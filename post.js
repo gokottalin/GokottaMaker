@@ -1,110 +1,6 @@
 (function () {
   function escapeHtml(value) {
-    return String(value || "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
-  }
-
-  function slugify(value) {
-    return String(value || "")
-      .trim()
-      .toLowerCase()
-      .replace(/[^\w\u4e00-\u9fa5]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-  }
-
-  function highlight(code) {
-    return code
-      .replace(/\b(const|let|var|for|if|return|void|uint16_t|uint32_t|define|include|HAL_ADC_Start_DMA)\b/g, '<span class="token-keyword">$1</span>')
-      .replace(/(".*?"|'.*?')/g, '<span class="token-string">$1</span>')
-      .replace(/\b(\d+)\b/g, '<span class="token-number">$1</span>');
-  }
-
-  function parseMarkdown(markdown) {
-    const headings = [];
-    const blocks = [];
-    const lines = String(markdown || "").split(/\r?\n/);
-    let paragraph = [];
-    let list = [];
-    let inCode = false;
-    let codeLang = "";
-    let code = [];
-
-    function inline(value) {
-      return escapeHtml(value)
-        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-        .replace(/`([^`]+)`/g, "<code>$1</code>");
-    }
-
-    function flushParagraph() {
-      if (!paragraph.length) return;
-      blocks.push(`<p>${inline(paragraph.join(" "))}</p>`);
-      paragraph = [];
-    }
-
-    function flushList() {
-      if (!list.length) return;
-      blocks.push(`<ul>${list.map((item) => `<li>${inline(item)}</li>`).join("")}</ul>`);
-      list = [];
-    }
-
-    for (const line of lines) {
-      const codeFence = line.match(/^```(.*)$/);
-      if (codeFence) {
-        if (inCode) {
-          blocks.push(`<pre data-lang="${escapeHtml(codeLang)}"><code>${highlight(escapeHtml(code.join("\n")))}</code></pre>`);
-          inCode = false;
-          code = [];
-          codeLang = "";
-        } else {
-          flushParagraph();
-          flushList();
-          inCode = true;
-          codeLang = codeFence[1].trim();
-        }
-        continue;
-      }
-
-      if (inCode) {
-        code.push(line);
-        continue;
-      }
-
-      if (!line.trim()) {
-        flushParagraph();
-        flushList();
-        continue;
-      }
-
-      const heading = line.match(/^(#{1,3})\s+(.+)$/);
-      if (heading) {
-        flushParagraph();
-        flushList();
-        const level = heading[1].length;
-        const text = heading[2].trim();
-        if (level === 1) continue;
-        const id = slugify(text);
-        headings.push({ id, text, level });
-        blocks.push(`<h${level} id="${id}">${inline(text)}</h${level}>`);
-        continue;
-      }
-
-      const listItem = line.match(/^-\s+(.+)$/);
-      if (listItem) {
-        flushParagraph();
-        list.push(listItem[1]);
-        continue;
-      }
-
-      paragraph.push(line.trim());
-    }
-
-    flushParagraph();
-    flushList();
-    return { html: blocks.join("\n"), headings };
+    return window.GokottaMarkdown.escapeHtml(value);
   }
 
   window.renderMarkdownPage = function renderMarkdownPage(options) {
@@ -134,13 +30,25 @@
       </div>
     `;
 
+    if (item.type === "project" && (item.repoUrl || item.bomUrl || item.docsUrl || item.version)) {
+      hero.querySelector(".post-hero-content").insertAdjacentHTML(
+        "beforeend",
+        `<div class="meta-row">
+          ${item.version ? `<span>${escapeHtml(item.version)}</span>` : ""}
+          ${item.repoUrl ? `<a href="${escapeHtml(item.repoUrl)}" target="_blank" rel="noopener noreferrer">代码仓库</a>` : ""}
+          ${item.bomUrl ? `<a href="${escapeHtml(item.bomUrl)}" target="_blank" rel="noopener noreferrer">BOM</a>` : ""}
+          ${item.docsUrl ? `<a href="${escapeHtml(item.docsUrl)}" target="_blank" rel="noopener noreferrer">文档</a>` : ""}
+        </div>`
+      );
+    }
+
     if (options.blocked && options.blocked(item)) {
       content.innerHTML = `<div class="empty-state">${escapeHtml(options.blockedMessage)}</div>`;
       toc.innerHTML = "";
       return;
     }
 
-    const parsed = parseMarkdown(item.markdown);
+    const parsed = window.GokottaMarkdown.render(item.markdown);
     content.innerHTML = parsed.html;
     toc.innerHTML = parsed.headings
       .filter((heading) => heading.level > 1)

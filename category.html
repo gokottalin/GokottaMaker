@@ -41,7 +41,7 @@
           .map(
             (post) => `
               <article class="article-card">
-                <a href="./post.html?id=${post.id}"><img src="${post.cover}" alt="${post.title}封面" /></a>
+                <a href="./post.html?id=${post.id}"><img src="${post.cover}" alt="${post.title}封面" loading="lazy" /></a>
                 <div>
                   <span class="category-pill">${post.category}</span>
                   <h3><a href="./post.html?id=${post.id}">${post.title}</a></h3>

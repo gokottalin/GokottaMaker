@@ -73,6 +73,25 @@ db.exec(`
   );
 `);
 
+function ensureColumn(table, name, definition) {
+  const columns = db.prepare(`PRAGMA table_info(${table})`).all().map((column) => column.name);
+  if (!columns.includes(name)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${name} ${definition}`);
+}
+
+ensureColumn("posts", "publish_status", "TEXT NOT NULL DEFAULT 'published'");
+ensureColumn("posts", "featured", "INTEGER NOT NULL DEFAULT 0");
+ensureColumn("posts", "featured_order", "INTEGER NOT NULL DEFAULT 0");
+ensureColumn("posts", "deleted_at", "TEXT");
+ensureColumn("projects", "visibility_status", "TEXT NOT NULL DEFAULT 'published'");
+ensureColumn("projects", "featured", "INTEGER NOT NULL DEFAULT 0");
+ensureColumn("projects", "featured_order", "INTEGER NOT NULL DEFAULT 0");
+ensureColumn("projects", "deleted_at", "TEXT");
+ensureColumn("projects", "repo_url", "TEXT");
+ensureColumn("projects", "bom_url", "TEXT");
+ensureColumn("projects", "docs_url", "TEXT");
+ensureColumn("projects", "version", "TEXT");
+ensureColumn("projects", "progress", "INTEGER NOT NULL DEFAULT 0");
+
 function hashPassword(password, salt = crypto.randomBytes(16).toString("hex")) {
   const hash = crypto.scryptSync(password, salt, 64).toString("hex");
   return { hash, salt };
@@ -92,6 +111,7 @@ function seedAdmin() {
   }
   if (resetAdminPassword) {
     db.prepare("UPDATE admin_users SET password_hash = ?, password_salt = ? WHERE id = ?").run(hash, salt, existing.id);
+    db.prepare("DELETE FROM sessions WHERE user_id = ?").run(existing.id);
   }
 }
 
@@ -113,10 +133,10 @@ function seedContent() {
 
   if (!postCount) {
     const insertPost = db.prepare(`
-      INSERT INTO posts (id, slug, title, category, category_key, excerpt, cover, markdown, read_time, date)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO posts (id, slug, title, category, category_key, excerpt, cover, markdown, read_time, date, publish_status, featured, featured_order)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', ?, ?)
     `);
-    for (const post of seed.posts) {
+    seed.posts.forEach((post, index) => {
       insertPost.run(
         post.id,
         post.slug || post.id,
@@ -127,15 +147,17 @@ function seedContent() {
         post.cover || "",
         post.markdown || "",
         post.readTime || "",
-        post.date || ""
+        post.date || "",
+        index < 4 ? 1 : 0,
+        index + 1
       );
-    }
+    });
   }
 
   if (!projectCount) {
     const insertProject = db.prepare(`
-      INSERT INTO projects (id, slug, title, status, status_key, summary, cover, markdown, license, stars, date)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO projects (id, slug, title, status, status_key, summary, cover, markdown, license, stars, date, visibility_status)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published')
     `);
     for (const project of seed.projects) {
       insertProject.run(
@@ -157,6 +179,7 @@ function seedContent() {
 
 seedAdmin();
 seedContent();
+db.prepare("DELETE FROM sessions WHERE expires_at <= datetime('now')").run();
 
 function json(res, status, payload) {
   const body = JSON.stringify(payload);
@@ -177,7 +200,15 @@ function readBody(req) {
         req.destroy();
       }
     });
-    req.on("end", () => resolve(body ? JSON.parse(body) : {}));
+    req.on("end", () => {
+      try {
+        resolve(body ? JSON.parse(body) : {});
+      } catch {
+        const error = new Error("请求数据格式不正确");
+        error.status = 400;
+        reject(error);
+      }
+    });
     req.on("error", reject);
   });
 }
@@ -217,38 +248,65 @@ function requireUser(req, res) {
   return user;
 }
 
-function allPosts() {
+function isHttps(req) {
+  return req.headers["x-forwarded-proto"] === "https";
+}
+
+function cookieHeader(token, req) {
+  const secure = isHttps(req) ? "; Secure" : "";
+  return `gokottamaker_session=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${60 * 60 * 24 * 30}${secure}`;
+}
+
+function normalizeFlag(value) {
+  return value === true || value === "true" || value === 1 || value === "1" ? 1 : 0;
+}
+
+function visibilityFilter(admin = false) {
+  return admin ? "" : "WHERE deleted_at IS NULL AND publish_status = 'published'";
+}
+
+function projectVisibilityFilter(admin = false) {
+  return admin ? "" : "WHERE deleted_at IS NULL AND visibility_status = 'published'";
+}
+
+function allPosts(admin = false) {
   return db
     .prepare(
       `SELECT id, slug, 'post' AS type, title, category, category_key AS categoryKey,
-              excerpt, cover, markdown, read_time AS readTime, date
+              excerpt, cover, markdown, read_time AS readTime, date,
+              publish_status AS publishStatus, featured, featured_order AS featuredOrder, deleted_at AS deletedAt
        FROM posts
-       ORDER BY date DESC, updated_at DESC`
+       ${visibilityFilter(admin)}
+       ORDER BY deleted_at IS NOT NULL ASC, date DESC, updated_at DESC`
     )
     .all();
 }
 
-function allProjects() {
+function allProjects(admin = false) {
   return db
     .prepare(
       `SELECT id, slug, 'project' AS type, title, status, status_key AS statusKey,
-              summary, cover, markdown, license, stars, date
+              summary, cover, markdown, license, stars, date,
+              visibility_status AS visibilityStatus, featured, featured_order AS featuredOrder, deleted_at AS deletedAt,
+              repo_url AS repoUrl, bom_url AS bomUrl, docs_url AS docsUrl, version, progress
        FROM projects
-       ORDER BY updated_at DESC`
+       ${projectVisibilityFilter(admin)}
+       ORDER BY deleted_at IS NOT NULL ASC, updated_at DESC`
     )
     .all();
 }
 
 function contentScript(res) {
-  const body = `window.GOKOTTA_SERVER_CONTENT = ${JSON.stringify({ posts: allPosts(), projects: allProjects() })};`;
+  const body = `window.GOKOTTA_SERVER_CONTENT = ${JSON.stringify({ posts: allPosts(false), projects: allProjects(false) })};`;
   res.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8" });
   res.end(body);
 }
 
 function savePost(payload) {
   db.prepare(
-    `INSERT INTO posts (id, slug, title, category, category_key, excerpt, cover, markdown, read_time, date, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+    `INSERT INTO posts (id, slug, title, category, category_key, excerpt, cover, markdown, read_time, date,
+                        publish_status, featured, featured_order, deleted_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, CURRENT_TIMESTAMP)
      ON CONFLICT(id) DO UPDATE SET
        slug = excluded.slug,
        title = excluded.title,
@@ -259,6 +317,10 @@ function savePost(payload) {
        markdown = excluded.markdown,
        read_time = excluded.read_time,
        date = excluded.date,
+       publish_status = excluded.publish_status,
+       featured = excluded.featured,
+       featured_order = excluded.featured_order,
+       deleted_at = NULL,
        updated_at = CURRENT_TIMESTAMP`
   ).run(
     payload.id,
@@ -270,14 +332,19 @@ function savePost(payload) {
     payload.cover || "",
     payload.markdown || "",
     payload.readTime || "10 分钟阅读",
-    payload.date || new Date().toISOString().slice(0, 10)
+    payload.date || new Date().toISOString().slice(0, 10),
+    payload.publishStatus || "draft",
+    normalizeFlag(payload.featured),
+    Number(payload.featuredOrder || 0)
   );
 }
 
 function saveProject(payload) {
   db.prepare(
-    `INSERT INTO projects (id, slug, title, status, status_key, summary, cover, markdown, license, stars, date, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+    `INSERT INTO projects (id, slug, title, status, status_key, summary, cover, markdown, license, stars, date,
+                           visibility_status, featured, featured_order, deleted_at,
+                           repo_url, bom_url, docs_url, version, progress, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
      ON CONFLICT(id) DO UPDATE SET
        slug = excluded.slug,
        title = excluded.title,
@@ -289,6 +356,15 @@ function saveProject(payload) {
        license = excluded.license,
        stars = excluded.stars,
        date = excluded.date,
+       visibility_status = excluded.visibility_status,
+       featured = excluded.featured,
+       featured_order = excluded.featured_order,
+       deleted_at = NULL,
+       repo_url = excluded.repo_url,
+       bom_url = excluded.bom_url,
+       docs_url = excluded.docs_url,
+       version = excluded.version,
+       progress = excluded.progress,
        updated_at = CURRENT_TIMESTAMP`
   ).run(
     payload.id,
@@ -301,7 +377,15 @@ function saveProject(payload) {
     payload.markdown || "",
     payload.license || "MIT License",
     Number(payload.stars || 0),
-    payload.date || new Date().toISOString().slice(0, 10)
+    payload.date || new Date().toISOString().slice(0, 10),
+    payload.visibilityStatus || "draft",
+    normalizeFlag(payload.featured),
+    Number(payload.featuredOrder || 0),
+    payload.repoUrl || "",
+    payload.bomUrl || "",
+    payload.docsUrl || "",
+    payload.version || "",
+    Number(payload.progress || 0)
   );
 }
 
@@ -342,20 +426,64 @@ function saveUpload(payload) {
   return `./uploads/${filename}`;
 }
 
+function uploads() {
+  if (!fs.existsSync(uploadDir)) return [];
+  return fs
+    .readdirSync(uploadDir, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && /\.(png|jpe?g|webp|gif)$/i.test(entry.name))
+    .map((entry) => {
+      const stats = fs.statSync(path.join(uploadDir, entry.name));
+      return {
+        name: entry.name,
+        url: `./uploads/${entry.name}`,
+        size: stats.size,
+        updatedAt: stats.mtime.toISOString()
+      };
+    })
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+}
+
+const loginFailures = new Map();
+
+function loginKey(req, username) {
+  return `${req.socket.remoteAddress || "unknown"}:${username || ""}`;
+}
+
+function isLoginBlocked(key) {
+  const record = loginFailures.get(key);
+  if (!record) return false;
+  if (record.until && record.until > Date.now()) return true;
+  if (record.until && record.until <= Date.now()) loginFailures.delete(key);
+  return false;
+}
+
+function recordLoginFailure(key) {
+  const record = loginFailures.get(key) || { count: 0, until: 0 };
+  record.count += 1;
+  if (record.count >= 5) record.until = Date.now() + 15 * 60 * 1000;
+  loginFailures.set(key, record);
+}
+
 async function api(req, res, pathname) {
   if (pathname === "/api/content.js" && req.method === "GET") return contentScript(res);
-  if (pathname === "/api/content" && req.method === "GET") return json(res, 200, { posts: allPosts(), projects: allProjects() });
+  if (pathname === "/api/content" && req.method === "GET") return json(res, 200, { posts: allPosts(false), projects: allProjects(false) });
   if (pathname === "/api/session" && req.method === "GET") return json(res, 200, { user: currentUser(req) });
 
   if (pathname === "/api/login" && req.method === "POST") {
     const body = await readBody(req);
+    const key = loginKey(req, body.username);
+    if (isLoginBlocked(key)) return json(res, 429, { error: "登录失败次数过多，请 15 分钟后再试" });
+
     const user = db.prepare("SELECT * FROM admin_users WHERE username = ?").get(body.username || "");
     if (!user || !verifyPassword(body.password || "", user.password_salt, user.password_hash)) {
+      recordLoginFailure(key);
       return json(res, 401, { error: "账号或密码不正确" });
     }
+
+    loginFailures.delete(key);
     const token = crypto.randomBytes(32).toString("hex");
     db.prepare("INSERT INTO sessions (token, user_id, expires_at) VALUES (?, ?, datetime('now', '+30 days'))").run(token, user.id);
-    res.setHeader("Set-Cookie", `gokottamaker_session=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${60 * 60 * 24 * 30}`);
+    res.setHeader("Set-Cookie", cookieHeader(token, req));
     return json(res, 200, { user: { id: user.id, username: user.username } });
   }
 
@@ -369,31 +497,58 @@ async function api(req, res, pathname) {
   const user = requireUser(req, res);
   if (!user) return;
 
+  if (pathname === "/api/admin/content" && req.method === "GET") return json(res, 200, { posts: allPosts(true), projects: allProjects(true) });
+  if (pathname === "/api/uploads" && req.method === "GET") return json(res, 200, { uploads: uploads() });
+
   if (pathname === "/api/posts" && req.method === "POST") {
     savePost(await readBody(req));
-    return json(res, 200, { posts: allPosts() });
+    return json(res, 200, { posts: allPosts(true) });
   }
 
   if (pathname === "/api/projects" && req.method === "POST") {
     saveProject(await readBody(req));
-    return json(res, 200, { projects: allProjects() });
+    return json(res, 200, { projects: allProjects(true) });
   }
 
   if (pathname === "/api/uploads" && req.method === "POST") {
     const url = saveUpload(await readBody(req));
-    return json(res, 200, { url });
+    return json(res, 200, { url, uploads: uploads() });
+  }
+
+  const postRestore = pathname.match(/^\/api\/posts\/([^/]+)\/restore$/);
+  if (postRestore && req.method === "POST") {
+    db.prepare("UPDATE posts SET deleted_at = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(decodeURIComponent(postRestore[1]));
+    return json(res, 200, { posts: allPosts(true) });
+  }
+
+  const projectRestore = pathname.match(/^\/api\/projects\/([^/]+)\/restore$/);
+  if (projectRestore && req.method === "POST") {
+    db.prepare("UPDATE projects SET deleted_at = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(decodeURIComponent(projectRestore[1]));
+    return json(res, 200, { projects: allProjects(true) });
+  }
+
+  const hardDeletePost = pathname.match(/^\/api\/posts\/([^/]+)\/hard$/);
+  if (hardDeletePost && req.method === "DELETE") {
+    db.prepare("DELETE FROM posts WHERE id = ?").run(decodeURIComponent(hardDeletePost[1]));
+    return json(res, 200, { posts: allPosts(true) });
+  }
+
+  const hardDeleteProject = pathname.match(/^\/api\/projects\/([^/]+)\/hard$/);
+  if (hardDeleteProject && req.method === "DELETE") {
+    db.prepare("DELETE FROM projects WHERE id = ?").run(decodeURIComponent(hardDeleteProject[1]));
+    return json(res, 200, { projects: allProjects(true) });
   }
 
   const deletePost = pathname.match(/^\/api\/posts\/([^/]+)$/);
   if (deletePost && req.method === "DELETE") {
-    db.prepare("DELETE FROM posts WHERE id = ?").run(decodeURIComponent(deletePost[1]));
-    return json(res, 200, { posts: allPosts() });
+    db.prepare("UPDATE posts SET deleted_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(decodeURIComponent(deletePost[1]));
+    return json(res, 200, { posts: allPosts(true) });
   }
 
   const deleteProject = pathname.match(/^\/api\/projects\/([^/]+)$/);
   if (deleteProject && req.method === "DELETE") {
-    db.prepare("DELETE FROM projects WHERE id = ?").run(decodeURIComponent(deleteProject[1]));
-    return json(res, 200, { projects: allProjects() });
+    db.prepare("UPDATE projects SET deleted_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(decodeURIComponent(deleteProject[1]));
+    return json(res, 200, { projects: allProjects(true) });
   }
 
   return json(res, 404, { error: "not found" });
@@ -439,7 +594,7 @@ const server = http.createServer(async (req, res) => {
     serveStatic(res, url.pathname);
   } catch (error) {
     console.error(error);
-    json(res, 500, { error: "server error" });
+    json(res, error.status || 500, { error: error.status ? error.message : "server error" });
   }
 });
 

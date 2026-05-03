@@ -88,12 +88,62 @@
                 <textarea name="excerpt" rows="4" placeholder="这段内容会显示在首页卡片和详情页顶部。"></textarea>
               </label>
 
+              <label>
+                发布状态
+                <select name="publishStatus">
+                  <option value="draft">草稿</option>
+                  <option value="published">已发布</option>
+                </select>
+              </label>
+
+              <div class="inline-fields">
+                <label class="checkbox-field">
+                  <input name="featured" type="checkbox" />
+                  加入首页轮播
+                </label>
+                <label>
+                  轮播排序
+                  <input name="featuredOrder" type="number" min="0" step="1" value="0" />
+                </label>
+              </div>
+
+              <div class="project-extra" id="projectExtra" hidden>
+                <label>
+                  项目版本
+                  <input name="version" placeholder="例如：v0.1" />
+                </label>
+                <label>
+                  项目进度
+                  <input name="progress" type="number" min="0" max="100" step="1" value="0" />
+                </label>
+                <label>
+                  GitHub / Gitee 链接
+                  <input name="repoUrl" type="url" placeholder="https://..." />
+                </label>
+                <label>
+                  BOM 链接
+                  <input name="bomUrl" type="url" placeholder="https://..." />
+                </label>
+                <label>
+                  文档链接
+                  <input name="docsUrl" type="url" placeholder="https://..." />
+                </label>
+              </div>
+
               <label class="cover-picker" title="推荐图片格式：JPG、PNG、WebP；推荐比例 16:9；推荐分辨率 1600x900 或 1920x1080。">
                 封面图片
                 <input id="coverFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
                 <span class="file-hint" id="coverHint">从资源管理器选择图片，推荐 1600x900 或 1920x1080</span>
                 <img class="cover-preview" id="coverPreview" alt="封面预览" />
               </label>
+
+              <section class="image-library-panel">
+                <div class="section-heading compact">
+                  <h3>图片库</h3>
+                  <button class="button secondary" id="refreshImagesButton" type="button">刷新图片库</button>
+                </div>
+                <div id="imageLibrary" class="image-library"></div>
+              </section>
 
               <label>
                 Markdown 文件导入
@@ -135,6 +185,7 @@
     <script src="../data/seed.js"></script>
     <script src="../api/content.js"></script>
     <script src="../data/content-store.js"></script>
+    <script src="../data/markdown-renderer.js"></script>
     <script src="./admin.js"></script>
   </body>
 </html>

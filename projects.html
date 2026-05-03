@@ -38,7 +38,7 @@
           const action = online ? `<a class="card-link" href="./project.html?id=${project.id}">查看详情</a>` : "";
           return `
             <article class="project-card ${online ? "" : "is-planned"}">
-              <img src="${project.cover}" alt="${project.title}项目图片" />
+              <img src="${project.cover}" alt="${project.title}项目图片" loading="lazy" />
               <div>
                 <span class="status">${project.status}</span>
                 <h3>${title}</h3>

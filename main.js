@@ -18,7 +18,7 @@
     return `
       <article class="article-card">
         <a href="./post.html?id=${post.id}" aria-label="${safe(post.title)}">
-          <img src="${post.cover}" alt="${safe(post.title)}封面" />
+          <img src="${post.cover}" alt="${safe(post.title)}封面" loading="lazy" />
         </a>
         <div>
           <span class="category-pill">${safe(post.category)}</span>
@@ -39,7 +39,7 @@
     const action = online ? `<a class="card-link" href="./project.html?id=${project.id}">查看详情</a>` : "";
     return `
       <article class="project-card ${online ? "" : "is-planned"}">
-        <img src="${project.cover}" alt="${safe(project.title)}项目图片" />
+        <img src="${project.cover}" alt="${safe(project.title)}项目图片" loading="lazy" />
         <div>
           <span class="status">${safe(project.status)}</span>
           <h3>${title}</h3>
@@ -60,8 +60,7 @@
   }
 
   function itemUrl(item) {
-    if (item.type === "project") return `./project.html?id=${item.id}`;
-    return `./post.html?id=${item.id}`;
+    return item.type === "project" ? `./project.html?id=${item.id}` : `./post.html?id=${item.id}`;
   }
 
   function itemLabel(item) {
@@ -85,7 +84,7 @@
   }
 
   function renderFeatured(index = 0) {
-    const featured = featuredItems[index] || posts.find((post) => post.id === "stm32-adc-dma-precision") || posts[0];
+    const featured = featuredItems[index] || posts[0];
     if (!featured) return;
     const copy = document.querySelector("#heroCopy");
     const bgA = document.querySelector("#heroBgA");
@@ -122,6 +121,8 @@
 
   function renderHeroCards() {
     if (!heroCards) return;
+    const dots = document.querySelector(".pagination-dots");
+    if (dots) dots.innerHTML = featuredItems.map((_, index) => `<span class="${index === 0 ? "active" : ""}"></span>`).join("");
     heroCards.innerHTML = featuredItems
       .map(
         (item, index) => `
@@ -153,20 +154,26 @@
 
   function restartHeroTimer() {
     if (heroTimer) window.clearInterval(heroTimer);
+    if (!featuredItems.length) return;
     heroTimer = window.setInterval(() => {
       activeHeroIndex = (activeHeroIndex + 1) % featuredItems.length;
       renderFeatured(activeHeroIndex);
     }, 10000);
   }
 
-  featuredItems = [
-    posts.find((post) => post.id === "stm32-adc-dma-precision") || posts[0],
-    posts.find((post) => post.id === "analog-active-filter") || posts[1],
-    posts.find((post) => post.id === "esp32-low-power-node") || posts[2],
-    posts.find((post) => post.id === "opensource-power-amplifier") || posts[3]
-  ].filter(Boolean);
+  featuredItems = [...posts, ...projects]
+    .filter((item) => item.featured)
+    .sort((a, b) => Number(a.featuredOrder || 0) - Number(b.featuredOrder || 0))
+    .slice(0, 6);
+  if (!featuredItems.length) {
+    featuredItems = [
+      posts.find((post) => post.id === "stm32-adc-dma-precision") || posts[0],
+      posts.find((post) => post.id === "analog-active-filter") || posts[1],
+      posts.find((post) => post.id === "esp32-low-power-node") || posts[2],
+      posts.find((post) => post.id === "opensource-power-amplifier") || posts[3]
+    ].filter(Boolean);
+  }
 
-  renderFeatured(0);
   renderArticles(posts);
   renderHeroCards();
   renderFeatured(0);

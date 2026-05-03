@@ -679,6 +679,27 @@ img {
   color: inherit;
 }
 
+.markdown-article blockquote {
+  margin: 24px 0;
+  padding: 14px 18px;
+  border-left: 4px solid var(--blue);
+  background: #f3f8ff;
+  color: var(--muted);
+}
+
+.markdown-article img {
+  max-width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.markdown-article a,
+.post-hero-content a {
+  color: var(--blue);
+  font-weight: 800;
+}
+
 .markdown-article .token-keyword {
   color: #79c0ff;
 }

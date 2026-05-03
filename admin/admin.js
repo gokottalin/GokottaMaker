@@ -16,6 +16,9 @@
   const list = document.querySelector("#adminContentList");
   const categoryField = document.querySelector("#categoryField");
   const statusField = document.querySelector("#statusField");
+  const projectExtra = document.querySelector("#projectExtra");
+  const imageLibrary = document.querySelector("#imageLibrary");
+  const refreshImagesButton = document.querySelector("#refreshImagesButton");
 
   let editingType = null;
   let editingId = null;
@@ -34,7 +37,7 @@
   }
 
   async function loadServerContent() {
-    serverContent = await request("/api/content");
+    serverContent = await request("/api/admin/content");
   }
 
   function setLoggedIn(value) {
@@ -65,23 +68,8 @@
   }
 
   function renderMarkdown(markdown) {
-    const escaped = escapeHtml(markdown || "");
-    return (
-      escaped
-        .replace(/```([\s\S]*?)```/g, "<pre><code>$1</code></pre>")
-        .replace(/^### (.*)$/gm, "<h3>$1</h3>")
-        .replace(/^## (.*)$/gm, "<h2>$1</h2>")
-        .replace(/^# (.*)$/gm, "<h1>$1</h1>")
-        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-        .replace(/`([^`]+)`/g, "<code>$1</code>")
-        .replace(/^- (.*)$/gm, "<li>$1</li>")
-        .replace(/\n{2,}/g, "</p><p>")
-        .replace(/^(.+)$/gm, "<p>$1</p>")
-        .replace(/<p><h/g, "<h")
-        .replace(/<\/h([1-3])><\/p>/g, "</h$1>")
-        .replace(/<p><li>/g, "<ul><li>")
-        .replace(/<\/li><\/p>/g, "</li></ul>") || "<p>Markdown 预览会显示在这里。</p>"
-    );
+    if (window.GokottaMarkdown) return window.GokottaMarkdown.render(markdown).html;
+    return `<p>${escapeHtml(markdown || "Markdown 预览会显示在这里。")}</p>`;
   }
 
   function getType() {
@@ -107,6 +95,7 @@
     const type = getType();
     categoryField.hidden = type === "project";
     statusField.hidden = type !== "project";
+    projectExtra.hidden = type !== "project";
   }
 
   function updatePreview() {
@@ -140,6 +129,8 @@
     editingId = null;
     contentForm.reset();
     contentForm.type.value = "post";
+    contentForm.publishStatus.value = "draft";
+    contentForm.featuredOrder.value = "0";
     setCover("");
     updateTypeFields();
     updatePreview();
@@ -158,23 +149,52 @@
       items
         .map((item) => {
           const kind = item.contentType === "project" ? "项目" : "文章";
+          const publish = item.contentType === "project" ? item.visibilityStatus : item.publishStatus;
           const meta = item.contentType === "project" ? `${item.status} / ${item.license || ""}` : `${item.category} / ${item.readTime || ""}`;
+          const deleted = Boolean(item.deletedAt);
           return `
-            <article class="admin-row">
+            <article class="admin-row ${deleted ? "is-deleted" : ""}">
               <img src="${adminSrc(item.cover)}" alt="${escapeHtml(item.title)}封面" />
               <div>
-                <strong><span class="content-kind">${kind}</span>${escapeHtml(item.title)}</strong>
-                <p>${escapeHtml(meta)} / ${escapeHtml(item.date || "暂无日期")}</p>
+                <strong>
+                  <span class="content-kind">${kind}</span>${escapeHtml(item.title)}
+                  <span class="content-status">${deleted ? "回收站" : publish === "published" ? "已发布" : "草稿"}</span>
+                </strong>
+                <p>${escapeHtml(meta)} / ${escapeHtml(item.date || "暂无日期")} ${item.featured ? " / 首页轮播" : ""}</p>
                 <p>${escapeHtml(item.excerpt || item.summary)}</p>
               </div>
               <div class="row-actions">
-                <button class="button secondary" data-action="edit" data-type="${item.contentType}" data-id="${item.id}" type="button">编辑</button>
-                <button class="button secondary" data-action="delete" data-type="${item.contentType}" data-id="${item.id}" type="button">删除</button>
+                ${deleted ? `
+                  <button class="button secondary" data-action="restore" data-type="${item.contentType}" data-id="${item.id}" type="button">恢复</button>
+                  <button class="button secondary" data-action="hard-delete" data-type="${item.contentType}" data-id="${item.id}" type="button">永久删除</button>
+                ` : `
+                  <button class="button secondary" data-action="edit" data-type="${item.contentType}" data-id="${item.id}" type="button">编辑</button>
+                  <button class="button secondary" data-action="delete" data-type="${item.contentType}" data-id="${item.id}" type="button">移入回收站</button>
+                `}
               </div>
             </article>
           `;
         })
         .join("") || `<div class="empty-state">当前还没有内容。</div>`;
+  }
+
+  function renderImageLibrary(images = []) {
+    imageLibrary.innerHTML =
+      images
+        .map(
+          (image) => `
+            <button class="image-choice" type="button" data-cover="${image.url}">
+              <img src="${adminSrc(image.url)}" alt="${escapeHtml(image.name)}" />
+              <span>${escapeHtml(image.name)}</span>
+            </button>
+          `
+        )
+        .join("") || `<div class="empty-state">还没有上传图片。</div>`;
+  }
+
+  async function loadImages() {
+    const result = await request("/api/uploads");
+    renderImageLibrary(result.uploads || []);
   }
 
   function applyItemToForm(type, item) {
@@ -184,12 +204,20 @@
     contentForm.title.value = item.title || "";
     contentForm.excerpt.value = item.excerpt || item.summary || "";
     contentForm.markdown.value = item.markdown || "";
+    contentForm.publishStatus.value = type === "post" ? item.publishStatus || "draft" : item.visibilityStatus || "draft";
+    contentForm.featured.checked = Boolean(item.featured);
+    contentForm.featuredOrder.value = item.featuredOrder || 0;
     if (type === "post") {
       contentForm.category.value = item.category || "模拟电子";
     } else {
       contentForm.statusKey.value = item.statusKey || "planned";
+      contentForm.version.value = item.version || "";
+      contentForm.progress.value = item.progress || 0;
+      contentForm.repoUrl.value = item.repoUrl || "";
+      contentForm.bomUrl.value = item.bomUrl || "";
+      contentForm.docsUrl.value = item.docsUrl || "";
     }
-    setCover(item.cover, "当前封面，可重新从资源管理器选择");
+    setCover(item.cover, "当前封面，可重新从资源管理器或图片库选择");
     updateTypeFields();
     updatePreview();
     window.location.hash = "editor";
@@ -204,6 +232,7 @@
       try {
         await request("/api/login", { method: "POST", body: JSON.stringify({ username, password }) });
         await loadServerContent();
+        await loadImages();
         loginNotice.textContent = "";
         saveLogin(username);
         setLoggedIn(true);
@@ -222,9 +251,16 @@
   });
 
   resetButton.addEventListener("click", resetForm);
+  refreshImagesButton.addEventListener("click", () => loadImages().catch((error) => (loginNotice.textContent = error.message)));
   contentForm.markdown.addEventListener("input", updatePreview);
   contentForm.addEventListener("change", (event) => {
     if (event.target.name === "type") updateTypeFields();
+  });
+
+  imageLibrary.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-cover]");
+    if (!button) return;
+    setCover(button.dataset.cover, "已从图片库选择封面");
   });
 
   markdownFile.addEventListener("change", async () => {
@@ -247,6 +283,7 @@
           body: JSON.stringify({ filename: file.name, dataUrl })
         });
         setCover(result.url, `${file.name} 已上传`);
+        renderImageLibrary(result.uploads || []);
       } catch (error) {
         coverHint.textContent = error.message;
       }
@@ -265,7 +302,9 @@
       title: data.get("title"),
       cover: currentCover || (type === "post" ? "./assets/covers/analog-cover.png" : "./assets/covers/project-cover.png"),
       markdown: data.get("markdown"),
-      date: now
+      date: now,
+      featured: data.get("featured") === "on",
+      featuredOrder: Number(data.get("featuredOrder") || 0)
     };
 
     (async () => {
@@ -276,6 +315,7 @@
             ...base,
             category,
             categoryKey: categoryKey(category),
+            publishStatus: data.get("publishStatus"),
             readTime: "10 分钟阅读",
             excerpt: data.get("excerpt")
           };
@@ -287,9 +327,15 @@
             ...base,
             statusKey,
             status: statusText(statusKey),
+            visibilityStatus: data.get("publishStatus"),
             summary: data.get("excerpt"),
             license: "MIT License",
-            stars: 0
+            stars: 0,
+            version: data.get("version"),
+            progress: Number(data.get("progress") || 0),
+            repoUrl: data.get("repoUrl"),
+            bomUrl: data.get("bomUrl"),
+            docsUrl: data.get("docsUrl")
           };
           const result = await request("/api/projects", { method: "POST", body: JSON.stringify(project) });
           serverContent = { ...serverContent, projects: result.projects };
@@ -308,26 +354,33 @@
     if (!button) return;
     const type = button.dataset.type;
     const id = button.dataset.id;
-    if (button.dataset.action === "delete") {
-      if (!confirm("确认删除这条内容吗？当前版本会直接从数据库删除。")) return;
-      (async () => {
-        if (type === "project") {
-          const result = await request(`/api/projects/${encodeURIComponent(id)}`, { method: "DELETE" });
-          serverContent = { ...serverContent, projects: result.projects };
-        } else {
-          const result = await request(`/api/posts/${encodeURIComponent(id)}`, { method: "DELETE" });
-          serverContent = { ...serverContent, posts: result.posts };
-        }
-        renderList();
-      })().catch((error) => {
-        loginNotice.textContent = error.message;
-      });
-      return;
-    }
+    const collectionKey = type === "project" ? "projects" : "posts";
+    const basePath = type === "project" ? "projects" : "posts";
 
-    const items = type === "project" ? serverContent.projects : serverContent.posts;
-    const item = items.find((entry) => entry.id === id);
-    if (item) applyItemToForm(type, item);
+    (async () => {
+      if (button.dataset.action === "edit") {
+        const item = serverContent[collectionKey].find((entry) => entry.id === id);
+        if (item) applyItemToForm(type, item);
+        return;
+      }
+      if (button.dataset.action === "delete") {
+        if (!confirm("确认移入回收站吗？访客端将不再显示。")) return;
+        const result = await request(`/api/${basePath}/${encodeURIComponent(id)}`, { method: "DELETE" });
+        serverContent = { ...serverContent, [collectionKey]: result[collectionKey] };
+      }
+      if (button.dataset.action === "restore") {
+        const result = await request(`/api/${basePath}/${encodeURIComponent(id)}/restore`, { method: "POST", body: "{}" });
+        serverContent = { ...serverContent, [collectionKey]: result[collectionKey] };
+      }
+      if (button.dataset.action === "hard-delete") {
+        if (!confirm("永久删除无法从回收站恢复，确认继续吗？")) return;
+        const result = await request(`/api/${basePath}/${encodeURIComponent(id)}/hard`, { method: "DELETE" });
+        serverContent = { ...serverContent, [collectionKey]: result[collectionKey] };
+      }
+      renderList();
+    })().catch((error) => {
+      loginNotice.textContent = error.message;
+    });
   });
 
   (async () => {
@@ -335,7 +388,10 @@
     const session = await request("/api/session").catch(() => ({ user: null }));
     const loggedIn = Boolean(session.user);
     setLoggedIn(loggedIn);
-    if (loggedIn) await loadServerContent();
+    if (loggedIn) {
+      await loadServerContent();
+      await loadImages();
+    }
     updateTypeFields();
     updatePreview();
     renderList();
