@@ -5,7 +5,7 @@ GokottaMaker 是一个面向模拟电子、STM32、ESP32 和独立开源硬件�
 ## 本地运行
 
 ```powershell
-node server.js
+node --experimental-sqlite server.js
 ```
 
 访问：

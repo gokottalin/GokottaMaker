@@ -33,6 +33,8 @@ Render 配置要点：
 - 持久磁盘：挂载到 `/var/data`
 - `DATA_DIR=/var/data`
 
+项目使用 Node 内置 SQLite，启动时需要 `--experimental-sqlite`。这个参数已经写入 `package.json` 的 `npm start`。
+
 ## 方案 B：VPS + Docker
 
 服务器安装 Docker 后，在项目目录执行：
@@ -52,6 +54,18 @@ docker run -d \
 
 ```text
 http://127.0.0.1:4173
+```
+
+## 方案 C：国内云 Node 直部署
+
+如果 Docker Hub 拉取基础镜像超时，可以直接安装 Node 22，并使用实验 SQLite 参数启动：
+
+```bash
+DATA_DIR=/srv/gokottamaker-data \
+ADMIN_USERNAME='Gokotta' \
+ADMIN_PASSWORD='请换成新的强密码' \
+PORT=4173 \
+/opt/node22/bin/node --experimental-sqlite server.js
 ```
 
 ## 必须备份
