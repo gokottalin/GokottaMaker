@@ -12,8 +12,12 @@ const dbPath = path.resolve(process.env.DB_PATH || path.join(dbDir, "gokottamake
 const uploadDir = path.resolve(process.env.UPLOAD_DIR || path.join(dataDir, "uploads"));
 const port = Number(process.env.PORT || 4173);
 const adminUsername = process.env.ADMIN_USERNAME || "Gokotta";
-const adminPassword = process.env.ADMIN_PASSWORD || "linguihong123...";
+const adminPassword = process.env.ADMIN_PASSWORD || "change-this-before-public-deploy";
 const resetAdminPassword = process.env.ADMIN_RESET_PASSWORD_ON_START === "true";
+
+if (!process.env.ADMIN_PASSWORD) {
+  console.warn("WARNING: ADMIN_PASSWORD is not set. Use a strong password in production.");
+}
 
 fs.mkdirSync(dbDir, { recursive: true });
 fs.mkdirSync(uploadDir, { recursive: true });

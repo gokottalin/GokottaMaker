@@ -1,7 +1,4 @@
 (function () {
-  const ADMIN_USERNAME = "Gokotta";
-  const ADMIN_PASSWORD = "linguihong123...";
-  const sessionKey = "gokottamaker_admin_session";
   const savedLoginKey = "gokottamaker_admin_saved_login";
 
   const loginPanel = document.querySelector("#loginPanel");
@@ -23,11 +20,7 @@
   let editingType = null;
   let editingId = null;
   let currentCover = "";
-  let serverContent = null;
-
-  function apiEnabled() {
-    return location.protocol === "http:" || location.protocol === "https:";
-  }
+  let serverContent = { posts: [], projects: [] };
 
   async function request(path, options = {}) {
     const response = await fetch(path, {
@@ -41,21 +34,10 @@
   }
 
   async function loadServerContent() {
-    if (!apiEnabled()) return;
     serverContent = await request("/api/content");
   }
 
-  function isLoggedIn() {
-    return localStorage.getItem(sessionKey) === "true" || document.cookie.includes("gokottamaker_admin_session=true");
-  }
-
-  function setCookie(value) {
-    document.cookie = `gokottamaker_admin_session=${value ? "true" : "false"}; path=/; max-age=${value ? 60 * 60 * 24 * 30 : 0}`;
-  }
-
   function setLoggedIn(value) {
-    localStorage.setItem(sessionKey, value ? "true" : "false");
-    setCookie(value);
     loginPanel.hidden = value;
     dashboard.hidden = !value;
   }
@@ -140,7 +122,7 @@
     } else {
       coverPreview.removeAttribute("src");
       coverPreview.classList.remove("is-visible");
-      coverHint.textContent = "从资源管理器选择图片，推荐 1600×900 或 1920×1080";
+      coverHint.textContent = "从资源管理器选择图片，推荐 1600x900 或 1920x1080";
     }
   }
 
@@ -164,40 +146,35 @@
   }
 
   function combinedItems() {
-    if (serverContent) {
-      return [
-        ...serverContent.posts.map((item) => ({ ...item, contentType: "post" })),
-        ...serverContent.projects.map((item) => ({ ...item, contentType: "project" }))
-      ];
-    }
     return [
-      ...window.GokottaContent.getPosts().map((item) => ({ ...item, contentType: "post" })),
-      ...window.GokottaContent.getProjects().map((item) => ({ ...item, contentType: "project" }))
+      ...serverContent.posts.map((item) => ({ ...item, contentType: "post" })),
+      ...serverContent.projects.map((item) => ({ ...item, contentType: "project" }))
     ];
   }
 
   function renderList() {
     const items = combinedItems();
-    list.innerHTML = items
-      .map((item) => {
-        const kind = item.contentType === "project" ? "项目" : "文章";
-        const meta = item.contentType === "project" ? `${item.status} · ${item.license || ""}` : `${item.category} · ${item.readTime || ""}`;
-        return `
-          <article class="admin-row">
-            <img src="${adminSrc(item.cover)}" alt="${escapeHtml(item.title)}封面" />
-            <div>
-              <strong><span class="content-kind">${kind}</span>${escapeHtml(item.title)}</strong>
-              <p>${escapeHtml(meta)} · ${escapeHtml(item.date || "本地内容")}</p>
-              <p>${escapeHtml(item.excerpt || item.summary)}</p>
-            </div>
-            <div class="row-actions">
-              <button class="button secondary" data-action="edit" data-type="${item.contentType}" data-id="${item.id}" type="button">编辑</button>
-              <button class="button secondary" data-action="delete" data-type="${item.contentType}" data-id="${item.id}" type="button">删除</button>
-            </div>
-          </article>
-        `;
-      })
-      .join("");
+    list.innerHTML =
+      items
+        .map((item) => {
+          const kind = item.contentType === "project" ? "项目" : "文章";
+          const meta = item.contentType === "project" ? `${item.status} / ${item.license || ""}` : `${item.category} / ${item.readTime || ""}`;
+          return `
+            <article class="admin-row">
+              <img src="${adminSrc(item.cover)}" alt="${escapeHtml(item.title)}封面" />
+              <div>
+                <strong><span class="content-kind">${kind}</span>${escapeHtml(item.title)}</strong>
+                <p>${escapeHtml(meta)} / ${escapeHtml(item.date || "暂无日期")}</p>
+                <p>${escapeHtml(item.excerpt || item.summary)}</p>
+              </div>
+              <div class="row-actions">
+                <button class="button secondary" data-action="edit" data-type="${item.contentType}" data-id="${item.id}" type="button">编辑</button>
+                <button class="button secondary" data-action="delete" data-type="${item.contentType}" data-id="${item.id}" type="button">删除</button>
+              </div>
+            </article>
+          `;
+        })
+        .join("") || `<div class="empty-state">当前还没有内容。</div>`;
   }
 
   function applyItemToForm(type, item) {
@@ -225,12 +202,8 @@
     const password = data.get("password");
     (async () => {
       try {
-        if (apiEnabled()) {
-          await request("/api/login", { method: "POST", body: JSON.stringify({ username, password }) });
-          await loadServerContent();
-        } else if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
-          throw new Error("账号或密码不正确。");
-        }
+        await request("/api/login", { method: "POST", body: JSON.stringify({ username, password }) });
+        await loadServerContent();
         loginNotice.textContent = "";
         saveLogin(username);
         setLoggedIn(true);
@@ -243,7 +216,7 @@
 
   logoutButton.addEventListener("click", () => {
     (async () => {
-      if (apiEnabled()) await request("/api/logout", { method: "POST", body: "{}" }).catch(() => {});
+      await request("/api/logout", { method: "POST", body: "{}" }).catch(() => {});
       setLoggedIn(false);
     })();
   });
@@ -269,15 +242,11 @@
       try {
         coverHint.textContent = "正在上传封面...";
         const dataUrl = await readFileAsDataUrl(file);
-        if (apiEnabled()) {
-          const result = await request("/api/uploads", {
-            method: "POST",
-            body: JSON.stringify({ filename: file.name, dataUrl })
-          });
-          setCover(result.url, `${file.name} 已上传`);
-        } else {
-          setCover(dataUrl, file.name);
-        }
+        const result = await request("/api/uploads", {
+          method: "POST",
+          body: JSON.stringify({ filename: file.name, dataUrl })
+        });
+        setCover(result.url, `${file.name} 已上传`);
       } catch (error) {
         coverHint.textContent = error.message;
       }
@@ -310,12 +279,8 @@
             readTime: "10 分钟阅读",
             excerpt: data.get("excerpt")
           };
-          if (apiEnabled()) {
-            const result = await request("/api/posts", { method: "POST", body: JSON.stringify(post) });
-            serverContent = { ...(serverContent || { posts: [], projects: window.GokottaContent.getProjects() }), posts: result.posts };
-          } else {
-            window.GokottaContent.savePost(post);
-          }
+          const result = await request("/api/posts", { method: "POST", body: JSON.stringify(post) });
+          serverContent = { ...serverContent, posts: result.posts };
         } else {
           const statusKey = data.get("statusKey");
           const project = {
@@ -326,15 +291,12 @@
             license: "MIT License",
             stars: 0
           };
-          if (apiEnabled()) {
-            const result = await request("/api/projects", { method: "POST", body: JSON.stringify(project) });
-            serverContent = { ...(serverContent || { posts: window.GokottaContent.getPosts(), projects: [] }), projects: result.projects };
-          } else {
-            window.GokottaContent.saveProject(project);
-          }
+          const result = await request("/api/projects", { method: "POST", body: JSON.stringify(project) });
+          serverContent = { ...serverContent, projects: result.projects };
         }
         resetForm();
         renderList();
+        loginNotice.textContent = "保存成功";
       } catch (error) {
         loginNotice.textContent = error.message;
       }
@@ -347,40 +309,33 @@
     const type = button.dataset.type;
     const id = button.dataset.id;
     if (button.dataset.action === "delete") {
+      if (!confirm("确认删除这条内容吗？当前版本会直接从数据库删除。")) return;
       (async () => {
-        if (apiEnabled()) {
-          if (type === "project") {
-            const result = await request(`/api/projects/${encodeURIComponent(id)}`, { method: "DELETE" });
-            serverContent = { ...(serverContent || { posts: window.GokottaContent.getPosts(), projects: [] }), projects: result.projects };
-          } else {
-            const result = await request(`/api/posts/${encodeURIComponent(id)}`, { method: "DELETE" });
-            serverContent = { ...(serverContent || { posts: [], projects: window.GokottaContent.getProjects() }), posts: result.posts };
-          }
+        if (type === "project") {
+          const result = await request(`/api/projects/${encodeURIComponent(id)}`, { method: "DELETE" });
+          serverContent = { ...serverContent, projects: result.projects };
         } else {
-          window.GokottaContent.remove(type, id);
+          const result = await request(`/api/posts/${encodeURIComponent(id)}`, { method: "DELETE" });
+          serverContent = { ...serverContent, posts: result.posts };
         }
         renderList();
-      })();
+      })().catch((error) => {
+        loginNotice.textContent = error.message;
+      });
       return;
     }
 
-    const items = type === "project"
-      ? serverContent?.projects || window.GokottaContent.getProjects()
-      : serverContent?.posts || window.GokottaContent.getPosts();
+    const items = type === "project" ? serverContent.projects : serverContent.posts;
     const item = items.find((entry) => entry.id === id);
     if (item) applyItemToForm(type, item);
   });
 
   (async () => {
     loadSavedLogin();
-    if (apiEnabled()) {
-      const session = await request("/api/session").catch(() => ({ user: null }));
-      const loggedIn = Boolean(session.user);
-      setLoggedIn(loggedIn);
-      if (loggedIn) await loadServerContent();
-    } else {
-      setLoggedIn(isLoggedIn());
-    }
+    const session = await request("/api/session").catch(() => ({ user: null }));
+    const loggedIn = Boolean(session.user);
+    setLoggedIn(loggedIn);
+    if (loggedIn) await loadServerContent();
     updateTypeFields();
     updatePreview();
     renderList();

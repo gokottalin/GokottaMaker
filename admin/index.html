@@ -15,7 +15,7 @@
           <span>Gokotta<b>Maker</b></span>
         </a>
         <h1>管理端登录</h1>
-        <p>首次登录成功后会记住登录状态，点击退出后才需要重新登录。当前为本地原型，正式上线时会迁移到 SQLite 与服务端认证。</p>
+        <p>登录状态由服务端 Session 保存。退出登录后需要重新输入管理员账号和密码。</p>
         <form id="loginForm">
           <label>
             管理员账号
@@ -46,7 +46,7 @@
         <div class="admin-main">
           <header class="admin-topbar">
             <div>
-              <p class="eyebrow">CMS Prototype</p>
+              <p class="eyebrow">CMS</p>
               <h1>内容管理</h1>
             </div>
             <button class="button secondary" id="logoutButton" type="button">退出</button>
@@ -88,10 +88,10 @@
                 <textarea name="excerpt" rows="4" placeholder="这段内容会显示在首页卡片和详情页顶部。"></textarea>
               </label>
 
-              <label class="cover-picker" title="推荐图片格式：JPG、PNG、WebP；推荐比例 16:9；推荐分辨率 1600×900 或 1920×1080。">
+              <label class="cover-picker" title="推荐图片格式：JPG、PNG、WebP；推荐比例 16:9；推荐分辨率 1600x900 或 1920x1080。">
                 封面图片
                 <input id="coverFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
-                <span class="file-hint" id="coverHint">从资源管理器选择图片，推荐 1600×900 或 1920×1080</span>
+                <span class="file-hint" id="coverHint">从资源管理器选择图片，推荐 1600x900 或 1920x1080</span>
                 <img class="cover-preview" id="coverPreview" alt="封面预览" />
               </label>
 
