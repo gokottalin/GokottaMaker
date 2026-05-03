@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>专题分类 | GokottaMaker</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="./index.html"><img class="brand-symbol" src="./assets/logo/gokottamaker-icon.png" alt="" /><span>Gokotta<b>Maker</b></span></a>
+        <nav class="main-nav" aria-label="主导航">
+          <a href="./category.html?category=analog">模拟电子</a>
+          <a href="./category.html?category=stm32">STM32</a>
+          <a href="./category.html?category=esp32">ESP32</a>
+          <a href="./projects.html">开源项目</a>
+        </nav>
+        <div class="header-actions"><a class="admin-link" href="./admin/index.html">管理端</a></div>
+      </div>
+    </header>
+    <main class="site-shell section-row">
+      <div class="section-heading">
+        <h1 id="categoryTitle">专题分类</h1>
+        <a href="./index.html">返回首页</a>
+      </div>
+      <div class="tutorial-grid" id="categoryList"></div>
+    </main>
+    <script src="./data/posts.js"></script>
+    <script src="./data/seed.js"></script>
+    <script src="./api/content.js"></script>
+    <script src="./data/content-store.js"></script>
+    <script>
+      const map = { analog: "模拟电子", stm32: "STM32", esp32: "ESP32", projects: "开源项目" };
+      const key = new URLSearchParams(location.search).get("category") || "analog";
+      const category = map[key] || "模拟电子";
+      document.querySelector("#categoryTitle").textContent = category;
+      const items = window.GokottaContent.getPosts().filter((post) => post.category === category);
+      document.querySelector("#categoryList").innerHTML =
+        items
+          .map(
+            (post) => `
+              <article class="article-card">
+                <a href="./post.html?id=${post.id}"><img src="${post.cover}" alt="${post.title}封面" /></a>
+                <div>
+                  <span class="category-pill">${post.category}</span>
+                  <h3><a href="./post.html?id=${post.id}">${post.title}</a></h3>
+                  <p>${post.excerpt}</p>
+                  <div class="card-footer"><span>${post.readTime}</span><span>${post.date}</span></div>
+                </div>
+              </article>
+            `
+          )
+          .join("") || "<div class=\"empty-state\">这个分类还没有文章。</div>";
+    </script>
+  </body>
+</html>

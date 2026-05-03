@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GokottaMaker 管理端</title>
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="./admin.css" />
+  </head>
+  <body>
+    <main class="admin-shell">
+      <section class="login-panel" id="loginPanel">
+        <a class="brand admin-login-brand" href="../index.html">
+          <img class="brand-symbol" src="../assets/logo/gokottamaker-icon.png" alt="" />
+          <span>Gokotta<b>Maker</b></span>
+        </a>
+        <h1>管理端登录</h1>
+        <p>首次登录成功后会记住登录状态，点击退出后才需要重新登录。当前为本地原型，正式上线时会迁移到 SQLite 与服务端认证。</p>
+        <form id="loginForm">
+          <label>
+            管理员账号
+            <input name="username" autocomplete="username" required />
+          </label>
+          <label>
+            管理员密码
+            <input name="password" type="password" autocomplete="current-password" required />
+          </label>
+          <button class="button primary" type="submit">登录</button>
+        </form>
+        <p class="notice" id="loginNotice"></p>
+      </section>
+
+      <section class="dashboard" id="dashboard" hidden>
+        <aside class="admin-sidebar">
+          <a class="brand" href="../index.html">
+            <img class="brand-symbol" src="../assets/logo/gokottamaker-icon.png" alt="" />
+            <span>Gokotta<b>Maker</b></span>
+          </a>
+          <nav>
+            <a href="#editor">内容编辑</a>
+            <a href="#library">内容列表</a>
+            <a href="../index.html">访客首页</a>
+          </nav>
+        </aside>
+
+        <div class="admin-main">
+          <header class="admin-topbar">
+            <div>
+              <p class="eyebrow">CMS Prototype</p>
+              <h1>内容管理</h1>
+            </div>
+            <button class="button secondary" id="logoutButton" type="button">退出</button>
+          </header>
+
+          <section class="editor-grid" id="editor">
+            <form class="editor-form" id="contentForm">
+              <div class="segmented" role="group" aria-label="内容类型">
+                <label><input type="radio" name="type" value="post" checked />文章</label>
+                <label><input type="radio" name="type" value="project" />项目</label>
+              </div>
+
+              <label>
+                标题
+                <input name="title" placeholder="例如：STM32 ADC + DMA 连续采样" required />
+              </label>
+
+              <label id="categoryField">
+                分类
+                <select name="category">
+                  <option>模拟电子</option>
+                  <option>STM32</option>
+                  <option>ESP32</option>
+                  <option>开源项目</option>
+                </select>
+              </label>
+
+              <label id="statusField" hidden>
+                项目状态
+                <select name="statusKey">
+                  <option value="planned">规划中</option>
+                  <option value="development">开发中</option>
+                  <option value="online">已上线</option>
+                </select>
+              </label>
+
+              <label>
+                摘要
+                <textarea name="excerpt" rows="4" placeholder="这段内容会显示在首页卡片和详情页顶部。"></textarea>
+              </label>
+
+              <label class="cover-picker" title="推荐图片格式：JPG、PNG、WebP；推荐比例 16:9；推荐分辨率 1600×900 或 1920×1080。">
+                封面图片
+                <input id="coverFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
+                <span class="file-hint" id="coverHint">从资源管理器选择图片，推荐 1600×900 或 1920×1080</span>
+                <img class="cover-preview" id="coverPreview" alt="封面预览" />
+              </label>
+
+              <label>
+                Markdown 文件导入
+                <input id="markdownFile" type="file" accept=".md,text/markdown,text/plain" />
+              </label>
+
+              <label>
+                Markdown 正文
+                <textarea name="markdown" rows="14" placeholder="# 标题&#10;&#10;这里输入 Markdown 内容。"></textarea>
+              </label>
+
+              <div class="form-actions">
+                <button class="button primary" type="submit">保存内容</button>
+                <button class="button secondary" id="resetButton" type="button">新建空白</button>
+              </div>
+            </form>
+
+            <article class="preview-panel">
+              <p class="eyebrow">Preview</p>
+              <div id="markdownPreview" class="markdown-preview"></div>
+            </article>
+          </section>
+
+          <section id="library" class="library-panel">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Library</p>
+                <h2>当前网站内容</h2>
+              </div>
+              <p class="library-note">这里显示主页出现的所有文章和项目。</p>
+            </div>
+            <div id="adminContentList" class="admin-article-list"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script src="../data/posts.js"></script>
+    <script src="../data/seed.js"></script>
+    <script src="../api/content.js"></script>
+    <script src="../data/content-store.js"></script>
+    <script src="./admin.js"></script>
+  </body>
+</html>

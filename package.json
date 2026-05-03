@@ -1,0 +1,15 @@
+{
+  "name": "gokottamaker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GokottaMaker embedded electronics blog and project site.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {}
+}

@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: gokottamaker
+    runtime: node
+    plan: starter
+    buildCommand: ""
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 22.11.0
+      - key: PORT
+        value: 10000
+      - key: DATA_DIR
+        value: /var/data
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_RESET_PASSWORD_ON_START
+        value: "false"
+    disk:
+      name: gokottamaker-data
+      mountPath: /var/data
+      sizeGB: 1

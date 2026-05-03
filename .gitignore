@@ -1,0 +1,14 @@
+node_modules/
+.env
+.DS_Store
+Thumbs.db
+
+# Runtime data. Keep directory placeholders, not private content.
+database/*.sqlite
+database/*.sqlite-*
+uploads/*
+!uploads/.gitkeep
+
+# Local debug artifacts
+*-debug.png
+*.log
