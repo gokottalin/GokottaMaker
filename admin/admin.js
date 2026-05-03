@@ -6,6 +6,7 @@
   const loginForm = document.querySelector("#loginForm");
   const loginNotice = document.querySelector("#loginNotice");
   const logoutButton = document.querySelector("#logoutButton");
+  const exportButton = document.querySelector("#exportButton");
   const contentForm = document.querySelector("#contentForm");
   const preview = document.querySelector("#markdownPreview");
   const markdownFile = document.querySelector("#markdownFile");
@@ -151,6 +152,7 @@
           const kind = item.contentType === "project" ? "项目" : "文章";
           const publish = item.contentType === "project" ? item.visibilityStatus : item.publishStatus;
           const meta = item.contentType === "project" ? `${item.status} / ${item.license || ""}` : `${item.category} / ${item.readTime || ""}`;
+          const tags = item.tags ? ` / ${item.tags}` : "";
           const deleted = Boolean(item.deletedAt);
           return `
             <article class="admin-row ${deleted ? "is-deleted" : ""}">
@@ -160,7 +162,7 @@
                   <span class="content-kind">${kind}</span>${escapeHtml(item.title)}
                   <span class="content-status">${deleted ? "回收站" : publish === "published" ? "已发布" : "草稿"}</span>
                 </strong>
-                <p>${escapeHtml(meta)} / ${escapeHtml(item.date || "暂无日期")} ${item.featured ? " / 首页轮播" : ""}</p>
+                <p>${escapeHtml(meta)}${escapeHtml(tags)} / ${escapeHtml(item.date || "暂无日期")} ${item.featured ? " / 首页轮播" : ""}</p>
                 <p>${escapeHtml(item.excerpt || item.summary)}</p>
               </div>
               <div class="row-actions">
@@ -203,6 +205,7 @@
     contentForm.type.value = type;
     contentForm.title.value = item.title || "";
     contentForm.excerpt.value = item.excerpt || item.summary || "";
+    contentForm.tags.value = item.tags || "";
     contentForm.markdown.value = item.markdown || "";
     contentForm.publishStatus.value = type === "post" ? item.publishStatus || "draft" : item.visibilityStatus || "draft";
     contentForm.featured.checked = Boolean(item.featured);
@@ -248,6 +251,21 @@
       await request("/api/logout", { method: "POST", body: "{}" }).catch(() => {});
       setLoggedIn(false);
     })();
+  });
+
+  exportButton.addEventListener("click", () => {
+    (async () => {
+      const data = await request("/api/admin/export");
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `gokottamaker-content-${data.site?.versionLabel || "export"}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+    })().catch((error) => {
+      loginNotice.textContent = error.message;
+    });
   });
 
   resetButton.addEventListener("click", resetForm);
@@ -302,6 +320,7 @@
       title: data.get("title"),
       cover: currentCover || (type === "post" ? "./assets/covers/analog-cover.png" : "./assets/covers/project-cover.png"),
       markdown: data.get("markdown"),
+      tags: data.get("tags"),
       date: now,
       featured: data.get("featured") === "on",
       featuredOrder: Number(data.get("featuredOrder") || 0)

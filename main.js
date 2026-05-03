@@ -161,6 +161,33 @@
     }, 10000);
   }
 
+  function scoreItem(item, keyword) {
+    if (!keyword) return 1;
+    const tokens = keyword.split(/\s+/).filter(Boolean);
+    return tokens.reduce((score, token) => {
+      const title = String(item.title || "").toLowerCase();
+      const tags = String(item.tags || "").toLowerCase();
+      const category = String(item.category || item.status || "").toLowerCase();
+      const summary = String(item.excerpt || item.summary || "").toLowerCase();
+      const markdown = String(item.markdown || "").toLowerCase();
+      if (title.includes(token)) score += 8;
+      if (tags.includes(token)) score += 6;
+      if (category.includes(token)) score += 4;
+      if (summary.includes(token)) score += 3;
+      if (markdown.includes(token)) score += 1;
+      return score;
+    }, 0);
+  }
+
+  function searchItems(items, keyword) {
+    if (!keyword) return items;
+    return items
+      .map((item) => ({ item, score: scoreItem(item, keyword) }))
+      .filter((entry) => entry.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map((entry) => entry.item);
+  }
+
   featuredItems = [...posts, ...projects]
     .filter((item) => item.featured)
     .sort((a, b) => Number(a.featuredOrder || 0) - Number(b.featuredOrder || 0))
@@ -183,12 +210,8 @@
   if (search) {
     search.addEventListener("input", () => {
       const keyword = search.value.trim().toLowerCase();
-      const filteredPosts = posts.filter((post) =>
-        [post.title, post.category, post.excerpt, post.markdown].join(" ").toLowerCase().includes(keyword)
-      );
-      const filteredProjects = projects.filter((project) =>
-        [project.title, project.status, project.summary, project.markdown].join(" ").toLowerCase().includes(keyword)
-      );
+      const filteredPosts = searchItems(posts, keyword);
+      const filteredProjects = searchItems(projects, keyword);
       renderArticles(filteredPosts);
       renderProjects(filteredProjects);
     });

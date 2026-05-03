@@ -82,15 +82,22 @@ ensureColumn("posts", "publish_status", "TEXT NOT NULL DEFAULT 'published'");
 ensureColumn("posts", "featured", "INTEGER NOT NULL DEFAULT 0");
 ensureColumn("posts", "featured_order", "INTEGER NOT NULL DEFAULT 0");
 ensureColumn("posts", "deleted_at", "TEXT");
+ensureColumn("posts", "tags", "TEXT");
 ensureColumn("projects", "visibility_status", "TEXT NOT NULL DEFAULT 'published'");
 ensureColumn("projects", "featured", "INTEGER NOT NULL DEFAULT 0");
 ensureColumn("projects", "featured_order", "INTEGER NOT NULL DEFAULT 0");
 ensureColumn("projects", "deleted_at", "TEXT");
+ensureColumn("projects", "tags", "TEXT");
 ensureColumn("projects", "repo_url", "TEXT");
 ensureColumn("projects", "bom_url", "TEXT");
 ensureColumn("projects", "docs_url", "TEXT");
 ensureColumn("projects", "version", "TEXT");
 ensureColumn("projects", "progress", "INTEGER NOT NULL DEFAULT 0");
+
+const siteVersion = "V1.0.0";
+const siteBuild = "20260504-0149";
+const siteVersionLabel = `${siteVersion}+${siteBuild}`;
+const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
 
 function hashPassword(password, salt = crypto.randomBytes(16).toString("hex")) {
   const hash = crypto.scryptSync(password, salt, 64).toString("hex");
@@ -185,6 +192,16 @@ function json(res, status, payload) {
   const body = JSON.stringify(payload);
   res.writeHead(status, {
     "Content-Type": "application/json; charset=utf-8",
+    "Cache-Control": "no-store",
+    "Content-Length": Buffer.byteLength(body)
+  });
+  res.end(body);
+}
+
+function text(res, status, body, type = "text/plain; charset=utf-8", cache = "public, max-age=300") {
+  res.writeHead(status, {
+    "Content-Type": type,
+    "Cache-Control": cache,
     "Content-Length": Buffer.byteLength(body)
   });
   res.end(body);
@@ -274,7 +291,7 @@ function allPosts(admin = false) {
     .prepare(
       `SELECT id, slug, 'post' AS type, title, category, category_key AS categoryKey,
               excerpt, cover, markdown, read_time AS readTime, date,
-              publish_status AS publishStatus, featured, featured_order AS featuredOrder, deleted_at AS deletedAt
+              publish_status AS publishStatus, featured, featured_order AS featuredOrder, deleted_at AS deletedAt, tags
        FROM posts
        ${visibilityFilter(admin)}
        ORDER BY deleted_at IS NOT NULL ASC, date DESC, updated_at DESC`
@@ -288,7 +305,7 @@ function allProjects(admin = false) {
       `SELECT id, slug, 'project' AS type, title, status, status_key AS statusKey,
               summary, cover, markdown, license, stars, date,
               visibility_status AS visibilityStatus, featured, featured_order AS featuredOrder, deleted_at AS deletedAt,
-              repo_url AS repoUrl, bom_url AS bomUrl, docs_url AS docsUrl, version, progress
+              repo_url AS repoUrl, bom_url AS bomUrl, docs_url AS docsUrl, version, progress, tags
        FROM projects
        ${projectVisibilityFilter(admin)}
        ORDER BY deleted_at IS NOT NULL ASC, updated_at DESC`
@@ -298,15 +315,15 @@ function allProjects(admin = false) {
 
 function contentScript(res) {
   const body = `window.GOKOTTA_SERVER_CONTENT = ${JSON.stringify({ posts: allPosts(false), projects: allProjects(false) })};`;
-  res.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8" });
+  res.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8", "Cache-Control": "no-store" });
   res.end(body);
 }
 
 function savePost(payload) {
   db.prepare(
     `INSERT INTO posts (id, slug, title, category, category_key, excerpt, cover, markdown, read_time, date,
-                        publish_status, featured, featured_order, deleted_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, CURRENT_TIMESTAMP)
+                        publish_status, featured, featured_order, deleted_at, tags, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, CURRENT_TIMESTAMP)
      ON CONFLICT(id) DO UPDATE SET
        slug = excluded.slug,
        title = excluded.title,
@@ -321,6 +338,7 @@ function savePost(payload) {
        featured = excluded.featured,
        featured_order = excluded.featured_order,
        deleted_at = NULL,
+       tags = excluded.tags,
        updated_at = CURRENT_TIMESTAMP`
   ).run(
     payload.id,
@@ -335,7 +353,8 @@ function savePost(payload) {
     payload.date || new Date().toISOString().slice(0, 10),
     payload.publishStatus || "draft",
     normalizeFlag(payload.featured),
-    Number(payload.featuredOrder || 0)
+    Number(payload.featuredOrder || 0),
+    payload.tags || ""
   );
 }
 
@@ -343,8 +362,8 @@ function saveProject(payload) {
   db.prepare(
     `INSERT INTO projects (id, slug, title, status, status_key, summary, cover, markdown, license, stars, date,
                            visibility_status, featured, featured_order, deleted_at,
-                           repo_url, bom_url, docs_url, version, progress, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                           repo_url, bom_url, docs_url, version, progress, tags, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
      ON CONFLICT(id) DO UPDATE SET
        slug = excluded.slug,
        title = excluded.title,
@@ -365,6 +384,7 @@ function saveProject(payload) {
        docs_url = excluded.docs_url,
        version = excluded.version,
        progress = excluded.progress,
+       tags = excluded.tags,
        updated_at = CURRENT_TIMESTAMP`
   ).run(
     payload.id,
@@ -385,7 +405,8 @@ function saveProject(payload) {
     payload.bomUrl || "",
     payload.docsUrl || "",
     payload.version || "",
-    Number(payload.progress || 0)
+    Number(payload.progress || 0),
+    payload.tags || ""
   );
 }
 
@@ -443,6 +464,104 @@ function uploads() {
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 }
 
+function absoluteUrl(pathname) {
+  return `${siteUrl}${pathname}`;
+}
+
+function xmlEscape(value) {
+  return String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function publicPages() {
+  return [
+    { loc: absoluteUrl("/"), priority: "1.0" },
+    { loc: absoluteUrl("/category.html?category=analog"), priority: "0.8" },
+    { loc: absoluteUrl("/category.html?category=stm32"), priority: "0.8" },
+    { loc: absoluteUrl("/category.html?category=esp32"), priority: "0.8" },
+    { loc: absoluteUrl("/projects.html"), priority: "0.8" },
+    ...allPosts(false).map((post) => ({ loc: absoluteUrl(`/post.html?id=${encodeURIComponent(post.id)}`), priority: "0.7", lastmod: post.date })),
+    ...allProjects(false).map((project) => ({ loc: absoluteUrl(`/project.html?id=${encodeURIComponent(project.id)}`), priority: "0.7", lastmod: project.date }))
+  ];
+}
+
+function sitemap(res) {
+  const urls = publicPages()
+    .map(
+      (page) => `  <url>
+    <loc>${xmlEscape(page.loc)}</loc>
+    ${page.lastmod ? `<lastmod>${xmlEscape(page.lastmod)}</lastmod>` : ""}
+    <priority>${page.priority}</priority>
+  </url>`
+    )
+    .join("\n");
+  return text(res, 200, `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`, "application/xml; charset=utf-8");
+}
+
+function robots(res) {
+  return text(
+    res,
+    200,
+    `User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: ${absoluteUrl("/sitemap.xml")}
+`,
+    "text/plain; charset=utf-8"
+  );
+}
+
+function rss(res) {
+  const items = allPosts(false)
+    .slice(0, 20)
+    .map(
+      (post) => `<item>
+  <title>${xmlEscape(post.title)}</title>
+  <link>${xmlEscape(absoluteUrl(`/post.html?id=${encodeURIComponent(post.id)}`))}</link>
+  <guid>${xmlEscape(absoluteUrl(`/post.html?id=${encodeURIComponent(post.id)}`))}</guid>
+  <description>${xmlEscape(post.excerpt || "")}</description>
+  <pubDate>${new Date(post.date || Date.now()).toUTCString()}</pubDate>
+</item>`
+    )
+    .join("\n");
+  return text(
+    res,
+    200,
+    `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+<title>GokottaMaker</title>
+<link>${xmlEscape(siteUrl)}</link>
+<description>Embedded electronics notes, STM32, ESP32, and open hardware projects.</description>
+${items}
+</channel>
+</rss>
+`,
+    "application/rss+xml; charset=utf-8"
+  );
+}
+
+function exportContent() {
+  return {
+    site: {
+      name: "GokottaMaker",
+      url: siteUrl,
+      version: siteVersion,
+      build: siteBuild,
+      versionLabel: siteVersionLabel
+    },
+    exportedAt: new Date().toISOString(),
+    posts: allPosts(true),
+    projects: allProjects(true),
+    uploads: uploads()
+  };
+}
+
 const loginFailures = new Map();
 
 function loginKey(req, username) {
@@ -498,6 +617,7 @@ async function api(req, res, pathname) {
   if (!user) return;
 
   if (pathname === "/api/admin/content" && req.method === "GET") return json(res, 200, { posts: allPosts(true), projects: allProjects(true) });
+  if (pathname === "/api/admin/export" && req.method === "GET") return json(res, 200, exportContent());
   if (pathname === "/api/uploads" && req.method === "GET") return json(res, 200, { uploads: uploads() });
 
   if (pathname === "/api/posts" && req.method === "POST") {
@@ -583,7 +703,13 @@ function serveStatic(res, pathname) {
     res.end("Not found");
     return;
   }
-  res.writeHead(200, { "Content-Type": mime[path.extname(target).toLowerCase()] || "application/octet-stream" });
+  const ext = path.extname(target).toLowerCase();
+  const isAsset = /\.(css|js|png|jpe?g|webp|gif)$/i.test(target);
+  const cacheControl = ext === ".html" ? "no-cache" : isAsset ? "public, max-age=604800" : "public, max-age=300";
+  res.writeHead(200, {
+    "Content-Type": mime[ext] || "application/octet-stream",
+    "Cache-Control": cacheControl
+  });
   fs.createReadStream(target).pipe(res);
 }
 
@@ -591,6 +717,9 @@ const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, `http://${req.headers.host}`);
     if (url.pathname.startsWith("/api/")) return await api(req, res, url.pathname);
+    if (url.pathname === "/sitemap.xml") return sitemap(res);
+    if (url.pathname === "/robots.txt") return robots(res);
+    if (url.pathname === "/rss.xml") return rss(res);
     serveStatic(res, url.pathname);
   } catch (error) {
     console.error(error);

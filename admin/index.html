@@ -49,7 +49,10 @@
               <p class="eyebrow">CMS</p>
               <h1>内容管理</h1>
             </div>
-            <button class="button secondary" id="logoutButton" type="button">退出</button>
+            <div class="admin-topbar-actions">
+              <button class="button secondary" id="exportButton" type="button">导出内容</button>
+              <button class="button secondary" id="logoutButton" type="button">退出</button>
+            </div>
           </header>
 
           <section class="editor-grid" id="editor">
@@ -86,6 +89,11 @@
               <label>
                 摘要
                 <textarea name="excerpt" rows="4" placeholder="这段内容会显示在首页卡片和详情页顶部。"></textarea>
+              </label>
+
+              <label>
+                标签
+                <input name="tags" placeholder="用逗号分隔，例如 ADC, DMA, 滤波" />
               </label>
 
               <label>
@@ -187,5 +195,7 @@
     <script src="../data/content-store.js"></script>
     <script src="../data/markdown-renderer.js"></script>
     <script src="./admin.js"></script>
+    <script src="../data/site-meta.js"></script>
+    <script src="../data/footer.js"></script>
   </body>
 </html>

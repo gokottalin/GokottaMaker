@@ -694,6 +694,22 @@ img {
   box-shadow: var(--shadow);
 }
 
+.site-footer {
+  margin-top: 56px;
+  border-top: 1px solid rgba(148, 163, 184, 0.24);
+  background: rgba(248, 251, 255, 0.82);
+  color: #667085;
+  font-size: 14px;
+}
+
+.site-footer-inner {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .markdown-article a,
 .post-hero-content a {
   color: var(--blue);
