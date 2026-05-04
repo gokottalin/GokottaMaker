@@ -1,0 +1,17 @@
+{
+  "name": "GokottaMaker",
+  "short_name": "GokottaMaker",
+  "description": "模拟电子、STM32、ESP32 与开源硬件项目记录。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f8fc",
+  "theme_color": "#0d6fd3",
+  "icons": [
+    {
+      "src": "/assets/logo/gokottamaker-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

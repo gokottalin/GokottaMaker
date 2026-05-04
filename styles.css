@@ -39,6 +39,33 @@ a {
   text-decoration: none;
 }
 
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(13, 111, 211, 0.38);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  transform: translateY(-160%);
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--blue);
+  font-weight: 850;
+  box-shadow: var(--shadow);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
 img {
   display: block;
   max-width: 100%;
@@ -293,20 +320,45 @@ img {
 }
 
 .hero-cards {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
   align-self: center;
 }
 
+.hero-cards::before {
+  content: "";
+  position: absolute;
+  inset: 24px 18px 24px 18px;
+  pointer-events: none;
+  border-radius: 36px;
+  background:
+    radial-gradient(92% 82% at 18% 8%, transparent 0 34%, rgba(180, 226, 255, 0.16) 36%, transparent 43%),
+    radial-gradient(84% 82% at 82% 35%, transparent 0 35%, rgba(255, 255, 255, 0.13) 37%, transparent 44%),
+    radial-gradient(96% 92% at 24% 82%, transparent 0 36%, rgba(67, 162, 255, 0.11) 38%, transparent 46%);
+  filter: blur(0.2px);
+  opacity: 0.62;
+  mix-blend-mode: screen;
+}
+
 .hero-card {
+  --glass-a-x: -18%;
+  --glass-a-y: 45%;
+  --glass-b-x: 112%;
+  --glass-b-y: 56%;
+  --flow-one-x: 0%;
+  --flow-two-x: 35%;
+  --flow-three-x: 70%;
+  --flow-four-x: 103%;
+  --flow-tilt: 0deg;
   position: relative;
   overflow: hidden;
   border: 1px solid rgba(224, 243, 255, 0.44);
   border-radius: var(--radius);
   background:
-    radial-gradient(120% 220% at -18% 45%, rgba(255, 255, 255, 0.46) 0 9%, rgba(184, 226, 255, 0.14) 18%, transparent 34%),
-    radial-gradient(140% 180% at 112% 56%, rgba(255, 255, 255, 0.24) 0 10%, rgba(39, 142, 239, 0.1) 28%, transparent 48%),
+    radial-gradient(120% 220% at var(--glass-a-x) var(--glass-a-y), rgba(255, 255, 255, 0.46) 0 9%, rgba(184, 226, 255, 0.14) 18%, transparent 34%),
+    radial-gradient(140% 180% at var(--glass-b-x) var(--glass-b-y), rgba(255, 255, 255, 0.24) 0 10%, rgba(39, 142, 239, 0.1) 28%, transparent 48%),
     linear-gradient(101deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.05) 23%, rgba(30, 111, 207, 0.12) 54%, rgba(255, 255, 255, 0.07) 76%, rgba(255, 255, 255, 0.2)),
     rgba(6, 36, 76, 0.18);
   box-shadow:
@@ -331,12 +383,13 @@ img {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(70% 180% at 18% 50%, rgba(255, 255, 255, 0.62) 0 7%, rgba(255, 255, 255, 0.13) 15%, transparent 28%),
-    radial-gradient(90% 210% at 64% 48%, rgba(179, 224, 255, 0.34) 0 6%, rgba(255, 255, 255, 0.1) 16%, transparent 31%),
-    radial-gradient(56% 180% at 96% 52%, rgba(255, 255, 255, 0.3) 0 8%, rgba(76, 167, 245, 0.12) 19%, transparent 33%),
+    radial-gradient(70% 180% at calc(var(--flow-one-x) + 18%) 50%, rgba(255, 255, 255, 0.62) 0 7%, rgba(255, 255, 255, 0.13) 15%, transparent 28%),
+    radial-gradient(90% 210% at calc(var(--flow-two-x) + 29%) 48%, rgba(179, 224, 255, 0.34) 0 6%, rgba(255, 255, 255, 0.1) 16%, transparent 31%),
+    radial-gradient(56% 180% at calc(var(--flow-three-x) + 26%) 52%, rgba(255, 255, 255, 0.3) 0 8%, rgba(76, 167, 245, 0.12) 19%, transparent 33%),
     linear-gradient(104deg, transparent 0 24%, rgba(255, 255, 255, 0.36) 27%, transparent 31% 54%, rgba(255, 255, 255, 0.18) 58%, transparent 64%);
   mix-blend-mode: screen;
   opacity: 0.76;
+  transform: rotate(var(--flow-tilt));
 }
 
 .hero-card::after {
@@ -345,13 +398,62 @@ img {
   inset: -18% -20%;
   pointer-events: none;
   background:
-    radial-gradient(130% 260% at 0% 50%, transparent 0 24%, rgba(255, 255, 255, 0.2) 25%, rgba(69, 169, 255, 0.07) 28%, transparent 32%),
-    radial-gradient(110% 220% at 35% 50%, transparent 0 21%, rgba(255, 255, 255, 0.18) 22%, rgba(12, 83, 162, 0.14) 25%, transparent 30%),
-    radial-gradient(118% 250% at 70% 50%, transparent 0 22%, rgba(224, 246, 255, 0.16) 23%, rgba(25, 123, 218, 0.11) 28%, transparent 34%),
-    radial-gradient(98% 210% at 103% 50%, transparent 0 19%, rgba(255, 255, 255, 0.22) 20%, rgba(21, 99, 183, 0.12) 25%, transparent 31%);
+    radial-gradient(130% 260% at var(--flow-one-x) 50%, transparent 0 24%, rgba(255, 255, 255, 0.2) 25%, rgba(69, 169, 255, 0.07) 28%, transparent 32%),
+    radial-gradient(110% 220% at var(--flow-two-x) 50%, transparent 0 21%, rgba(255, 255, 255, 0.18) 22%, rgba(12, 83, 162, 0.14) 25%, transparent 30%),
+    radial-gradient(118% 250% at var(--flow-three-x) 50%, transparent 0 22%, rgba(224, 246, 255, 0.16) 23%, rgba(25, 123, 218, 0.11) 28%, transparent 34%),
+    radial-gradient(98% 210% at var(--flow-four-x) 50%, transparent 0 19%, rgba(255, 255, 255, 0.22) 20%, rgba(21, 99, 183, 0.12) 25%, transparent 31%);
   filter: contrast(138%) saturate(132%);
   mix-blend-mode: plus-lighter;
   opacity: 0.54;
+  transform: rotate(var(--flow-tilt));
+}
+
+.hero-card:nth-child(1) {
+  --glass-a-x: -22%;
+  --glass-a-y: 35%;
+  --glass-b-x: 108%;
+  --glass-b-y: 48%;
+  --flow-one-x: -8%;
+  --flow-two-x: 28%;
+  --flow-three-x: 68%;
+  --flow-four-x: 106%;
+  --flow-tilt: -1.2deg;
+}
+
+.hero-card:nth-child(2) {
+  --glass-a-x: -12%;
+  --glass-a-y: 50%;
+  --glass-b-x: 116%;
+  --glass-b-y: 42%;
+  --flow-one-x: 4%;
+  --flow-two-x: 42%;
+  --flow-three-x: 78%;
+  --flow-four-x: 116%;
+  --flow-tilt: 0.8deg;
+}
+
+.hero-card:nth-child(3) {
+  --glass-a-x: -26%;
+  --glass-a-y: 60%;
+  --glass-b-x: 104%;
+  --glass-b-y: 66%;
+  --flow-one-x: -14%;
+  --flow-two-x: 22%;
+  --flow-three-x: 58%;
+  --flow-four-x: 96%;
+  --flow-tilt: 1.7deg;
+}
+
+.hero-card:nth-child(4) {
+  --glass-a-x: -6%;
+  --glass-a-y: 43%;
+  --glass-b-x: 122%;
+  --glass-b-y: 58%;
+  --flow-one-x: 10%;
+  --flow-two-x: 50%;
+  --flow-three-x: 86%;
+  --flow-four-x: 124%;
+  --flow-tilt: -0.6deg;
 }
 
 .hero-card.is-active {
@@ -716,6 +818,42 @@ img {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+@media print {
+  .site-header,
+  .toc-card,
+  .hero,
+  .site-footer,
+  .admin-link,
+  .header-actions {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff;
+    color: #000000;
+  }
+
+  .post-layout,
+  .markdown-article {
+    width: auto;
+    margin: 0;
+    display: block;
+    box-shadow: none;
+    border: 0;
+  }
 }
 
 .markdown-article a,

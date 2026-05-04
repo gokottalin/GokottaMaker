@@ -94,8 +94,8 @@ ensureColumn("projects", "docs_url", "TEXT");
 ensureColumn("projects", "version", "TEXT");
 ensureColumn("projects", "progress", "INTEGER NOT NULL DEFAULT 0");
 
-const siteVersion = "V1.1.0";
-const siteBuild = "20260504-1022";
+const siteVersion = "V1.2.0";
+const siteBuild = "20260504-1043";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
 
@@ -225,6 +225,9 @@ function json(res, status, payload) {
   res.writeHead(status, {
     "Content-Type": "application/json; charset=utf-8",
     "Cache-Control": "no-store",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
     "Content-Length": Buffer.byteLength(body)
   });
   res.end(body);
@@ -234,6 +237,9 @@ function text(res, status, body, type = "text/plain; charset=utf-8", cache = "pu
   res.writeHead(status, {
     "Content-Type": type,
     "Cache-Control": cache,
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
     "Content-Length": Buffer.byteLength(body)
   });
   res.end(body);
@@ -715,7 +721,8 @@ const mime = {
   ".jpeg": "image/jpeg",
   ".webp": "image/webp",
   ".gif": "image/gif",
-  ".md": "text/markdown; charset=utf-8"
+  ".md": "text/markdown; charset=utf-8",
+  ".webmanifest": "application/manifest+json; charset=utf-8"
 };
 
 function serveStatic(res, pathname) {
@@ -731,7 +738,19 @@ function serveStatic(res, pathname) {
     target = path.join(target, "index.html");
   }
   if (!fs.existsSync(target) || !fs.statSync(target).isFile()) {
-    res.writeHead(404);
+    const notFound = path.join(root, "404.html");
+    if (fs.existsSync(notFound)) {
+      res.writeHead(404, {
+        "Content-Type": mime[".html"],
+        "Cache-Control": "no-cache",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Permissions-Policy": "camera=(), microphone=(), geolocation=()"
+      });
+      fs.createReadStream(notFound).pipe(res);
+      return;
+    }
+    res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
     res.end("Not found");
     return;
   }
@@ -740,7 +759,10 @@ function serveStatic(res, pathname) {
   const cacheControl = ext === ".html" ? "no-cache" : isAsset ? "public, max-age=604800" : "public, max-age=300";
   res.writeHead(200, {
     "Content-Type": mime[ext] || "application/octet-stream",
-    "Cache-Control": cacheControl
+    "Cache-Control": cacheControl,
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()"
   });
   fs.createReadStream(target).pipe(res);
 }
