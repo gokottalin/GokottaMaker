@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
@@ -6,7 +6,7 @@
     <title>开源项目 | GokottaMaker</title>
     <meta name="description" content="浏览 GokottaMaker 的开源硬件项目、规划项目与已上线项目。" />
     <link rel="manifest" href="./site.webmanifest" />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=20260504-1655" />
   </head>
   <body>
     <a class="skip-link" href="#mainContent">跳到主要内容</a>
@@ -29,10 +29,10 @@
       </div>
       <div class="project-grid" id="projectList"></div>
     </main>
-    <script src="./data/posts.js"></script>
-    <script src="./data/seed.js"></script>
-    <script src="./api/content.js"></script>
-    <script src="./data/content-store.js"></script>
+    <script src="./data/posts.js?v=20260504-1655"></script>
+    <script src="./data/seed.js?v=20260504-1655"></script>
+    <script src="./api/content.js?v=20260504-1655"></script>
+    <script src="./data/content-store.js?v=20260504-1655"></script>
     <script>
       document.querySelector("#projectList").innerHTML = window.GokottaContent.getProjects()
         .map((project) => {
@@ -53,7 +53,7 @@
         })
         .join("");
     </script>
-    <script src="./data/site-meta.js"></script>
-    <script src="./data/footer.js"></script>
+    <script src="./data/site-meta.js?v=20260504-1655"></script>
+    <script src="./data/footer.js?v=20260504-1655"></script>
   </body>
 </html>

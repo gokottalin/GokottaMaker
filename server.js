@@ -96,8 +96,8 @@ ensureColumn("projects", "docs_url", "TEXT");
 ensureColumn("projects", "version", "TEXT");
 ensureColumn("projects", "progress", "INTEGER NOT NULL DEFAULT 0");
 
-const siteVersion = "V1.4.0";
-const siteBuild = "20260504-1427";
+const siteVersion = "V1.5.0";
+const siteBuild = "20260504-1655";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
 
@@ -810,8 +810,9 @@ function serveStatic(res, pathname) {
     return;
   }
   const ext = path.extname(target).toLowerCase();
-  const isAsset = /\.(css|js|png|jpe?g|webp|gif)$/i.test(target);
-  const cacheControl = ext === ".html" ? "no-cache" : isAsset ? "public, max-age=604800" : "public, max-age=300";
+  const isImage = /\.(png|jpe?g|webp|gif)$/i.test(target);
+  const isCodeAsset = /\.(css|js|webmanifest)$/i.test(target);
+  const cacheControl = ext === ".html" || isCodeAsset ? "no-cache" : isImage ? "public, max-age=604800" : "public, max-age=300";
   res.writeHead(200, {
     "Content-Type": mime[ext] || "application/octet-stream",
     "Cache-Control": cacheControl,
