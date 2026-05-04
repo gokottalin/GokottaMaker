@@ -68,6 +68,62 @@ PORT=4173 \
 /opt/node22/bin/node --experimental-sqlite server.js
 ```
 
+### systemd 环境文件
+
+推荐把生产配置放在：
+
+```text
+/etc/gokottamaker.env
+```
+
+模板见：
+
+```text
+scripts/gokottamaker.env.example
+```
+
+安装或更新 systemd：
+
+```bash
+sudo cp scripts/gokottamaker.env.example /etc/gokottamaker.env
+sudo nano /etc/gokottamaker.env
+sudo cp scripts/gokottamaker.service /etc/systemd/system/gokottamaker.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now gokottamaker
+```
+
+### 一键更新
+
+更新线上代码推荐执行：
+
+```bash
+cd /opt/GokottaMaker
+bash scripts/deploy-update.sh
+```
+
+脚本会自动：
+
+- `git fetch origin`
+- 检查工作区是否干净
+- 备份 `/srv/gokottamaker-data`
+- `git pull --ff-only origin main`
+- 重启 `gokottamaker`
+- 请求 `/healthz` 验证版本
+
+### 健康检查
+
+公开健康检查：
+
+```text
+http://服务器地址:4173/healthz
+```
+
+管理员详细健康检查：
+
+```text
+http://服务器地址:4173/api/admin/health
+```
+
 ## 必须备份
 
 ```text

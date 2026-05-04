@@ -13,6 +13,17 @@ if [ -z "${GOKOTTA_ADMIN_PASSWORD:-}" ]; then
 fi
 
 mkdir -p /srv/gokottamaker-data
+cat > /etc/gokottamaker.env <<EOF
+NODE_ENV=production
+DATA_DIR=/srv/gokottamaker-data
+ADMIN_USERNAME=Gokotta
+ADMIN_PASSWORD=${GOKOTTA_ADMIN_PASSWORD}
+ADMIN_RESET_PASSWORD_ON_START=false
+PORT=4173
+SITE_URL=${GOKOTTA_SITE_URL:-http://81.71.156.122:4173}
+EOF
+chmod 600 /etc/gokottamaker.env
+
 cat > /etc/systemd/system/gokottamaker.service <<EOF
 [Unit]
 Description=GokottaMaker Website
@@ -21,11 +32,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/opt/GokottaMaker
-Environment=NODE_ENV=production
-Environment=DATA_DIR=/srv/gokottamaker-data
-Environment=ADMIN_USERNAME=Gokotta
-Environment=ADMIN_PASSWORD=${GOKOTTA_ADMIN_PASSWORD}
-Environment=PORT=4173
+EnvironmentFile=/etc/gokottamaker.env
 ExecStart=/opt/node22/bin/node --experimental-sqlite /opt/GokottaMaker/server.js
 Restart=always
 RestartSec=5

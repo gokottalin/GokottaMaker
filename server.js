@@ -1,4 +1,5 @@
 const crypto = require("node:crypto");
+const childProcess = require("node:child_process");
 const fs = require("node:fs");
 const http = require("node:http");
 const path = require("node:path");
@@ -14,6 +15,7 @@ const port = Number(process.env.PORT || 4173);
 const adminUsername = process.env.ADMIN_USERNAME || "Gokotta";
 const adminPassword = process.env.ADMIN_PASSWORD || "change-this-before-public-deploy";
 const resetAdminPassword = process.env.ADMIN_RESET_PASSWORD_ON_START === "true";
+const startedAt = new Date();
 
 if (!process.env.ADMIN_PASSWORD) {
   console.warn("WARNING: ADMIN_PASSWORD is not set. Use a strong password in production.");
@@ -94,8 +96,8 @@ ensureColumn("projects", "docs_url", "TEXT");
 ensureColumn("projects", "version", "TEXT");
 ensureColumn("projects", "progress", "INTEGER NOT NULL DEFAULT 0");
 
-const siteVersion = "V1.3.0";
-const siteBuild = "20260504-1112";
+const siteVersion = "V1.4.0";
+const siteBuild = "20260504-1427";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
 
@@ -600,6 +602,58 @@ function exportContent() {
   };
 }
 
+function gitCommit() {
+  if (process.env.GIT_COMMIT) return process.env.GIT_COMMIT;
+  try {
+    return childProcess.execSync("git rev-parse --short HEAD", { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+  } catch {
+    return "unknown";
+  }
+}
+
+function writable(target) {
+  try {
+    fs.accessSync(target, fs.constants.W_OK);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function healthPayload({ detailed = false } = {}) {
+  const payload = {
+    ok: true,
+    name: "GokottaMaker",
+    version: siteVersion,
+    build: siteBuild,
+    versionLabel: siteVersionLabel,
+    gitCommit: gitCommit(),
+    node: process.version,
+    uptimeSeconds: Math.round(process.uptime()),
+    startedAt: startedAt.toISOString(),
+    serverTime: new Date().toISOString()
+  };
+
+  if (!detailed) return payload;
+
+  const dbReady = Boolean(db.prepare("SELECT 1 AS ok").get()?.ok);
+  return {
+    ...payload,
+    root,
+    dataDir,
+    dbPath,
+    uploadDir,
+    databaseReady: dbReady,
+    databaseWritable: writable(dbDir),
+    uploadsWritable: writable(uploadDir),
+    publicPosts: allPosts(false).length,
+    publicProjects: allProjects(false).length,
+    adminPosts: allPosts(true).length,
+    adminProjects: allProjects(true).length,
+    uploads: uploads().length
+  };
+}
+
 const loginFailures = new Map();
 
 function loginKey(req, username) {
@@ -655,6 +709,7 @@ async function api(req, res, pathname) {
   if (!user) return;
 
   if (pathname === "/api/admin/content" && req.method === "GET") return json(res, 200, { posts: allPosts(true), projects: allProjects(true) });
+  if (pathname === "/api/admin/health" && req.method === "GET") return json(res, 200, healthPayload({ detailed: true }));
   if (pathname === "/api/admin/export" && req.method === "GET") return json(res, 200, exportContent());
   if (pathname === "/api/uploads" && req.method === "GET") return json(res, 200, { uploads: uploads() });
 
@@ -771,6 +826,7 @@ const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, `http://${req.headers.host}`);
     if (url.pathname.startsWith("/api/")) return await api(req, res, url.pathname);
+    if (url.pathname === "/healthz") return json(res, 200, healthPayload());
     if (url.pathname === "/sitemap.xml") return sitemap(res);
     if (url.pathname === "/robots.txt") return robots(res);
     if (url.pathname === "/rss.xml") return rss(res);

@@ -59,3 +59,28 @@ DATA_DIR=/var/data
 - `.env.example`: 环境变量模板。
 
 详细步骤见 [docs/deployment.md](docs/deployment.md)。
+
+## 服务器更新诊断
+
+生产服务提供基础健康检查：
+
+```text
+http://服务器地址:4173/healthz
+```
+
+服务器更新推荐使用：
+
+```bash
+cd /opt/GokottaMaker
+bash scripts/deploy-update.sh
+```
+
+如果需要重新安装 systemd 服务，先准备环境文件：
+
+```bash
+sudo cp scripts/gokottamaker.env.example /etc/gokottamaker.env
+sudo nano /etc/gokottamaker.env
+sudo cp scripts/gokottamaker.service /etc/systemd/system/gokottamaker.service
+sudo systemctl daemon-reload
+sudo systemctl restart gokottamaker
+```

@@ -5,11 +5,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/opt/GokottaMaker
-Environment=NODE_ENV=production
-Environment=DATA_DIR=/srv/gokottamaker-data
-Environment=ADMIN_USERNAME=Gokotta
-Environment=ADMIN_PASSWORD=REPLACE_WITH_STRONG_PASSWORD
-Environment=PORT=4173
+EnvironmentFile=/etc/gokottamaker.env
 ExecStart=/opt/node22/bin/node --experimental-sqlite /opt/GokottaMaker/server.js
 Restart=always
 RestartSec=5
