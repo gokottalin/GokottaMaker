@@ -95,7 +95,7 @@ ensureColumn("projects", "version", "TEXT");
 ensureColumn("projects", "progress", "INTEGER NOT NULL DEFAULT 0");
 
 const siteVersion = "V1.0.0";
-const siteBuild = "20260504-0149";
+const siteBuild = "20260504-1003";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
 
@@ -164,7 +164,7 @@ function seedContent() {
   if (!projectCount) {
     const insertProject = db.prepare(`
       INSERT INTO projects (id, slug, title, status, status_key, summary, cover, markdown, license, stars, date, visibility_status)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published')
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
     for (const project of seed.projects) {
       insertProject.run(
@@ -178,14 +178,46 @@ function seedContent() {
         project.markdown || "",
         project.license || "",
         Number(project.stars || 0),
-        project.date || ""
+        project.date || "",
+        project.statusKey === "online" ? "published" : "draft"
       );
     }
   }
 }
 
+function reconcileSeedContent() {
+  const seed = loadSeedData();
+  const updateSeedPost = db.prepare(`
+    UPDATE posts
+    SET publish_status = 'published',
+        featured = CASE WHEN featured = 0 THEN ? ELSE featured END,
+        featured_order = CASE WHEN featured_order = 0 THEN ? ELSE featured_order END,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+      AND deleted_at IS NULL
+      AND publish_status != 'published'
+  `);
+  seed.posts.forEach((post, index) => {
+    updateSeedPost.run(index < 4 ? 1 : 0, index + 1, post.id);
+  });
+
+  const updateSeedProject = db.prepare(`
+    UPDATE projects
+    SET visibility_status = ?,
+        status = ?,
+        status_key = ?,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+      AND deleted_at IS NULL
+  `);
+  seed.projects.forEach((project) => {
+    updateSeedProject.run(project.statusKey === "online" ? "published" : "draft", project.status, project.statusKey, project.id);
+  });
+}
+
 seedAdmin();
 seedContent();
+reconcileSeedContent();
 db.prepare("DELETE FROM sessions WHERE expires_at <= datetime('now')").run();
 
 function json(res, status, payload) {
