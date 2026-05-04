@@ -94,8 +94,8 @@ ensureColumn("projects", "docs_url", "TEXT");
 ensureColumn("projects", "version", "TEXT");
 ensureColumn("projects", "progress", "INTEGER NOT NULL DEFAULT 0");
 
-const siteVersion = "V1.2.0";
-const siteBuild = "20260504-1043";
+const siteVersion = "V1.3.0";
+const siteBuild = "20260504-1112";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
 
