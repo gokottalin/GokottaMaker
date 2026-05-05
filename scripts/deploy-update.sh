@@ -19,7 +19,7 @@ echo "Local:  $(git rev-parse --short HEAD)"
 
 echo
 echo "== Fetch origin =="
-git fetch origin
+git -c http.version=HTTP/1.1 fetch origin
 echo "Remote: $(git rev-parse --short origin/main)"
 
 if [ -n "$(git status --porcelain)" ]; then
@@ -39,7 +39,7 @@ fi
 
 echo
 echo "== Pull latest =="
-git pull --ff-only origin main
+git -c http.version=HTTP/1.1 pull --ff-only origin main
 echo "Now:    $(git rev-parse --short HEAD)"
 
 echo
