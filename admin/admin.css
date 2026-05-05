@@ -87,6 +87,37 @@ button {
   color: #b0332f;
 }
 
+.admin-notice {
+  margin: -10px 0 18px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+}
+
+.admin-notice.is-success {
+  border-color: rgba(11, 143, 103, 0.18);
+  background: #effaf5;
+  color: #0b7a58;
+}
+
+.admin-notice.is-warning {
+  border-color: rgba(192, 126, 0, 0.22);
+  background: #fff8e8;
+  color: #9a6500;
+}
+
+.admin-notice.is-error {
+  border-color: rgba(176, 51, 47, 0.2);
+  background: #fff2f1;
+  color: #b0332f;
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.68;
+}
+
 .dashboard {
   min-height: 100vh;
   display: grid;
@@ -184,6 +215,31 @@ button {
   background: white;
   color: var(--blue);
   box-shadow: 0 8px 18px rgba(13, 111, 211, 0.1);
+}
+
+.draft-status {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid rgba(192, 126, 0, 0.22);
+  border-radius: 8px;
+  background: #fff8e8;
+  color: #735000;
+}
+
+.draft-status strong {
+  color: #5f4200;
+}
+
+.draft-status span {
+  color: #87620c;
+  font-size: 13px;
+}
+
+.draft-status .button {
+  grid-row: span 2;
 }
 
 .cover-picker {
@@ -402,6 +458,14 @@ button {
   .inline-fields,
   .project-extra {
     grid-template-columns: 1fr;
+  }
+
+  .draft-status {
+    grid-template-columns: 1fr;
+  }
+
+  .draft-status .button {
+    grid-row: auto;
   }
 
   .admin-row img {

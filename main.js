@@ -18,7 +18,7 @@
     return `
       <article class="article-card">
         <a href="./post.html?id=${post.id}" aria-label="${safe(post.title)}">
-          <img src="${post.cover}" alt="${safe(post.title)}封面" loading="lazy" />
+          ${window.GokottaMedia.image(post.cover, `${safe(post.title)}封面`, { loading: "lazy" })}
         </a>
         <div>
           <span class="category-pill">${safe(post.category)}</span>
@@ -39,7 +39,7 @@
     const action = online ? `<a class="card-link" href="./project.html?id=${project.id}">查看详情</a>` : "";
     return `
       <article class="project-card ${online ? "" : "is-planned"}">
-        <img src="${project.cover}" alt="${safe(project.title)}项目图片" loading="lazy" />
+        ${window.GokottaMedia.image(project.cover, `${safe(project.title)}项目图片`, { loading: "lazy" })}
         <div>
           <span class="status">${safe(project.status)}</span>
           <h3>${title}</h3>
@@ -105,7 +105,7 @@
     }, 240);
 
     if (nextBg && currentBg) {
-      nextBg.src = featured.cover || "./assets/hero/electronics-lab-hero.png";
+      window.GokottaMedia.applyToImage(nextBg, featured.cover || "./assets/hero/electronics-lab-hero.png", { sizes: "100vw" });
       nextBg.classList.add("is-active");
       currentBg.classList.remove("is-active");
       activeBg = activeBg === "A" ? "B" : "A";

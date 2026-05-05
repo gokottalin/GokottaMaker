@@ -12,3 +12,7 @@ uploads/*
 # Local debug artifacts
 *-debug.png
 *.log
+.agent*-local-db-backup-*/
+
+# Deployment state generated on servers
+.deploy/

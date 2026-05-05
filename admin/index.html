@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GokottaMaker 管理端</title>
     <meta name="robots" content="noindex,nofollow" />
-    <link rel="stylesheet" href="../styles.css?v=20260504-1655" />
-    <link rel="stylesheet" href="./admin.css?v=20260504-1655" />
+    <link rel="stylesheet" href="../styles.css?v=20260505-1910" />
+    <link rel="stylesheet" href="./admin.css?v=20260505-1910" />
   </head>
   <body>
     <main class="admin-shell">
@@ -55,9 +55,16 @@
               <button class="button secondary" id="logoutButton" type="button">退出</button>
             </div>
           </header>
+          <p class="notice admin-notice" id="adminNotice" role="status" aria-live="polite"></p>
 
           <section class="editor-grid" id="editor">
             <form class="editor-form" id="contentForm">
+              <div class="draft-status" id="draftStatus" hidden>
+                <strong>本地草稿未入库</strong>
+                <span id="draftStatusText">当前编辑内容已自动保存在此浏览器。</span>
+                <button class="button secondary" id="discardDraftButton" type="button">丢弃本地草稿</button>
+              </div>
+
               <div class="segmented" role="group" aria-label="内容类型">
                 <label><input type="radio" name="type" value="post" checked />文章</label>
                 <label><input type="radio" name="type" value="project" />项目</label>
@@ -190,13 +197,13 @@
       </section>
     </main>
 
-    <script src="../data/posts.js?v=20260504-1655"></script>
-    <script src="../data/seed.js?v=20260504-1655"></script>
-    <script src="../api/content.js?v=20260504-1655"></script>
-    <script src="../data/content-store.js?v=20260504-1655"></script>
-    <script src="../data/markdown-renderer.js?v=20260504-1655"></script>
-    <script src="./admin.js?v=20260504-1655"></script>
-    <script src="../data/site-meta.js?v=20260504-1655"></script>
-    <script src="../data/footer.js?v=20260504-1655"></script>
+    <script src="../data/posts.js?v=20260505-1910"></script>
+    <script src="../data/seed.js?v=20260505-1910"></script>
+    <script src="../api/content.js?v=20260505-1910"></script>
+    <script src="../data/content-store.js?v=20260505-1910"></script>
+    <script src="../data/markdown-renderer.js?v=20260505-1910"></script>
+    <script src="./admin.js?v=20260505-1910"></script>
+    <script src="../data/site-meta.js?v=20260505-1910"></script>
+    <script src="../data/footer.js?v=20260505-1910"></script>
   </body>
 </html>

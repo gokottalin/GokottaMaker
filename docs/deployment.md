@@ -109,6 +109,8 @@ bash scripts/deploy-update.sh
 - `git pull --ff-only origin main`
 - 重启 `gokottamaker`
 - 请求 `/healthz` 验证版本
+- 输出部署前后 commit、版本号、健康检查和备份目录对比
+- 失败时输出诊断命令、最近备份目录和推荐回滚命令
 
 ### 健康检查
 
@@ -122,6 +124,104 @@ http://服务器地址:4173/healthz
 
 ```text
 http://服务器地址:4173/api/admin/health
+```
+
+### 回滚
+
+如果部署后健康检查失败、服务无法启动，或页面出现明显异常，先查看脚本失败提示中的 `Pre-deploy commit` 和 `Latest backup`。
+
+回滚到上一次部署前记录的 commit：
+
+```bash
+cd /opt/GokottaMaker
+bash scripts/rollback.sh
+```
+
+回滚到指定 commit：
+
+```bash
+cd /opt/GokottaMaker
+bash scripts/rollback.sh 9263f08
+```
+
+回滚脚本会自动：
+
+- 检查工作区是否干净。
+- 在回滚代码前备份 `/srv/gokottamaker-data`。
+- `git reset --hard` 到目标 commit。
+- 重启 `gokottamaker`。
+- 请求 `/healthz` 验证回滚后的服务。
+
+注意：回滚脚本只回滚代码，不删除或替换 SQLite 与 uploads 运行数据。若需要恢复数据，应使用恢复脚本。
+
+### 备份校验
+
+手动创建备份：
+
+```bash
+sudo bash scripts/backup-linux.sh
+```
+
+备份默认写入：
+
+```text
+/srv/gokottamaker-backups/YYYY-MM-DD_HH-MM-SS
+```
+
+每份备份会包含：
+
+- `database/`
+- `uploads/`
+- `manifest.txt`
+- `manifest.sha256`，当服务器存在 `sha256sum` 时生成
+
+如果服务器存在 `sqlite3`，备份脚本会使用 SQLite `.backup` 创建数据库快照，并执行：
+
+```sql
+PRAGMA integrity_check;
+```
+
+如果服务器暂时没有 `sqlite3`，脚本会降级为文件复制，并在 manifest 中记录 `skipped-sqlite3-missing`。
+
+### 恢复数据
+
+恢复前建议先 dry-run：
+
+```bash
+DRY_RUN=true sudo bash scripts/restore-linux.sh /srv/gokottamaker-backups/YYYY-MM-DD_HH-MM-SS
+```
+
+正式恢复：
+
+```bash
+sudo bash scripts/restore-linux.sh /srv/gokottamaker-backups/YYYY-MM-DD_HH-MM-SS
+```
+
+恢复脚本会自动：
+
+- 校验备份目录结构。
+- 如果有 `manifest.sha256`，执行 checksum 校验。
+- 如果有 `sqlite3`，执行 SQLite 完整性校验。
+- 停止 `gokottamaker`。
+- 给当前数据目录创建安全副本：`/srv/gokottamaker-data.before-restore-YYYY-MM-DD_HH-MM`。
+- 替换 `database/` 与 `uploads/`。
+- 启动 `gokottamaker`。
+
+### 部署失败诊断
+
+如果 `deploy-update.sh` 失败，优先执行：
+
+```bash
+sudo journalctl -u gokottamaker -n 120 --no-pager
+sudo systemctl status gokottamaker --no-pager
+curl -fsS http://127.0.0.1:4173/healthz
+```
+
+如果确认需要回滚，使用脚本输出的推荐命令，例如：
+
+```bash
+cd /opt/GokottaMaker
+bash scripts/rollback.sh <Pre-deploy commit>
 ```
 
 ## 必须备份

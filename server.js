@@ -1,10 +1,12 @@
-const crypto = require("node:crypto");
+﻿const crypto = require("node:crypto");
 const childProcess = require("node:child_process");
 const fs = require("node:fs");
 const http = require("node:http");
 const path = require("node:path");
 const vm = require("node:vm");
-const { DatabaseSync } = require("node:sqlite");
+const { logAudit } = require("./lib/audit");
+const { createContentStore } = require("./lib/content");
+const { createDatabase } = require("./lib/db");
 
 const root = __dirname;
 const dataDir = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : root;
@@ -21,83 +23,11 @@ if (!process.env.ADMIN_PASSWORD) {
   console.warn("WARNING: ADMIN_PASSWORD is not set. Use a strong password in production.");
 }
 
-fs.mkdirSync(dbDir, { recursive: true });
-fs.mkdirSync(uploadDir, { recursive: true });
+const db = createDatabase({ root, dataDir, dbDir, dbPath, uploadDir });
+const contentStore = createContentStore(db);
 
-const db = new DatabaseSync(dbPath);
-db.exec(`
-  PRAGMA journal_mode = WAL;
-  PRAGMA foreign_keys = ON;
-
-  CREATE TABLE IF NOT EXISTS admin_users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
-    password_salt TEXT NOT NULL,
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE TABLE IF NOT EXISTS sessions (
-    token TEXT PRIMARY KEY,
-    user_id INTEGER NOT NULL,
-    expires_at TEXT NOT NULL,
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES admin_users(id) ON DELETE CASCADE
-  );
-
-  CREATE TABLE IF NOT EXISTS posts (
-    id TEXT PRIMARY KEY,
-    slug TEXT NOT NULL,
-    title TEXT NOT NULL,
-    category TEXT NOT NULL,
-    category_key TEXT NOT NULL,
-    excerpt TEXT,
-    cover TEXT,
-    markdown TEXT NOT NULL,
-    read_time TEXT,
-    date TEXT,
-    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE TABLE IF NOT EXISTS projects (
-    id TEXT PRIMARY KEY,
-    slug TEXT NOT NULL,
-    title TEXT NOT NULL,
-    status TEXT NOT NULL,
-    status_key TEXT NOT NULL,
-    summary TEXT,
-    cover TEXT,
-    markdown TEXT NOT NULL,
-    license TEXT,
-    stars INTEGER NOT NULL DEFAULT 0,
-    date TEXT,
-    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-  );
-`);
-
-function ensureColumn(table, name, definition) {
-  const columns = db.prepare(`PRAGMA table_info(${table})`).all().map((column) => column.name);
-  if (!columns.includes(name)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${name} ${definition}`);
-}
-
-ensureColumn("posts", "publish_status", "TEXT NOT NULL DEFAULT 'published'");
-ensureColumn("posts", "featured", "INTEGER NOT NULL DEFAULT 0");
-ensureColumn("posts", "featured_order", "INTEGER NOT NULL DEFAULT 0");
-ensureColumn("posts", "deleted_at", "TEXT");
-ensureColumn("posts", "tags", "TEXT");
-ensureColumn("projects", "visibility_status", "TEXT NOT NULL DEFAULT 'published'");
-ensureColumn("projects", "featured", "INTEGER NOT NULL DEFAULT 0");
-ensureColumn("projects", "featured_order", "INTEGER NOT NULL DEFAULT 0");
-ensureColumn("projects", "deleted_at", "TEXT");
-ensureColumn("projects", "tags", "TEXT");
-ensureColumn("projects", "repo_url", "TEXT");
-ensureColumn("projects", "bom_url", "TEXT");
-ensureColumn("projects", "docs_url", "TEXT");
-ensureColumn("projects", "version", "TEXT");
-ensureColumn("projects", "progress", "INTEGER NOT NULL DEFAULT 0");
-
-const siteVersion = "V1.5.0";
-const siteBuild = "20260504-1655";
+const siteVersion = "V1.7.0";
+const siteBuild = "20260505-1910";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
 
@@ -142,8 +72,8 @@ function seedContent() {
 
   if (!postCount) {
     const insertPost = db.prepare(`
-      INSERT INTO posts (id, slug, title, category, category_key, excerpt, cover, markdown, read_time, date, publish_status, featured, featured_order)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', ?, ?)
+      INSERT INTO posts (id, slug, title, category, category_key, excerpt, cover, markdown, read_time, date, publish_status, featured, featured_order, tags)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', ?, ?, ?)
     `);
     seed.posts.forEach((post, index) => {
       insertPost.run(
@@ -158,15 +88,16 @@ function seedContent() {
         post.readTime || "",
         post.date || "",
         index < 4 ? 1 : 0,
-        index + 1
+        index + 1,
+        post.tags || ""
       );
     });
   }
 
   if (!projectCount) {
     const insertProject = db.prepare(`
-      INSERT INTO projects (id, slug, title, status, status_key, summary, cover, markdown, license, stars, date, visibility_status)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO projects (id, slug, title, status, status_key, summary, cover, markdown, license, stars, date, visibility_status, version, progress, tags)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
     for (const project of seed.projects) {
       insertProject.run(
@@ -181,7 +112,10 @@ function seedContent() {
         project.license || "",
         Number(project.stars || 0),
         project.date || "",
-        project.statusKey === "online" ? "published" : "draft"
+        project.statusKey === "online" ? "published" : "draft",
+        project.version || "",
+        Number(project.progress || 0),
+        project.tags || ""
       );
     }
   }
@@ -194,13 +128,20 @@ function reconcileSeedContent() {
     SET publish_status = 'published',
         featured = CASE WHEN featured = 0 THEN ? ELSE featured END,
         featured_order = CASE WHEN featured_order = 0 THEN ? ELSE featured_order END,
+        tags = CASE WHEN tags IS NULL OR tags = '' THEN ? ELSE tags END,
         updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
       AND deleted_at IS NULL
-      AND publish_status != 'published'
+      AND (
+        publish_status != 'published'
+        OR featured = 0
+        OR featured_order = 0
+        OR tags IS NULL
+        OR tags = ''
+      )
   `);
   seed.posts.forEach((post, index) => {
-    updateSeedPost.run(index < 4 ? 1 : 0, index + 1, post.id);
+    updateSeedPost.run(index < 4 ? 1 : 0, index + 1, post.tags || "", post.id);
   });
 
   const updateSeedProject = db.prepare(`
@@ -208,12 +149,25 @@ function reconcileSeedContent() {
     SET visibility_status = ?,
         status = ?,
         status_key = ?,
+        date = CASE WHEN date IS NULL OR date = '' THEN ? ELSE date END,
+        version = CASE WHEN version IS NULL OR version = '' THEN ? ELSE version END,
+        progress = CASE WHEN progress IS NULL OR progress = 0 THEN ? ELSE progress END,
+        tags = CASE WHEN tags IS NULL OR tags = '' THEN ? ELSE tags END,
         updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
       AND deleted_at IS NULL
   `);
   seed.projects.forEach((project) => {
-    updateSeedProject.run(project.statusKey === "online" ? "published" : "draft", project.status, project.statusKey, project.id);
+    updateSeedProject.run(
+      project.statusKey === "online" ? "published" : "draft",
+      project.status,
+      project.statusKey,
+      project.date || "",
+      project.version || "",
+      Number(project.progress || 0),
+      project.tags || "",
+      project.id
+    );
   });
 }
 
@@ -288,12 +242,17 @@ function currentUser(req) {
   if (!token) return null;
   return db
     .prepare(
-      `SELECT admin_users.id, admin_users.username
+      `SELECT admin_users.id, admin_users.username, sessions.csrf_token AS csrfToken
        FROM sessions
        JOIN admin_users ON admin_users.id = sessions.user_id
        WHERE sessions.token = ? AND sessions.expires_at > datetime('now')`
     )
     .get(token);
+}
+
+function publicUser(user) {
+  if (!user) return null;
+  return { id: user.id, username: user.username };
 }
 
 function requireUser(req, res) {
@@ -305,6 +264,16 @@ function requireUser(req, res) {
   return user;
 }
 
+function requireCsrf(req, res, user) {
+  if (["GET", "HEAD", "OPTIONS"].includes(req.method)) return true;
+  const token = String(req.headers["x-csrf-token"] || "");
+  if (!user.csrfToken || token !== user.csrfToken) {
+    json(res, 403, { error: "csrf token mismatch" });
+    return false;
+  }
+  return true;
+}
+
 function isHttps(req) {
   return req.headers["x-forwarded-proto"] === "https";
 }
@@ -314,140 +283,23 @@ function cookieHeader(token, req) {
   return `gokottamaker_session=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${60 * 60 * 24 * 30}${secure}`;
 }
 
-function normalizeFlag(value) {
-  return value === true || value === "true" || value === 1 || value === "1" ? 1 : 0;
-}
-
-function visibilityFilter(admin = false) {
-  return admin ? "" : "WHERE deleted_at IS NULL AND publish_status = 'published'";
-}
-
-function projectVisibilityFilter(admin = false) {
-  return admin ? "" : "WHERE deleted_at IS NULL AND visibility_status = 'published'";
-}
-
-function allPosts(admin = false) {
-  return db
-    .prepare(
-      `SELECT id, slug, 'post' AS type, title, category, category_key AS categoryKey,
-              excerpt, cover, markdown, read_time AS readTime, date,
-              publish_status AS publishStatus, featured, featured_order AS featuredOrder, deleted_at AS deletedAt, tags
-       FROM posts
-       ${visibilityFilter(admin)}
-       ORDER BY deleted_at IS NOT NULL ASC, date DESC, updated_at DESC`
-    )
-    .all();
-}
-
-function allProjects(admin = false) {
-  return db
-    .prepare(
-      `SELECT id, slug, 'project' AS type, title, status, status_key AS statusKey,
-              summary, cover, markdown, license, stars, date,
-              visibility_status AS visibilityStatus, featured, featured_order AS featuredOrder, deleted_at AS deletedAt,
-              repo_url AS repoUrl, bom_url AS bomUrl, docs_url AS docsUrl, version, progress, tags
-       FROM projects
-       ${projectVisibilityFilter(admin)}
-       ORDER BY deleted_at IS NOT NULL ASC, updated_at DESC`
-    )
-    .all();
-}
+const {
+  allPosts,
+  allProjects,
+  savePost,
+  saveProject,
+  restorePost,
+  restoreProject,
+  hardDeletePost,
+  hardDeleteProject,
+  softDeletePost,
+  softDeleteProject
+} = contentStore;
 
 function contentScript(res) {
   const body = `window.GOKOTTA_SERVER_CONTENT = ${JSON.stringify({ posts: allPosts(false), projects: allProjects(false) })};`;
   res.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8", "Cache-Control": "no-store" });
   res.end(body);
-}
-
-function savePost(payload) {
-  db.prepare(
-    `INSERT INTO posts (id, slug, title, category, category_key, excerpt, cover, markdown, read_time, date,
-                        publish_status, featured, featured_order, deleted_at, tags, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, CURRENT_TIMESTAMP)
-     ON CONFLICT(id) DO UPDATE SET
-       slug = excluded.slug,
-       title = excluded.title,
-       category = excluded.category,
-       category_key = excluded.category_key,
-       excerpt = excluded.excerpt,
-       cover = excluded.cover,
-       markdown = excluded.markdown,
-       read_time = excluded.read_time,
-       date = excluded.date,
-       publish_status = excluded.publish_status,
-       featured = excluded.featured,
-       featured_order = excluded.featured_order,
-       deleted_at = NULL,
-       tags = excluded.tags,
-       updated_at = CURRENT_TIMESTAMP`
-  ).run(
-    payload.id,
-    payload.slug || payload.id,
-    payload.title,
-    payload.category,
-    payload.categoryKey,
-    payload.excerpt || "",
-    payload.cover || "",
-    payload.markdown || "",
-    payload.readTime || "10 分钟阅读",
-    payload.date || new Date().toISOString().slice(0, 10),
-    payload.publishStatus || "draft",
-    normalizeFlag(payload.featured),
-    Number(payload.featuredOrder || 0),
-    payload.tags || ""
-  );
-}
-
-function saveProject(payload) {
-  db.prepare(
-    `INSERT INTO projects (id, slug, title, status, status_key, summary, cover, markdown, license, stars, date,
-                           visibility_status, featured, featured_order, deleted_at,
-                           repo_url, bom_url, docs_url, version, progress, tags, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-     ON CONFLICT(id) DO UPDATE SET
-       slug = excluded.slug,
-       title = excluded.title,
-       status = excluded.status,
-       status_key = excluded.status_key,
-       summary = excluded.summary,
-       cover = excluded.cover,
-       markdown = excluded.markdown,
-       license = excluded.license,
-       stars = excluded.stars,
-       date = excluded.date,
-       visibility_status = excluded.visibility_status,
-       featured = excluded.featured,
-       featured_order = excluded.featured_order,
-       deleted_at = NULL,
-       repo_url = excluded.repo_url,
-       bom_url = excluded.bom_url,
-       docs_url = excluded.docs_url,
-       version = excluded.version,
-       progress = excluded.progress,
-       tags = excluded.tags,
-       updated_at = CURRENT_TIMESTAMP`
-  ).run(
-    payload.id,
-    payload.slug || payload.id,
-    payload.title,
-    payload.status,
-    payload.statusKey,
-    payload.summary || "",
-    payload.cover || "",
-    payload.markdown || "",
-    payload.license || "MIT License",
-    Number(payload.stars || 0),
-    payload.date || new Date().toISOString().slice(0, 10),
-    payload.visibilityStatus || "draft",
-    normalizeFlag(payload.featured),
-    Number(payload.featuredOrder || 0),
-    payload.repoUrl || "",
-    payload.bomUrl || "",
-    payload.docsUrl || "",
-    payload.version || "",
-    Number(payload.progress || 0),
-    payload.tags || ""
-  );
 }
 
 function extensionFromUpload(filename, dataUrl) {
@@ -678,89 +530,124 @@ function recordLoginFailure(key) {
 async function api(req, res, pathname) {
   if (pathname === "/api/content.js" && req.method === "GET") return contentScript(res);
   if (pathname === "/api/content" && req.method === "GET") return json(res, 200, { posts: allPosts(false), projects: allProjects(false) });
-  if (pathname === "/api/session" && req.method === "GET") return json(res, 200, { user: currentUser(req) });
+  if (pathname === "/api/session" && req.method === "GET") {
+    const user = currentUser(req);
+    return json(res, 200, { user: publicUser(user), csrfToken: user?.csrfToken || "" });
+  }
 
   if (pathname === "/api/login" && req.method === "POST") {
     const body = await readBody(req);
     const key = loginKey(req, body.username);
-    if (isLoginBlocked(key)) return json(res, 429, { error: "登录失败次数过多，请 15 分钟后再试" });
+    if (isLoginBlocked(key)) {
+      logAudit(db, req, null, "login_blocked", "admin_user", body.username || "", { username: body.username || "" });
+      return json(res, 429, { error: "登录失败次数过多，请 15 分钟后再试" });
+    }
 
     const user = db.prepare("SELECT * FROM admin_users WHERE username = ?").get(body.username || "");
     if (!user || !verifyPassword(body.password || "", user.password_salt, user.password_hash)) {
       recordLoginFailure(key);
+      logAudit(db, req, user ? { id: user.id, username: user.username } : null, "login_failed", "admin_user", body.username || "", { username: body.username || "" });
       return json(res, 401, { error: "账号或密码不正确" });
     }
 
     loginFailures.delete(key);
     const token = crypto.randomBytes(32).toString("hex");
-    db.prepare("INSERT INTO sessions (token, user_id, expires_at) VALUES (?, ?, datetime('now', '+30 days'))").run(token, user.id);
+    const csrfToken = crypto.randomBytes(32).toString("hex");
+    db.prepare("INSERT INTO sessions (token, user_id, expires_at, csrf_token) VALUES (?, ?, datetime('now', '+30 days'), ?)").run(token, user.id, csrfToken);
     res.setHeader("Set-Cookie", cookieHeader(token, req));
-    return json(res, 200, { user: { id: user.id, username: user.username } });
+    logAudit(db, req, user, "login_success", "admin_user", String(user.id));
+    return json(res, 200, { user: { id: user.id, username: user.username }, csrfToken });
   }
 
   if (pathname === "/api/logout" && req.method === "POST") {
+    const user = requireUser(req, res);
+    if (!user) return;
+    if (!requireCsrf(req, res, user)) return;
     const token = cookies(req).gokottamaker_session;
     if (token) db.prepare("DELETE FROM sessions WHERE token = ?").run(token);
     res.setHeader("Set-Cookie", "gokottamaker_session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0");
+    logAudit(db, req, user, "logout", "session", token ? token.slice(0, 8) : "");
     return json(res, 200, { ok: true });
   }
 
   const user = requireUser(req, res);
   if (!user) return;
+  if (!requireCsrf(req, res, user)) return;
 
   if (pathname === "/api/admin/content" && req.method === "GET") return json(res, 200, { posts: allPosts(true), projects: allProjects(true) });
   if (pathname === "/api/admin/health" && req.method === "GET") return json(res, 200, healthPayload({ detailed: true }));
-  if (pathname === "/api/admin/export" && req.method === "GET") return json(res, 200, exportContent());
+  if (pathname === "/api/admin/export" && req.method === "GET") {
+    logAudit(db, req, user, "content_export", "content", "all");
+    return json(res, 200, exportContent());
+  }
   if (pathname === "/api/uploads" && req.method === "GET") return json(res, 200, { uploads: uploads() });
 
   if (pathname === "/api/posts" && req.method === "POST") {
-    savePost(await readBody(req));
+    const body = await readBody(req);
+    savePost(body);
+    logAudit(db, req, user, "post_save", "post", body.id, { publishStatus: body.publishStatus, featured: body.featured });
     return json(res, 200, { posts: allPosts(true) });
   }
 
   if (pathname === "/api/projects" && req.method === "POST") {
-    saveProject(await readBody(req));
+    const body = await readBody(req);
+    saveProject(body);
+    logAudit(db, req, user, "project_save", "project", body.id, { visibilityStatus: body.visibilityStatus, statusKey: body.statusKey });
     return json(res, 200, { projects: allProjects(true) });
   }
 
   if (pathname === "/api/uploads" && req.method === "POST") {
-    const url = saveUpload(await readBody(req));
+    const body = await readBody(req);
+    const url = saveUpload(body);
+    logAudit(db, req, user, "upload_create", "upload", url, { filename: body.filename || "" });
     return json(res, 200, { url, uploads: uploads() });
   }
 
   const postRestore = pathname.match(/^\/api\/posts\/([^/]+)\/restore$/);
   if (postRestore && req.method === "POST") {
-    db.prepare("UPDATE posts SET deleted_at = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(decodeURIComponent(postRestore[1]));
+    const id = decodeURIComponent(postRestore[1]);
+    restorePost(id);
+    logAudit(db, req, user, "post_restore", "post", id);
     return json(res, 200, { posts: allPosts(true) });
   }
 
   const projectRestore = pathname.match(/^\/api\/projects\/([^/]+)\/restore$/);
   if (projectRestore && req.method === "POST") {
-    db.prepare("UPDATE projects SET deleted_at = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(decodeURIComponent(projectRestore[1]));
+    const id = decodeURIComponent(projectRestore[1]);
+    restoreProject(id);
+    logAudit(db, req, user, "project_restore", "project", id);
     return json(res, 200, { projects: allProjects(true) });
   }
 
-  const hardDeletePost = pathname.match(/^\/api\/posts\/([^/]+)\/hard$/);
-  if (hardDeletePost && req.method === "DELETE") {
-    db.prepare("DELETE FROM posts WHERE id = ?").run(decodeURIComponent(hardDeletePost[1]));
+  const hardDeletePostMatch = pathname.match(/^\/api\/posts\/([^/]+)\/hard$/);
+  if (hardDeletePostMatch && req.method === "DELETE") {
+    const id = decodeURIComponent(hardDeletePostMatch[1]);
+    hardDeletePost(id);
+    logAudit(db, req, user, "post_hard_delete", "post", id);
     return json(res, 200, { posts: allPosts(true) });
   }
 
-  const hardDeleteProject = pathname.match(/^\/api\/projects\/([^/]+)\/hard$/);
-  if (hardDeleteProject && req.method === "DELETE") {
-    db.prepare("DELETE FROM projects WHERE id = ?").run(decodeURIComponent(hardDeleteProject[1]));
+  const hardDeleteProjectMatch = pathname.match(/^\/api\/projects\/([^/]+)\/hard$/);
+  if (hardDeleteProjectMatch && req.method === "DELETE") {
+    const id = decodeURIComponent(hardDeleteProjectMatch[1]);
+    hardDeleteProject(id);
+    logAudit(db, req, user, "project_hard_delete", "project", id);
     return json(res, 200, { projects: allProjects(true) });
   }
 
   const deletePost = pathname.match(/^\/api\/posts\/([^/]+)$/);
   if (deletePost && req.method === "DELETE") {
-    db.prepare("UPDATE posts SET deleted_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(decodeURIComponent(deletePost[1]));
+    const id = decodeURIComponent(deletePost[1]);
+    softDeletePost(id);
+    logAudit(db, req, user, "post_soft_delete", "post", id);
     return json(res, 200, { posts: allPosts(true) });
   }
 
   const deleteProject = pathname.match(/^\/api\/projects\/([^/]+)$/);
   if (deleteProject && req.method === "DELETE") {
-    db.prepare("UPDATE projects SET deleted_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?").run(decodeURIComponent(deleteProject[1]));
+    const id = decodeURIComponent(deleteProject[1]);
+    softDeleteProject(id);
+    logAudit(db, req, user, "project_soft_delete", "project", id);
     return json(res, 200, { projects: allProjects(true) });
   }
 
@@ -843,3 +730,4 @@ server.listen(port, () => {
   console.log(`SQLite database: ${dbPath}`);
   console.log(`Uploads directory: ${uploadDir}`);
 });
+

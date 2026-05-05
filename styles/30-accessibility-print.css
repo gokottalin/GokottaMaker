@@ -1,0 +1,65 @@
+﻿@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+@media print {
+  .site-header,
+  .toc-card,
+  .hero,
+  .site-footer,
+  .admin-link,
+  .header-actions,
+  .reading-progress,
+  .code-copy,
+  .image-lightbox {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff;
+    color: #000000;
+  }
+
+  .post-layout,
+  .markdown-article {
+    width: auto;
+    margin: 0;
+    display: block;
+    box-shadow: none;
+    border: 0;
+  }
+}
+
+.markdown-article a,
+.post-hero-content a {
+  color: var(--blue);
+  font-weight: 800;
+}
+
+.markdown-article .token-keyword {
+  color: #79c0ff;
+}
+
+.markdown-article .token-string {
+  color: #a7f3d0;
+}
+
+.markdown-article .token-number {
+  color: #f9c74f;
+}
+
+.empty-state {
+  padding: 36px;
+  color: var(--muted);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  background: white;
+}
+
