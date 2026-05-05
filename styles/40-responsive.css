@@ -130,6 +130,18 @@
   .section-heading {
     align-items: flex-start;
     flex-direction: column;
+    gap: 12px;
+  }
+
+  .section-title-block.split-title {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .section-title-block h1,
+  .section-title-block h2 {
+    font-size: 28px;
   }
 
   .post-hero-content,
@@ -181,6 +193,10 @@
   }
 
   .button {
+    width: 100%;
+  }
+
+  .section-heading .return-link {
     width: 100%;
   }
 

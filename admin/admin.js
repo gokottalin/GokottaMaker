@@ -1,12 +1,20 @@
 (function () {
   const savedLoginKey = "gokottamaker_admin_saved_login";
   const draftKey = "gokottamaker_admin_autodraft_v1";
+  const sidebarStateKey = "gokottamaker_admin_sidebar_collapsed";
+  const editorDockStateKey = "gokottamaker_admin_editor_dock_collapsed";
   const autosaveDelay = 900;
 
   const loginPanel = document.querySelector("#loginPanel");
   const dashboard = document.querySelector("#dashboard");
   const loginForm = document.querySelector("#loginForm");
   const loginNotice = document.querySelector("#loginNotice");
+  const passwordToggle = document.querySelector("#passwordToggle");
+  const sidebarToggle = document.querySelector("#sidebarToggle");
+  const editorDock = document.querySelector("#editor");
+  const editorDockToggle = document.querySelector("#editorDockToggle");
+  const editorDockHandle = document.querySelector("#editorDockHandle");
+  const editorDockState = document.querySelector("#editorDockState");
   const adminNotice = document.querySelector("#adminNotice");
   const logoutButton = document.querySelector("#logoutButton");
   const exportButton = document.querySelector("#exportButton");
@@ -51,6 +59,38 @@
   let lastDraftSavedAt = "";
   const selectedContent = new Set();
   const filters = { search: "", type: "all", status: "all" };
+
+  function storedBool(key) {
+    return localStorage.getItem(key) === "true";
+  }
+
+  function setSidebarCollapsed(value) {
+    dashboard.classList.toggle("is-sidebar-collapsed", value);
+    sidebarToggle.setAttribute("aria-pressed", String(value));
+    sidebarToggle.setAttribute("aria-label", value ? "展开侧栏" : "收缩侧栏");
+    sidebarToggle.textContent = value ? "›" : "‹";
+    localStorage.setItem(sidebarStateKey, String(value));
+  }
+
+  function setEditorDockCollapsed(value) {
+    editorDock.classList.toggle("is-collapsed", value);
+    editorDockToggle.textContent = value ? "展开" : "收起";
+    editorDockHandle.setAttribute("aria-expanded", String(!value));
+    editorDockState.textContent = value ? "已收起" : "展开";
+    localStorage.setItem(editorDockStateKey, String(value));
+  }
+
+  function updatePasswordActive() {
+    const password = loginForm.password;
+    loginPanel.classList.toggle("is-password-active", document.activeElement === password || Boolean(password.value));
+  }
+
+  function setPasswordVisible(value) {
+    loginForm.password.type = value ? "text" : "password";
+    passwordToggle.textContent = value ? "隐藏" : "显示";
+    passwordToggle.setAttribute("aria-label", value ? "隐藏密码" : "显示密码");
+    passwordToggle.setAttribute("aria-pressed", String(value));
+  }
 
   async function request(path, options = {}) {
     const method = String(options.method || "GET").toUpperCase();
@@ -691,6 +731,28 @@
     });
   });
 
+  loginForm.password.addEventListener("focus", updatePasswordActive);
+  loginForm.password.addEventListener("blur", updatePasswordActive);
+  loginForm.password.addEventListener("input", updatePasswordActive);
+
+  passwordToggle.addEventListener("click", () => {
+    setPasswordVisible(loginForm.password.type === "password");
+    loginForm.password.focus();
+    updatePasswordActive();
+  });
+
+  sidebarToggle.addEventListener("click", () => {
+    setSidebarCollapsed(!dashboard.classList.contains("is-sidebar-collapsed"));
+  });
+
+  editorDockToggle.addEventListener("click", () => {
+    setEditorDockCollapsed(!editorDock.classList.contains("is-collapsed"));
+  });
+
+  editorDockHandle.addEventListener("click", () => {
+    setEditorDockCollapsed(!editorDock.classList.contains("is-collapsed"));
+  });
+
   logoutButton.addEventListener("click", () => {
     if (!confirmDiscard("当前有未保存修改，退出登录会保留本地草稿但不会写入数据库，确认退出吗？")) return;
     withBusy(logoutButton, "退出中...", async () => {
@@ -931,6 +993,10 @@
   });
 
   (async () => {
+    setSidebarCollapsed(storedBool(sidebarStateKey));
+    setEditorDockCollapsed(storedBool(editorDockStateKey));
+    setPasswordVisible(false);
+    updatePasswordActive();
     loadSavedLogin();
     const session = await request("/api/session").catch(() => ({ user: null }));
     csrfToken = session.csrfToken || "";

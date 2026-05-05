@@ -6,6 +6,10 @@
   min-height: 100vh;
 }
 
+.admin-shell:has(.dashboard:not([hidden])) {
+  background: #f6f9fd;
+}
+
 .login-panel {
   width: min(620px, calc(100% - 32px));
   margin: 8vh auto;
@@ -14,6 +18,105 @@
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.92);
   box-shadow: var(--shadow);
+}
+
+.login-panel::before,
+.login-panel::after {
+  content: "";
+  position: fixed;
+  top: 24vh;
+  width: 156px;
+  height: 156px;
+  border: 2px solid rgba(13, 111, 211, 0.2);
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 38% 42%, #0b1220 0 5px, transparent 6px),
+    radial-gradient(circle at 62% 42%, #0b1220 0 5px, transparent 6px),
+    radial-gradient(ellipse at 50% 63%, transparent 0 10px, #0d6fd3 11px 13px, transparent 14px),
+    linear-gradient(90deg, transparent 0 8px, rgba(13, 111, 211, 0.42) 9px 14px, transparent 15px calc(100% - 15px), rgba(13, 111, 211, 0.42) calc(100% - 14px) calc(100% - 9px), transparent calc(100% - 8px)),
+    linear-gradient(0deg, transparent 0 10px, rgba(13, 111, 211, 0.26) 11px 16px, transparent 17px calc(100% - 17px), rgba(13, 111, 211, 0.26) calc(100% - 16px) calc(100% - 11px), transparent calc(100% - 10px)),
+    linear-gradient(145deg, #ffffff, #eaf5ff);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 24px 48px rgba(13, 111, 211, 0.16);
+  pointer-events: none;
+  transition:
+    transform 260ms ease,
+    border-color 260ms ease,
+    background 260ms ease;
+  animation: component-float 5.2s ease-in-out infinite;
+}
+
+.login-panel::before {
+  left: max(24px, calc(50vw - 520px));
+  transform: rotate(-5deg);
+}
+
+.login-panel::after {
+  right: max(24px, calc(50vw - 520px));
+  border-radius: 999px 999px 28px 28px;
+  background:
+    radial-gradient(circle at 38% 42%, #0b1220 0 5px, transparent 6px),
+    radial-gradient(circle at 62% 42%, #0b1220 0 5px, transparent 6px),
+    radial-gradient(ellipse at 50% 64%, transparent 0 10px, #16a376 11px 13px, transparent 14px),
+    linear-gradient(90deg, transparent 0 20px, rgba(22, 163, 118, 0.34) 21px 27px, transparent 28px calc(100% - 28px), rgba(22, 163, 118, 0.34) calc(100% - 27px) calc(100% - 21px), transparent calc(100% - 20px)),
+    linear-gradient(180deg, #ffffff, #eefaf6);
+  transform: rotate(6deg);
+  animation-delay: -1.8s;
+}
+
+.login-panel.is-password-active::before,
+.login-panel.is-password-active::after {
+  border-color: rgba(13, 111, 211, 0.3);
+  transform: translateY(4px) rotate(0deg);
+  animation: component-shy 680ms ease-in-out both;
+}
+
+.login-panel.is-password-active::before {
+  background:
+    linear-gradient(18deg, transparent 0 31%, rgba(13, 111, 211, 0.78) 32% 39%, transparent 40%),
+    linear-gradient(-18deg, transparent 0 31%, rgba(13, 111, 211, 0.78) 32% 39%, transparent 40%),
+    radial-gradient(ellipse at 38% 43%, transparent 0 7px, #0b1220 8px 10px, transparent 11px),
+    radial-gradient(ellipse at 62% 43%, transparent 0 7px, #0b1220 8px 10px, transparent 11px),
+    radial-gradient(ellipse at 50% 66%, transparent 0 8px, #0d6fd3 9px 11px, transparent 12px),
+    linear-gradient(90deg, transparent 0 8px, rgba(13, 111, 211, 0.42) 9px 14px, transparent 15px calc(100% - 15px), rgba(13, 111, 211, 0.42) calc(100% - 14px) calc(100% - 9px), transparent calc(100% - 8px)),
+    linear-gradient(145deg, #ffffff, #eaf5ff);
+}
+
+@keyframes component-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+
+  50% {
+    translate: 0 -10px;
+  }
+}
+
+@keyframes component-shy {
+  0% {
+    translate: 0 0;
+  }
+
+  45% {
+    translate: 0 8px;
+  }
+
+  100% {
+    translate: 0 4px;
+  }
+}
+
+.login-panel.is-password-active::after {
+  background:
+    radial-gradient(ellipse at 38% 43%, transparent 0 7px, #0b1220 8px 10px, transparent 11px),
+    radial-gradient(ellipse at 62% 43%, transparent 0 7px, #0b1220 8px 10px, transparent 11px),
+    linear-gradient(18deg, transparent 0 31%, rgba(22, 163, 118, 0.76) 32% 39%, transparent 40%),
+    linear-gradient(-18deg, transparent 0 31%, rgba(22, 163, 118, 0.76) 32% 39%, transparent 40%),
+    radial-gradient(ellipse at 50% 66%, transparent 0 8px, #16a376 9px 11px, transparent 12px),
+    linear-gradient(90deg, transparent 0 20px, rgba(22, 163, 118, 0.34) 21px 27px, transparent 28px calc(100% - 28px), rgba(22, 163, 118, 0.34) calc(100% - 27px) calc(100% - 21px), transparent calc(100% - 20px)),
+    linear-gradient(180deg, #ffffff, #eefaf6);
 }
 
 .admin-login-brand .brand-symbol,
@@ -118,10 +221,37 @@ button:disabled {
   opacity: 0.68;
 }
 
+.password-control {
+  position: relative;
+  display: block;
+}
+
+.password-control input {
+  padding-right: 74px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fbff;
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 900;
+}
+
 .dashboard {
   min-height: 100vh;
   display: grid;
   grid-template-columns: 300px minmax(0, 1fr);
+}
+
+.dashboard.is-sidebar-collapsed {
+  grid-template-columns: 88px minmax(0, 1fr);
 }
 
 .admin-sidebar {
@@ -131,6 +261,29 @@ button:disabled {
   padding: 28px;
   border-right: 1px solid var(--line);
   background: #f5f9ff;
+}
+
+.sidebar-toggle {
+  position: absolute;
+  top: 18px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  color: var(--blue);
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 900;
+}
+
+.dashboard.is-sidebar-collapsed .admin-sidebar {
+  padding: 22px 16px;
+}
+
+.dashboard.is-sidebar-collapsed .admin-sidebar .brand span {
+  display: none;
 }
 
 .admin-sidebar nav {
@@ -146,13 +299,30 @@ button:disabled {
   font-weight: 760;
 }
 
+.dashboard.is-sidebar-collapsed .admin-sidebar nav a {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  font-size: 0;
+}
+
+.dashboard.is-sidebar-collapsed .admin-sidebar nav a::before {
+  content: attr(data-short);
+  color: var(--blue);
+  font-size: 15px;
+  font-weight: 950;
+}
+
 .admin-sidebar nav a:hover {
   background: white;
   color: var(--blue);
 }
 
 .admin-main {
-  padding: 32px;
+  padding: 32px 32px 42vh;
 }
 
 .admin-topbar {
@@ -170,11 +340,83 @@ button:disabled {
   gap: 10px;
 }
 
+.editor-dock {
+  position: fixed;
+  right: 24px;
+  bottom: 18px;
+  left: 324px;
+  z-index: 20;
+  max-height: 38vh;
+}
+
+.dashboard.is-sidebar-collapsed .editor-dock {
+  left: 112px;
+}
+
+.editor-dock-panel {
+  max-height: 38vh;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.16);
+}
+
+.editor-dock-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.editor-dock-toolbar h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.editor-dock-handle {
+  display: none;
+  width: 100%;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  color: var(--ink);
+  box-shadow: 0 12px 34px rgba(15, 23, 42, 0.14);
+  font-weight: 900;
+}
+
+.editor-dock-handle span,
+.editor-dock-handle strong {
+  display: inline-block;
+}
+
+.editor-dock-handle span {
+  float: left;
+}
+
+.editor-dock-handle strong {
+  float: right;
+  color: var(--blue);
+}
+
+.editor-dock.is-collapsed .editor-dock-panel {
+  display: none;
+}
+
+.editor-dock.is-collapsed .editor-dock-handle {
+  display: block;
+}
+
 .editor-grid {
   display: grid;
   grid-template-columns: minmax(420px, 0.95fr) minmax(380px, 1fr);
   gap: 24px;
   align-items: start;
+  max-height: calc(38vh - 84px);
+  overflow: hidden;
 }
 
 .editor-form,
@@ -186,6 +428,35 @@ button:disabled {
   border-radius: 8px;
   background: white;
   box-shadow: var(--shadow);
+}
+
+.editor-form,
+.preview-panel {
+  max-height: calc(38vh - 86px);
+  overflow: auto;
+}
+
+.preview-panel {
+  padding: 0;
+}
+
+.preview-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.preview-toolbar span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
 }
 
 .segmented {
@@ -219,7 +490,7 @@ button:disabled {
 
 .draft-status {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 6px 12px;
   align-items: center;
   padding: 12px;
@@ -236,10 +507,11 @@ button:disabled {
 .draft-status span {
   color: #87620c;
   font-size: 13px;
+  min-width: 0;
 }
 
 .draft-status .button {
-  grid-row: span 2;
+  white-space: nowrap;
 }
 
 .cover-picker {
@@ -269,6 +541,16 @@ button:disabled {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+.editor-floating-actions {
+  position: sticky;
+  bottom: -1px;
+  z-index: 3;
+  margin: 0 -24px -24px;
+  padding: 14px 24px;
+  border-top: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.96);
 }
 
 .inline-fields {
@@ -359,22 +641,13 @@ button:disabled {
   text-overflow: ellipsis;
 }
 
-.markdown-preview {
-  color: var(--ink);
-}
-
-.markdown-preview h1,
-.markdown-preview h2,
-.markdown-preview h3 {
-  line-height: 1.25;
-}
-
-.markdown-preview pre {
-  overflow: auto;
-  padding: 14px;
-  border-radius: 8px;
-  background: #071527;
-  color: #dbeafe;
+.preview-panel .markdown-preview {
+  min-height: 100%;
+  padding: 34px 42px;
+  border: 0;
+  border-radius: 0;
+  background: white;
+  box-shadow: none;
 }
 
 .library-panel {
@@ -520,8 +793,29 @@ button:disabled {
 }
 
 @media (max-width: 1180px) {
+  .admin-main {
+    padding-bottom: 50vh;
+  }
+
+  .editor-dock {
+    left: 24px;
+    max-height: 48vh;
+  }
+
+  .dashboard.is-sidebar-collapsed .editor-dock {
+    left: 24px;
+  }
+
+  .editor-dock-panel,
+  .editor-form,
+  .preview-panel {
+    max-height: 48vh;
+  }
+
   .editor-grid {
     grid-template-columns: 1fr;
+    max-height: calc(48vh - 84px);
+    overflow: auto;
   }
 }
 
@@ -538,6 +832,36 @@ button:disabled {
   .admin-main,
   .login-panel {
     padding: 22px;
+  }
+
+  .login-panel::before,
+  .login-panel::after {
+    display: none;
+  }
+
+  .admin-main {
+    padding-bottom: 52vh;
+  }
+
+  .editor-dock {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    max-height: 50vh;
+  }
+
+  .editor-dock-panel {
+    max-height: 50vh;
+    padding: 10px;
+  }
+
+  .editor-form,
+  .preview-panel {
+    max-height: calc(50vh - 84px);
+  }
+
+  .preview-panel .markdown-preview {
+    padding: 24px 18px;
   }
 
   .admin-row {
@@ -564,5 +888,12 @@ button:disabled {
   .admin-row img {
     width: 100%;
     height: 180px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-panel::before,
+  .login-panel::after {
+    animation: none;
   }
 }

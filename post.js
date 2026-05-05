@@ -58,6 +58,17 @@
     });
   }
 
+  function titleEnglish(item) {
+    if (item.type === "project") return "Open Hardware Project";
+    const map = {
+      "模拟电子": "Analog Electronics",
+      STM32: "STM32 Lab",
+      ESP32: "ESP32 Systems",
+      开源项目: "Open Projects"
+    };
+    return map[item.category] || "Technical Note";
+  }
+
   function tagSet(item) {
     return new Set(
       String(item.tags || "")
@@ -241,7 +252,10 @@
       ${window.GokottaMedia.image(item.cover, `${item.title}封面`, { loading: "eager", sizes: "100vw", fetchPriority: "high" })}
       <div class="post-hero-content">
         <span class="category-pill">${escapeHtml(item.category || item.status)}</span>
-        <h1>${escapeHtml(item.title)}</h1>
+        <div class="section-title-block split-title post-title-block">
+          <h1>${escapeHtml(item.title)}</h1>
+          <span>${escapeHtml(titleEnglish(item))}</span>
+        </div>
         <p>${escapeHtml(item.excerpt || item.summary)}</p>
         <div class="meta-row">
           <span>${escapeHtml(item.readTime || item.license)}</span>
