@@ -67,6 +67,20 @@
     );
   }
 
+  function tagList(item) {
+    return [...tagSet(item)];
+  }
+
+  function renderTagChips(item) {
+    const tags = tagList(item);
+    if (!tags.length) return "";
+    return `
+      <div class="tag-list" aria-label="内容标签">
+        ${tags.map((tag) => `<span class="tag-chip">${escapeHtml(tag)}</span>`).join("")}
+      </div>
+    `;
+  }
+
   function itemUrl(item) {
     const page = item.type === "project" ? "project.html" : "post.html";
     return `./${page}?id=${encodeURIComponent(item.slug || item.id)}`;
@@ -224,7 +238,7 @@
 
     syncSeo(item);
     hero.innerHTML = `
-      ${window.GokottaMedia.image(item.cover, `${item.title}封面`, { loading: "eager", sizes: "100vw" })}
+      ${window.GokottaMedia.image(item.cover, `${item.title}封面`, { loading: "eager", sizes: "100vw", fetchPriority: "high" })}
       <div class="post-hero-content">
         <span class="category-pill">${escapeHtml(item.category || item.status)}</span>
         <h1>${escapeHtml(item.title)}</h1>
@@ -233,6 +247,7 @@
           <span>${escapeHtml(item.readTime || item.license)}</span>
           <span>${escapeHtml(item.date || item.status)}</span>
         </div>
+        ${renderTagChips(item)}
       </div>
     `;
 

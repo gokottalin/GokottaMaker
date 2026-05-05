@@ -5,14 +5,17 @@ const http = require("node:http");
 const path = require("node:path");
 const vm = require("node:vm");
 const { logAudit } = require("./lib/audit");
+const { createAuth } = require("./lib/auth");
 const { createContentStore } = require("./lib/content");
 const { createDatabase } = require("./lib/db");
+const { validatePostPayload, validateProjectPayload, validateUploadPayload } = require("./lib/validators");
 
 const root = __dirname;
 const dataDir = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : root;
 const dbDir = path.resolve(process.env.DB_DIR || path.join(dataDir, "database"));
 const dbPath = path.resolve(process.env.DB_PATH || path.join(dbDir, "gokottamaker.sqlite"));
 const uploadDir = path.resolve(process.env.UPLOAD_DIR || path.join(dataDir, "uploads"));
+const backupRoot = path.resolve(process.env.BACKUP_ROOT || "/srv/gokottamaker-backups");
 const port = Number(process.env.PORT || 4173);
 const adminUsername = process.env.ADMIN_USERNAME || "Gokotta";
 const adminPassword = process.env.ADMIN_PASSWORD || "change-this-before-public-deploy";
@@ -25,34 +28,12 @@ if (!process.env.ADMIN_PASSWORD) {
 
 const db = createDatabase({ root, dataDir, dbDir, dbPath, uploadDir });
 const contentStore = createContentStore(db);
+const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword });
 
-const siteVersion = "V1.7.0";
-const siteBuild = "20260505-1910";
+const siteVersion = "V1.8.0";
+const siteBuild = "20260505-2016";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
-
-function hashPassword(password, salt = crypto.randomBytes(16).toString("hex")) {
-  const hash = crypto.scryptSync(password, salt, 64).toString("hex");
-  return { hash, salt };
-}
-
-function verifyPassword(password, salt, expected) {
-  const actual = crypto.scryptSync(password, salt, 64);
-  return crypto.timingSafeEqual(actual, Buffer.from(expected, "hex"));
-}
-
-function seedAdmin() {
-  const existing = db.prepare("SELECT id FROM admin_users WHERE username = ?").get(adminUsername);
-  const { hash, salt } = hashPassword(adminPassword);
-  if (!existing) {
-    db.prepare("INSERT INTO admin_users (username, password_hash, password_salt) VALUES (?, ?, ?)").run(adminUsername, hash, salt);
-    return;
-  }
-  if (resetAdminPassword) {
-    db.prepare("UPDATE admin_users SET password_hash = ?, password_salt = ? WHERE id = ?").run(hash, salt, existing.id);
-    db.prepare("DELETE FROM sessions WHERE user_id = ?").run(existing.id);
-  }
-}
 
 function loadSeedData() {
   const sandbox = { window: {} };
@@ -72,8 +53,8 @@ function seedContent() {
 
   if (!postCount) {
     const insertPost = db.prepare(`
-      INSERT INTO posts (id, slug, title, category, category_key, excerpt, cover, markdown, read_time, date, publish_status, featured, featured_order, tags)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', ?, ?, ?)
+      INSERT INTO posts (id, slug, title, category, category_key, excerpt, cover, markdown, read_time, date, publish_status, featured, featured_order, tags, created_at, published_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', ?, ?, ?, CURRENT_TIMESTAMP, ?)
     `);
     seed.posts.forEach((post, index) => {
       insertPost.run(
@@ -89,15 +70,16 @@ function seedContent() {
         post.date || "",
         index < 4 ? 1 : 0,
         index + 1,
-        post.tags || ""
+        post.tags || "",
+        post.date || new Date().toISOString()
       );
     });
   }
 
   if (!projectCount) {
     const insertProject = db.prepare(`
-      INSERT INTO projects (id, slug, title, status, status_key, summary, cover, markdown, license, stars, date, visibility_status, version, progress, tags)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO projects (id, slug, title, status, status_key, summary, cover, markdown, license, stars, date, visibility_status, version, progress, tags, created_at, published_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)
     `);
     for (const project of seed.projects) {
       insertProject.run(
@@ -115,7 +97,8 @@ function seedContent() {
         project.statusKey === "online" ? "published" : "draft",
         project.version || "",
         Number(project.progress || 0),
-        project.tags || ""
+        project.tags || "",
+        project.statusKey === "online" ? project.date || new Date().toISOString() : null
       );
     }
   }
@@ -129,6 +112,8 @@ function reconcileSeedContent() {
         featured = CASE WHEN featured = 0 THEN ? ELSE featured END,
         featured_order = CASE WHEN featured_order = 0 THEN ? ELSE featured_order END,
         tags = CASE WHEN tags IS NULL OR tags = '' THEN ? ELSE tags END,
+        created_at = COALESCE(created_at, updated_at, CURRENT_TIMESTAMP),
+        published_at = CASE WHEN publish_status = 'published' THEN COALESCE(published_at, date, updated_at, CURRENT_TIMESTAMP) ELSE published_at END,
         updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
       AND deleted_at IS NULL
@@ -153,6 +138,8 @@ function reconcileSeedContent() {
         version = CASE WHEN version IS NULL OR version = '' THEN ? ELSE version END,
         progress = CASE WHEN progress IS NULL OR progress = 0 THEN ? ELSE progress END,
         tags = CASE WHEN tags IS NULL OR tags = '' THEN ? ELSE tags END,
+        created_at = COALESCE(created_at, updated_at, CURRENT_TIMESTAMP),
+        published_at = CASE WHEN ? = 'online' THEN COALESCE(published_at, date, updated_at, CURRENT_TIMESTAMP) ELSE published_at END,
         updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
       AND deleted_at IS NULL
@@ -166,15 +153,17 @@ function reconcileSeedContent() {
       project.version || "",
       Number(project.progress || 0),
       project.tags || "",
+      project.statusKey,
       project.id
     );
   });
 }
 
-seedAdmin();
+auth.seedAdmin();
 seedContent();
 reconcileSeedContent();
-db.prepare("DELETE FROM sessions WHERE expires_at <= datetime('now')").run();
+contentStore.syncTaxonomyForExistingContent();
+auth.cleanupExpiredSessions();
 
 function json(res, status, payload) {
   const body = JSON.stringify(payload);
@@ -238,21 +227,11 @@ function cookies(req) {
 }
 
 function currentUser(req) {
-  const token = cookies(req).gokottamaker_session;
-  if (!token) return null;
-  return db
-    .prepare(
-      `SELECT admin_users.id, admin_users.username, sessions.csrf_token AS csrfToken
-       FROM sessions
-       JOIN admin_users ON admin_users.id = sessions.user_id
-       WHERE sessions.token = ? AND sessions.expires_at > datetime('now')`
-    )
-    .get(token);
+  return auth.currentUser(cookies(req).gokottamaker_session);
 }
 
 function publicUser(user) {
-  if (!user) return null;
-  return { id: user.id, username: user.username };
+  return auth.publicUser(user);
 }
 
 function requireUser(req, res) {
@@ -472,7 +451,98 @@ function writable(target) {
   }
 }
 
+function fileSize(target) {
+  try {
+    return fs.statSync(target).size;
+  } catch {
+    return 0;
+  }
+}
+
+function directorySummary(target) {
+  const summary = { path: target, exists: false, files: 0, bytes: 0 };
+
+  function walk(current) {
+    let entries = [];
+    try {
+      entries = fs.readdirSync(current, { withFileTypes: true });
+    } catch {
+      return;
+    }
+
+    for (const entry of entries) {
+      const entryPath = path.join(current, entry.name);
+      if (entry.isDirectory()) {
+        walk(entryPath);
+      } else if (entry.isFile()) {
+        summary.files += 1;
+        summary.bytes += fileSize(entryPath);
+      }
+    }
+  }
+
+  try {
+    summary.exists = fs.statSync(target).isDirectory();
+  } catch {
+    return summary;
+  }
+
+  if (summary.exists) walk(target);
+  return summary;
+}
+
+function databaseFilesSummary() {
+  const walPath = `${dbPath}-wal`;
+  const shmPath = `${dbPath}-shm`;
+  return {
+    path: dbPath,
+    exists: fs.existsSync(dbPath),
+    bytes: fileSize(dbPath),
+    walBytes: fileSize(walPath),
+    shmBytes: fileSize(shmPath),
+    totalBytes: fileSize(dbPath) + fileSize(walPath) + fileSize(shmPath)
+  };
+}
+
+function latestBackupSummary() {
+  try {
+    const backups = fs
+      .readdirSync(backupRoot, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => {
+        const backupPath = path.join(backupRoot, entry.name);
+        const stats = fs.statSync(backupPath);
+        return {
+          name: entry.name,
+          path: backupPath,
+          updatedAt: stats.mtime.toISOString(),
+          hasManifest: fs.existsSync(path.join(backupPath, "manifest.txt")),
+          hasChecksums: fs.existsSync(path.join(backupPath, "manifest.sha256"))
+        };
+      })
+      .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+    const latest = backups[0] || null;
+    if (latest) latest.bytes = directorySummary(latest.path).bytes;
+
+    return {
+      root: backupRoot,
+      exists: true,
+      count: backups.length,
+      latest
+    };
+  } catch {
+    return {
+      root: backupRoot,
+      exists: false,
+      count: 0,
+      latest: null
+    };
+  }
+}
+
 function healthPayload({ detailed = false } = {}) {
+  const database = databaseFilesSummary();
+  const uploadsSummary = directorySummary(uploadDir);
   const payload = {
     ok: true,
     name: "GokottaMaker",
@@ -483,7 +553,12 @@ function healthPayload({ detailed = false } = {}) {
     node: process.version,
     uptimeSeconds: Math.round(process.uptime()),
     startedAt: startedAt.toISOString(),
-    serverTime: new Date().toISOString()
+    serverTime: new Date().toISOString(),
+    data: {
+      databaseBytes: database.totalBytes,
+      uploadsBytes: uploadsSummary.bytes,
+      uploadsFiles: uploadsSummary.files
+    }
   };
 
   if (!detailed) return payload;
@@ -495,9 +570,13 @@ function healthPayload({ detailed = false } = {}) {
     dataDir,
     dbPath,
     uploadDir,
+    backupRoot,
     databaseReady: dbReady,
     databaseWritable: writable(dbDir),
     uploadsWritable: writable(uploadDir),
+    database,
+    uploadsStorage: uploadsSummary,
+    backups: latestBackupSummary(),
     publicPosts: allPosts(false).length,
     publicProjects: allProjects(false).length,
     adminPosts: allPosts(true).length,
@@ -543,17 +622,15 @@ async function api(req, res, pathname) {
       return json(res, 429, { error: "登录失败次数过多，请 15 分钟后再试" });
     }
 
-    const user = db.prepare("SELECT * FROM admin_users WHERE username = ?").get(body.username || "");
-    if (!user || !verifyPassword(body.password || "", user.password_salt, user.password_hash)) {
+    const user = auth.findUser(body.username || "");
+    if (!user || !auth.verifyPassword(body.password || "", user.password_salt, user.password_hash)) {
       recordLoginFailure(key);
       logAudit(db, req, user ? { id: user.id, username: user.username } : null, "login_failed", "admin_user", body.username || "", { username: body.username || "" });
       return json(res, 401, { error: "账号或密码不正确" });
     }
 
     loginFailures.delete(key);
-    const token = crypto.randomBytes(32).toString("hex");
-    const csrfToken = crypto.randomBytes(32).toString("hex");
-    db.prepare("INSERT INTO sessions (token, user_id, expires_at, csrf_token) VALUES (?, ?, datetime('now', '+30 days'), ?)").run(token, user.id, csrfToken);
+    const { token, csrfToken } = auth.createSession(user.id);
     res.setHeader("Set-Cookie", cookieHeader(token, req));
     logAudit(db, req, user, "login_success", "admin_user", String(user.id));
     return json(res, 200, { user: { id: user.id, username: user.username }, csrfToken });
@@ -564,7 +641,7 @@ async function api(req, res, pathname) {
     if (!user) return;
     if (!requireCsrf(req, res, user)) return;
     const token = cookies(req).gokottamaker_session;
-    if (token) db.prepare("DELETE FROM sessions WHERE token = ?").run(token);
+    auth.deleteSession(token);
     res.setHeader("Set-Cookie", "gokottamaker_session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0");
     logAudit(db, req, user, "logout", "session", token ? token.slice(0, 8) : "");
     return json(res, 200, { ok: true });
@@ -583,21 +660,21 @@ async function api(req, res, pathname) {
   if (pathname === "/api/uploads" && req.method === "GET") return json(res, 200, { uploads: uploads() });
 
   if (pathname === "/api/posts" && req.method === "POST") {
-    const body = await readBody(req);
+    const body = validatePostPayload(await readBody(req));
     savePost(body);
     logAudit(db, req, user, "post_save", "post", body.id, { publishStatus: body.publishStatus, featured: body.featured });
     return json(res, 200, { posts: allPosts(true) });
   }
 
   if (pathname === "/api/projects" && req.method === "POST") {
-    const body = await readBody(req);
+    const body = validateProjectPayload(await readBody(req));
     saveProject(body);
     logAudit(db, req, user, "project_save", "project", body.id, { visibilityStatus: body.visibilityStatus, statusKey: body.statusKey });
     return json(res, 200, { projects: allProjects(true) });
   }
 
   if (pathname === "/api/uploads" && req.method === "POST") {
-    const body = await readBody(req);
+    const body = validateUploadPayload(await readBody(req));
     const url = saveUpload(body);
     logAudit(db, req, user, "upload_create", "upload", url, { filename: body.filename || "" });
     return json(res, 200, { url, uploads: uploads() });

@@ -349,6 +349,16 @@ button:disabled {
   text-overflow: ellipsis;
 }
 
+.image-meta {
+  display: block;
+  padding: 0 7px 7px;
+  color: #8aa0bb;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .markdown-preview {
   color: var(--ink);
 }
@@ -371,6 +381,80 @@ button:disabled {
   margin-top: 24px;
 }
 
+.library-tools {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) 150px 160px auto;
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fbff;
+}
+
+.bulk-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+}
+
+.bulk-actions span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 760;
+}
+
+.bulk-select-all {
+  min-height: auto;
+}
+
+.health-panel {
+  margin-bottom: 24px;
+}
+
+.health-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.health-card {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fbff;
+}
+
+.health-card strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+
+.health-card p {
+  margin: 4px 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.health-card.is-ok {
+  border-color: rgba(11, 143, 103, 0.2);
+  background: #effaf5;
+}
+
+.health-card.is-bad {
+  border-color: rgba(176, 51, 47, 0.2);
+  background: #fff2f1;
+}
+
 .admin-article-list {
   display: grid;
   gap: 12px;
@@ -378,13 +462,18 @@ button:disabled {
 
 .admin-row {
   display: grid;
-  grid-template-columns: 96px minmax(0, 1fr) auto;
+  grid-template-columns: 24px 96px minmax(0, 1fr) auto;
   gap: 16px;
   align-items: center;
   padding: 14px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: white;
+}
+
+.admin-row-select input {
+  width: 18px;
+  height: 18px;
 }
 
 .admin-row.is-deleted {
@@ -452,6 +541,10 @@ button:disabled {
   }
 
   .admin-row {
+    grid-template-columns: 1fr;
+  }
+
+  .library-tools {
     grid-template-columns: 1fr;
   }
 

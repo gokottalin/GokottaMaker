@@ -126,6 +126,11 @@ http://服务器地址:4173/healthz
 http://服务器地址:4173/api/admin/health
 ```
 
+健康检查字段说明：
+
+- `/healthz` 会返回版本、build、git commit、Node 版本、启动时间、服务时间，以及 `data.databaseBytes`、`data.uploadsBytes`、`data.uploadsFiles`。
+- `/api/admin/health` 会额外返回数据库文件、WAL/SHM 文件大小、uploads 目录统计、最近备份目录、manifest 和 checksum 是否存在。
+
 ### 回滚
 
 如果部署后健康检查失败、服务无法启动，或页面出现明显异常，先查看脚本失败提示中的 `Pre-deploy commit` 和 `Latest backup`。
@@ -182,6 +187,12 @@ PRAGMA integrity_check;
 ```
 
 如果服务器暂时没有 `sqlite3`，脚本会降级为文件复制，并在 manifest 中记录 `skipped-sqlite3-missing`。
+
+生产环境推荐在 `/etc/gokottamaker.env` 中设置备份根目录，供管理员健康检查展示最近备份：
+
+```text
+BACKUP_ROOT=/srv/gokottamaker-backups
+```
 
 ### 恢复数据
 

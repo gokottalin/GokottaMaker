@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GokottaMaker 管理端</title>
     <meta name="robots" content="noindex,nofollow" />
-    <link rel="stylesheet" href="../styles.css?v=20260505-1910" />
-    <link rel="stylesheet" href="./admin.css?v=20260505-1910" />
+    <link rel="stylesheet" href="../styles.css?v=20260505-2016" />
+    <link rel="stylesheet" href="./admin.css?v=20260505-2016" />
   </head>
   <body>
     <main class="admin-shell">
@@ -40,6 +40,7 @@
           <nav>
             <a href="#editor">内容编辑</a>
             <a href="#library">内容列表</a>
+            <a href="#health">系统状态</a>
             <a href="../index.html">访客首页</a>
           </nav>
         </aside>
@@ -191,19 +192,69 @@
               </div>
               <p class="library-note">这里显示主页出现的所有文章和项目。</p>
             </div>
+            <div class="library-tools" aria-label="内容筛选">
+              <label>
+                搜索
+                <input id="contentSearch" type="search" placeholder="搜索标题、摘要、标签、分类" />
+              </label>
+              <label>
+                类型
+                <select id="typeFilter">
+                  <option value="all">全部</option>
+                  <option value="post">文章</option>
+                  <option value="project">项目</option>
+                </select>
+              </label>
+              <label>
+                状态
+                <select id="statusFilter">
+                  <option value="all">全部</option>
+                  <option value="published">已发布</option>
+                  <option value="draft">草稿</option>
+                  <option value="deleted">回收站</option>
+                  <option value="featured">首页轮播</option>
+                </select>
+              </label>
+              <button class="button secondary" id="clearFiltersButton" type="button">清空筛选</button>
+            </div>
+            <div class="bulk-actions" id="bulkActions">
+              <label class="checkbox-field bulk-select-all">
+                <input id="selectAllContent" type="checkbox" />
+                选择当前结果
+              </label>
+              <span id="contentResultCount">0 项内容</span>
+              <span id="selectedCount">已选择 0 项</span>
+              <button class="button secondary" id="bulkPublishButton" type="button">批量发布</button>
+              <button class="button secondary" id="bulkDraftButton" type="button">批量转草稿</button>
+              <button class="button secondary" id="bulkDeleteButton" type="button">批量回收</button>
+              <button class="button secondary" id="bulkRestoreButton" type="button">批量恢复</button>
+            </div>
             <div id="adminContentList" class="admin-article-list"></div>
+          </section>
+
+          <section id="health" class="library-panel health-panel">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Health</p>
+                <h2>系统状态</h2>
+              </div>
+              <button class="button secondary" id="refreshHealthButton" type="button">刷新状态</button>
+            </div>
+            <div id="healthPanel" class="health-grid">
+              <div class="empty-state">登录后会显示服务、数据库、上传目录和备份状态。</div>
+            </div>
           </section>
         </div>
       </section>
     </main>
 
-    <script src="../data/posts.js?v=20260505-1910"></script>
-    <script src="../data/seed.js?v=20260505-1910"></script>
-    <script src="../api/content.js?v=20260505-1910"></script>
-    <script src="../data/content-store.js?v=20260505-1910"></script>
-    <script src="../data/markdown-renderer.js?v=20260505-1910"></script>
-    <script src="./admin.js?v=20260505-1910"></script>
-    <script src="../data/site-meta.js?v=20260505-1910"></script>
-    <script src="../data/footer.js?v=20260505-1910"></script>
+    <script src="../data/posts.js?v=20260505-2016"></script>
+    <script src="../data/seed.js?v=20260505-2016"></script>
+    <script src="../api/content.js?v=20260505-2016"></script>
+    <script src="../data/content-store.js?v=20260505-2016"></script>
+    <script src="../data/markdown-renderer.js?v=20260505-2016"></script>
+    <script src="./admin.js?v=20260505-2016"></script>
+    <script src="../data/site-meta.js?v=20260505-2016"></script>
+    <script src="../data/footer.js?v=20260505-2016"></script>
   </body>
 </html>

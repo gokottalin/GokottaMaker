@@ -6,7 +6,7 @@
     <title>专题分类 | GokottaMaker</title>
     <meta name="description" content="按方向浏览 GokottaMaker 的模拟电子、STM32、ESP32 与开源项目内容。" />
     <link rel="manifest" href="./site.webmanifest" />
-    <link rel="stylesheet" href="./styles.css?v=20260505-1910" />
+    <link rel="stylesheet" href="./styles.css?v=20260505-2016" />
   </head>
   <body>
     <a class="skip-link" href="#mainContent">跳到主要内容</a>
@@ -24,16 +24,19 @@
     </header>
     <main class="site-shell section-row" id="mainContent">
       <div class="section-heading">
-        <h1 id="categoryTitle">专题分类</h1>
+        <div>
+          <h1 id="categoryTitle">专题分类</h1>
+          <p class="category-summary" id="categorySummary"></p>
+        </div>
         <a href="./index.html">返回首页</a>
       </div>
       <div class="tutorial-grid" id="categoryList"></div>
     </main>
-    <script src="./data/posts.js?v=20260505-1910"></script>
-    <script src="./data/seed.js?v=20260505-1910"></script>
-    <script src="./api/content.js?v=20260505-1910"></script>
-    <script src="./data/content-store.js?v=20260505-1910"></script>
-    <script src="./data/media.js?v=20260505-1910"></script>
+    <script src="./data/posts.js?v=20260505-2016"></script>
+    <script src="./data/seed.js?v=20260505-2016"></script>
+    <script src="./api/content.js?v=20260505-2016"></script>
+    <script src="./data/content-store.js?v=20260505-2016"></script>
+    <script src="./data/media.js?v=20260505-2016"></script>
     <script>
       const map = { analog: "模拟电子", stm32: "STM32", esp32: "ESP32", projects: "开源项目" };
       const descriptions = {
@@ -45,29 +48,32 @@
       const key = new URLSearchParams(location.search).get("category") || "analog";
       const category = map[key] || "模拟电子";
       const description = descriptions[key] || descriptions.analog;
+      const escapeHtml = window.GokottaMedia.escapeHtml;
+      const itemUrl = (post) => `./post.html?id=${encodeURIComponent(post.id)}`;
       document.title = `${category} | GokottaMaker`;
       document.querySelector('meta[name="description"]').setAttribute("content", description);
       document.querySelector("#categoryTitle").textContent = category;
       const items = window.GokottaContent.getPosts().filter((post) => post.category === category);
+      document.querySelector("#categorySummary").textContent = `${description} 当前共 ${items.length} 篇内容。`;
       document.querySelector("#categoryList").innerHTML =
         items
           .map(
             (post) => `
               <article class="article-card">
-                <a href="./post.html?id=${post.id}">${window.GokottaMedia.image(post.cover, `${post.title}封面`, { loading: "lazy" })}</a>
+                <a href="${itemUrl(post)}">${window.GokottaMedia.image(post.cover, `${post.title}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 180px" })}</a>
                 <div>
-                  <span class="category-pill">${post.category}</span>
-                  <h3><a href="./post.html?id=${post.id}">${post.title}</a></h3>
-                  <p>${post.excerpt}</p>
-                  <div class="card-footer"><span>${post.readTime}</span><span>${post.date}</span></div>
+                  <span class="category-pill">${escapeHtml(post.category)}</span>
+                  <h3><a href="${itemUrl(post)}">${escapeHtml(post.title)}</a></h3>
+                  <p>${escapeHtml(post.excerpt)}</p>
+                  <div class="card-footer"><span>${escapeHtml(post.readTime)}</span><span>${escapeHtml(post.date)}</span></div>
                 </div>
               </article>
             `
           )
           .join("") || "<div class=\"empty-state\">这个分类还没有文章。</div>";
     </script>
-    <script src="./data/site-meta.js?v=20260505-1910"></script>
-    <script src="./data/footer.js?v=20260505-1910"></script>
+    <script src="./data/site-meta.js?v=20260505-2016"></script>
+    <script src="./data/footer.js?v=20260505-2016"></script>
   </body>
 </html>
 

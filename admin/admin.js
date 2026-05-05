@@ -26,6 +26,19 @@
   const draftStatus = document.querySelector("#draftStatus");
   const draftStatusText = document.querySelector("#draftStatusText");
   const discardDraftButton = document.querySelector("#discardDraftButton");
+  const contentSearch = document.querySelector("#contentSearch");
+  const typeFilter = document.querySelector("#typeFilter");
+  const statusFilter = document.querySelector("#statusFilter");
+  const clearFiltersButton = document.querySelector("#clearFiltersButton");
+  const selectAllContent = document.querySelector("#selectAllContent");
+  const contentResultCount = document.querySelector("#contentResultCount");
+  const selectedCount = document.querySelector("#selectedCount");
+  const bulkPublishButton = document.querySelector("#bulkPublishButton");
+  const bulkDraftButton = document.querySelector("#bulkDraftButton");
+  const bulkDeleteButton = document.querySelector("#bulkDeleteButton");
+  const bulkRestoreButton = document.querySelector("#bulkRestoreButton");
+  const refreshHealthButton = document.querySelector("#refreshHealthButton");
+  const healthPanel = document.querySelector("#healthPanel");
 
   let editingType = null;
   let editingId = null;
@@ -36,6 +49,8 @@
   let isRestoringForm = false;
   let autosaveTimer = 0;
   let lastDraftSavedAt = "";
+  const selectedContent = new Set();
+  const filters = { search: "", type: "all", status: "all" };
 
   async function request(path, options = {}) {
     const method = String(options.method || "GET").toUpperCase();
@@ -137,6 +152,39 @@
     if (src.startsWith("data:") || src.startsWith("http")) return src;
     if (src.startsWith("./")) return `../${src.slice(2)}`;
     return src;
+  }
+
+  function formatBytes(value) {
+    const bytes = Number(value || 0);
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+  }
+
+  function itemKey(item) {
+    return `${item.contentType}:${item.id}`;
+  }
+
+  function publishValue(item) {
+    return item.contentType === "project" ? item.visibilityStatus : item.publishStatus;
+  }
+
+  function searchableText(item) {
+    return [
+      item.title,
+      item.excerpt,
+      item.summary,
+      item.category,
+      item.status,
+      item.license,
+      item.tags,
+      item.date,
+      item.id,
+      item.slug
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
   }
 
   function updateTypeFields() {
@@ -292,18 +340,57 @@
     ];
   }
 
+  function filteredItems() {
+    const query = filters.search.trim().toLowerCase();
+    return combinedItems().filter((item) => {
+      if (filters.type !== "all" && item.contentType !== filters.type) return false;
+      if (filters.status === "published" && (item.deletedAt || publishValue(item) !== "published")) return false;
+      if (filters.status === "draft" && (item.deletedAt || publishValue(item) === "published")) return false;
+      if (filters.status === "deleted" && !item.deletedAt) return false;
+      if (filters.status === "featured" && !item.featured) return false;
+      if (query && !searchableText(item).includes(query)) return false;
+      return true;
+    });
+  }
+
+  function pruneSelection() {
+    const keys = new Set(combinedItems().map(itemKey));
+    [...selectedContent].forEach((key) => {
+      if (!keys.has(key)) selectedContent.delete(key);
+    });
+  }
+
+  function updateBulkState(items = filteredItems()) {
+    pruneSelection();
+    const visibleKeys = items.map(itemKey);
+    const selectedVisible = visibleKeys.filter((key) => selectedContent.has(key));
+    contentResultCount.textContent = `${items.length} 项内容`;
+    selectedCount.textContent = `已选择 ${selectedContent.size} 项`;
+    selectAllContent.checked = visibleKeys.length > 0 && selectedVisible.length === visibleKeys.length;
+    selectAllContent.indeterminate = selectedVisible.length > 0 && selectedVisible.length < visibleKeys.length;
+    const hasSelection = selectedContent.size > 0;
+    [bulkPublishButton, bulkDraftButton, bulkDeleteButton, bulkRestoreButton].forEach((button) => {
+      button.disabled = !hasSelection;
+    });
+  }
+
   function renderList() {
-    const items = combinedItems();
+    const items = filteredItems();
+    updateBulkState(items);
     list.innerHTML =
       items
         .map((item) => {
           const kind = item.contentType === "project" ? "项目" : "文章";
-          const publish = item.contentType === "project" ? item.visibilityStatus : item.publishStatus;
+          const publish = publishValue(item);
           const meta = item.contentType === "project" ? `${item.status} / ${item.license || ""}` : `${item.category} / ${item.readTime || ""}`;
           const tags = item.tags ? ` / ${item.tags}` : "";
           const deleted = Boolean(item.deletedAt);
+          const key = itemKey(item);
           return `
             <article class="admin-row ${deleted ? "is-deleted" : ""}">
+              <label class="admin-row-select" aria-label="选择 ${escapeHtml(item.title)}">
+                <input data-action="select" data-key="${escapeHtml(key)}" type="checkbox" ${selectedContent.has(key) ? "checked" : ""} />
+              </label>
               <img src="${adminSrc(item.cover)}" alt="${escapeHtml(item.title)}封面" />
               <div>
                 <strong>
@@ -325,7 +412,7 @@
             </article>
           `;
         })
-        .join("") || `<div class="empty-state">当前还没有内容。</div>`;
+        .join("") || `<div class="empty-state">没有匹配的内容。</div>`;
   }
 
   function renderImageLibrary(images = []) {
@@ -336,6 +423,7 @@
             <button class="image-choice" type="button" data-cover="${image.url}">
               <img src="${adminSrc(image.url)}" alt="${escapeHtml(image.name)}" />
               <span>${escapeHtml(image.name)}</span>
+              <small class="image-meta">${formatBytes(image.size)} / ${escapeHtml(new Date(image.updatedAt).toLocaleDateString())}</small>
             </button>
           `
         )
@@ -345,6 +433,56 @@
   async function loadImages() {
     const result = await request("/api/uploads");
     renderImageLibrary(result.uploads || []);
+  }
+
+  function healthCard(title, ok, lines) {
+    return `
+      <article class="health-card ${ok ? "is-ok" : "is-bad"}">
+        <strong>${escapeHtml(title)}</strong>
+        ${lines.map((line) => `<p>${escapeHtml(line)}</p>`).join("")}
+      </article>
+    `;
+  }
+
+  function renderHealth(data) {
+    if (!data) {
+      healthPanel.innerHTML = `<div class="empty-state">暂时无法读取系统状态。</div>`;
+      return;
+    }
+    const backup = data.backups?.latest;
+    healthPanel.innerHTML = [
+      healthCard("服务", Boolean(data.ok), [
+        `版本：${data.versionLabel || ""}`,
+        `提交：${data.gitCommit || ""}`,
+        `Node：${data.node || ""}`,
+        `运行：${data.uptimeSeconds || 0} 秒`
+      ]),
+      healthCard("数据库", Boolean(data.databaseReady && data.databaseWritable), [
+        data.databaseReady ? "数据库连接正常" : "数据库连接异常",
+        data.databaseWritable ? "数据库目录可写" : "数据库目录不可写",
+        `体积：${formatBytes(data.database?.totalBytes)}`
+      ]),
+      healthCard("上传目录", Boolean(data.uploadsWritable), [
+        data.uploadsWritable ? "上传目录可写" : "上传目录不可写",
+        `文件：${data.uploadsStorage?.files || 0}`,
+        `体积：${formatBytes(data.uploadsStorage?.bytes)}`
+      ]),
+      healthCard("内容", true, [
+        `公开文章：${data.publicPosts || 0}`,
+        `公开项目：${data.publicProjects || 0}`,
+        `管理端内容：${(data.adminPosts || 0) + (data.adminProjects || 0)}`
+      ]),
+      healthCard("备份", Boolean(data.backups?.exists), [
+        `备份目录：${data.backups?.exists ? "可读取" : "不可读取"}`,
+        `备份数量：${data.backups?.count || 0}`,
+        backup ? `最近备份：${backup.name}` : "最近备份：暂无"
+      ])
+    ].join("");
+  }
+
+  async function loadHealth() {
+    const data = await request("/api/admin/health");
+    renderHealth(data);
   }
 
   function applySnapshotToForm(snapshot, options = {}) {
@@ -470,6 +608,65 @@
     };
   }
 
+  function selectedItems() {
+    const itemMap = new Map(combinedItems().map((item) => [itemKey(item), item]));
+    return [...selectedContent].map((key) => itemMap.get(key)).filter(Boolean);
+  }
+
+  async function saveItemStatus(item, status) {
+    if (item.contentType === "post") {
+      const payload = { ...item, type: "post", publishStatus: status };
+      const result = await request("/api/posts", { method: "POST", body: JSON.stringify(payload) });
+      serverContent = { ...serverContent, posts: result.posts };
+      return;
+    }
+
+    const payload = { ...item, type: "project", visibilityStatus: status };
+    const result = await request("/api/projects", { method: "POST", body: JSON.stringify(payload) });
+    serverContent = { ...serverContent, projects: result.projects };
+  }
+
+  async function mutateItem(item, action) {
+    const collectionKey = item.contentType === "project" ? "projects" : "posts";
+    const basePath = item.contentType === "project" ? "projects" : "posts";
+    let result;
+
+    if (action === "publish") {
+      await saveItemStatus(item, "published");
+      return;
+    }
+    if (action === "draft") {
+      await saveItemStatus(item, "draft");
+      return;
+    }
+    if (action === "delete") {
+      result = await request(`/api/${basePath}/${encodeURIComponent(item.id)}`, { method: "DELETE" });
+    }
+    if (action === "restore") {
+      result = await request(`/api/${basePath}/${encodeURIComponent(item.id)}/restore`, { method: "POST", body: "{}" });
+    }
+    if (result) serverContent = { ...serverContent, [collectionKey]: result[collectionKey] };
+  }
+
+  async function runBulkAction(action, button, label, confirmMessage) {
+    const items = selectedItems();
+    if (!items.length) {
+      setNotice("请先选择内容。", "warning");
+      return;
+    }
+    if (confirmMessage && !window.confirm(confirmMessage.replace("{count}", items.length))) return;
+
+    await withBusy(button, label, async () => {
+      for (const item of items) {
+        await mutateItem(item, action);
+      }
+      selectedContent.clear();
+      renderList();
+      setNotice(`批量操作完成：${items.length} 项。`, "success");
+    });
+    updateBulkState();
+  }
+
   loginForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const submitButton = loginForm.querySelector("button[type='submit']");
@@ -482,6 +679,7 @@
         csrfToken = login.csrfToken || csrfToken;
         await loadServerContent();
         await loadImages();
+        await loadHealth().catch(() => {});
         setNotice("");
         saveLogin(username);
         setLoggedIn(true);
@@ -545,6 +743,69 @@
     });
   });
 
+  refreshHealthButton.addEventListener("click", () => {
+    withBusy(refreshHealthButton, "刷新中...", async () => {
+      try {
+        await loadHealth();
+        setNotice("系统状态已刷新。", "success");
+      } catch (error) {
+        renderHealth(null);
+        setNotice(error.message, "error");
+      }
+    });
+  });
+
+  contentSearch.addEventListener("input", () => {
+    filters.search = contentSearch.value;
+    renderList();
+  });
+
+  typeFilter.addEventListener("change", () => {
+    filters.type = typeFilter.value;
+    renderList();
+  });
+
+  statusFilter.addEventListener("change", () => {
+    filters.status = statusFilter.value;
+    renderList();
+  });
+
+  clearFiltersButton.addEventListener("click", () => {
+    filters.search = "";
+    filters.type = "all";
+    filters.status = "all";
+    contentSearch.value = "";
+    typeFilter.value = "all";
+    statusFilter.value = "all";
+    renderList();
+  });
+
+  selectAllContent.addEventListener("change", () => {
+    const items = filteredItems();
+    if (selectAllContent.checked) {
+      items.forEach((item) => selectedContent.add(itemKey(item)));
+    } else {
+      items.forEach((item) => selectedContent.delete(itemKey(item)));
+    }
+    renderList();
+  });
+
+  bulkPublishButton.addEventListener("click", () => {
+    runBulkAction("publish", bulkPublishButton, "发布中...", "确认发布已选择的 {count} 项内容吗？").catch((error) => setNotice(error.message, "error"));
+  });
+
+  bulkDraftButton.addEventListener("click", () => {
+    runBulkAction("draft", bulkDraftButton, "转草稿中...", "确认将已选择的 {count} 项内容转为草稿吗？").catch((error) => setNotice(error.message, "error"));
+  });
+
+  bulkDeleteButton.addEventListener("click", () => {
+    runBulkAction("delete", bulkDeleteButton, "回收中...", "确认将已选择的 {count} 项内容移入回收站吗？").catch((error) => setNotice(error.message, "error"));
+  });
+
+  bulkRestoreButton.addEventListener("click", () => {
+    runBulkAction("restore", bulkRestoreButton, "恢复中...", "确认恢复已选择的 {count} 项内容吗？").catch((error) => setNotice(error.message, "error"));
+  });
+
   contentForm.addEventListener("input", () => {
     markDirty();
     updatePreview();
@@ -559,6 +820,10 @@
     const button = event.target.closest("[data-cover]");
     if (!button) return;
     setCover(button.dataset.cover, "已从图片库选择封面");
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(button.dataset.cover).catch(() => {});
+    }
+    setNotice("已选择图片，并复制图片路径。", "success");
   });
 
   markdownFile.addEventListener("change", async () => {
@@ -612,6 +877,14 @@
   });
 
   list.addEventListener("click", (event) => {
+    const checkbox = event.target.closest("input[data-action='select']");
+    if (checkbox) {
+      if (checkbox.checked) selectedContent.add(checkbox.dataset.key);
+      else selectedContent.delete(checkbox.dataset.key);
+      updateBulkState(filteredItems());
+      return;
+    }
+
     const button = event.target.closest("button[data-action]");
     if (!button) return;
     const type = button.dataset.type;
@@ -666,6 +939,7 @@
     if (loggedIn) {
       await loadServerContent();
       await loadImages();
+      await loadHealth().catch(() => {});
       restoreDraftIfNeeded();
     } else {
       updateDraftStatus();
