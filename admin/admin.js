@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   const savedLoginKey = "gokottamaker_admin_saved_login";
   const draftKey = "gokottamaker_admin_autodraft_v1";
   const sidebarStateKey = "gokottamaker_admin_sidebar_collapsed";
@@ -41,6 +41,9 @@
   const selectAllContent = document.querySelector("#selectAllContent");
   const contentResultCount = document.querySelector("#contentResultCount");
   const selectedCount = document.querySelector("#selectedCount");
+  const recentContentList = document.querySelector("#recentContentList");
+  const adminViews = [...document.querySelectorAll("[data-admin-view]")];
+  const adminNavLinks = [...document.querySelectorAll("[data-admin-nav]")];
   const bulkPublishButton = document.querySelector("#bulkPublishButton");
   const bulkDraftButton = document.querySelector("#bulkDraftButton");
   const bulkDeleteButton = document.querySelector("#bulkDeleteButton");
@@ -143,7 +146,7 @@
     if (!button) return;
     if (busy) {
       button.dataset.idleText = button.textContent;
-      button.textContent = label || "处理中...";
+      button.textContent = label || "澶勭悊涓?..";
       button.disabled = true;
     } else {
       button.textContent = button.dataset.idleText || button.textContent;
@@ -414,6 +417,37 @@
     });
   }
 
+  function itemTimestamp(item) {
+    return Date.parse(item.updatedAt || item.createdAt || item.date || "") || 0;
+  }
+
+  function recentItems(limit = 4) {
+    return combinedItems()
+      .filter((item) => !item.deletedAt)
+      .sort((a, b) => itemTimestamp(b) - itemTimestamp(a))
+      .slice(0, limit);
+  }
+
+  function renderRecentContent() {
+    if (!recentContentList) return;
+    recentContentList.innerHTML =
+      recentItems()
+        .map((item) => {
+          const kind = item.contentType === "project" ? "项目" : "文章";
+          const publish = publishValue(item) === "published" ? "已发布" : "草稿";
+          const meta = item.contentType === "project" ? item.status || "项目" : item.category || "文章";
+          return `
+            <article class="admin-recommendation-card">
+              <span>${kind} / ${escapeHtml(publish)} / ${escapeHtml(meta)}</span>
+              <strong>${escapeHtml(item.title || "未命名内容")}</strong>
+              <p>${escapeHtml(item.date || "暂无日期")}</p>
+              <button class="button secondary" data-action="edit" data-type="${item.contentType}" data-id="${item.id}" type="button">编辑</button>
+            </article>
+          `;
+        })
+        .join("") || `<div class="empty-state">暂无可推荐内容。</div>`;
+  }
+
   function renderList() {
     const items = filteredItems();
     updateBulkState(items);
@@ -422,7 +456,7 @@
         .map((item) => {
           const kind = item.contentType === "project" ? "项目" : "文章";
           const publish = publishValue(item);
-          const meta = item.contentType === "project" ? `${item.status} / ${item.license || ""}` : `${item.category} / ${item.readTime || ""}`;
+          const meta = item.contentType === "project" ? `${item.status || ""} / ${item.license || ""}` : `${item.category || ""} / ${item.readTime || ""}`;
           const tags = item.tags ? ` / ${item.tags}` : "";
           const deleted = Boolean(item.deletedAt);
           const key = itemKey(item);
@@ -453,8 +487,8 @@
           `;
         })
         .join("") || `<div class="empty-state">没有匹配的内容。</div>`;
+    renderRecentContent();
   }
-
   function renderImageLibrary(images = []) {
     imageLibrary.innerHTML =
       images
@@ -467,7 +501,7 @@
             </button>
           `
         )
-        .join("") || `<div class="empty-state">还没有上传图片。</div>`;
+        .join("") || `<div class="empty-state">杩樻病鏈変笂浼犲浘鐗囥€?/div>`;
   }
 
   async function loadImages() {
@@ -519,7 +553,6 @@
       ])
     ].join("");
   }
-
   async function loadHealth() {
     const data = await request("/api/admin/health");
     renderHealth(data);
@@ -701,10 +734,25 @@
         await mutateItem(item, action);
       }
       selectedContent.clear();
-      renderList();
+      renderList(); renderRecentContent();
       setNotice(`批量操作完成：${items.length} 项。`, "success");
     });
     updateBulkState();
+  }
+  function currentAdminView() {
+    const view = (window.location.hash || "#editor").replace("#", "");
+    return ["editor", "library", "health"].includes(view) ? view : "editor";
+  }
+
+  function setAdminView(view = currentAdminView()) {
+    adminViews.forEach((section) => {
+      section.hidden = section.dataset.adminView !== view;
+    });
+    adminNavLinks.forEach((link) => {
+      link.classList.toggle("is-active", link.dataset.adminNav === view);
+    });
+    if (view === "health") loadHealth().catch(() => renderHealth(null));
+    if (view === "editor") renderRecentContent();
   }
 
   loginForm.addEventListener("submit", (event) => {
@@ -723,7 +771,8 @@
         setNotice("");
         saveLogin(username);
         setLoggedIn(true);
-        renderList();
+        renderList(); renderRecentContent();
+        setAdminView();
         restoreDraftIfNeeded();
       } catch (error) {
         loginNotice.textContent = error.message;
@@ -819,17 +868,17 @@
 
   contentSearch.addEventListener("input", () => {
     filters.search = contentSearch.value;
-    renderList();
+    renderList(); renderRecentContent();
   });
 
   typeFilter.addEventListener("change", () => {
     filters.type = typeFilter.value;
-    renderList();
+    renderList(); renderRecentContent();
   });
 
   statusFilter.addEventListener("change", () => {
     filters.status = statusFilter.value;
-    renderList();
+    renderList(); renderRecentContent();
   });
 
   clearFiltersButton.addEventListener("click", () => {
@@ -839,7 +888,7 @@
     contentSearch.value = "";
     typeFilter.value = "all";
     statusFilter.value = "all";
-    renderList();
+    renderList(); renderRecentContent();
   });
 
   selectAllContent.addEventListener("change", () => {
@@ -849,7 +898,7 @@
     } else {
       items.forEach((item) => selectedContent.delete(itemKey(item)));
     }
-    renderList();
+    renderList(); renderRecentContent();
   });
 
   bulkPublishButton.addEventListener("click", () => {
@@ -867,6 +916,15 @@
   bulkRestoreButton.addEventListener("click", () => {
     runBulkAction("restore", bulkRestoreButton, "恢复中...", "确认恢复已选择的 {count} 项内容吗？").catch((error) => setNotice(error.message, "error"));
   });
+
+  recentContentList.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-action='edit']");
+    if (!button) return;
+    const item = combinedItems().find((entry) => entry.contentType === button.dataset.type && entry.id === button.dataset.id);
+    if (item) applyItemToForm(button.dataset.type, item);
+  });
+
+  window.addEventListener("hashchange", () => setAdminView());
 
   contentForm.addEventListener("input", () => {
     markDirty();
@@ -929,7 +987,7 @@
         serverContent = { ...serverContent, [collectionKey]: result[collectionKey] };
         clearDraft();
         resetForm();
-        renderList();
+        renderList(); renderRecentContent();
         setNotice(`保存成功：${payload.title || "未命名内容"}。`, "success");
       } catch (error) {
         saveDraft();
@@ -978,13 +1036,12 @@
           serverContent = { ...serverContent, [collectionKey]: result[collectionKey] };
           setNotice("内容已永久删除。", "success");
         }
-        renderList();
+        renderList(); renderRecentContent();
       } catch (error) {
         setNotice(error.message, "error");
       }
     });
   });
-
   window.addEventListener("beforeunload", (event) => {
     if (!isDirty) return;
     saveDraft();
@@ -1012,6 +1069,7 @@
     }
     updateTypeFields();
     updatePreview();
-    renderList();
+    renderList(); renderRecentContent();
+    setAdminView();
   })();
 })();

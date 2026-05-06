@@ -378,6 +378,8 @@ button:disabled {
   z-index: auto;
   max-height: none;
   margin-bottom: 28px;
+  min-height: calc(100vh - 210px);
+  padding-right: min(520px, 44vw);
 }
 
 .dashboard.is-sidebar-collapsed .editor-dock {
@@ -385,12 +387,13 @@ button:disabled {
 }
 
 .editor-dock-panel {
+  display: contents;
   max-height: none;
-  padding: 20px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: var(--shadow);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .editor-dock-toolbar {
@@ -446,10 +449,7 @@ button:disabled {
 }
 
 .editor-grid {
-  display: grid;
-  grid-template-columns: minmax(520px, 0.92fr) minmax(520px, 1.08fr);
-  gap: 24px;
-  align-items: start;
+  display: block;
   max-height: none;
   overflow: visible;
 }
@@ -471,9 +471,23 @@ button:disabled {
   overflow: auto;
 }
 
+.editor-form {
+  position: fixed;
+  top: 126px;
+  right: 24px;
+  bottom: 24px;
+  z-index: 25;
+  width: min(500px, calc(100vw - 48px));
+  max-height: calc(100vh - 150px);
+  overflow: auto;
+  border-color: rgba(13, 111, 211, 0.18);
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 24px 60px rgba(15, 35, 70, 0.18);
+}
+
 .preview-panel {
-  position: sticky;
-  top: 112px;
+  position: relative;
+  top: auto;
   min-height: calc(100vh - 150px);
   padding: 0;
 }
@@ -688,6 +702,41 @@ button:disabled {
   box-shadow: none;
 }
 
+.editor-recommendations {
+  margin-right: min(520px, 44vw);
+}
+
+.admin-recommendation-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.admin-recommendation-card {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fbff;
+}
+
+.admin-recommendation-card strong {
+  color: var(--ink);
+}
+
+.admin-recommendation-card span,
+.admin-recommendation-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.admin-sidebar nav a.is-active {
+  background: #edf6ff;
+  color: var(--blue);
+}
+
 .library-panel {
   margin-top: 24px;
 }
@@ -830,12 +879,13 @@ button:disabled {
   justify-content: end;
 }
 
-@media (max-width: 1180px) {
+@media (max-width: 900px) {
   .admin-main {
     padding: 28px;
   }
 
   .editor-dock {
+    padding-right: 0;
     max-height: none;
   }
 
@@ -849,8 +899,14 @@ button:disabled {
     max-height: none;
   }
 
+  .editor-form {
+    position: static;
+    width: auto;
+    margin-bottom: 18px;
+    max-height: none;
+  }
+
   .editor-grid {
-    grid-template-columns: 1fr;
     max-height: none;
     overflow: visible;
   }
@@ -858,6 +914,10 @@ button:disabled {
   .preview-panel {
     position: static;
     min-height: 0;
+  }
+
+  .editor-recommendations {
+    margin-right: 0;
   }
 }
 

@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GokottaMaker 管理端</title>
     <meta name="robots" content="noindex,nofollow" />
-    <link rel="stylesheet" href="../styles.css?v=20260506-0748" />
-    <link rel="stylesheet" href="./admin.css?v=20260506-0748" />
+    <link rel="stylesheet" href="../styles.css?v=20260506-0913" />
+    <link rel="stylesheet" href="./admin.css?v=20260506-0913" />
   </head>
   <body>
     <main class="admin-shell">
@@ -43,12 +43,12 @@
           <nav class="admin-nav">
             <div class="nav-group">
               <span>内容工作台</span>
-              <a href="#editor" data-short="编">内容编辑</a>
-              <a href="#library" data-short="列">内容列表</a>
+              <a href="#editor" data-admin-nav="editor" data-short="编">内容编辑</a>
+              <a href="#library" data-admin-nav="library" data-short="列">内容列表</a>
             </div>
             <div class="nav-group">
               <span>系统与访问</span>
-              <a href="#health" data-short="状">系统状态</a>
+              <a href="#health" data-admin-nav="health" data-short="状">系统状态</a>
               <a href="../index.html" data-short="首">访客首页</a>
             </div>
           </nav>
@@ -67,7 +67,7 @@
           </header>
           <p class="notice admin-notice" id="adminNotice" role="status" aria-live="polite"></p>
 
-          <section class="editor-dock" id="editor">
+          <section class="editor-dock admin-view" id="editor" data-admin-view="editor">
             <button class="editor-dock-handle" id="editorDockHandle" type="button" aria-expanded="true">
               <span>内容编辑器</span>
               <strong id="editorDockState">展开</strong>
@@ -211,7 +211,18 @@
             </div>
           </section>
 
-          <section id="library" class="library-panel">
+          <section class="library-panel editor-recommendations admin-view" id="editorRecommendations" data-admin-view="editor">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Recent Picks</p>
+                <h2>最近编辑内容</h2>
+              </div>
+              <a class="button secondary" href="#library">进入内容列表</a>
+            </div>
+            <div id="recentContentList" class="admin-recommendation-list"></div>
+          </section>
+
+          <section id="library" class="library-panel admin-view" data-admin-view="library" hidden>
             <div class="section-heading">
               <div>
                 <p class="eyebrow">Library</p>
@@ -259,7 +270,7 @@
             <div id="adminContentList" class="admin-article-list"></div>
           </section>
 
-          <section id="health" class="library-panel health-panel">
+          <section id="health" class="library-panel health-panel admin-view" data-admin-view="health" hidden>
             <div class="section-heading">
               <div>
                 <p class="eyebrow">Health</p>
@@ -275,13 +286,13 @@
       </section>
     </main>
 
-    <script src="../data/posts.js?v=20260506-0748"></script>
-    <script src="../data/seed.js?v=20260506-0748"></script>
-    <script src="../api/content.js?v=20260506-0748"></script>
-    <script src="../data/content-store.js?v=20260506-0748"></script>
-    <script src="../data/markdown-renderer.js?v=20260506-0748"></script>
-    <script src="./admin.js?v=20260506-0748"></script>
-    <script src="../data/site-meta.js?v=20260506-0748"></script>
-    <script src="../data/footer.js?v=20260506-0748"></script>
+    <script src="../data/posts.js?v=20260506-0913"></script>
+    <script src="../data/seed.js?v=20260506-0913"></script>
+    <script src="../api/content.js?v=20260506-0913"></script>
+    <script src="../data/content-store.js?v=20260506-0913"></script>
+    <script src="../data/markdown-renderer.js?v=20260506-0913"></script>
+    <script src="./admin.js?v=20260506-0913"></script>
+    <script src="../data/site-meta.js?v=20260506-0913"></script>
+    <script src="../data/footer.js?v=20260506-0913"></script>
   </body>
 </html>
