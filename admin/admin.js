@@ -197,6 +197,16 @@
     return src;
   }
 
+  function fallbackCover(item) {
+    if (item.cover) return item.cover;
+    if (item.contentType === "project") return "./assets/covers/project-cover.png";
+    const key = categoryKey(item.category || "");
+    if (key === "stm32") return "./assets/covers/stm32-cover.png";
+    if (key === "esp32") return "./assets/covers/esp32-cover.png";
+    if (key === "projects") return "./assets/covers/project-cover.png";
+    return "./assets/covers/analog-cover.png";
+  }
+
   function formatBytes(value) {
     const bytes = Number(value || 0);
     if (bytes < 1024) return `${bytes} B`;
@@ -436,12 +446,16 @@
           const kind = item.contentType === "project" ? "项目" : "文章";
           const publish = publishValue(item) === "published" ? "已发布" : "草稿";
           const meta = item.contentType === "project" ? item.status || "项目" : item.category || "文章";
+          const cover = fallbackCover(item);
           return `
             <article class="admin-recommendation-card">
-              <span>${kind} / ${escapeHtml(publish)} / ${escapeHtml(meta)}</span>
-              <strong>${escapeHtml(item.title || "未命名内容")}</strong>
-              <p>${escapeHtml(item.date || "暂无日期")}</p>
-              <button class="button secondary" data-action="edit" data-type="${item.contentType}" data-id="${item.id}" type="button">编辑</button>
+              <img src="${adminSrc(cover)}" alt="${escapeHtml(item.title || "未命名内容")}封面" />
+              <div class="admin-recommendation-body">
+                <span>${kind} / ${escapeHtml(publish)} / ${escapeHtml(meta)}</span>
+                <strong>${escapeHtml(item.title || "未命名内容")}</strong>
+                <p>${escapeHtml(item.date || "暂无日期")}</p>
+                <button class="button secondary" data-action="edit" data-type="${item.contentType}" data-id="${item.id}" type="button">编辑</button>
+              </div>
             </article>
           `;
         })

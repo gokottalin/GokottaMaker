@@ -714,11 +714,29 @@ button:disabled {
 
 .admin-recommendation-card {
   display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  align-items: stretch;
   gap: 8px;
   padding: 14px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: #f8fbff;
+}
+
+.admin-recommendation-card > img {
+  width: 100%;
+  height: 100%;
+  min-height: 118px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  object-fit: cover;
+  background: #dcecff;
+}
+
+.admin-recommendation-body {
+  display: grid;
+  min-width: 0;
+  gap: 8px;
 }
 
 .admin-recommendation-card strong {
@@ -980,6 +998,16 @@ button:disabled {
 
   .preview-panel .markdown-preview {
     padding: 24px 18px;
+  }
+
+  .admin-recommendation-card {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-recommendation-card > img {
+    aspect-ratio: 16 / 9;
+    height: auto;
+    min-height: 0;
   }
 
   .admin-row {

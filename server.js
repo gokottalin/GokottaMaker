@@ -30,8 +30,8 @@ const db = createDatabase({ root, dataDir, dbDir, dbPath, uploadDir });
 const contentStore = createContentStore(db);
 const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword });
 
-const siteVersion = "V2.1.0";
-const siteBuild = "20260506-0913";
+const siteVersion = "V2.1.1";
+const siteBuild = "20260506-1205";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
 
