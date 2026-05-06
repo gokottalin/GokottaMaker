@@ -25,20 +25,34 @@
   content: "";
   position: fixed;
   top: 24vh;
-  width: 156px;
-  height: 156px;
-  border: 2px solid rgba(13, 111, 211, 0.2);
-  border-radius: 26px;
+  width: 170px;
+  height: 150px;
+  display: grid;
+  place-items: center;
+  border: 2px solid rgba(13, 111, 211, 0.32);
+  border-radius: 18px;
   background:
-    radial-gradient(circle at 38% 42%, #0b1220 0 5px, transparent 6px),
-    radial-gradient(circle at 62% 42%, #0b1220 0 5px, transparent 6px),
-    radial-gradient(ellipse at 50% 63%, transparent 0 10px, #0d6fd3 11px 13px, transparent 14px),
-    linear-gradient(90deg, transparent 0 8px, rgba(13, 111, 211, 0.42) 9px 14px, transparent 15px calc(100% - 15px), rgba(13, 111, 211, 0.42) calc(100% - 14px) calc(100% - 9px), transparent calc(100% - 8px)),
-    linear-gradient(0deg, transparent 0 10px, rgba(13, 111, 211, 0.26) 11px 16px, transparent 17px calc(100% - 17px), rgba(13, 111, 211, 0.26) calc(100% - 16px) calc(100% - 11px), transparent calc(100% - 10px)),
-    linear-gradient(145deg, #ffffff, #eaf5ff);
+    radial-gradient(circle at 39% 42%, #0b1220 0 5px, transparent 6px),
+    radial-gradient(circle at 61% 42%, #0b1220 0 5px, transparent 6px),
+    radial-gradient(ellipse at 50% 62%, transparent 0 10px, #0d6fd3 11px 13px, transparent 14px),
+    linear-gradient(90deg, rgba(12, 30, 54, 0.98), rgba(23, 59, 94, 0.98)),
+    repeating-linear-gradient(90deg, transparent 0 18px, rgba(255, 255, 255, 0.05) 19px 20px);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    -18px 16px 0 -12px #8eb6dc,
+    -18px 44px 0 -12px #8eb6dc,
+    -18px 72px 0 -12px #8eb6dc,
+    -18px 100px 0 -12px #8eb6dc,
+    18px 16px 0 -12px #8eb6dc,
+    18px 44px 0 -12px #8eb6dc,
+    18px 72px 0 -12px #8eb6dc,
+    18px 100px 0 -12px #8eb6dc,
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -24px 42px rgba(0, 0, 0, 0.24),
     0 24px 48px rgba(13, 111, 211, 0.16);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 18px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
   pointer-events: none;
   transition:
     transform 260ms ease,
@@ -48,19 +62,23 @@
 }
 
 .login-panel::before {
+  content: "SOP-8";
   left: max(24px, calc(50vw - 520px));
   transform: rotate(-5deg);
 }
 
 .login-panel::after {
+  content: "ESP32";
   right: max(24px, calc(50vw - 520px));
-  border-radius: 999px 999px 28px 28px;
+  width: 184px;
+  height: 154px;
+  border-radius: 20px;
   background:
-    radial-gradient(circle at 38% 42%, #0b1220 0 5px, transparent 6px),
-    radial-gradient(circle at 62% 42%, #0b1220 0 5px, transparent 6px),
+    radial-gradient(circle at 39% 42%, #0b1220 0 5px, transparent 6px),
+    radial-gradient(circle at 61% 42%, #0b1220 0 5px, transparent 6px),
     radial-gradient(ellipse at 50% 64%, transparent 0 10px, #16a376 11px 13px, transparent 14px),
-    linear-gradient(90deg, transparent 0 20px, rgba(22, 163, 118, 0.34) 21px 27px, transparent 28px calc(100% - 28px), rgba(22, 163, 118, 0.34) calc(100% - 27px) calc(100% - 21px), transparent calc(100% - 20px)),
-    linear-gradient(180deg, #ffffff, #eefaf6);
+    linear-gradient(90deg, rgba(9, 45, 68, 0.98), rgba(16, 92, 124, 0.98)),
+    repeating-linear-gradient(0deg, transparent 0 20px, rgba(255, 255, 255, 0.05) 21px 22px);
   transform: rotate(6deg);
   animation-delay: -1.8s;
 }
@@ -74,13 +92,12 @@
 
 .login-panel.is-password-active::before {
   background:
-    linear-gradient(18deg, transparent 0 31%, rgba(13, 111, 211, 0.78) 32% 39%, transparent 40%),
-    linear-gradient(-18deg, transparent 0 31%, rgba(13, 111, 211, 0.78) 32% 39%, transparent 40%),
-    radial-gradient(ellipse at 38% 43%, transparent 0 7px, #0b1220 8px 10px, transparent 11px),
-    radial-gradient(ellipse at 62% 43%, transparent 0 7px, #0b1220 8px 10px, transparent 11px),
+    linear-gradient(18deg, transparent 0 29%, rgba(139, 184, 225, 0.9) 30% 37%, transparent 38%),
+    linear-gradient(-18deg, transparent 0 29%, rgba(139, 184, 225, 0.9) 30% 37%, transparent 38%),
+    radial-gradient(ellipse at 39% 43%, transparent 0 7px, #dbeafe 8px 10px, transparent 11px),
+    radial-gradient(ellipse at 61% 43%, transparent 0 7px, #dbeafe 8px 10px, transparent 11px),
     radial-gradient(ellipse at 50% 66%, transparent 0 8px, #0d6fd3 9px 11px, transparent 12px),
-    linear-gradient(90deg, transparent 0 8px, rgba(13, 111, 211, 0.42) 9px 14px, transparent 15px calc(100% - 15px), rgba(13, 111, 211, 0.42) calc(100% - 14px) calc(100% - 9px), transparent calc(100% - 8px)),
-    linear-gradient(145deg, #ffffff, #eaf5ff);
+    linear-gradient(90deg, rgba(12, 30, 54, 0.98), rgba(23, 59, 94, 0.98));
 }
 
 @keyframes component-float {
@@ -110,13 +127,12 @@
 
 .login-panel.is-password-active::after {
   background:
-    radial-gradient(ellipse at 38% 43%, transparent 0 7px, #0b1220 8px 10px, transparent 11px),
-    radial-gradient(ellipse at 62% 43%, transparent 0 7px, #0b1220 8px 10px, transparent 11px),
-    linear-gradient(18deg, transparent 0 31%, rgba(22, 163, 118, 0.76) 32% 39%, transparent 40%),
-    linear-gradient(-18deg, transparent 0 31%, rgba(22, 163, 118, 0.76) 32% 39%, transparent 40%),
+    radial-gradient(ellipse at 39% 43%, transparent 0 7px, #dbeafe 8px 10px, transparent 11px),
+    radial-gradient(ellipse at 61% 43%, transparent 0 7px, #dbeafe 8px 10px, transparent 11px),
+    linear-gradient(18deg, transparent 0 29%, rgba(126, 211, 173, 0.86) 30% 37%, transparent 38%),
+    linear-gradient(-18deg, transparent 0 29%, rgba(126, 211, 173, 0.86) 30% 37%, transparent 38%),
     radial-gradient(ellipse at 50% 66%, transparent 0 8px, #16a376 9px 11px, transparent 12px),
-    linear-gradient(90deg, transparent 0 20px, rgba(22, 163, 118, 0.34) 21px 27px, transparent 28px calc(100% - 28px), rgba(22, 163, 118, 0.34) calc(100% - 27px) calc(100% - 21px), transparent calc(100% - 20px)),
-    linear-gradient(180deg, #ffffff, #eefaf6);
+    linear-gradient(90deg, rgba(9, 45, 68, 0.98), rgba(16, 92, 124, 0.98));
 }
 
 .admin-login-brand .brand-symbol,
@@ -246,83 +262,100 @@ button:disabled {
 
 .dashboard {
   min-height: 100vh;
-  display: grid;
-  grid-template-columns: 300px minmax(0, 1fr);
+  display: block;
 }
 
 .dashboard.is-sidebar-collapsed {
-  grid-template-columns: 88px minmax(0, 1fr);
+  display: block;
 }
 
 .admin-sidebar {
   position: sticky;
   top: 0;
-  height: 100vh;
-  padding: 28px;
-  border-right: 1px solid var(--line);
-  background: #f5f9ff;
+  z-index: 30;
+  min-height: 86px;
+  height: auto;
+  padding: 16px 32px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 28px;
+  align-items: center;
+  border-right: 0;
+  border-bottom: 1px solid var(--line);
+  background: rgba(245, 249, 255, 0.94);
+  backdrop-filter: blur(18px);
 }
 
 .sidebar-toggle {
-  position: absolute;
-  top: 18px;
-  right: 14px;
-  width: 34px;
-  height: 34px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: white;
-  color: var(--blue);
-  font-size: 24px;
-  line-height: 1;
-  font-weight: 900;
-}
-
-.dashboard.is-sidebar-collapsed .admin-sidebar {
-  padding: 22px 16px;
-}
-
-.dashboard.is-sidebar-collapsed .admin-sidebar .brand span {
   display: none;
 }
 
-.admin-sidebar nav {
-  display: grid;
-  gap: 12px;
-  margin-top: 48px;
+.dashboard.is-sidebar-collapsed .admin-sidebar {
+  padding: 16px 32px;
+}
+
+.dashboard.is-sidebar-collapsed .admin-sidebar .brand span {
+  display: inline;
+}
+
+.admin-sidebar nav,
+.admin-nav {
+  display: flex;
+  justify-content: flex-end;
+  align-items: stretch;
+  gap: 16px;
+  margin-top: 0;
+  min-width: 0;
+}
+
+.nav-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px;
+  border: 1px solid #d9e6f4;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.74);
+}
+
+.nav-group > span {
+  padding: 0 8px;
+  color: #8096b0;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
 }
 
 .admin-sidebar nav a {
-  padding: 12px 14px;
-  border-radius: 8px;
-  color: var(--muted);
-  font-weight: 760;
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 7px;
+  color: #344b68;
+  font-weight: 840;
+  white-space: nowrap;
 }
 
 .dashboard.is-sidebar-collapsed .admin-sidebar nav a {
-  position: relative;
-  width: 48px;
-  height: 48px;
-  padding: 0;
-  display: grid;
-  place-items: center;
-  font-size: 0;
+  width: auto;
+  height: auto;
+  padding: 0 14px;
+  display: inline-flex;
+  font-size: 15px;
 }
 
 .dashboard.is-sidebar-collapsed .admin-sidebar nav a::before {
-  content: attr(data-short);
-  color: var(--blue);
-  font-size: 15px;
-  font-weight: 950;
+  content: none;
 }
 
 .admin-sidebar nav a:hover {
-  background: white;
+  background: #edf6ff;
   color: var(--blue);
 }
 
 .admin-main {
-  padding: 32px 32px 42vh;
+  padding: 32px;
 }
 
 .admin-topbar {
@@ -341,25 +374,23 @@ button:disabled {
 }
 
 .editor-dock {
-  position: fixed;
-  right: 24px;
-  bottom: 18px;
-  left: 324px;
-  z-index: 20;
-  max-height: 38vh;
+  position: static;
+  z-index: auto;
+  max-height: none;
+  margin-bottom: 28px;
 }
 
 .dashboard.is-sidebar-collapsed .editor-dock {
-  left: 112px;
+  left: auto;
 }
 
 .editor-dock-panel {
-  max-height: 38vh;
-  padding: 14px;
+  max-height: none;
+  padding: 20px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.16);
+  box-shadow: var(--shadow);
 }
 
 .editor-dock-toolbar {
@@ -373,6 +404,10 @@ button:disabled {
 .editor-dock-toolbar h2 {
   margin: 0;
   font-size: 22px;
+}
+
+#editorDockToggle {
+  display: none;
 }
 
 .editor-dock-handle {
@@ -403,20 +438,20 @@ button:disabled {
 }
 
 .editor-dock.is-collapsed .editor-dock-panel {
-  display: none;
+  display: block;
 }
 
 .editor-dock.is-collapsed .editor-dock-handle {
-  display: block;
+  display: none;
 }
 
 .editor-grid {
   display: grid;
-  grid-template-columns: minmax(420px, 0.95fr) minmax(380px, 1fr);
+  grid-template-columns: minmax(520px, 0.92fr) minmax(520px, 1.08fr);
   gap: 24px;
   align-items: start;
-  max-height: calc(38vh - 84px);
-  overflow: hidden;
+  max-height: none;
+  overflow: visible;
 }
 
 .editor-form,
@@ -432,11 +467,14 @@ button:disabled {
 
 .editor-form,
 .preview-panel {
-  max-height: calc(38vh - 86px);
+  max-height: none;
   overflow: auto;
 }
 
 .preview-panel {
+  position: sticky;
+  top: 112px;
+  min-height: calc(100vh - 150px);
   padding: 0;
 }
 
@@ -794,39 +832,62 @@ button:disabled {
 
 @media (max-width: 1180px) {
   .admin-main {
-    padding-bottom: 50vh;
+    padding: 28px;
   }
 
   .editor-dock {
-    left: 24px;
-    max-height: 48vh;
+    max-height: none;
   }
 
   .dashboard.is-sidebar-collapsed .editor-dock {
-    left: 24px;
+    left: auto;
   }
 
   .editor-dock-panel,
   .editor-form,
   .preview-panel {
-    max-height: 48vh;
+    max-height: none;
   }
 
   .editor-grid {
     grid-template-columns: 1fr;
-    max-height: calc(48vh - 84px);
-    overflow: auto;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .preview-panel {
+    position: static;
+    min-height: 0;
   }
 }
 
 @media (max-width: 760px) {
   .dashboard {
-    grid-template-columns: 1fr;
+    display: block;
   }
 
   .admin-sidebar {
     position: static;
     height: auto;
+    padding: 16px;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .admin-sidebar nav,
+  .admin-nav,
+  .nav-group {
+    justify-content: stretch;
+    flex-wrap: wrap;
+  }
+
+  .nav-group {
+    width: 100%;
+  }
+
+  .admin-sidebar nav a {
+    flex: 1 1 120px;
+    justify-content: center;
   }
 
   .admin-main,
@@ -840,24 +901,21 @@ button:disabled {
   }
 
   .admin-main {
-    padding-bottom: 52vh;
+    padding-bottom: 28px;
   }
 
   .editor-dock {
-    right: 12px;
-    bottom: 12px;
-    left: 12px;
-    max-height: 50vh;
+    max-height: none;
   }
 
   .editor-dock-panel {
-    max-height: 50vh;
+    max-height: none;
     padding: 10px;
   }
 
   .editor-form,
   .preview-panel {
-    max-height: calc(50vh - 84px);
+    max-height: none;
   }
 
   .preview-panel .markdown-preview {
