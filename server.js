@@ -33,8 +33,8 @@ const contentStore = createContentStore(db);
 const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword });
 const uploadStore = createUploadStore(uploadDir);
 
-const siteVersion = "V2.2.4";
-const siteBuild = "20260507-1300";
+const siteVersion = "V2.2.5";
+const siteBuild = "20260507-1608";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
 
@@ -616,8 +616,11 @@ const mime = {
 function serveStatic(res, pathname) {
   let requested = decodeURIComponent(pathname === "/" ? "/index.html" : pathname);
   if (requested.endsWith("/")) requested += "index.html";
-  let target = path.normalize(path.join(root, requested));
-  if (!target.startsWith(root)) {
+  const staticRoot = requested.startsWith("/uploads/") ? uploadDir : root;
+  const relativeRequest = requested.startsWith("/uploads/") ? requested.slice("/uploads/".length) : requested;
+  let target = path.normalize(path.join(staticRoot, relativeRequest));
+  const relativeTarget = path.relative(staticRoot, target);
+  if (relativeTarget.startsWith("..") || path.isAbsolute(relativeTarget)) {
     res.writeHead(403);
     res.end("Forbidden");
     return;

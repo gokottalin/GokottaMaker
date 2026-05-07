@@ -94,6 +94,9 @@ try {
     dataUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII="
   }
   if (-not $upload.url) { throw "API verify failed: upload did not return url" }
+  $uploadAsset = Invoke-WebRequest -Uri "$base/$($upload.url.TrimStart('./'))" -TimeoutSec 10
+  if ($uploadAsset.StatusCode -ne 200) { throw "API verify failed: uploaded image returned $($uploadAsset.StatusCode)" }
+  if ("$($uploadAsset.Headers['Content-Type'])" -notmatch "image/") { throw "API verify failed: uploaded image content-type is $($uploadAsset.Headers['Content-Type'])" }
 
   $postId = "verify-api-post"
   $postResult = Invoke-Json -Uri "$base/api/posts" -Method "POST" -Session $session -Headers $csrfHeaders -Body @{
