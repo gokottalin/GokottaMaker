@@ -1,4 +1,4 @@
-﻿const crypto = require("node:crypto");
+const crypto = require("node:crypto");
 const childProcess = require("node:child_process");
 const fs = require("node:fs");
 const http = require("node:http");
@@ -8,6 +8,8 @@ const { logAudit } = require("./lib/audit");
 const { createAuth } = require("./lib/auth");
 const { createContentStore } = require("./lib/content");
 const { createDatabase } = require("./lib/db");
+const { createSeo } = require("./lib/seo");
+const { createUploadStore } = require("./lib/uploads");
 const { validatePostPayload, validateProjectPayload, validateUploadPayload } = require("./lib/validators");
 
 const root = __dirname;
@@ -29,9 +31,10 @@ if (!process.env.ADMIN_PASSWORD) {
 const db = createDatabase({ root, dataDir, dbDir, dbPath, uploadDir });
 const contentStore = createContentStore(db);
 const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword });
+const uploadStore = createUploadStore(uploadDir);
 
-const siteVersion = "V2.1.1";
-const siteBuild = "20260506-1205";
+const siteVersion = "V2.2.4";
+const siteBuild = "20260507-1300";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
 
@@ -274,147 +277,13 @@ const {
   softDeletePost,
   softDeleteProject
 } = contentStore;
+const { saveUpload, uploads } = uploadStore;
+const seo = createSeo({ siteUrl, allPosts, allProjects, text });
 
 function contentScript(res) {
   const body = `window.GOKOTTA_SERVER_CONTENT = ${JSON.stringify({ posts: allPosts(false), projects: allProjects(false) })};`;
   res.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8", "Cache-Control": "no-store" });
   res.end(body);
-}
-
-function extensionFromUpload(filename, dataUrl) {
-  const lower = String(filename || "").toLowerCase();
-  const ext = path.extname(lower);
-  if ([".png", ".jpg", ".jpeg", ".webp", ".gif"].includes(ext)) return ext;
-  const match = String(dataUrl || "").match(/^data:image\/(png|jpeg|jpg|webp|gif);base64,/);
-  if (!match) return "";
-  return match[1] === "jpeg" ? ".jpg" : `.${match[1]}`;
-}
-
-function saveUpload(payload) {
-  const dataUrl = String(payload.dataUrl || "");
-  const match = dataUrl.match(/^data:image\/(png|jpeg|jpg|webp|gif);base64,(.+)$/);
-  if (!match) {
-    const error = new Error("仅支持 PNG、JPG、WebP、GIF 图片");
-    error.status = 400;
-    throw error;
-  }
-
-  const ext = extensionFromUpload(payload.filename, dataUrl);
-  if (!ext) {
-    const error = new Error("无法识别图片格式");
-    error.status = 400;
-    throw error;
-  }
-
-  const bytes = Buffer.from(match[2], "base64");
-  if (bytes.length > 8 * 1024 * 1024) {
-    const error = new Error("图片不能超过 8MB");
-    error.status = 400;
-    throw error;
-  }
-
-  const filename = `${new Date().toISOString().slice(0, 10)}-${crypto.randomBytes(8).toString("hex")}${ext}`;
-  fs.writeFileSync(path.join(uploadDir, filename), bytes);
-  return `./uploads/${filename}`;
-}
-
-function uploads() {
-  if (!fs.existsSync(uploadDir)) return [];
-  return fs
-    .readdirSync(uploadDir, { withFileTypes: true })
-    .filter((entry) => entry.isFile() && /\.(png|jpe?g|webp|gif)$/i.test(entry.name))
-    .map((entry) => {
-      const stats = fs.statSync(path.join(uploadDir, entry.name));
-      return {
-        name: entry.name,
-        url: `./uploads/${entry.name}`,
-        size: stats.size,
-        updatedAt: stats.mtime.toISOString()
-      };
-    })
-    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
-}
-
-function absoluteUrl(pathname) {
-  return `${siteUrl}${pathname}`;
-}
-
-function xmlEscape(value) {
-  return String(value || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
-}
-
-function publicPages() {
-  return [
-    { loc: absoluteUrl("/"), priority: "1.0" },
-    { loc: absoluteUrl("/category.html?category=analog"), priority: "0.8" },
-    { loc: absoluteUrl("/category.html?category=stm32"), priority: "0.8" },
-    { loc: absoluteUrl("/category.html?category=esp32"), priority: "0.8" },
-    { loc: absoluteUrl("/projects.html"), priority: "0.8" },
-    ...allPosts(false).map((post) => ({ loc: absoluteUrl(`/post.html?id=${encodeURIComponent(post.id)}`), priority: "0.7", lastmod: post.date })),
-    ...allProjects(false).map((project) => ({ loc: absoluteUrl(`/project.html?id=${encodeURIComponent(project.id)}`), priority: "0.7", lastmod: project.date }))
-  ];
-}
-
-function sitemap(res) {
-  const urls = publicPages()
-    .map(
-      (page) => `  <url>
-    <loc>${xmlEscape(page.loc)}</loc>
-    ${page.lastmod ? `<lastmod>${xmlEscape(page.lastmod)}</lastmod>` : ""}
-    <priority>${page.priority}</priority>
-  </url>`
-    )
-    .join("\n");
-  return text(res, 200, `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`, "application/xml; charset=utf-8");
-}
-
-function robots(res) {
-  return text(
-    res,
-    200,
-    `User-agent: *
-Allow: /
-Disallow: /admin/
-Disallow: /api/
-
-Sitemap: ${absoluteUrl("/sitemap.xml")}
-`,
-    "text/plain; charset=utf-8"
-  );
-}
-
-function rss(res) {
-  const items = allPosts(false)
-    .slice(0, 20)
-    .map(
-      (post) => `<item>
-  <title>${xmlEscape(post.title)}</title>
-  <link>${xmlEscape(absoluteUrl(`/post.html?id=${encodeURIComponent(post.id)}`))}</link>
-  <guid>${xmlEscape(absoluteUrl(`/post.html?id=${encodeURIComponent(post.id)}`))}</guid>
-  <description>${xmlEscape(post.excerpt || "")}</description>
-  <pubDate>${new Date(post.date || Date.now()).toUTCString()}</pubDate>
-</item>`
-    )
-    .join("\n");
-  return text(
-    res,
-    200,
-    `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
-<channel>
-<title>GokottaMaker</title>
-<link>${xmlEscape(siteUrl)}</link>
-<description>Embedded electronics notes, STM32, ESP32, and open hardware projects.</description>
-${items}
-</channel>
-</rss>
-`,
-    "application/rss+xml; charset=utf-8"
-  );
 }
 
 function exportContent() {
@@ -792,9 +661,9 @@ const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
     if (url.pathname.startsWith("/api/")) return await api(req, res, url.pathname);
     if (url.pathname === "/healthz") return json(res, 200, healthPayload());
-    if (url.pathname === "/sitemap.xml") return sitemap(res);
-    if (url.pathname === "/robots.txt") return robots(res);
-    if (url.pathname === "/rss.xml") return rss(res);
+    if (url.pathname === "/sitemap.xml") return seo.sitemap(res);
+    if (url.pathname === "/robots.txt") return seo.robots(res);
+    if (url.pathname === "/rss.xml") return seo.rss(res);
     serveStatic(res, url.pathname);
   } catch (error) {
     console.error(error);

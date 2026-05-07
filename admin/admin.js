@@ -24,6 +24,13 @@
   const coverFile = document.querySelector("#coverFile");
   const coverPreview = document.querySelector("#coverPreview");
   const coverHint = document.querySelector("#coverHint");
+  const coverCropModal = document.querySelector("#coverCropModal");
+  const coverCropCanvas = document.querySelector("#coverCropCanvas");
+  const coverCropZoom = document.querySelector("#coverCropZoom");
+  const coverCropX = document.querySelector("#coverCropX");
+  const coverCropY = document.querySelector("#coverCropY");
+  const coverCropApply = document.querySelector("#coverCropApply");
+  const coverCropCancel = document.querySelector("#coverCropCancel");
   const resetButton = document.querySelector("#resetButton");
   const list = document.querySelector("#adminContentList");
   const categoryField = document.querySelector("#categoryField");
@@ -60,6 +67,7 @@
   let isRestoringForm = false;
   let autosaveTimer = 0;
   let lastDraftSavedAt = "";
+  let cropState = null;
   const selectedContent = new Set();
   const filters = { search: "", type: "all", status: "all" };
 
@@ -146,7 +154,7 @@
     if (!button) return;
     if (busy) {
       button.dataset.idleText = button.textContent;
-      button.textContent = label || "澶勭悊涓?..";
+      button.textContent = label || "处理中...";
       button.disabled = true;
     } else {
       button.textContent = button.dataset.idleText || button.textContent;
@@ -369,6 +377,69 @@
     });
   }
 
+  function loadImage(dataUrl) {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      image.addEventListener("load", () => resolve(image));
+      image.addEventListener("error", () => reject(new Error("图片解析失败，请换一张常见格式图片。")));
+      image.src = dataUrl;
+    });
+  }
+
+  function drawCoverCrop() {
+    if (!cropState || !coverCropCanvas) return;
+    const canvas = coverCropCanvas;
+    const context = canvas.getContext("2d");
+    const image = cropState.image;
+    const zoom = Number(coverCropZoom.value || 1);
+    const offsetX = Number(coverCropX.value || 0) / 100;
+    const offsetY = Number(coverCropY.value || 0) / 100;
+    const baseScale = Math.max(canvas.width / image.naturalWidth, canvas.height / image.naturalHeight);
+    const scale = baseScale * zoom;
+    const width = image.naturalWidth * scale;
+    const height = image.naturalHeight * scale;
+    const maxX = Math.max(0, (width - canvas.width) / 2);
+    const maxY = Math.max(0, (height - canvas.height) / 2);
+    const x = (canvas.width - width) / 2 - maxX * offsetX;
+    const y = (canvas.height - height) / 2 - maxY * offsetY;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = "#f4f8fe";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(image, x, y, width, height);
+  }
+
+  async function openCoverCrop(file) {
+    const dataUrl = await readFileAsDataUrl(file);
+    const image = await loadImage(dataUrl);
+    cropState = { file, image };
+    coverCropZoom.value = "1";
+    coverCropX.value = "0";
+    coverCropY.value = "0";
+    drawCoverCrop();
+    coverCropModal.hidden = false;
+    coverCropZoom.focus();
+  }
+
+  function closeCoverCrop() {
+    coverCropModal.hidden = true;
+    cropState = null;
+    coverFile.value = "";
+  }
+
+  async function uploadCroppedCover() {
+    if (!cropState) return;
+    const originalName = cropState.file.name.replace(/\.[^.]+$/, "") || "cover";
+    const dataUrl = coverCropCanvas.toDataURL("image/jpeg", 0.9);
+    const result = await request("/api/uploads", {
+      method: "POST",
+      body: JSON.stringify({ filename: `${originalName}-cover.jpg`, dataUrl })
+    });
+    setCover(result.url, `${originalName}-cover.jpg 已上传`);
+    renderImageLibrary(result.uploads || []);
+    setNotice("封面裁剪并上传成功，本地草稿已更新，请保存内容写入数据库。", "success");
+    closeCoverCrop();
+  }
+
   function resetForm(options = {}) {
     const { dirty = false, clearLocalDraft = false } = options;
     isRestoringForm = true;
@@ -515,7 +586,7 @@
             </button>
           `
         )
-        .join("") || `<div class="empty-state">杩樻病鏈変笂浼犲浘鐗囥€?/div>`;
+        .join("") || `<div class="empty-state">还没有上传图片。</div>`;
   }
 
   async function loadImages() {
@@ -974,19 +1045,28 @@
     if (!file) return;
     withBusy(coverFile, "", async () => {
       try {
-        coverHint.textContent = `正在上传封面：${file.name}`;
-        const dataUrl = await readFileAsDataUrl(file);
-        const result = await request("/api/uploads", {
-          method: "POST",
-          body: JSON.stringify({ filename: file.name, dataUrl })
-        });
-        setCover(result.url, `${file.name} 已上传`);
-        renderImageLibrary(result.uploads || []);
-        setNotice("封面上传成功，本地草稿已更新，请保存内容写入数据库。", "success");
+        coverHint.textContent = `准备裁剪封面：${file.name}`;
+        await openCoverCrop(file);
       } catch (error) {
         coverHint.textContent = error.message;
         setNotice(error.message, "error");
       }
+    });
+  });
+
+  [coverCropZoom, coverCropX, coverCropY].forEach((input) => {
+    input?.addEventListener("input", drawCoverCrop);
+  });
+
+  coverCropCancel?.addEventListener("click", closeCoverCrop);
+
+  coverCropModal?.addEventListener("click", (event) => {
+    if (event.target === coverCropModal) closeCoverCrop();
+  });
+
+  coverCropApply?.addEventListener("click", () => {
+    withBusy(coverCropApply, "上传中...", uploadCroppedCover).catch((error) => {
+      setNotice(error.message, "error");
     });
   });
 

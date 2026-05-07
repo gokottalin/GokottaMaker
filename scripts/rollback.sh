@@ -24,8 +24,8 @@ version_from_file() {
   node -e '
 const fs = require("node:fs");
 const text = fs.readFileSync("server.js", "utf8");
-const version = text.match(/const siteVersion = "([^"]+)"/)?.[1] || "unknown";
-const build = text.match(/const siteBuild = "([^"]+)"/)?.[1] || "unknown";
+const version = text.match(/const\s+siteVersion\s*=\s*["\x27]([^"\x27]+)["\x27]/)?.[1] || "unknown";
+const build = text.match(/const\s+siteBuild\s*=\s*["\x27]([^"\x27]+)["\x27]/)?.[1] || "unknown";
 console.log(`${version}+${build}`);
 ' 2>/dev/null || echo "unknown"
 }

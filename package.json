@@ -1,12 +1,13 @@
 {
   "name": "gokottamaker",
-  "version": "0.1.0",
+  "version": "2.2.4",
   "private": true,
   "description": "GokottaMaker embedded electronics blog and project site.",
   "main": "server.js",
   "scripts": {
     "start": "node --experimental-sqlite server.js",
-    "dev": "node --experimental-sqlite --watch server.js"
+    "dev": "node --experimental-sqlite --watch server.js",
+    "check:version": "node scripts/check-version.js"
   },
   "engines": {
     "node": ">=22.5.0"

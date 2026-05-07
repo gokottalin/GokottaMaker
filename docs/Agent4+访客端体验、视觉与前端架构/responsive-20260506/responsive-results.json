@@ -1,0 +1,200 @@
+[
+  {
+    "name": "home-1920",
+    "path": "/",
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "shot": true,
+    "errors": [],
+    "horizontalOverflow": false,
+    "data": {
+      "title": "GokottaMaker | 嵌入式与模拟电子技术",
+      "bodyWidth": 1920,
+      "viewportWidth": 1920,
+      "titleBlocks": 2,
+      "returnLinks": 0,
+      "progress": false,
+      "codeCopy": 0,
+      "lightbox": false,
+      "pictures": 6
+    }
+  },
+  {
+    "name": "home-1366",
+    "path": "/",
+    "viewport": {
+      "width": 1366,
+      "height": 768
+    },
+    "shot": true,
+    "errors": [],
+    "horizontalOverflow": false,
+    "data": {
+      "title": "GokottaMaker | 嵌入式与模拟电子技术",
+      "bodyWidth": 1366,
+      "viewportWidth": 1366,
+      "titleBlocks": 2,
+      "returnLinks": 0,
+      "progress": false,
+      "codeCopy": 0,
+      "lightbox": false,
+      "pictures": 6
+    }
+  },
+  {
+    "name": "home-1039",
+    "path": "/",
+    "viewport": {
+      "width": 1039,
+      "height": 720
+    },
+    "shot": true,
+    "errors": [],
+    "horizontalOverflow": false,
+    "data": {
+      "title": "GokottaMaker | 嵌入式与模拟电子技术",
+      "bodyWidth": 1039,
+      "viewportWidth": 1039,
+      "titleBlocks": 2,
+      "returnLinks": 0,
+      "progress": false,
+      "codeCopy": 0,
+      "lightbox": false,
+      "pictures": 6
+    }
+  },
+  {
+    "name": "home-390",
+    "path": "/",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "shot": true,
+    "errors": [],
+    "horizontalOverflow": false,
+    "data": {
+      "title": "GokottaMaker | 嵌入式与模拟电子技术",
+      "bodyWidth": 390,
+      "viewportWidth": 390,
+      "titleBlocks": 2,
+      "returnLinks": 0,
+      "progress": false,
+      "codeCopy": 0,
+      "lightbox": false,
+      "pictures": 6
+    }
+  },
+  {
+    "name": "category-390",
+    "path": "/category.html?category=stm32",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "shot": true,
+    "errors": [],
+    "horizontalOverflow": false,
+    "data": {
+      "title": "STM32 | GokottaMaker",
+      "bodyWidth": 390,
+      "viewportWidth": 390,
+      "titleBlocks": 1,
+      "returnLinks": 1,
+      "progress": false,
+      "codeCopy": 0,
+      "lightbox": false,
+      "pictures": 1
+    }
+  },
+  {
+    "name": "projects-390",
+    "path": "/projects.html",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "shot": true,
+    "errors": [],
+    "horizontalOverflow": false,
+    "data": {
+      "title": "开源项目 | GokottaMaker",
+      "bodyWidth": 390,
+      "viewportWidth": 390,
+      "titleBlocks": 1,
+      "returnLinks": 1,
+      "progress": false,
+      "codeCopy": 0,
+      "lightbox": false,
+      "pictures": 2
+    }
+  },
+  {
+    "name": "post-390",
+    "path": "/post.html?id=stm32-adc-dma-precision",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "shot": true,
+    "errors": [],
+    "horizontalOverflow": false,
+    "data": {
+      "title": "STM32 ADC 模拟采样从原理到精度优化 | GokottaMaker",
+      "bodyWidth": 390,
+      "viewportWidth": 390,
+      "titleBlocks": 1,
+      "returnLinks": 1,
+      "progress": true,
+      "codeCopy": 3,
+      "lightbox": true,
+      "pictures": 1
+    }
+  },
+  {
+    "name": "project-390",
+    "path": "/project.html?id=desktop-power-amplifier",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "shot": true,
+    "errors": [],
+    "horizontalOverflow": false,
+    "data": {
+      "title": "GokottaLogic 逻辑分析仪 | GokottaMaker",
+      "bodyWidth": 390,
+      "viewportWidth": 390,
+      "titleBlocks": 1,
+      "returnLinks": 1,
+      "progress": true,
+      "codeCopy": 0,
+      "lightbox": true,
+      "pictures": 1
+    }
+  },
+  {
+    "name": "post-1039",
+    "path": "/post.html?id=stm32-adc-dma-precision",
+    "viewport": {
+      "width": 1039,
+      "height": 720
+    },
+    "shot": false,
+    "errors": [],
+    "horizontalOverflow": false,
+    "data": {
+      "title": "STM32 ADC 模拟采样从原理到精度优化 | GokottaMaker",
+      "bodyWidth": 1039,
+      "viewportWidth": 1039,
+      "titleBlocks": 1,
+      "returnLinks": 1,
+      "progress": true,
+      "codeCopy": 3,
+      "lightbox": true,
+      "pictures": 1
+    }
+  }
+]

@@ -1,9 +1,9 @@
 # GokottaMaker Agent Handoff Plan
 
-更新时间：2026-05-05 14:08  
-当前版本：V1.5.0+20260504-1655  
-规划基线提交：9263f08 Force HTTP1 for deploy git operations  
-线上地址：http://81.71.156.122:4173/  
+更新时间：2026-05-05 14:08
+当前版本：V1.5.0+20260504-1655
+规划基线提交：9263f08 Force HTTP1 for deploy git operations
+线上地址：http://81.71.156.122:4173/
 健康检查：http://81.71.156.122:4173/healthz
 
 ## 1. 项目定位

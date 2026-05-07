@@ -1,16 +1,48 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GokottaMaker 管理端</title>
     <meta name="robots" content="noindex,nofollow" />
-    <link rel="stylesheet" href="../styles.css?v=20260506-1205" />
-    <link rel="stylesheet" href="./admin.css?v=20260506-1205" />
+    <link rel="stylesheet" href="../styles.css?v=20260507-1300" />
+    <link rel="stylesheet" href="./admin.css?v=20260507-1300" />
   </head>
   <body>
     <main class="admin-shell">
       <section class="login-panel" id="loginPanel">
+        <div class="login-mascot login-mascot-left" aria-hidden="true">
+          <div class="vector-board">
+            <span class="vector-rail vector-rail-top"></span>
+            <span class="vector-rail vector-rail-bottom"></span>
+            <span class="vector-component vector-usb"></span>
+            <span class="vector-component vector-module"></span>
+            <span class="vector-component vector-chip"></span>
+            <span class="vector-component vector-port"></span>
+            <span class="vector-component vector-button"></span>
+          </div>
+          <span class="board-eye board-eye-left"></span>
+          <span class="board-eye board-eye-right"></span>
+          <span class="board-mouth"></span>
+          <span class="board-hand board-hand-left"></span>
+          <span class="board-hand board-hand-right"></span>
+        </div>
+        <div class="login-mascot login-mascot-right" aria-hidden="true">
+          <div class="vector-board">
+            <span class="vector-rail vector-rail-top"></span>
+            <span class="vector-rail vector-rail-bottom"></span>
+            <span class="vector-component vector-usb"></span>
+            <span class="vector-component vector-module"></span>
+            <span class="vector-component vector-chip"></span>
+            <span class="vector-component vector-port"></span>
+            <span class="vector-component vector-button"></span>
+          </div>
+          <span class="board-eye board-eye-left"></span>
+          <span class="board-eye board-eye-right"></span>
+          <span class="board-mouth"></span>
+          <span class="board-hand board-hand-left"></span>
+          <span class="board-hand board-hand-right"></span>
+        </div>
         <a class="brand admin-login-brand" href="../index.html">
           <img class="brand-symbol" src="../assets/logo/gokottamaker-icon.png" alt="" />
           <span>Gokotta<b>Maker</b></span>
@@ -57,12 +89,8 @@
         <div class="admin-main">
           <header class="admin-topbar">
             <div>
-              <p class="eyebrow">CMS</p>
+              <p class="poster-kicker"><span>创作后台</span><em>Content Studio</em></p>
               <h1>内容管理</h1>
-            </div>
-            <div class="admin-topbar-actions">
-              <button class="button secondary" id="exportButton" type="button">导出内容</button>
-              <button class="button secondary" id="logoutButton" type="button">退出</button>
             </div>
           </header>
           <p class="notice admin-notice" id="adminNotice" role="status" aria-live="polite"></p>
@@ -72,143 +100,160 @@
               <span>内容编辑器</span>
               <strong id="editorDockState">展开</strong>
             </button>
-            <div class="editor-dock-panel">
-              <div class="editor-dock-toolbar">
-                <div>
-                  <p class="eyebrow">Editor</p>
-                  <h2>内容编辑器</h2>
+            <form class="content-workbench-form" id="contentForm">
+              <section class="content-meta-panel" aria-labelledby="contentBlueprintTitle">
+                <div class="content-meta-header">
+                  <div>
+                    <p class="poster-kicker poster-kicker-small"><span>内容蓝图</span><em>Content Blueprint</em></p>
+                    <h2 id="contentBlueprintTitle">文章 / 项目总体设计</h2>
+                  </div>
+                  <div class="content-meta-actions">
+                    <button class="button secondary" id="exportButton" type="button">导出内容</button>
+                    <button class="button secondary" id="logoutButton" type="button">退出</button>
+                  </div>
                 </div>
-                <button class="button secondary" id="editorDockToggle" type="button">收起</button>
-              </div>
-              <div class="editor-grid">
-                <form class="editor-form" id="contentForm">
+
                   <div class="draft-status" id="draftStatus" hidden>
                     <strong>本地草稿未入库</strong>
                     <span id="draftStatusText">当前编辑内容已自动保存在此浏览器。</span>
                     <button class="button secondary" id="discardDraftButton" type="button">丢弃本地草稿</button>
                   </div>
 
-              <div class="segmented" role="group" aria-label="内容类型">
-                <label><input type="radio" name="type" value="post" checked />文章</label>
-                <label><input type="radio" name="type" value="project" />项目</label>
-              </div>
+                <div class="content-meta-grid">
+                  <div class="segmented type-switch" role="group" aria-label="内容类型">
+                    <label><input type="radio" name="type" value="post" checked />文章</label>
+                    <label><input type="radio" name="type" value="project" />项目</label>
+                  </div>
 
-              <label>
-                标题
-                <input name="title" placeholder="例如：STM32 ADC + DMA 连续采样" required />
-              </label>
+                  <label class="meta-title">
+                    标题
+                    <input name="title" placeholder="例如：STM32 ADC + DMA 连续采样" required />
+                  </label>
 
-              <label id="categoryField">
-                分类
-                <select name="category">
-                  <option>模拟电子</option>
-                  <option>STM32</option>
-                  <option>ESP32</option>
-                  <option>开源项目</option>
-                </select>
-              </label>
+                  <label id="categoryField">
+                    分类
+                    <select name="category">
+                      <option>模拟电子</option>
+                      <option>STM32</option>
+                      <option>ESP32</option>
+                      <option>开源项目</option>
+                    </select>
+                  </label>
 
-              <label id="statusField" hidden>
-                项目状态
-                <select name="statusKey">
-                  <option value="planned">规划中</option>
-                  <option value="development">开发中</option>
-                  <option value="online">已上线</option>
-                </select>
-              </label>
+                  <label id="statusField" hidden>
+                    项目状态
+                    <select name="statusKey">
+                      <option value="planned">规划中</option>
+                      <option value="development">开发中</option>
+                      <option value="online">已上线</option>
+                    </select>
+                  </label>
 
-              <label>
-                摘要
-                <textarea name="excerpt" rows="4" placeholder="这段内容会显示在首页卡片和详情页顶部。"></textarea>
-              </label>
+                  <label class="meta-excerpt">
+                    摘要
+                    <textarea name="excerpt" rows="4" placeholder="这段内容会显示在首页卡片和详情页顶部。"></textarea>
+                  </label>
 
-              <label>
-                标签
-                <input name="tags" placeholder="用逗号分隔，例如 ADC, DMA, 滤波" />
-              </label>
+                  <label class="meta-tags">
+                    标签
+                    <input name="tags" placeholder="用逗号分隔，例如 ADC, DMA, 滤波" />
+                  </label>
 
-              <label>
-                发布状态
-                <select name="publishStatus">
-                  <option value="draft">草稿</option>
-                  <option value="published">已发布</option>
-                </select>
-              </label>
+                  <label class="meta-publish">
+                    发布状态
+                    <select name="publishStatus">
+                      <option value="draft">草稿</option>
+                      <option value="published">已发布</option>
+                    </select>
+                  </label>
 
-              <div class="inline-fields">
-                <label class="checkbox-field">
-                  <input name="featured" type="checkbox" />
-                  加入首页轮播
-                </label>
-                <label>
-                  轮播排序
-                  <input name="featuredOrder" type="number" min="0" step="1" value="0" />
-                </label>
-              </div>
+                  <div class="inline-fields meta-featured">
+                    <label class="checkbox-field">
+                      <input name="featured" type="checkbox" />
+                      加入首页轮播
+                    </label>
+                    <label>
+                      轮播排序
+                      <input name="featuredOrder" type="number" min="0" step="1" value="0" />
+                    </label>
+                  </div>
 
-              <div class="project-extra" id="projectExtra" hidden>
-                <label>
-                  项目版本
-                  <input name="version" placeholder="例如：v0.1" />
-                </label>
-                <label>
-                  项目进度
-                  <input name="progress" type="number" min="0" max="100" step="1" value="0" />
-                </label>
-                <label>
-                  GitHub / Gitee 链接
-                  <input name="repoUrl" type="url" placeholder="https://..." />
-                </label>
-                <label>
-                  BOM 链接
-                  <input name="bomUrl" type="url" placeholder="https://..." />
-                </label>
-                <label>
-                  文档链接
-                  <input name="docsUrl" type="url" placeholder="https://..." />
-                </label>
-              </div>
+                  <div class="project-extra" id="projectExtra" hidden>
+                    <label>
+                      项目版本
+                      <input name="version" placeholder="例如：v0.1" />
+                    </label>
+                    <label>
+                      项目进度
+                      <input name="progress" type="number" min="0" max="100" step="1" value="0" />
+                    </label>
+                    <label>
+                      GitHub / Gitee 链接
+                      <input name="repoUrl" type="url" placeholder="https://..." />
+                    </label>
+                    <label>
+                      BOM 链接
+                      <input name="bomUrl" type="url" placeholder="https://..." />
+                    </label>
+                    <label>
+                      文档链接
+                      <input name="docsUrl" type="url" placeholder="https://..." />
+                    </label>
+                  </div>
 
-              <label class="cover-picker" title="推荐图片格式：JPG、PNG、WebP；推荐比例 16:9；推荐分辨率 1600x900 或 1920x1080。">
-                封面图片
-                <input id="coverFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
-                <span class="file-hint" id="coverHint">从资源管理器选择图片，推荐 1600x900 或 1920x1080</span>
-                <img class="cover-preview" id="coverPreview" alt="封面预览" />
-              </label>
+                  <label class="cover-picker meta-cover" title="推荐图片格式：JPG、PNG、WebP；推荐比例 16:9；推荐分辨率 1600x900 或 1920x1080。">
+                    封面图片
+                    <input id="coverFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
+                    <span class="file-hint" id="coverHint">从资源管理器选择图片，推荐 1600x900 或 1920x1080</span>
+                    <img class="cover-preview" id="coverPreview" alt="封面预览" />
+                  </label>
 
-              <section class="image-library-panel">
-                <div class="section-heading compact">
-                  <h3>图片库</h3>
-                  <button class="button secondary" id="refreshImagesButton" type="button">刷新图片库</button>
+                  <section class="image-library-panel meta-library">
+                    <div class="section-heading compact">
+                      <h3>图片库</h3>
+                      <button class="button secondary" id="refreshImagesButton" type="button">刷新图片库</button>
+                    </div>
+                    <div id="imageLibrary" class="image-library"></div>
+                  </section>
                 </div>
-                <div id="imageLibrary" class="image-library"></div>
               </section>
 
-              <label>
-                Markdown 文件导入
-                <input id="markdownFile" type="file" accept=".md,text/markdown,text/plain" />
-              </label>
-
-              <label>
-                Markdown 正文
-                <textarea name="markdown" rows="14" placeholder="# 标题&#10;&#10;这里输入 Markdown 内容。"></textarea>
-              </label>
-
-                  <div class="form-actions editor-floating-actions">
-                    <button class="button primary" type="submit">保存内容</button>
-                    <button class="button secondary" id="resetButton" type="button">新建空白</button>
+              <div class="editor-dock-panel">
+                <div class="editor-dock-toolbar">
+                  <div>
+                    <p class="poster-kicker poster-kicker-small"><span>编辑器</span><em>Editorial Bench</em></p>
+                    <h2>内容编辑器</h2>
                   </div>
-                </form>
+                  <button class="button secondary" id="editorDockToggle" type="button">收起</button>
+                </div>
+                <div class="editor-grid">
+                  <article class="preview-panel">
+                    <div class="preview-toolbar">
+                      <p class="eyebrow">Preview</p>
+                      <span>网页预览</span>
+                    </div>
+                    <div id="markdownPreview" class="markdown-preview markdown-article"></div>
+                  </article>
 
-                <article class="preview-panel">
-                  <div class="preview-toolbar">
-                    <p class="eyebrow">Preview</p>
-                    <span>网页预览</span>
-                  </div>
-                  <div id="markdownPreview" class="markdown-preview markdown-article"></div>
-                </article>
+                  <section class="editor-form markdown-editor-panel">
+                    <label>
+                      Markdown 文件导入
+                      <input id="markdownFile" type="file" accept=".md,text/markdown,text/plain" />
+                    </label>
+
+                    <label class="markdown-body-field">
+                      Markdown 正文
+                      <textarea name="markdown" rows="22" placeholder="# 标题&#10;&#10;这里输入 Markdown 内容。"></textarea>
+                    </label>
+
+                    <div class="form-actions editor-floating-actions">
+                      <button class="button primary" type="submit">保存内容</button>
+                      <button class="button secondary" id="resetButton" type="button">新建空白</button>
+                    </div>
+                  </section>
+                </div>
               </div>
-            </div>
+            </form>
           </section>
 
           <section class="library-panel editor-recommendations admin-view" id="editorRecommendations" data-admin-view="editor">
@@ -286,13 +331,43 @@
       </section>
     </main>
 
-    <script src="../data/posts.js?v=20260506-1205"></script>
-    <script src="../data/seed.js?v=20260506-1205"></script>
-    <script src="../api/content.js?v=20260506-1205"></script>
-    <script src="../data/content-store.js?v=20260506-1205"></script>
-    <script src="../data/markdown-renderer.js?v=20260506-1205"></script>
-    <script src="./admin.js?v=20260506-1205"></script>
-    <script src="../data/site-meta.js?v=20260506-1205"></script>
-    <script src="../data/footer.js?v=20260506-1205"></script>
+    <div class="crop-modal" id="coverCropModal" hidden>
+      <section class="crop-dialog" role="dialog" aria-modal="true" aria-labelledby="coverCropTitle">
+        <div class="section-heading compact">
+          <div>
+            <p class="poster-kicker poster-kicker-small"><span>裁剪封面</span><em>Cover Crop</em></p>
+            <h3 id="coverCropTitle">封面比例 16:9</h3>
+          </div>
+          <button class="button secondary" id="coverCropCancel" type="button">取消</button>
+        </div>
+        <div class="crop-stage">
+          <canvas id="coverCropCanvas" width="1600" height="900"></canvas>
+        </div>
+        <div class="crop-controls">
+          <label>
+            缩放
+            <input id="coverCropZoom" type="range" min="1" max="3" value="1" step="0.01" />
+          </label>
+          <label>
+            水平
+            <input id="coverCropX" type="range" min="-100" max="100" value="0" step="1" />
+          </label>
+          <label>
+            垂直
+            <input id="coverCropY" type="range" min="-100" max="100" value="0" step="1" />
+          </label>
+          <button class="button primary" id="coverCropApply" type="button">使用裁剪封面</button>
+        </div>
+      </section>
+    </div>
+
+    <script src="../data/posts.js?v=20260507-1300"></script>
+    <script src="../data/seed.js?v=20260507-1300"></script>
+    <script src="../api/content.js?v=20260507-1300"></script>
+    <script src="../data/content-store.js?v=20260507-1300"></script>
+    <script src="../data/markdown-renderer.js?v=20260507-1300"></script>
+    <script src="./admin.js?v=20260507-1300"></script>
+    <script src="../data/site-meta.js?v=20260507-1300"></script>
+    <script src="../data/footer.js?v=20260507-1300"></script>
   </body>
 </html>
