@@ -1,6 +1,6 @@
 {
   "name": "gokottamaker",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "private": true,
   "description": "GokottaMaker embedded electronics blog and project site.",
   "main": "server.js",

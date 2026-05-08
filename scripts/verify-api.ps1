@@ -89,6 +89,23 @@ try {
   }
   if (-not $csrfBlocked) { throw "API verify failed: write without CSRF was not blocked" }
 
+  $featuredOrderBlocked = $false
+  try {
+    Invoke-Json -Uri "$base/api/posts" -Method "POST" -Session $session -Headers $csrfHeaders -Body @{
+      id = "verify-api-featured-order"
+      slug = "verify-api-featured-order"
+      title = "Verify API Featured Order"
+      category = "STM32"
+      markdown = "# featured order"
+      publishStatus = "published"
+      featured = $true
+      featuredOrder = 4
+    } | Out-Null
+  } catch {
+    if ($_.Exception.Response.StatusCode.value__ -eq 400) { $featuredOrderBlocked = $true } else { throw }
+  }
+  if (-not $featuredOrderBlocked) { throw "API verify failed: carousel order outside 0-3 was not blocked" }
+
   $upload = Invoke-Json -Uri "$base/api/uploads" -Method "POST" -Session $session -Headers $csrfHeaders -Body @{
     filename = "verify-api.png"
     dataUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII="
@@ -162,7 +179,8 @@ try {
     publicProjects = $publicContent.projects.Count
     uploadUrl = $upload.url
     csrfBlocked = $csrfBlocked
-    verified = "login, csrf, upload, post CRUD, project CRUD, export, sitemap, rss, logout"
+    carouselOrderBlocked = $featuredOrderBlocked
+    verified = "login, csrf, carousel order, upload, post CRUD, project CRUD, export, sitemap, rss, logout"
   } | Format-List
 } finally {
   if ($serverProcess -and -not $serverProcess.HasExited) {

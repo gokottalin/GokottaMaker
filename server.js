@@ -33,8 +33,8 @@ const contentStore = createContentStore(db);
 const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword });
 const uploadStore = createUploadStore(uploadDir);
 
-const siteVersion = "V2.2.5";
-const siteBuild = "20260507-1608";
+const siteVersion = "V2.2.6";
+const siteBuild = "20260508-2254";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
 
@@ -129,7 +129,7 @@ function reconcileSeedContent() {
       )
   `);
   seed.posts.forEach((post, index) => {
-    updateSeedPost.run(index < 4 ? 1 : 0, index + 1, post.tags || "", post.id);
+    updateSeedPost.run(index < 4 ? 1 : 0, index, post.tags || "", post.id);
   });
 
   const updateSeedProject = db.prepare(`
@@ -300,6 +300,32 @@ function exportContent() {
     projects: allProjects(true),
     uploads: uploads()
   };
+}
+
+function apiError(status, message) {
+  const error = new Error(message);
+  error.status = status;
+  return error;
+}
+
+function carouselItems() {
+  return [
+    ...allPosts(true).map((item) => ({ ...item, contentType: "post" })),
+    ...allProjects(true).map((item) => ({ ...item, contentType: "project" }))
+  ].filter((item) => item.featured && !item.deletedAt);
+}
+
+function assertCarouselSlot(payload, contentType) {
+  if (!payload.featured) return;
+  const order = Number(payload.featuredOrder || 0);
+  const existing = carouselItems().filter((item) => !(item.contentType === contentType && item.id === payload.id));
+  if (existing.length >= 4) {
+    throw apiError(400, "首页轮播最多只能设置 4 个内容，请先取消一个已有轮播项");
+  }
+  const conflict = existing.find((item) => Number(item.featuredOrder || 0) === order);
+  if (conflict) {
+    throw apiError(400, `轮播排序 ${order} 已被《${conflict.title || "未命名内容"}》使用，请选择 0-3 中的空槽位`);
+  }
 }
 
 function gitCommit() {
@@ -530,6 +556,7 @@ async function api(req, res, pathname) {
 
   if (pathname === "/api/posts" && req.method === "POST") {
     const body = validatePostPayload(await readBody(req));
+    assertCarouselSlot(body, "post");
     savePost(body);
     logAudit(db, req, user, "post_save", "post", body.id, { publishStatus: body.publishStatus, featured: body.featured });
     return json(res, 200, { posts: allPosts(true) });
@@ -537,6 +564,7 @@ async function api(req, res, pathname) {
 
   if (pathname === "/api/projects" && req.method === "POST") {
     const body = validateProjectPayload(await readBody(req));
+    assertCarouselSlot(body, "project");
     saveProject(body);
     logAudit(db, req, user, "project_save", "project", body.id, { visibilityStatus: body.visibilityStatus, statusKey: body.statusKey });
     return json(res, 200, { projects: allProjects(true) });
@@ -679,4 +707,3 @@ server.listen(port, () => {
   console.log(`SQLite database: ${dbPath}`);
   console.log(`Uploads directory: ${uploadDir}`);
 });
-

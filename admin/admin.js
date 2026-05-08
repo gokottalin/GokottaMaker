@@ -49,6 +49,7 @@
   const contentResultCount = document.querySelector("#contentResultCount");
   const selectedCount = document.querySelector("#selectedCount");
   const recentContentList = document.querySelector("#recentContentList");
+  const featuredSlots = document.querySelector("#featuredSlots");
   const adminViews = [...document.querySelectorAll("[data-admin-view]")];
   const adminNavLinks = [...document.querySelectorAll("[data-admin-nav]")];
   const bulkPublishButton = document.querySelector("#bulkPublishButton");
@@ -70,6 +71,7 @@
   let cropState = null;
   const selectedContent = new Set();
   const filters = { search: "", type: "all", status: "all" };
+  const featuredLimit = 4;
 
   function storedBool(key) {
     return localStorage.getItem(key) === "true";
@@ -230,6 +232,18 @@
     return item.contentType === "project" ? item.visibilityStatus : item.publishStatus;
   }
 
+  function featuredOrderValue(value) {
+    const order = Number(value);
+    if (!Number.isFinite(order)) return 0;
+    return Math.min(featuredLimit - 1, Math.max(0, Math.trunc(order)));
+  }
+
+  function featuredItems() {
+    return combinedItems()
+      .filter((item) => item.featured && !item.deletedAt)
+      .sort((a, b) => featuredOrderValue(a.featuredOrder) - featuredOrderValue(b.featuredOrder) || itemTimestamp(b) - itemTimestamp(a));
+  }
+
   function searchableText(item) {
     return [
       item.title,
@@ -273,7 +287,7 @@
       tags: data.get("tags") || "",
       publishStatus: data.get("publishStatus") || "draft",
       featured: data.get("featured") === "on",
-      featuredOrder: data.get("featuredOrder") || "0",
+      featuredOrder: String(featuredOrderValue(data.get("featuredOrder") || "0")),
       version: data.get("version") || "",
       progress: data.get("progress") || "0",
       repoUrl: data.get("repoUrl") || "",
@@ -533,6 +547,32 @@
         .join("") || `<div class="empty-state">暂无可推荐内容。</div>`;
   }
 
+  function renderFeaturedSlots() {
+    if (!featuredSlots) return;
+    const byOrder = new Map();
+    featuredItems().forEach((item) => {
+      const order = featuredOrderValue(item.featuredOrder);
+      if (!byOrder.has(order)) byOrder.set(order, item);
+    });
+    featuredSlots.innerHTML = Array.from({ length: featuredLimit }, (_, order) => {
+      const item = byOrder.get(order);
+      if (!item) {
+        return `<article class="featured-slot is-empty"><span>${order}</span><small>空槽位</small></article>`;
+      }
+      const kind = item.contentType === "project" ? "项目" : "文章";
+      const cover = fallbackCover(item);
+      return `
+        <article class="featured-slot">
+          <span>Slot ${order} · ${kind}</span>
+          <img src="${adminSrc(cover)}" alt="${escapeHtml(item.title || "未命名内容")}封面" />
+          <strong>${escapeHtml(item.title || "未命名内容")}</strong>
+          <small>${escapeHtml(publishValue(item) === "published" ? "已发布" : "草稿")}</small>
+          <button class="button secondary" data-action="edit-featured" data-type="${item.contentType}" data-id="${item.id}" type="button">编辑槽位内容</button>
+        </article>
+      `;
+    }).join("");
+  }
+
   function renderList() {
     const items = filteredItems();
     updateBulkState(items);
@@ -573,6 +613,7 @@
         })
         .join("") || `<div class="empty-state">没有匹配的内容。</div>`;
     renderRecentContent();
+    renderFeaturedSlots();
   }
   function renderImageLibrary(images = []) {
     imageLibrary.innerHTML =
@@ -655,7 +696,7 @@
     contentForm.markdown.value = snapshot.markdown || "";
     contentForm.publishStatus.value = snapshot.publishStatus || "draft";
     contentForm.featured.checked = Boolean(snapshot.featured);
-    contentForm.featuredOrder.value = snapshot.featuredOrder || 0;
+    contentForm.featuredOrder.value = String(featuredOrderValue(snapshot.featuredOrder || 0));
     contentForm.category.value = snapshot.category || "模拟电子";
     contentForm.statusKey.value = snapshot.statusKey || "planned";
     contentForm.version.value = snapshot.version || "";
@@ -683,7 +724,7 @@
         markdown: item.markdown || "",
         publishStatus: type === "post" ? item.publishStatus || "draft" : item.visibilityStatus || "draft",
         featured: Boolean(item.featured),
-        featuredOrder: item.featuredOrder || 0,
+        featuredOrder: featuredOrderValue(item.featuredOrder || 0),
         category: item.category || "模拟电子",
         statusKey: item.statusKey || "planned",
         version: item.version || "",
@@ -726,7 +767,7 @@
       tags: data.get("tags"),
       date: now,
       featured: data.get("featured") === "on",
-      featuredOrder: Number(data.get("featuredOrder") || 0)
+      featuredOrder: featuredOrderValue(data.get("featuredOrder") || 0)
     };
 
     if (type === "post") {
@@ -764,6 +805,20 @@
         docsUrl: data.get("docsUrl")
       }
     };
+  }
+
+  function validateFeaturedPayload(payload) {
+    if (!payload.featured) return;
+    const order = featuredOrderValue(payload.featuredOrder);
+    const sameItem = (item) => item.contentType === payload.type && item.id === payload.id;
+    const existing = featuredItems().filter((item) => !sameItem(item));
+    if (existing.length >= featuredLimit) {
+      throw new Error("首页轮播最多只能设置 4 个内容，请先取消一个已有轮播项");
+    }
+    const conflict = existing.find((item) => featuredOrderValue(item.featuredOrder) === order);
+    if (conflict) {
+      throw new Error(`轮播排序 ${order} 已被《${conflict.title || "未命名内容"}》使用，请选择 0-3 中的空槽位`);
+    }
   }
 
   function selectedItems() {
@@ -1009,6 +1064,13 @@
     if (item) applyItemToForm(button.dataset.type, item);
   });
 
+  featuredSlots?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-action='edit-featured']");
+    if (!button) return;
+    const item = combinedItems().find((entry) => entry.contentType === button.dataset.type && entry.id === button.dataset.id);
+    if (item) applyItemToForm(button.dataset.type, item);
+  });
+
   window.addEventListener("hashchange", () => setAdminView());
 
   contentForm.addEventListener("input", () => {
@@ -1018,6 +1080,9 @@
 
   contentForm.addEventListener("change", (event) => {
     if (event.target.name === "type") updateTypeFields();
+    if (event.target.name === "featuredOrder") {
+      event.target.value = String(featuredOrderValue(event.target.value));
+    }
     markDirty();
   });
 
@@ -1077,11 +1142,12 @@
       try {
         saveDraft();
         const { endpoint, collectionKey, payload } = buildPayload();
+        validateFeaturedPayload(payload);
         const result = await request(endpoint, { method: "POST", body: JSON.stringify(payload) });
         serverContent = { ...serverContent, [collectionKey]: result[collectionKey] };
         clearDraft();
         resetForm();
-        renderList(); renderRecentContent();
+        renderList(); renderRecentContent(); renderFeaturedSlots();
         setNotice(`保存成功：${payload.title || "未命名内容"}。`, "success");
       } catch (error) {
         saveDraft();

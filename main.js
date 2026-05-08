@@ -221,7 +221,7 @@
   featuredItems = [...posts, ...projects]
     .filter((item) => item.featured)
     .sort((a, b) => Number(a.featuredOrder || 0) - Number(b.featuredOrder || 0))
-    .slice(0, 6);
+    .slice(0, 4);
   if (!featuredItems.length) {
     featuredItems = [
       posts.find((post) => post.id === "stm32-adc-dma-precision") || posts[0],

@@ -759,6 +759,7 @@ button:disabled {
     "type title category publish"
     "excerpt excerpt tags featured"
     "excerpt excerpt cover cover"
+    "carousel carousel carousel carousel"
     "project project project project"
     "library library library library";
   gap: 18px 22px;
@@ -833,8 +834,79 @@ button:disabled {
   min-width: 0;
 }
 
-.meta-featured input[type="number"] {
+.meta-featured select {
   min-width: 0;
+}
+
+.meta-featured small {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.meta-featured-manager {
+  grid-area: carousel;
+  padding: 18px;
+  border: 1px solid rgba(185, 210, 236, 0.8);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.featured-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.featured-slot {
+  min-height: 132px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(232, 244, 255, 0.74));
+}
+
+.featured-slot.is-empty {
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  border-style: dashed;
+}
+
+.featured-slot img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid rgba(185, 210, 236, 0.75);
+}
+
+.featured-slot strong,
+.featured-slot span,
+.featured-slot small {
+  display: block;
+}
+
+.featured-slot strong {
+  margin-top: 8px;
+  line-height: 1.35;
+}
+
+.featured-slot span {
+  color: var(--blue);
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.featured-slot small {
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.featured-slot button {
+  margin-top: 10px;
+  width: 100%;
 }
 
 .meta-cover {
@@ -1520,6 +1592,7 @@ button:disabled {
       "excerpt excerpt"
       "tags tags"
       "cover cover"
+      "carousel carousel"
       "project project"
       "library library";
   }
@@ -1559,6 +1632,10 @@ button:disabled {
     grid-template-areas: none;
     max-height: none;
     overflow: visible;
+  }
+
+  .featured-slot-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .preview-panel {
@@ -1609,6 +1686,10 @@ button:disabled {
     padding: 18px;
   }
 
+  .featured-slot-grid {
+    grid-template-columns: 1fr;
+  }
+
   .content-meta-grid {
     grid-template-columns: 1fr;
     grid-template-areas:
@@ -1617,6 +1698,7 @@ button:disabled {
       "category"
       "publish"
       "featured"
+      "carousel"
       "excerpt"
       "tags"
       "cover"

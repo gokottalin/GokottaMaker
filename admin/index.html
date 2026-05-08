@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GokottaMaker 管理端</title>
     <meta name="robots" content="noindex,nofollow" />
-    <link rel="stylesheet" href="../styles.css?v=20260507-1608" />
-    <link rel="stylesheet" href="./admin.css?v=20260507-1608" />
+    <link rel="stylesheet" href="../styles.css?v=20260508-2254" />
+    <link rel="stylesheet" href="./admin.css?v=20260508-2254" />
   </head>
   <body>
     <main class="admin-shell">
@@ -174,9 +174,26 @@
                     </label>
                     <label>
                       轮播排序
-                      <input name="featuredOrder" type="number" min="0" step="1" value="0" />
+                      <select name="featuredOrder" aria-describedby="featuredOrderHelp">
+                        <option value="0">0 / 第一张</option>
+                        <option value="1">1 / 第二张</option>
+                        <option value="2">2 / 第三张</option>
+                        <option value="3">3 / 第四张</option>
+                      </select>
                     </label>
+                    <small id="featuredOrderHelp">首页轮播最多 4 个，排序仅支持 0-3。</small>
                   </div>
+
+                  <section class="featured-manager meta-featured-manager" aria-labelledby="featuredManagerTitle">
+                    <div class="section-heading compact">
+                      <div>
+                        <p class="eyebrow">Carousel</p>
+                        <h3 id="featuredManagerTitle">首页轮播管理</h3>
+                      </div>
+                      <span>4 个固定槽位</span>
+                    </div>
+                    <div id="featuredSlots" class="featured-slot-grid"></div>
+                  </section>
 
                   <div class="project-extra" id="projectExtra" hidden>
                     <label>
@@ -361,13 +378,13 @@
       </section>
     </div>
 
-    <script src="../data/posts.js?v=20260507-1608"></script>
-    <script src="../data/seed.js?v=20260507-1608"></script>
-    <script src="../api/content.js?v=20260507-1608"></script>
-    <script src="../data/content-store.js?v=20260507-1608"></script>
-    <script src="../data/markdown-renderer.js?v=20260507-1608"></script>
-    <script src="./admin.js?v=20260507-1608"></script>
-    <script src="../data/site-meta.js?v=20260507-1608"></script>
-    <script src="../data/footer.js?v=20260507-1608"></script>
+    <script src="../data/posts.js?v=20260508-2254"></script>
+    <script src="../data/seed.js?v=20260508-2254"></script>
+    <script src="../api/content.js?v=20260508-2254"></script>
+    <script src="../data/content-store.js?v=20260508-2254"></script>
+    <script src="../data/markdown-renderer.js?v=20260508-2254"></script>
+    <script src="./admin.js?v=20260508-2254"></script>
+    <script src="../data/site-meta.js?v=20260508-2254"></script>
+    <script src="../data/footer.js?v=20260508-2254"></script>
   </body>
 </html>
