@@ -187,6 +187,10 @@
     padding: 26px 18px 54px;
   }
 
+  .hero {
+    min-height: 450px;
+  }
+
   .hero h1,
   .post-hero h1 {
     font-size: 30px;

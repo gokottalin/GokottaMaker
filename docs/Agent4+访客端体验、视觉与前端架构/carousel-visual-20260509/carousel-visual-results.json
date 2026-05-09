@@ -1,0 +1,1099 @@
+{
+  "url": "http://127.0.0.1:4175/",
+  "generatedAt": "2026-05-08T17:25:08.731Z",
+  "results": [
+    {
+      "viewport": {
+        "name": "1920",
+        "width": 1920,
+        "height": 1080
+      },
+      "consoleMessages": [],
+      "uniqueTitles": [
+        "有源低通滤波器设计与仿真分析",
+        "STM32 ADC 模拟采样从原理到精度优化",
+        "ESP32 低功耗智能家居节点设计指南",
+        "开源桌面功率放大器项目规划"
+      ],
+      "heightDelta": 0,
+      "failures": [],
+      "states": [
+        {
+          "label": "initial",
+          "viewportName": "1920",
+          "title": "有源低通滤波器设计与仿真分析",
+          "excerpt": "从指标拆解、拓扑选择、参数计算到示波器验证，整理一套可复用的模拟前端设计流程。",
+          "href": "./post.html?id=analog-active-filter",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 0,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 0,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 1920,
+          "innerWidth": 1920,
+          "overflowNodes": [
+            {
+              "tag": "IMG",
+              "className": "hero-bg",
+              "id": "heroBgA",
+              "right": 1924,
+              "left": -4
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 2054,
+              "left": 627
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 2002,
+              "left": 1469
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 2062,
+              "left": 677
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1957,
+              "left": 908
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 2041,
+              "left": 614
+            }
+          ],
+          "heroHeight": 662,
+          "titleLines": 2,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        },
+        {
+          "label": "slot-0",
+          "viewportName": "1920",
+          "title": "有源低通滤波器设计与仿真分析",
+          "excerpt": "从指标拆解、拓扑选择、参数计算到示波器验证，整理一套可复用的模拟前端设计流程。",
+          "href": "./post.html?id=analog-active-filter",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 0,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 0,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 1920,
+          "innerWidth": 1920,
+          "overflowNodes": [
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 2054,
+              "left": 627
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 2002,
+              "left": 1469
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 2062,
+              "left": 677
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1957,
+              "left": 908
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 2041,
+              "left": 614
+            }
+          ],
+          "heroHeight": 662,
+          "titleLines": 2,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        },
+        {
+          "label": "slot-1",
+          "viewportName": "1920",
+          "title": "STM32 ADC 模拟采样从原理到精度优化",
+          "excerpt": "围绕采样时间、DMA 环形缓冲、参考电压和软件滤波，建立稳定可信的 ADC 采样链路。",
+          "href": "./post.html?id=stm32-adc-dma-precision",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 1,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 1,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 1920,
+          "innerWidth": 1920,
+          "overflowNodes": [
+            {
+              "tag": "IMG",
+              "className": "hero-bg",
+              "id": "heroBgA",
+              "right": 1925,
+              "left": -5
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 2062,
+              "left": 635
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1994,
+              "left": 1461
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 2054,
+              "left": 669
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1957,
+              "left": 908
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 2041,
+              "left": 614
+            }
+          ],
+          "heroHeight": 662,
+          "titleLines": 2,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        },
+        {
+          "label": "slot-2",
+          "viewportName": "1920",
+          "title": "ESP32 低功耗智能家居节点设计指南",
+          "excerpt": "从硬件静态电流、Deep Sleep、MQTT 上报到 OTA 维护，设计一个真正省电的联网节点。",
+          "href": "./post.html?id=esp32-low-power-node",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 2,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 2,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 1920,
+          "innerWidth": 1920,
+          "overflowNodes": [
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 2062,
+              "left": 635
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 2002,
+              "left": 1469
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 2062,
+              "left": 677
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1949,
+              "left": 900
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 2041,
+              "left": 614
+            }
+          ],
+          "heroHeight": 662,
+          "titleLines": 2,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        },
+        {
+          "label": "slot-3",
+          "viewportName": "1920",
+          "title": "开源桌面功率放大器项目规划",
+          "excerpt": "一个适合长期沉淀的开源硬件项目：原理图、PCB、BOM、固件、外壳和调试记录都应可复现。",
+          "href": "./post.html?id=opensource-power-amplifier",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 3,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 3,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 1920,
+          "innerWidth": 1920,
+          "overflowNodes": [
+            {
+              "tag": "IMG",
+              "className": "hero-bg",
+              "id": "heroBgA",
+              "right": 1926,
+              "left": -6
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 2062,
+              "left": 635
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 2002,
+              "left": 1469
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 2062,
+              "left": 677
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1957,
+              "left": 908
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 2033,
+              "left": 606
+            }
+          ],
+          "heroHeight": 662,
+          "titleLines": 2,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "name": "1366",
+        "width": 1366,
+        "height": 768
+      },
+      "consoleMessages": [],
+      "uniqueTitles": [
+        "有源低通滤波器设计与仿真分析",
+        "STM32 ADC 模拟采样从原理到精度优化",
+        "ESP32 低功耗智能家居节点设计指南",
+        "开源桌面功率放大器项目规划"
+      ],
+      "heightDelta": 0,
+      "failures": [],
+      "states": [
+        {
+          "label": "initial",
+          "viewportName": "1366",
+          "title": "有源低通滤波器设计与仿真分析",
+          "excerpt": "从指标拆解、拓扑选择、参数计算到示波器验证，整理一套可复用的模拟前端设计流程。",
+          "href": "./post.html?id=analog-active-filter",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 0,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 0,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 1366,
+          "innerWidth": 1366,
+          "overflowNodes": [
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1462,
+              "left": 436
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1426,
+              "left": 1044
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1470,
+              "left": 474
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1394,
+              "left": 640
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1454,
+              "left": 429
+            }
+          ],
+          "heroHeight": 662,
+          "titleLines": 2,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        },
+        {
+          "label": "slot-0",
+          "viewportName": "1366",
+          "title": "有源低通滤波器设计与仿真分析",
+          "excerpt": "从指标拆解、拓扑选择、参数计算到示波器验证，整理一套可复用的模拟前端设计流程。",
+          "href": "./post.html?id=analog-active-filter",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 0,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 0,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 1366,
+          "innerWidth": 1366,
+          "overflowNodes": [
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1462,
+              "left": 436
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1426,
+              "left": 1044
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1470,
+              "left": 474
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1394,
+              "left": 640
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1454,
+              "left": 429
+            }
+          ],
+          "heroHeight": 662,
+          "titleLines": 2,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        },
+        {
+          "label": "slot-1",
+          "viewportName": "1366",
+          "title": "STM32 ADC 模拟采样从原理到精度优化",
+          "excerpt": "围绕采样时间、DMA 环形缓冲、参考电压和软件滤波，建立稳定可信的 ADC 采样链路。",
+          "href": "./post.html?id=stm32-adc-dma-precision",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 1,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 1,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 1366,
+          "innerWidth": 1366,
+          "overflowNodes": [
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1470,
+              "left": 444
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1418,
+              "left": 1036
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1462,
+              "left": 466
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1394,
+              "left": 640
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1454,
+              "left": 429
+            }
+          ],
+          "heroHeight": 662,
+          "titleLines": 3,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        },
+        {
+          "label": "slot-2",
+          "viewportName": "1366",
+          "title": "ESP32 低功耗智能家居节点设计指南",
+          "excerpt": "从硬件静态电流、Deep Sleep、MQTT 上报到 OTA 维护，设计一个真正省电的联网节点。",
+          "href": "./post.html?id=esp32-low-power-node",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 2,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 2,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 1366,
+          "innerWidth": 1366,
+          "overflowNodes": [
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1470,
+              "left": 444
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1426,
+              "left": 1044
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1470,
+              "left": 474
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1386,
+              "left": 632
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1454,
+              "left": 429
+            }
+          ],
+          "heroHeight": 662,
+          "titleLines": 2,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        },
+        {
+          "label": "slot-3",
+          "viewportName": "1366",
+          "title": "开源桌面功率放大器项目规划",
+          "excerpt": "一个适合长期沉淀的开源硬件项目：原理图、PCB、BOM、固件、外壳和调试记录都应可复现。",
+          "href": "./post.html?id=opensource-power-amplifier",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 3,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 3,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 1366,
+          "innerWidth": 1366,
+          "overflowNodes": [
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1470,
+              "left": 444
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1426,
+              "left": 1044
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1470,
+              "left": 474
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1394,
+              "left": 640
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1447,
+              "left": 421
+            }
+          ],
+          "heroHeight": 662,
+          "titleLines": 2,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "name": "1039",
+        "width": 1039,
+        "height": 589
+      },
+      "consoleMessages": [],
+      "uniqueTitles": [
+        "有源低通滤波器设计与仿真分析",
+        "STM32 ADC 模拟采样从原理到精度优化",
+        "ESP32 低功耗智能家居节点设计指南",
+        "开源桌面功率放大器项目规划"
+      ],
+      "heightDelta": 0,
+      "failures": [],
+      "states": [
+        {
+          "label": "initial",
+          "viewportName": "1039",
+          "title": "有源低通滤波器设计与仿真分析",
+          "excerpt": "从指标拆解、拓扑选择、参数计算到示波器验证，整理一套可复用的模拟前端设计流程。",
+          "href": "./post.html?id=analog-active-filter",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 0,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 0,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 1039,
+          "innerWidth": 1039,
+          "overflowNodes": [
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1113,
+              "left": 311
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1087,
+              "left": 788
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1121,
+              "left": 343
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1062,
+              "left": 472
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1109,
+              "left": 307
+            }
+          ],
+          "heroHeight": 662,
+          "titleLines": 2,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        },
+        {
+          "label": "slot-0",
+          "viewportName": "1039",
+          "title": "有源低通滤波器设计与仿真分析",
+          "excerpt": "从指标拆解、拓扑选择、参数计算到示波器验证，整理一套可复用的模拟前端设计流程。",
+          "href": "./post.html?id=analog-active-filter",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 0,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 0,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 1039,
+          "innerWidth": 1039,
+          "overflowNodes": [
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1113,
+              "left": 311
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1087,
+              "left": 788
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1121,
+              "left": 343
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1062,
+              "left": 472
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1109,
+              "left": 307
+            }
+          ],
+          "heroHeight": 662,
+          "titleLines": 2,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        },
+        {
+          "label": "slot-1",
+          "viewportName": "1039",
+          "title": "STM32 ADC 模拟采样从原理到精度优化",
+          "excerpt": "围绕采样时间、DMA 环形缓冲、参考电压和软件滤波，建立稳定可信的 ADC 采样链路。",
+          "href": "./post.html?id=stm32-adc-dma-precision",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 1,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 1,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 1039,
+          "innerWidth": 1039,
+          "overflowNodes": [
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1121,
+              "left": 319
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1079,
+              "left": 780
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1113,
+              "left": 335
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1062,
+              "left": 472
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1109,
+              "left": 307
+            }
+          ],
+          "heroHeight": 662,
+          "titleLines": 3,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        },
+        {
+          "label": "slot-2",
+          "viewportName": "1039",
+          "title": "ESP32 低功耗智能家居节点设计指南",
+          "excerpt": "从硬件静态电流、Deep Sleep、MQTT 上报到 OTA 维护，设计一个真正省电的联网节点。",
+          "href": "./post.html?id=esp32-low-power-node",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 2,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 2,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 1039,
+          "innerWidth": 1039,
+          "overflowNodes": [
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1121,
+              "left": 319
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1087,
+              "left": 788
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1121,
+              "left": 343
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1054,
+              "left": 464
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1109,
+              "left": 307
+            }
+          ],
+          "heroHeight": 662,
+          "titleLines": 3,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        },
+        {
+          "label": "slot-3",
+          "viewportName": "1039",
+          "title": "开源桌面功率放大器项目规划",
+          "excerpt": "一个适合长期沉淀的开源硬件项目：原理图、PCB、BOM、固件、外壳和调试记录都应可复现。",
+          "href": "./post.html?id=opensource-power-amplifier",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 3,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 3,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 1039,
+          "innerWidth": 1039,
+          "overflowNodes": [
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1121,
+              "left": 319
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1087,
+              "left": 788
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1121,
+              "left": 343
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1062,
+              "left": 472
+            },
+            {
+              "tag": "path",
+              "className": "[object SVGAnimatedString]",
+              "id": "",
+              "right": 1101,
+              "left": 299
+            }
+          ],
+          "heroHeight": 662,
+          "titleLines": 2,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "name": "390",
+        "width": 390,
+        "height": 844
+      },
+      "consoleMessages": [],
+      "uniqueTitles": [
+        "有源低通滤波器设计与仿真分析",
+        "STM32 ADC 模拟采样从原理到精度优化",
+        "ESP32 低功耗智能家居节点设计指南",
+        "开源桌面功率放大器项目规划"
+      ],
+      "heightDelta": 0,
+      "failures": [],
+      "states": [
+        {
+          "label": "initial",
+          "viewportName": "390",
+          "title": "有源低通滤波器设计与仿真分析",
+          "excerpt": "从指标拆解、拓扑选择、参数计算到示波器验证，整理一套可复用的模拟前端设计流程。",
+          "href": "./post.html?id=analog-active-filter",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 0,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 0,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 390,
+          "innerWidth": 390,
+          "overflowNodes": [],
+          "heroHeight": 450,
+          "titleLines": 2,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        },
+        {
+          "label": "slot-0",
+          "viewportName": "390",
+          "title": "有源低通滤波器设计与仿真分析",
+          "excerpt": "从指标拆解、拓扑选择、参数计算到示波器验证，整理一套可复用的模拟前端设计流程。",
+          "href": "./post.html?id=analog-active-filter",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 0,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 0,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 390,
+          "innerWidth": 390,
+          "overflowNodes": [],
+          "heroHeight": 450,
+          "titleLines": 2,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        },
+        {
+          "label": "slot-1",
+          "viewportName": "390",
+          "title": "STM32 ADC 模拟采样从原理到精度优化",
+          "excerpt": "围绕采样时间、DMA 环形缓冲、参考电压和软件滤波，建立稳定可信的 ADC 采样链路。",
+          "href": "./post.html?id=stm32-adc-dma-precision",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 1,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 1,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 390,
+          "innerWidth": 390,
+          "overflowNodes": [],
+          "heroHeight": 450,
+          "titleLines": 2,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        },
+        {
+          "label": "slot-2",
+          "viewportName": "390",
+          "title": "ESP32 低功耗智能家居节点设计指南",
+          "excerpt": "从硬件静态电流、Deep Sleep、MQTT 上报到 OTA 维护，设计一个真正省电的联网节点。",
+          "href": "./post.html?id=esp32-low-power-node",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 2,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 2,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 390,
+          "innerWidth": 390,
+          "overflowNodes": [],
+          "heroHeight": 450,
+          "titleLines": 2,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        },
+        {
+          "label": "slot-3",
+          "viewportName": "390",
+          "title": "开源桌面功率放大器项目规划",
+          "excerpt": "一个适合长期沉淀的开源硬件项目：原理图、PCB、BOM、固件、外壳和调试记录都应可复现。",
+          "href": "./post.html?id=opensource-power-amplifier",
+          "dotCount": 4,
+          "activeDotCount": 1,
+          "activeDotIndex": 3,
+          "cardCount": 4,
+          "activeCardCount": 1,
+          "activeCardIndex": 3,
+          "activeBgCount": 1,
+          "horizontalOverflow": false,
+          "scrollWidth": 390,
+          "innerWidth": 390,
+          "overflowNodes": [],
+          "heroHeight": 450,
+          "titleLines": 2,
+          "titleWithinHero": true,
+          "copyVisible": true,
+          "copyWithinHero": true
+        }
+      ]
+    }
+  ]
+}

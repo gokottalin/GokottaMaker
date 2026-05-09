@@ -554,20 +554,40 @@
       const order = featuredOrderValue(item.featuredOrder);
       if (!byOrder.has(order)) byOrder.set(order, item);
     });
+    const current = currentSnapshot();
+    const canAssignCurrent = snapshotHasContent(current);
     featuredSlots.innerHTML = Array.from({ length: featuredLimit }, (_, order) => {
       const item = byOrder.get(order);
       if (!item) {
-        return `<article class="featured-slot is-empty"><span>${order}</span><small>空槽位</small></article>`;
+        return `
+          <article class="featured-slot is-empty" data-slot="${order}">
+            <div class="featured-slot-head">
+              <span>Slot ${order}</span>
+              <small>空槽位</small>
+            </div>
+            <div class="featured-slot-empty-mark">待安排</div>
+            <button class="button secondary" data-action="assign-featured-slot" data-slot="${order}" type="button" ${canAssignCurrent ? "" : "disabled"}>填入当前内容</button>
+          </article>
+        `;
       }
       const kind = item.contentType === "project" ? "项目" : "文章";
+      const publish = publishValue(item) === "published" ? "已发布" : "草稿";
+      const meta = item.contentType === "project" ? item.status || "项目" : item.category || "文章";
       const cover = fallbackCover(item);
       return `
-        <article class="featured-slot">
-          <span>Slot ${order} · ${kind}</span>
+        <article class="featured-slot is-filled" data-slot="${order}">
+          <div class="featured-slot-head">
+            <span>Slot ${order}</span>
+            <small>${kind} · ${escapeHtml(publish)}</small>
+          </div>
           <img src="${adminSrc(cover)}" alt="${escapeHtml(item.title || "未命名内容")}封面" />
           <strong>${escapeHtml(item.title || "未命名内容")}</strong>
-          <small>${escapeHtml(publishValue(item) === "published" ? "已发布" : "草稿")}</small>
-          <button class="button secondary" data-action="edit-featured" data-type="${item.contentType}" data-id="${item.id}" type="button">编辑槽位内容</button>
+          <small>${escapeHtml(meta)}</small>
+          <div class="featured-slot-actions">
+            <button class="button secondary" data-action="edit-featured" data-type="${item.contentType}" data-id="${item.id}" type="button">编辑</button>
+            <button class="button secondary" data-action="replace-featured-slot" data-slot="${order}" data-type="${item.contentType}" data-id="${item.id}" type="button" ${canAssignCurrent ? "" : "disabled"}>替换</button>
+            <button class="button secondary danger" data-action="clear-featured-slot" data-type="${item.contentType}" data-id="${item.id}" type="button">取消</button>
+          </div>
         </article>
       `;
     }).join("");
@@ -821,6 +841,44 @@
     }
   }
 
+  async function saveItemFeatured(item, featured, order = item.featuredOrder) {
+    if (item.contentType === "post") {
+      const payload = { ...item, type: "post", featured: Boolean(featured), featuredOrder: featuredOrderValue(order) };
+      const result = await request("/api/posts", { method: "POST", body: JSON.stringify(payload) });
+      serverContent = { ...serverContent, posts: result.posts };
+      return;
+    }
+
+    const payload = { ...item, type: "project", featured: Boolean(featured), featuredOrder: featuredOrderValue(order) };
+    const result = await request("/api/projects", { method: "POST", body: JSON.stringify(payload) });
+    serverContent = { ...serverContent, projects: result.projects };
+  }
+
+  function assignCurrentToFeaturedSlot(order) {
+    contentForm.featured.checked = true;
+    contentForm.featuredOrder.value = String(featuredOrderValue(order));
+    markDirty();
+    renderFeaturedSlots();
+    setNotice(`已把当前编辑内容安排到首页轮播槽位 ${order}，保存后生效。`, "warning");
+  }
+
+  async function replaceFeaturedSlot(order, occupiedItem) {
+    const current = currentSnapshot();
+    if (!snapshotHasContent(current)) {
+      setNotice("请先在编辑器中填写要替换到轮播的内容。", "warning");
+      return;
+    }
+    const currentName = current.title.trim() || "当前编辑内容";
+    const occupiedName = occupiedItem.title || "未命名内容";
+    if (!window.confirm(`确认用《${currentName}》替换槽位 ${order} 的《${occupiedName}》吗？旧内容会先取消首页轮播，当前内容仍需点击保存。`)) return;
+    await saveItemFeatured(occupiedItem, false, occupiedItem.featuredOrder);
+    assignCurrentToFeaturedSlot(order);
+    renderList();
+    renderRecentContent();
+    renderFeaturedSlots();
+    setNotice(`槽位 ${order} 已腾出。请保存《${currentName}》完成替换。`, "warning");
+  }
+
   function selectedItems() {
     const itemMap = new Map(combinedItems().map((item) => [itemKey(item), item]));
     return [...selectedContent].map((key) => itemMap.get(key)).filter(Boolean);
@@ -1065,10 +1123,32 @@
   });
 
   featuredSlots?.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-action='edit-featured']");
+    const button = event.target.closest("[data-action]");
     if (!button) return;
+    const action = button.dataset.action;
     const item = combinedItems().find((entry) => entry.contentType === button.dataset.type && entry.id === button.dataset.id);
-    if (item) applyItemToForm(button.dataset.type, item);
+    if (action === "edit-featured" && item) {
+      applyItemToForm(button.dataset.type, item);
+      return;
+    }
+    if (action === "assign-featured-slot") {
+      assignCurrentToFeaturedSlot(button.dataset.slot);
+      return;
+    }
+    if (action === "replace-featured-slot" && item) {
+      withBusy(button, "替换中...", () => replaceFeaturedSlot(button.dataset.slot, item)).catch((error) => setNotice(error.message, "error"));
+      return;
+    }
+    if (action === "clear-featured-slot" && item) {
+      if (!window.confirm(`确认将《${item.title || "未命名内容"}》移出首页轮播吗？`)) return;
+      withBusy(button, "取消中...", async () => {
+        await saveItemFeatured(item, false, item.featuredOrder);
+        renderList();
+        renderRecentContent();
+        renderFeaturedSlots();
+        setNotice("已取消该槽位的首页轮播。", "success");
+      }).catch((error) => setNotice(error.message, "error"));
+    }
   });
 
   window.addEventListener("hashchange", () => setAdminView());
@@ -1076,6 +1156,7 @@
   contentForm.addEventListener("input", () => {
     markDirty();
     updatePreview();
+    renderFeaturedSlots();
   });
 
   contentForm.addEventListener("change", (event) => {
@@ -1084,6 +1165,7 @@
       event.target.value = String(featuredOrderValue(event.target.value));
     }
     markDirty();
+    renderFeaturedSlots();
   });
 
   imageLibrary.addEventListener("click", (event) => {

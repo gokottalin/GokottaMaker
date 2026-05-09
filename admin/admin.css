@@ -860,18 +860,40 @@ button:disabled {
 }
 
 .featured-slot {
-  min-height: 132px;
+  min-height: 188px;
   padding: 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(232, 244, 255, 0.74));
+  display: grid;
+  grid-template-rows: auto auto minmax(0, auto) auto auto;
+  gap: 8px;
 }
 
 .featured-slot.is-empty {
-  display: grid;
-  place-items: center;
+  align-content: stretch;
   color: var(--muted);
   border-style: dashed;
+  background: rgba(248, 251, 255, 0.72);
+}
+
+.featured-slot-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.featured-slot-empty-mark {
+  min-height: 86px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed rgba(156, 185, 214, 0.8);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.56);
+  color: #7f96b1;
+  font-size: 13px;
+  font-weight: 900;
 }
 
 .featured-slot img {
@@ -891,6 +913,7 @@ button:disabled {
 .featured-slot strong {
   margin-top: 8px;
   line-height: 1.35;
+  min-height: 38px;
 }
 
 .featured-slot span {
@@ -905,8 +928,25 @@ button:disabled {
 }
 
 .featured-slot button {
-  margin-top: 10px;
   width: 100%;
+}
+
+.featured-slot-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.featured-slot-actions .button {
+  min-height: 36px;
+  padding: 0 8px;
+}
+
+.featured-slot-actions .button.danger {
+  border-color: rgba(176, 51, 47, 0.22);
+  background: #fff4f3;
+  color: #a72f2b;
 }
 
 .meta-cover {

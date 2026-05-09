@@ -34,7 +34,7 @@ const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword }
 const uploadStore = createUploadStore(uploadDir);
 
 const siteVersion = "V2.2.6";
-const siteBuild = "20260508-2254";
+const siteBuild = "20260509-0833";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
 
@@ -72,7 +72,7 @@ function seedContent() {
         post.readTime || "",
         post.date || "",
         index < 4 ? 1 : 0,
-        index + 1,
+        index,
         post.tags || "",
         post.date || new Date().toISOString()
       );
