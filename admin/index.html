@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GokottaMaker 管理端</title>
     <meta name="robots" content="noindex,nofollow" />
-    <link rel="stylesheet" href="../styles.css?v=20260509-1956" />
-    <link rel="stylesheet" href="./admin.css?v=20260509-1956" />
+    <link rel="stylesheet" href="../styles.css?v=20260509-2145" />
+    <link rel="stylesheet" href="./admin.css?v=20260509-2145" />
   </head>
   <body>
     <main class="admin-shell">
@@ -220,8 +220,11 @@
 
                   <label class="cover-picker meta-cover" title="推荐图片格式：JPG、PNG、WebP；推荐比例 16:9；推荐分辨率 1600x900 或 1920x1080。">
                     封面图片
-                    <input id="coverFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
-                    <span class="file-hint" id="coverHint">从资源管理器选择图片，推荐 1600x900 或 1920x1080</span>
+                    <span class="file-picker-control">
+                      <input id="coverFile" class="visually-hidden-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif" />
+                      <span class="file-picker-button">选择封面图片</span>
+                      <span class="file-hint" id="coverHint">推荐 1600x900 或 1920x1080</span>
+                    </span>
                     <img class="cover-preview" id="coverPreview" alt="封面预览" />
                   </label>
 
@@ -378,13 +381,13 @@
       </section>
     </div>
 
-    <script src="../data/posts.js?v=20260509-1956"></script>
-    <script src="../data/seed.js?v=20260509-1956"></script>
-    <script src="../api/content.js?v=20260509-1956"></script>
-    <script src="../data/content-store.js?v=20260509-1956"></script>
-    <script src="../data/markdown-renderer.js?v=20260509-1956"></script>
-    <script src="./admin.js?v=20260509-1956"></script>
-    <script src="../data/site-meta.js?v=20260509-1956"></script>
-    <script src="../data/footer.js?v=20260509-1956"></script>
+    <script src="../data/posts.js?v=20260509-2145"></script>
+    <script src="../data/seed.js?v=20260509-2145"></script>
+    <script src="../api/content.js?v=20260509-2145"></script>
+    <script src="../data/content-store.js?v=20260509-2145"></script>
+    <script src="../data/markdown-renderer.js?v=20260509-2145"></script>
+    <script src="./admin.js?v=20260509-2145"></script>
+    <script src="../data/site-meta.js?v=20260509-2145"></script>
+    <script src="../data/footer.js?v=20260509-2145"></script>
   </body>
 </html>
