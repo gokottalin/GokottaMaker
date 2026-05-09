@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.2605-elec/schema/circuit-ir.v0.1.json",
+  "title": "Circuit IR v0.1",
+  "type": "object",
+  "required": ["schema_version", "circuit", "nets", "devices", "connections"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "0.1.0"
+    },
+    "circuit": {
+      "type": "object",
+      "required": ["id", "version"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9_\\-]*$"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "nets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/net"
+      },
+      "uniqueItems": true
+    },
+    "devices": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/device"
+      },
+      "uniqueItems": true
+    },
+    "connections": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/connection"
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/constraint"
+      },
+      "default": []
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "net": {
+      "type": "object",
+      "required": ["id", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_+\\-]*$"
+        },
+        "type": {
+          "enum": ["ground", "power", "signal", "bias", "feedback", "input", "output", "internal"]
+        },
+        "alias": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "device": {
+      "type": "object",
+      "required": ["refdes", "component_type"],
+      "additionalProperties": false,
+      "properties": {
+        "refdes": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*[0-9]+$"
+        },
+        "component_type": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "model": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "package": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": {
+            "type": ["string", "number", "boolean"]
+          },
+          "default": {}
+        },
+        "pin_map": {
+          "type": "object",
+          "patternProperties": {
+            "^[A-Za-z0-9_\\-]+$": {
+              "type": "string",
+              "pattern": "^[A-Z][A-Z0-9_+\\-]*$"
+            }
+          },
+          "additionalProperties": false,
+          "default": {}
+        },
+        "internal_ties": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "string"
+            }
+          },
+          "default": []
+        },
+        "package_group": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string"
+        }
+      }
+    },
+    "connection": {
+      "type": "object",
+      "required": ["net", "terminals"],
+      "additionalProperties": false,
+      "properties": {
+        "net": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_+\\-]*$"
+        },
+        "terminals": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]*[0-9]+\\.[A-Z][A-Z0-9_+\\-]*$"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "constraint": {
+      "type": "object",
+      "required": ["target", "level", "rule"],
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "type": "string"
+        },
+        "level": {
+          "enum": ["must", "allow", "forbid", "warn"]
+        },
+        "rule": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

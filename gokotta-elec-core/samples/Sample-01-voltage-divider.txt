@@ -1,0 +1,16 @@
+电路 SAMPLE_01_VOLTAGE_DIVIDER 版本 0.1.0。
+
+网络 GND 是 ground，说明=全局参考地。
+网络 VIN 是 input，说明=输入电压。
+网络 VOUT 是 output，说明=分压输出节点。
+
+器件 V1 是 VOLTAGE_SOURCE_DC，参数{voltage=5V}。
+器件 R1 是 RESISTOR，参数{resistance=10kΩ, tolerance=1%}。
+器件 R2 是 RESISTOR，参数{resistance=10kΩ, tolerance=1%}。
+
+连接 VIN: V1.POS, R1.A。
+连接 VOUT: R1.B, R2.A。
+连接 GND: V1.NEG, R2.B。
+
+约束 R1 必须 terminal_connected(A,B)。
+约束 R2 必须 terminal_connected(A,B)。

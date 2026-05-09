@@ -1,0 +1,90 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GokottaElec 在线预览 | GokottaMaker</title>
+    <meta name="description" content="粘贴 CNL 电路描述，生成 SVG 原理图、IR JSON 和 ERC 诊断。" />
+    <link rel="manifest" href="../site.webmanifest" />
+    <link rel="stylesheet" href="../styles.css?v=20260509-1346" />
+  </head>
+  <body class="ge-page">
+    <a class="skip-link" href="#mainContent">跳到工具</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="../index.html"><img class="brand-symbol" src="../assets/logo/gokottamaker-icon.png" alt="" /><span>Gokotta<b>Maker</b></span></a>
+        <nav class="main-nav" aria-label="主导航">
+          <a href="../category.html?category=analog">模拟电子</a>
+          <a href="../category.html?category=stm32">STM32</a>
+          <a href="../category.html?category=esp32">ESP32</a>
+          <a href="../projects.html">开源项目</a>
+          <a href="../miniapps.html" aria-current="page">小程序</a>
+        </nav>
+        <div class="header-actions"><a class="return-link" href="../miniapps.html">小程序中心</a></div>
+      </div>
+    </header>
+
+    <main class="ge-shell" id="mainContent">
+      <header class="ge-tool-header">
+        <img class="ge-brand-icon" src="./assets/gokotta-elec-icon.png" alt="" aria-hidden="true" />
+        <div>
+          <h1>GokottaElec 在线预览</h1>
+          <p>粘贴 LLM 输出的 CNL 文本，调用 GokottaElec V1.1 生成 SVG 原理图、IR JSON 与 ERC 诊断。</p>
+        </div>
+        <div class="ge-reserved-actions" aria-label="预留功能">
+          <button type="button" disabled>保存工程</button>
+          <button type="button" disabled>分享链接</button>
+          <button type="button" disabled>导出包</button>
+        </div>
+      </header>
+
+      <section class="ge-workspace" aria-label="GokottaElec 工具">
+        <section class="ge-panel ge-editor-panel">
+          <div class="ge-panel-head">
+            <h2>CNL 输入</h2>
+            <select id="sampleSelect" aria-label="选择 Sample">
+              <option value="">加载 Sample</option>
+            </select>
+          </div>
+          <textarea id="cnlInput" spellcheck="false" placeholder="请粘贴 LLM 输出的 CNL 文本。"></textarea>
+          <div class="ge-toolbar">
+            <button id="renderButton" type="button">生成预览</button>
+            <button id="clearButton" type="button">清空</button>
+            <button id="copyButton" type="button">复制输入</button>
+          </div>
+        </section>
+
+        <section class="ge-panel ge-preview-panel">
+          <div class="ge-panel-head">
+            <h2>SVG 原理图</h2>
+            <div class="ge-actions">
+              <button id="fitButton" type="button">适配</button>
+              <button id="downloadSvgButton" type="button" disabled>下载 SVG</button>
+            </div>
+          </div>
+          <div id="svgPreview" class="ge-preview-empty">等待生成预览</div>
+        </section>
+      </section>
+
+      <section class="ge-bottom">
+        <section class="ge-panel">
+          <div class="ge-panel-head">
+            <h2>诊断日志</h2>
+          </div>
+          <pre id="diagnosticsLog">接口尚未调用。</pre>
+        </section>
+        <section class="ge-panel">
+          <div class="ge-panel-head">
+            <h2>IR JSON</h2>
+            <button id="copyIrButton" type="button" disabled>复制 IR</button>
+          </div>
+          <pre id="irViewer">{}</pre>
+        </section>
+      </section>
+    </main>
+
+    <script src="./gokotta-elec.js?v=20260509-1346"></script>
+    <script src="../data/site-meta.js?v=20260509-1346"></script>
+    <script src="../data/footer.js?v=20260509-1346"></script>
+  </body>
+</html>

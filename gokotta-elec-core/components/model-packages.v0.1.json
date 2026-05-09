@@ -1,0 +1,187 @@
+{
+  "library_version": "0.1.0",
+  "pin_numbering_policy": "Pin maps are package- and vendor-sensitive. Apply a model pin_map only when device.model and device.package match a listed package or alias.",
+  "models": {
+    "2N3904": {
+      "component_type": "BJT_NPN",
+      "aliases": ["MMBT3904"],
+      "default_package": "TO-92_EBC",
+      "packages": {
+        "TO-92_EBC": {
+          "package_aliases": ["TO-92", "TO-92-3", "SOT54"],
+          "pin_numbering_view": "flat face toward viewer, leads pointing down",
+          "pin_map": {
+            "1": "E",
+            "2": "B",
+            "3": "C"
+          },
+          "source": "JEDEC-style 2N3904 TO-92 pinout; common sources show flat-face lead order E, B, C.",
+          "source_url": "https://www.onsemi.com/pdf/datasheet/2n3904-d.pdf"
+        },
+        "SOT-23_BEC": {
+          "package_aliases": ["SOT-23", "TO-236AB"],
+          "pin_numbering_view": "top view",
+          "pin_map": {
+            "1": "B",
+            "2": "E",
+            "3": "C"
+          },
+          "source": "Common MMBT3904 SOT-23 pinout.",
+          "source_url": "https://www.digikey.com/en/htmldatasheets/production/95776/0/0/1/2n3904-datasheet.html"
+        }
+      }
+    },
+    "S8050": {
+      "component_type": "BJT_NPN",
+      "aliases": ["SS8050"],
+      "default_package": "TO-92_EBC",
+      "packages": {
+        "TO-92_EBC": {
+          "package_aliases": ["TO-92", "TO-92-3"],
+          "pin_numbering_view": "flat face toward viewer, leads pointing down",
+          "pin_map": {
+            "1": "E",
+            "2": "B",
+            "3": "C"
+          },
+          "source": "Several S8050/SS8050 references list TO-92 pins 1=Emitter, 2=Base, 3=Collector.",
+          "source_url": "https://www.xecor.com/blog/s8050-datasheet-equivalent-working-and-uses"
+        },
+        "TO-92_CBE": {
+          "package_aliases": ["TO-92-MCC", "SS8050BBU"],
+          "pin_numbering_view": "vendor datasheet package view",
+          "pin_map": {
+            "1": "C",
+            "2": "B",
+            "3": "E"
+          },
+          "source": "Some SS8050 vendor datasheets mark TO-92 pin configuration as C, B, E.",
+          "source_url": "https://www.onsemi.com/pdf/datasheet/ss8050-d.pdf"
+        },
+        "SOT-23_BEC": {
+          "package_aliases": ["SOT-23", "SOT23", "J3Y"],
+          "pin_numbering_view": "top view",
+          "pin_map": {
+            "1": "B",
+            "2": "E",
+            "3": "C"
+          },
+          "source": "Common S8050/J3Y SOT-23 pinout.",
+          "source_url": "https://www.hygroup.com.tw/upfiles/ADUpload/all_/S8050%20Rev-0.pdf"
+        }
+      }
+    },
+    "2N7002": {
+      "component_type": "MOS_NMOS_ENHANCEMENT",
+      "default_package": "SOT-23_GSD",
+      "packages": {
+        "SOT-23_GSD": {
+          "package_aliases": ["SOT-23", "SOT23", "TO-236AB"],
+          "pin_numbering_view": "top view",
+          "pin_map": {
+            "1": "G",
+            "2": "S",
+            "3": "D"
+          },
+          "internal_ties": [["B", "S"]],
+          "source": "Nexperia 2N7002 is a three-lead SOT-23 N-channel MOSFET; common package pinout is 1=G, 2=S, 3=D.",
+          "source_url": "https://assets.nexperia.com/documents/data-sheet/2N7002.pdf"
+        }
+      }
+    },
+    "IRLZ44N": {
+      "component_type": "MOS_NMOS_ENHANCEMENT",
+      "aliases": ["IRLZ44NPBF"],
+      "default_package": "TO-220AB_GDS",
+      "packages": {
+        "TO-220AB_GDS": {
+          "package_aliases": ["TO-220", "TO-220AB"],
+          "pin_numbering_view": "front marking face toward viewer, leads pointing down",
+          "pin_map": {
+            "1": "G",
+            "2": "D",
+            "3": "S"
+          },
+          "case_map": {
+            "TAB": "D"
+          },
+          "internal_ties": [["B", "S"]],
+          "source": "IRLZ44N TO-220AB pinout is 1=Gate, 2=Drain, 3=Source; metal tab is drain.",
+          "source_url": "https://www.infineon.com/assets/row/public/documents/24/49/infineon-irlz44n-datasheet-en.pdf"
+        }
+      }
+    },
+    "LM358": {
+      "component_type": "OPAMP_DUAL_PACKAGE",
+      "aliases": ["LM358N", "LM358P", "LM358D", "LM358DR", "LM358DT"],
+      "default_package": "DIP-8_DUAL_OPAMP",
+      "packages": {
+        "DIP-8_DUAL_OPAMP": {
+          "package_aliases": ["DIP-8", "PDIP-8", "DIP8", "PDIP8"],
+          "pin_numbering_view": "top view, notch up",
+          "pin_map": {
+            "1": "A_OUT",
+            "2": "A_IN-",
+            "3": "A_IN+",
+            "4": "V-",
+            "5": "B_IN+",
+            "6": "B_IN-",
+            "7": "B_OUT",
+            "8": "V+"
+          },
+          "unit_pin_maps": {
+            "A": {
+              "1": "OUT",
+              "2": "IN-",
+              "3": "IN+",
+              "4": "V-",
+              "8": "V+"
+            },
+            "B": {
+              "5": "IN+",
+              "6": "IN-",
+              "7": "OUT",
+              "4": "V-",
+              "8": "V+"
+            }
+          },
+          "source": "LM358 dual op-amp pin description: 1=OUT1, 2=IN1-, 3=IN1+, 4=GND/V-, 5=IN2+, 6=IN2-, 7=OUT2, 8=V+.",
+          "source_url": "https://www.ti.com/lit/ds/symlink/lm358.pdf"
+        },
+        "SOIC-8_DUAL_OPAMP": {
+          "package_aliases": ["SOIC-8", "SO-8", "SO8", "SOP-8"],
+          "same_pinout_as": "DIP-8_DUAL_OPAMP",
+          "pin_numbering_view": "top view, pin 1 marker at upper left",
+          "pin_map": {
+            "1": "A_OUT",
+            "2": "A_IN-",
+            "3": "A_IN+",
+            "4": "V-",
+            "5": "B_IN+",
+            "6": "B_IN-",
+            "7": "B_OUT",
+            "8": "V+"
+          },
+          "unit_pin_maps": {
+            "A": {
+              "1": "OUT",
+              "2": "IN-",
+              "3": "IN+",
+              "4": "V-",
+              "8": "V+"
+            },
+            "B": {
+              "5": "IN+",
+              "6": "IN-",
+              "7": "OUT",
+              "4": "V-",
+              "8": "V+"
+            }
+          },
+          "source": "SOIC-8 LM358 variants keep the standard dual op-amp 8-pin assignment.",
+          "source_url": "https://www.ti.com/lit/ds/symlink/lm358.pdf"
+        }
+      }
+    }
+  }
+}

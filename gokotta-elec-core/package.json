@@ -1,0 +1,25 @@
+{
+  "name": "gokottaelec",
+  "version": "1.1.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gokottalin/GokottaElec.git"
+  },
+  "gokottaVersion": "V1.1",
+  "type": "module",
+  "scripts": {
+    "parse:sample": "node scripts/parse-cnl.mjs samples/Sample-01-voltage-divider.txt output/sample-01.ir.json",
+    "parse:cnl": "node scripts/parse-cnl.mjs",
+    "erc:check": "node scripts/erc-check.mjs",
+    "build": "node scripts/elec-cli.mjs build",
+    "build:sample1": "node scripts/elec-cli.mjs build samples/Sample-01-voltage-divider.txt output/sample-01",
+    "build:sample2": "node scripts/elec-cli.mjs build samples/Sample-02-npn-low-side-switch.txt output/sample-02",
+    "build:sample3": "node scripts/elec-cli.mjs build samples/Sample-03-pnp-high-side-switch.txt output/sample-03",
+    "build:sample4": "node scripts/elec-cli.mjs build samples/Sample-04-cmos-inverter-nmos-pmos.txt output/sample-04",
+    "build:sample5": "node scripts/elec-cli.mjs build samples/Sample-05-opamp-noninverting-amplifier.txt output/sample-05",
+    "paste": "node scripts/build-paste.mjs",
+    "render:sample": "node scripts/render-svg.mjs output/sample-01/Sample-01-voltage-divider.ir.json output/sample-01/Sample-01-voltage-divider.svg",
+    "render:svg": "node scripts/render-svg.mjs"
+  }
+}

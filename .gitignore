@@ -13,6 +13,7 @@ uploads/*
 *-debug.png
 *.log
 .agent*-local-db-backup-*/
+.tmp/
 
 # Deployment state generated on servers
 .deploy/

@@ -33,10 +33,15 @@ const contentStore = createContentStore(db);
 const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword });
 const uploadStore = createUploadStore(uploadDir);
 
-const siteVersion = "V2.2.6";
-const siteBuild = "20260509-0833";
+const siteVersion = "V2.3.0";
+const siteBuild = "20260509-1346";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
+const elecVersion = "V1.1";
+const elecInputLimitBytes = 200 * 1024;
+const elecMaxCircuits = 10;
+const elecTmpRoot = path.resolve(process.env.ELEC_TMP_DIR || path.join(dataDir, ".tmp", "gokotta-elec"));
+const elecCoreDir = path.resolve(process.env.ELEC_CORE_DIR || path.join(root, "gokotta-elec-core"));
 
 function loadSeedData() {
   const sandbox = { window: {} };
@@ -193,13 +198,15 @@ function text(res, status, body, type = "text/plain; charset=utf-8", cache = "pu
   res.end(body);
 }
 
-function readBody(req) {
+function readBody(req, limitBytes = 25_000_000) {
   return new Promise((resolve, reject) => {
     let body = "";
     req.on("data", (chunk) => {
       body += chunk;
-      if (body.length > 25_000_000) {
-        reject(new Error("Payload too large"));
+      if (Buffer.byteLength(body, "utf8") > limitBytes) {
+        const error = new Error("Payload too large");
+        error.status = 413;
+        reject(error);
         req.destroy();
       }
     });
@@ -306,6 +313,245 @@ function apiError(status, message) {
   const error = new Error(message);
   error.status = status;
   return error;
+}
+
+function elecDiagnostic(level, code, message, extra = {}) {
+  return { level, code, message, ...extra };
+}
+
+function elecResponse(res, status, payload) {
+  return json(res, status, {
+    version: elecVersion,
+    diagnostics: [],
+    ...payload
+  });
+}
+
+function elecCoreReady() {
+  const scriptPath = path.join(elecCoreDir, "scripts", "build-paste.mjs");
+  const samplesDir = path.join(elecCoreDir, "samples");
+  return fs.existsSync(scriptPath) && fs.existsSync(samplesDir);
+}
+
+function slugifySampleId(filename) {
+  return path.basename(filename, path.extname(filename)).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+function sampleTitle(filename) {
+  return path.basename(filename, path.extname(filename)).replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function elecSamples() {
+  if (!elecCoreReady()) {
+    return {
+      ok: false,
+      samples: [],
+      diagnostics: [elecDiagnostic("ERROR", "ELEC_CORE_UNAVAILABLE", "GokottaElec 核心目录不可用。")]
+    };
+  }
+
+  try {
+    const samplesDir = path.join(elecCoreDir, "samples");
+    const samples = fs.readdirSync(samplesDir)
+      .filter((filename) => /\.txt$/i.test(filename))
+      .sort((a, b) => a.localeCompare(b))
+      .map((filename) => ({
+        id: slugifySampleId(filename),
+        title: sampleTitle(filename),
+        source: fs.readFileSync(path.join(samplesDir, filename), "utf8")
+      }));
+
+    return { ok: true, samples, diagnostics: [] };
+  } catch (error) {
+    return {
+      ok: false,
+      samples: [],
+      diagnostics: [elecDiagnostic("ERROR", "SAMPLES_UNAVAILABLE", "Sample 文件不可用。", { detail: error.message })]
+    };
+  }
+}
+
+function countCnlCircuits(source) {
+  const matches = String(source || "").match(/(^|\n)\s*电路\s+[A-Za-z][A-Za-z0-9_-]*\s+版本\s+[0-9]+\.[0-9]+\.[0-9]+/gu);
+  return matches ? matches.length : 0;
+}
+
+function readFirstFile(dir, predicate) {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const entryPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      const nested = readFirstFile(entryPath, predicate);
+      if (nested) return nested;
+    } else if (entry.isFile() && predicate(entryPath)) {
+      return entryPath;
+    }
+  }
+  return "";
+}
+
+function readCircuitArtifacts(dir) {
+  const irPath = readFirstFile(dir, (target) => target.endsWith(".ir.json"));
+  const svgPath = readFirstFile(dir, (target) => target.endsWith(".svg"));
+  const ercPath = readFirstFile(dir, (target) => target.endsWith(".erc.txt"));
+  const buildErrorPath = readFirstFile(dir, (target) => /(?:build|render)-error\.txt$/i.test(target));
+  const ir = irPath ? JSON.parse(fs.readFileSync(irPath, "utf8")) : null;
+  const svg = svgPath ? fs.readFileSync(svgPath, "utf8") : "";
+  const erc = ercPath ? fs.readFileSync(ercPath, "utf8") : "";
+  const buildError = buildErrorPath ? fs.readFileSync(buildErrorPath, "utf8") : "";
+  return { ir, svg, erc, buildError };
+}
+
+function parseErcDiagnostics(ercText) {
+  if (!ercText || ercText.trim() === "OK") return [];
+  return ercText.split(/\r?\n/).map((line) => line.trim()).filter(Boolean).map((line) => {
+    const match = line.match(/^(INFO|WARNING|ERROR):\s*([^:]+):\s*(.*)$/);
+    if (!match) return elecDiagnostic("INFO", "ERC", line);
+    return elecDiagnostic(match[1], match[2].trim(), match[3].trim());
+  });
+}
+
+function parseBuildOutput(outputDir) {
+  const summaryPath = path.join(outputDir, "summary.txt");
+  const summary = fs.existsSync(summaryPath) ? fs.readFileSync(summaryPath, "utf8") : "";
+  const circuitDirs = fs.readdirSync(outputDir, { withFileTypes: true }).filter((entry) => entry.isDirectory());
+  const circuits = [];
+  const diagnostics = [];
+
+  for (const entry of circuitDirs) {
+    const dir = path.join(outputDir, entry.name);
+    const circuitId = entry.name.replace(/^\d+-/, "").toUpperCase();
+    const artifacts = readCircuitArtifacts(dir);
+    const ercDiagnostics = parseErcDiagnostics(artifacts.erc);
+    const svgLooksValid = artifacts.svg.trimStart().startsWith("<svg");
+    const ok = Boolean(artifacts.ir && svgLooksValid && !ercDiagnostics.some((item) => item.level === "ERROR") && !artifacts.buildError);
+
+    if (artifacts.buildError) {
+      diagnostics.push(elecDiagnostic("ERROR", "ELEC_BUILD", artifacts.buildError.trim().slice(0, 2000), { target: circuitId }));
+    }
+    if (artifacts.svg && !svgLooksValid) {
+      diagnostics.push(elecDiagnostic("ERROR", "SVG_INVALID", "SVG 产物格式不正确。", { target: circuitId }));
+    }
+    diagnostics.push(...ercDiagnostics.map((item) => ({ ...item, target: item.target || circuitId })));
+
+    circuits.push({
+      id: circuitId,
+      ok,
+      svg: svgLooksValid ? artifacts.svg : "",
+      ir: artifacts.ir || {},
+      erc: artifacts.erc || "",
+      warnings: ercDiagnostics.filter((item) => item.level === "WARNING")
+    });
+  }
+
+  if (summary && circuits.length === 0) {
+    diagnostics.push(elecDiagnostic("ERROR", "ELEC_BUILD_EMPTY", summary.trim()));
+  }
+
+  const firstOk = circuits.find((item) => item.ok) || circuits[0] || null;
+  return {
+    ok: circuits.length > 0 && circuits.every((item) => item.ok) && !diagnostics.some((item) => item.level === "ERROR"),
+    circuits,
+    artifacts: firstOk ? { svg: firstOk.svg, ir: firstOk.ir, ercText: firstOk.erc } : {},
+    diagnostics
+  };
+}
+
+function spawnElecBuild(inputPath, outputDir) {
+  return new Promise((resolve) => {
+    const child = childProcess.spawn(process.execPath, [
+      path.join(elecCoreDir, "scripts", "build-paste.mjs"),
+      inputPath,
+      outputDir
+    ], {
+      cwd: elecCoreDir,
+      shell: false,
+      windowsHide: true
+    });
+    let stdout = "";
+    let stderr = "";
+    const timer = setTimeout(() => {
+      child.kill("SIGKILL");
+    }, 30_000);
+    child.stdout.on("data", (chunk) => {
+      stdout += chunk;
+    });
+    child.stderr.on("data", (chunk) => {
+      stderr += chunk;
+    });
+    child.on("close", (code, signal) => {
+      clearTimeout(timer);
+      resolve({ code, signal, stdout, stderr });
+    });
+    child.on("error", (error) => {
+      clearTimeout(timer);
+      resolve({ code: 1, signal: "", stdout, stderr: error.message });
+    });
+  });
+}
+
+async function elecBuild(res, body) {
+  if (!elecCoreReady()) {
+    return elecResponse(res, 503, {
+      ok: false,
+      circuits: [],
+      artifacts: {},
+      diagnostics: [elecDiagnostic("ERROR", "ELEC_CORE_UNAVAILABLE", "GokottaElec 核心目录不可用。")]
+    });
+  }
+
+  const source = typeof body.source === "string" ? body.source : "";
+  const sourceBytes = Buffer.byteLength(source, "utf8");
+  if (!source.trim()) {
+    return elecResponse(res, 400, {
+      ok: false,
+      circuits: [],
+      artifacts: {},
+      diagnostics: [elecDiagnostic("ERROR", "SOURCE_REQUIRED", "source 不能为空。")]
+    });
+  }
+  if (sourceBytes > elecInputLimitBytes) {
+    return elecResponse(res, 413, {
+      ok: false,
+      circuits: [],
+      artifacts: {},
+      diagnostics: [elecDiagnostic("ERROR", "SOURCE_TOO_LARGE", "单次输入文本不能超过 200 KB。")]
+    });
+  }
+  const circuitCount = countCnlCircuits(source);
+  if (circuitCount > elecMaxCircuits) {
+    return elecResponse(res, 400, {
+      ok: false,
+      circuits: [],
+      artifacts: {},
+      diagnostics: [elecDiagnostic("ERROR", "TOO_MANY_CIRCUITS", "单次最多处理 10 个电路块。")]
+    });
+  }
+
+  fs.mkdirSync(elecTmpRoot, { recursive: true });
+  const runDir = fs.mkdtempSync(path.join(elecTmpRoot, "run-"));
+  const inputPath = path.join(runDir, "input.cnl.txt");
+  const outputDir = path.join(runDir, "output");
+  fs.writeFileSync(inputPath, source, "utf8");
+
+  try {
+    const build = await spawnElecBuild(inputPath, outputDir);
+    const parsed = fs.existsSync(outputDir)
+      ? parseBuildOutput(outputDir)
+      : { ok: false, circuits: [], artifacts: {}, diagnostics: [] };
+    if (build.signal) {
+      parsed.ok = false;
+      parsed.diagnostics.push(elecDiagnostic("ERROR", "ELEC_BUILD_TIMEOUT", "GokottaElec 构建超时。"));
+    }
+    if (build.stderr.trim()) {
+      parsed.diagnostics.push(elecDiagnostic(build.code === 0 ? "INFO" : "ERROR", "ELEC_STDERR", build.stderr.trim().slice(0, 2000)));
+    }
+    const hasError = parsed.diagnostics.some((item) => item.level === "ERROR");
+    parsed.ok = Boolean(parsed.ok && !hasError);
+    return elecResponse(res, parsed.ok ? 200 : 422, parsed);
+  } finally {
+    fs.rmSync(runDir, { recursive: true, force: true });
+  }
 }
 
 function carouselItems() {
@@ -504,6 +750,8 @@ function recordLoginFailure(key) {
 async function api(req, res, pathname) {
   if (pathname === "/api/content.js" && req.method === "GET") return contentScript(res);
   if (pathname === "/api/content" && req.method === "GET") return json(res, 200, { posts: allPosts(false), projects: allProjects(false) });
+  if (pathname === "/api/elec/samples" && req.method === "GET") return elecResponse(res, 200, elecSamples());
+  if (pathname === "/api/elec/build" && req.method === "POST") return elecBuild(res, await readBody(req, elecInputLimitBytes + 4096));
   if (pathname === "/api/session" && req.method === "GET") {
     const user = currentUser(req);
     return json(res, 200, { user: publicUser(user), csrfToken: user?.csrfToken || "" });

@@ -1,0 +1,21 @@
+电路 SAMPLE_04_CMOS_INVERTER_NMOS_PMOS 版本 0.1.0。
+
+网络 GND 是 ground，说明=全局参考地。
+网络 VDD 是 power，说明=5V逻辑电源。
+网络 VIN 是 input，说明=CMOS反相器输入。
+网络 VOUT 是 output，说明=CMOS反相器输出。
+
+器件 V1 是 VOLTAGE_SOURCE_DC，参数{voltage=5V}。
+器件 V2 是 SIGNAL_SOURCE，参数{amplitude=5V, frequency=1kHz, waveform=square}。
+器件 M1 是 MOS_NMOS_ENHANCEMENT，型号=2N7002，封装=SOT-23。
+器件 M2 是 MOS_PMOS_ENHANCEMENT，型号=BSS84，封装=SOT-23。
+
+连接 VDD: V1.POS, M2.S, M2.B。
+连接 GND: V1.NEG, V2.REF, M1.S, M1.B。
+连接 VIN: V2.OUT, M1.G, M2.G。
+连接 VOUT: M1.D, M2.D。
+
+约束 M1 必须 terminal_connected(D,G,S,B)。
+约束 M2 必须 terminal_connected(D,G,S,B)。
+约束 M1 禁止 same_net(D,S)。
+约束 M2 禁止 same_net(D,S)。

@@ -1,0 +1,1048 @@
+{
+  "library_version": "0.1.0",
+  "terminal_naming_policy": "Logical terminals are canonical. Physical pins must be provided by package-specific pin_map.",
+  "components": {
+    "RESISTOR": {
+      "category": "passive",
+      "prefix": "R",
+      "terminals": ["A", "B"],
+      "required_parameters": ["resistance"],
+      "optional_parameters": ["tolerance", "power_rating", "temperature_coefficient"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "B"],
+        "polarity": "none",
+        "terminal_swap_groups": [["A", "B"]],
+        "warnings": ["resistance_missing", "power_rating_missing_for_power_path"]
+      }
+    },
+    "CAPACITOR_NONPOLAR": {
+      "category": "passive",
+      "prefix": "C",
+      "terminals": ["A", "B"],
+      "required_parameters": ["capacitance"],
+      "optional_parameters": ["voltage_rating", "dielectric", "tolerance"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "B"],
+        "polarity": "none",
+        "terminal_swap_groups": [["A", "B"]]
+      }
+    },
+    "CAPACITOR_POLAR": {
+      "category": "passive",
+      "prefix": "C",
+      "terminals": ["POS", "NEG"],
+      "required_parameters": ["capacitance"],
+      "optional_parameters": ["voltage_rating", "esr", "tolerance"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["POS", "NEG"],
+        "polarity": "positive_negative",
+        "terminal_swap_groups": [],
+        "warnings": ["reverse_polarity_possible_if_pos_net_voltage_below_neg"]
+      }
+    },
+    "INDUCTOR": {
+      "category": "passive",
+      "prefix": "L",
+      "terminals": ["A", "B"],
+      "required_parameters": ["inductance"],
+      "optional_parameters": ["current_rating", "dc_resistance", "shielding"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "B"],
+        "polarity": "none",
+        "terminal_swap_groups": [["A", "B"]]
+      }
+    },
+    "DIODE": {
+      "category": "semiconductor",
+      "prefix": "D",
+      "terminals": ["A", "K"],
+      "required_parameters": [],
+      "optional_parameters": ["forward_voltage", "current_rating", "reverse_voltage"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "K"],
+        "polarity": "anode_cathode",
+        "terminal_swap_groups": [],
+        "warnings": ["orientation_matters"]
+      }
+    },
+    "LED": {
+      "category": "opto",
+      "prefix": "D",
+      "terminals": ["A", "K"],
+      "required_parameters": ["color"],
+      "optional_parameters": ["forward_voltage", "forward_current", "luminous_intensity"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "K"],
+        "polarity": "anode_cathode",
+        "requires_current_limit": true
+      }
+    },
+    "ZENER_DIODE": {
+      "category": "semiconductor",
+      "prefix": "D",
+      "terminals": ["A", "K"],
+      "required_parameters": ["zener_voltage"],
+      "optional_parameters": ["power_rating", "tolerance"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "K"],
+        "polarity": "anode_cathode",
+        "terminal_swap_groups": []
+      }
+    },
+    "SCHOTTKY_DIODE": {
+      "category": "semiconductor",
+      "prefix": "D",
+      "terminals": ["A", "K"],
+      "required_parameters": [],
+      "optional_parameters": ["forward_voltage", "current_rating", "reverse_voltage", "reverse_leakage"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "K"],
+        "polarity": "anode_cathode",
+        "terminal_swap_groups": [],
+        "warnings": ["orientation_matters", "reverse_leakage_may_matter"]
+      }
+    },
+    "TVS_DIODE": {
+      "category": "semiconductor",
+      "prefix": "D",
+      "terminals": ["A", "K"],
+      "required_parameters": ["standoff_voltage"],
+      "optional_parameters": ["breakdown_voltage", "clamping_voltage", "peak_pulse_power", "capacitance", "directionality"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "K"],
+        "polarity": "directionality_parameter_controls_polarity",
+        "terminal_swap_groups": [],
+        "warnings": ["capacitance_may_load_high_speed_signal"]
+      }
+    },
+    "BRIDGE_RECTIFIER": {
+      "category": "semiconductor",
+      "prefix": "D",
+      "terminals": ["AC1", "AC2", "POS", "NEG"],
+      "required_parameters": [],
+      "optional_parameters": ["current_rating", "reverse_voltage", "forward_voltage", "package"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["AC1", "AC2", "POS", "NEG"],
+        "polarity": "bridge_rectifier",
+        "terminal_swap_groups": [["AC1", "AC2"]],
+        "warnings": ["pos_neg_orientation_matters"]
+      }
+    },
+    "BJT_NPN": {
+      "category": "transistor",
+      "prefix": "Q",
+      "terminals": ["C", "B", "E"],
+      "terminal_descriptions": {
+        "C": "collector",
+        "B": "base",
+        "E": "emitter"
+      },
+      "required_parameters": [],
+      "optional_parameters": ["hfe", "vce_max", "ic_max", "power_rating"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["C", "B", "E"],
+        "polarity": "npn",
+        "terminal_swap_groups": [],
+        "allowed_same_net": [["C", "B"]],
+        "warn_same_net": [["B", "E"], ["C", "E"]],
+        "forbid_implicit_type": true,
+        "floating_terminal_errors": ["C", "B", "E"]
+      }
+    },
+    "BJT_PNP": {
+      "category": "transistor",
+      "prefix": "Q",
+      "terminals": ["C", "B", "E"],
+      "terminal_descriptions": {
+        "C": "collector",
+        "B": "base",
+        "E": "emitter"
+      },
+      "required_parameters": [],
+      "optional_parameters": ["hfe", "vce_max", "ic_max", "power_rating"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["C", "B", "E"],
+        "polarity": "pnp",
+        "terminal_swap_groups": [],
+        "allowed_same_net": [["C", "B"]],
+        "warn_same_net": [["B", "E"], ["C", "E"]],
+        "forbid_implicit_type": true,
+        "floating_terminal_errors": ["C", "B", "E"]
+      }
+    },
+    "JFET_N_CHANNEL": {
+      "category": "transistor",
+      "prefix": "Q",
+      "terminals": ["D", "G", "S"],
+      "terminal_descriptions": {
+        "D": "drain",
+        "G": "gate",
+        "S": "source"
+      },
+      "required_parameters": [],
+      "optional_parameters": ["vgs_off", "idss", "vds_max", "noise_voltage"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["D", "G", "S"],
+        "polarity": "n_channel_jfet",
+        "terminal_swap_groups": [],
+        "warn_same_net": [["D", "S"], ["G", "S"], ["G", "D"]],
+        "floating_terminal_errors": ["D", "G", "S"]
+      }
+    },
+    "JFET_P_CHANNEL": {
+      "category": "transistor",
+      "prefix": "Q",
+      "terminals": ["D", "G", "S"],
+      "terminal_descriptions": {
+        "D": "drain",
+        "G": "gate",
+        "S": "source"
+      },
+      "required_parameters": [],
+      "optional_parameters": ["vgs_off", "idss", "vds_max", "noise_voltage"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["D", "G", "S"],
+        "polarity": "p_channel_jfet",
+        "terminal_swap_groups": [],
+        "warn_same_net": [["D", "S"], ["G", "S"], ["G", "D"]],
+        "floating_terminal_errors": ["D", "G", "S"]
+      }
+    },
+    "JFET_N": {
+      "category": "transistor",
+      "prefix": "Q",
+      "terminals": ["D", "G", "S"],
+      "terminal_descriptions": {
+        "D": "drain",
+        "G": "gate",
+        "S": "source"
+      },
+      "required_parameters": [],
+      "optional_parameters": ["vgs_off", "idss", "vds_max", "noise_voltage", "gate_reverse_voltage"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["D", "G", "S"],
+        "polarity": "n_channel_jfet",
+        "gate_junction_policy": "gate_is_reverse_biased_in_normal_operation",
+        "terminal_swap_groups": [],
+        "warn_same_net": [["D", "S"], ["G", "S"], ["G", "D"]],
+        "floating_terminal_errors": ["D", "G", "S"],
+        "aliases": ["JFET_N_CHANNEL"]
+      }
+    },
+    "JFET_P": {
+      "category": "transistor",
+      "prefix": "Q",
+      "terminals": ["D", "G", "S"],
+      "terminal_descriptions": {
+        "D": "drain",
+        "G": "gate",
+        "S": "source"
+      },
+      "required_parameters": [],
+      "optional_parameters": ["vgs_off", "idss", "vds_max", "noise_voltage", "gate_reverse_voltage"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["D", "G", "S"],
+        "polarity": "p_channel_jfet",
+        "gate_junction_policy": "gate_is_reverse_biased_in_normal_operation",
+        "terminal_swap_groups": [],
+        "warn_same_net": [["D", "S"], ["G", "S"], ["G", "D"]],
+        "floating_terminal_errors": ["D", "G", "S"],
+        "aliases": ["JFET_P_CHANNEL"]
+      }
+    },
+    "MOS_NMOS_ENHANCEMENT": {
+      "category": "transistor",
+      "prefix": "M",
+      "terminals": ["D", "G", "S", "B"],
+      "terminal_descriptions": {
+        "D": "drain",
+        "G": "gate",
+        "S": "source",
+        "B": "body_bulk"
+      },
+      "required_parameters": [],
+      "optional_parameters": ["vgs_threshold", "vds_max", "id_max", "rds_on", "gate_charge"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["D", "G", "S"],
+        "body_terminal_policy": "must_connect_or_internal_tie",
+        "common_internal_tie": ["B", "S"],
+        "polarity": "n_channel_enhancement",
+        "drain_source_swappable": false,
+        "terminal_swap_groups": [],
+        "allowed_same_net": [["S", "B"]],
+        "warn_same_net": [["D", "S"], ["G", "S"], ["G", "D"]],
+        "floating_terminal_errors": ["D", "G", "S"]
+      }
+    },
+    "MOS_PMOS_ENHANCEMENT": {
+      "category": "transistor",
+      "prefix": "M",
+      "terminals": ["D", "G", "S", "B"],
+      "terminal_descriptions": {
+        "D": "drain",
+        "G": "gate",
+        "S": "source",
+        "B": "body_bulk"
+      },
+      "required_parameters": [],
+      "optional_parameters": ["vgs_threshold", "vds_max", "id_max", "rds_on", "gate_charge"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["D", "G", "S"],
+        "body_terminal_policy": "must_connect_or_internal_tie",
+        "common_internal_tie": ["B", "S"],
+        "polarity": "p_channel_enhancement",
+        "drain_source_swappable": false,
+        "terminal_swap_groups": [],
+        "allowed_same_net": [["S", "B"]],
+        "warn_same_net": [["D", "S"], ["G", "S"], ["G", "D"]],
+        "floating_terminal_errors": ["D", "G", "S"]
+      }
+    },
+    "MOS_NMOS_DEPLETION": {
+      "category": "transistor",
+      "prefix": "M",
+      "terminals": ["D", "G", "S", "B"],
+      "required_parameters": [],
+      "optional_parameters": ["vgs_off", "idss", "vds_max"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["D", "G", "S"],
+        "body_terminal_policy": "must_connect_or_internal_tie",
+        "polarity": "n_channel_depletion",
+        "drain_source_swappable": false,
+        "allowed_same_net": [["S", "B"]]
+      }
+    },
+    "MOS_PMOS_DEPLETION": {
+      "category": "transistor",
+      "prefix": "M",
+      "terminals": ["D", "G", "S", "B"],
+      "required_parameters": [],
+      "optional_parameters": ["vgs_off", "idss", "vds_max"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["D", "G", "S"],
+        "body_terminal_policy": "must_connect_or_internal_tie",
+        "polarity": "p_channel_depletion",
+        "drain_source_swappable": false,
+        "allowed_same_net": [["S", "B"]]
+      }
+    },
+    "IGBT_N": {
+      "category": "transistor",
+      "prefix": "Q",
+      "terminals": ["C", "G", "E"],
+      "terminal_descriptions": {
+        "C": "collector",
+        "G": "gate",
+        "E": "emitter"
+      },
+      "required_parameters": [],
+      "optional_parameters": ["vce_max", "ic_max", "vge_threshold", "vge_max", "switching_energy", "package"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["C", "G", "E"],
+        "polarity": "n_channel_igbt",
+        "terminal_swap_groups": [],
+        "insulated_gate": true,
+        "warn_same_net": [["C", "E"], ["G", "E"], ["G", "C"]],
+        "floating_terminal_errors": ["C", "G", "E"],
+        "warnings": ["gate_drive_voltage_and_miller_clamp_may_matter", "freewheel_path_required_for_inductive_load"]
+      }
+    },
+    "IGBT_P": {
+      "category": "transistor",
+      "prefix": "Q",
+      "terminals": ["C", "G", "E"],
+      "terminal_descriptions": {
+        "C": "collector",
+        "G": "gate",
+        "E": "emitter"
+      },
+      "required_parameters": [],
+      "optional_parameters": ["vce_max", "ic_max", "vge_threshold", "vge_max", "switching_energy", "package"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["C", "G", "E"],
+        "polarity": "p_channel_igbt",
+        "terminal_swap_groups": [],
+        "insulated_gate": true,
+        "warn_same_net": [["C", "E"], ["G", "E"], ["G", "C"]],
+        "floating_terminal_errors": ["C", "G", "E"],
+        "warnings": ["gate_drive_voltage_and_miller_clamp_may_matter", "freewheel_path_required_for_inductive_load"]
+      }
+    },
+    "SCR": {
+      "category": "thyristor",
+      "prefix": "Q",
+      "terminals": ["A", "K", "G"],
+      "terminal_descriptions": {
+        "A": "anode",
+        "K": "cathode",
+        "G": "gate"
+      },
+      "required_parameters": [],
+      "optional_parameters": ["vdrm", "it_rms", "igt", "holding_current", "latching_current", "dv_dt_rating"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "K", "G"],
+        "polarity": "anode_cathode_gate",
+        "terminal_swap_groups": [],
+        "warn_same_net": [["A", "K"], ["G", "K"], ["G", "A"]],
+        "floating_terminal_errors": ["A", "K", "G"],
+        "warnings": ["latches_until_current_below_holding_current", "snubber_may_be_required_for_inductive_load"]
+      }
+    },
+    "TRIAC": {
+      "category": "thyristor",
+      "prefix": "Q",
+      "terminals": ["MT1", "MT2", "G"],
+      "terminal_descriptions": {
+        "MT1": "main_terminal_1",
+        "MT2": "main_terminal_2",
+        "G": "gate"
+      },
+      "required_parameters": [],
+      "optional_parameters": ["vdrm", "it_rms", "igt_quadrants", "holding_current", "dv_dt_rating"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["MT1", "MT2", "G"],
+        "polarity": "bidirectional_main_terminals_gate_referenced_to_mt1",
+        "terminal_swap_groups": [],
+        "warn_same_net": [["MT1", "MT2"], ["G", "MT1"], ["G", "MT2"]],
+        "floating_terminal_errors": ["MT1", "MT2", "G"],
+        "warnings": ["gate_reference_is_mt1_not_interchangeable", "snubber_may_be_required_for_inductive_load"]
+      }
+    },
+    "OPAMP_SINGLE": {
+      "category": "analog_ic",
+      "prefix": "U",
+      "terminals": ["IN+", "IN-", "OUT", "V+", "V-"],
+      "terminal_descriptions": {
+        "IN+": "non_inverting_input",
+        "IN-": "inverting_input",
+        "OUT": "output",
+        "V+": "positive_supply",
+        "V-": "negative_supply"
+      },
+      "required_parameters": [],
+      "optional_parameters": ["gain_bandwidth", "slew_rate", "input_offset_voltage", "supply_range"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["IN+", "IN-", "OUT", "V+", "V-"],
+        "polarity": "differential_input",
+        "terminal_swap_groups": [],
+        "forbid_unpowered_use": true,
+        "warn_output_parallel_push_pull": true,
+        "floating_terminal_errors": ["IN+", "IN-", "OUT", "V+", "V-"]
+      }
+    },
+    "OPAMP_DUAL_UNIT": {
+      "category": "analog_ic",
+      "prefix": "U",
+      "terminals": ["IN+", "IN-", "OUT", "V+", "V-"],
+      "terminal_descriptions": {
+        "IN+": "non_inverting_input",
+        "IN-": "inverting_input",
+        "OUT": "output",
+        "V+": "shared_positive_supply",
+        "V-": "shared_negative_supply"
+      },
+      "required_parameters": [],
+      "optional_parameters": ["gain_bandwidth", "slew_rate", "input_offset_voltage", "supply_range"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["IN+", "IN-", "OUT", "V+", "V-"],
+        "requires_package_group": true,
+        "requires_unit": true,
+        "shared_supply_terminals": ["V+", "V-"],
+        "polarity": "differential_input",
+        "terminal_swap_groups": [],
+        "forbid_unpowered_use": true,
+        "warn_output_parallel_push_pull": true,
+        "floating_terminal_errors": ["IN+", "IN-", "OUT", "V+", "V-"]
+      }
+    },
+    "OPAMP_QUAD_UNIT": {
+      "category": "analog_ic",
+      "prefix": "U",
+      "terminals": ["IN+", "IN-", "OUT", "V+", "V-"],
+      "terminal_descriptions": {
+        "IN+": "non_inverting_input",
+        "IN-": "inverting_input",
+        "OUT": "output",
+        "V+": "shared_positive_supply",
+        "V-": "shared_negative_supply"
+      },
+      "required_parameters": [],
+      "optional_parameters": ["gain_bandwidth", "slew_rate", "input_offset_voltage", "supply_range"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["IN+", "IN-", "OUT", "V+", "V-"],
+        "requires_package_group": true,
+        "requires_unit": true,
+        "shared_supply_terminals": ["V+", "V-"],
+        "polarity": "differential_input",
+        "terminal_swap_groups": [],
+        "forbid_unpowered_use": true,
+        "warn_output_parallel_push_pull": true,
+        "floating_terminal_errors": ["IN+", "IN-", "OUT", "V+", "V-"]
+      }
+    },
+    "OPAMP_DUAL_PACKAGE": {
+      "category": "analog_ic",
+      "prefix": "U",
+      "terminals": ["A_IN+", "A_IN-", "A_OUT", "B_IN+", "B_IN-", "B_OUT", "V+", "V-"],
+      "terminal_descriptions": {
+        "A_IN+": "unit_a_non_inverting_input",
+        "A_IN-": "unit_a_inverting_input",
+        "A_OUT": "unit_a_output",
+        "B_IN+": "unit_b_non_inverting_input",
+        "B_IN-": "unit_b_inverting_input",
+        "B_OUT": "unit_b_output",
+        "V+": "shared_positive_supply",
+        "V-": "shared_negative_supply"
+      },
+      "required_parameters": [],
+      "optional_parameters": ["gain_bandwidth", "slew_rate", "input_offset_voltage", "supply_range", "package"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A_IN+", "A_IN-", "A_OUT", "B_IN+", "B_IN-", "B_OUT", "V+", "V-"],
+        "unit_groups": [["A_IN+", "A_IN-", "A_OUT"], ["B_IN+", "B_IN-", "B_OUT"]],
+        "shared_supply_terminals": ["V+", "V-"],
+        "polarity": "dual_differential_input",
+        "terminal_swap_groups": [],
+        "forbid_unpowered_use": true,
+        "warn_output_parallel_push_pull": true,
+        "floating_terminal_errors": ["A_IN+", "A_IN-", "A_OUT", "B_IN+", "B_IN-", "B_OUT", "V+", "V-"]
+      }
+    },
+    "OPAMP_QUAD_PACKAGE": {
+      "category": "analog_ic",
+      "prefix": "U",
+      "terminals": ["A_IN+", "A_IN-", "A_OUT", "B_IN+", "B_IN-", "B_OUT", "C_IN+", "C_IN-", "C_OUT", "D_IN+", "D_IN-", "D_OUT", "V+", "V-"],
+      "terminal_descriptions": {
+        "A_IN+": "unit_a_non_inverting_input",
+        "A_IN-": "unit_a_inverting_input",
+        "A_OUT": "unit_a_output",
+        "B_IN+": "unit_b_non_inverting_input",
+        "B_IN-": "unit_b_inverting_input",
+        "B_OUT": "unit_b_output",
+        "C_IN+": "unit_c_non_inverting_input",
+        "C_IN-": "unit_c_inverting_input",
+        "C_OUT": "unit_c_output",
+        "D_IN+": "unit_d_non_inverting_input",
+        "D_IN-": "unit_d_inverting_input",
+        "D_OUT": "unit_d_output",
+        "V+": "shared_positive_supply",
+        "V-": "shared_negative_supply"
+      },
+      "required_parameters": [],
+      "optional_parameters": ["gain_bandwidth", "slew_rate", "input_offset_voltage", "supply_range", "package"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A_IN+", "A_IN-", "A_OUT", "B_IN+", "B_IN-", "B_OUT", "C_IN+", "C_IN-", "C_OUT", "D_IN+", "D_IN-", "D_OUT", "V+", "V-"],
+        "unit_groups": [["A_IN+", "A_IN-", "A_OUT"], ["B_IN+", "B_IN-", "B_OUT"], ["C_IN+", "C_IN-", "C_OUT"], ["D_IN+", "D_IN-", "D_OUT"]],
+        "shared_supply_terminals": ["V+", "V-"],
+        "polarity": "quad_differential_input",
+        "terminal_swap_groups": [],
+        "forbid_unpowered_use": true,
+        "warn_output_parallel_push_pull": true,
+        "floating_terminal_errors": ["A_IN+", "A_IN-", "A_OUT", "B_IN+", "B_IN-", "B_OUT", "C_IN+", "C_IN-", "C_OUT", "D_IN+", "D_IN-", "D_OUT", "V+", "V-"]
+      }
+    },
+    "COMPARATOR_SINGLE": {
+      "category": "analog_ic",
+      "prefix": "U",
+      "terminals": ["IN+", "IN-", "OUT", "V+", "V-"],
+      "required_parameters": [],
+      "optional_parameters": ["output_stage", "propagation_delay", "supply_range"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["IN+", "IN-", "OUT", "V+", "V-"],
+        "if_output_stage_open_drain_requires_pullup": true,
+        "forbid_unpowered_use": true
+      }
+    },
+    "REGULATOR_LINEAR_FIXED": {
+      "category": "power_ic",
+      "prefix": "U",
+      "terminals": ["IN", "OUT", "GND"],
+      "required_parameters": ["output_voltage"],
+      "optional_parameters": ["input_voltage_range", "output_current", "dropout_voltage", "quiescent_current"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["IN", "OUT", "GND"],
+        "polarity": "positive_linear_regulator",
+        "terminal_swap_groups": [],
+        "forbid_unpowered_use": true,
+        "warnings": ["input_output_capacitors_usually_required"]
+      }
+    },
+    "REGULATOR_LINEAR_ADJUSTABLE": {
+      "category": "power_ic",
+      "prefix": "U",
+      "terminals": ["IN", "OUT", "ADJ"],
+      "required_parameters": [],
+      "optional_parameters": ["output_voltage", "input_voltage_range", "output_current", "dropout_voltage", "reference_voltage"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["IN", "OUT", "ADJ"],
+        "polarity": "adjustable_linear_regulator",
+        "terminal_swap_groups": [],
+        "forbid_unpowered_use": true,
+        "warnings": ["feedback_divider_required_for_adjustable_output"]
+      }
+    },
+    "LOGIC_GATE_2IN": {
+      "category": "digital_ic",
+      "prefix": "U",
+      "terminals": ["A", "B", "Y", "VCC", "GND"],
+      "required_parameters": ["function"],
+      "optional_parameters": ["logic_family", "supply_range", "output_stage"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "B", "Y", "VCC", "GND"],
+        "requires_known_logic_function": true,
+        "forbid_unpowered_use": true,
+        "terminal_swap_groups": [["A", "B"]]
+      }
+    },
+    "LOGIC_AND_2IN": {
+      "category": "digital_ic",
+      "prefix": "U",
+      "terminals": ["A", "B", "Y", "VCC", "GND"],
+      "required_parameters": [],
+      "optional_parameters": ["logic_family", "supply_range", "output_stage", "unit"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "B", "Y", "VCC", "GND"],
+        "logic_function": "AND",
+        "forbid_unpowered_use": true,
+        "terminal_swap_groups": [["A", "B"]],
+        "floating_terminal_errors": ["A", "B", "Y", "VCC", "GND"]
+      }
+    },
+    "LOGIC_OR_2IN": {
+      "category": "digital_ic",
+      "prefix": "U",
+      "terminals": ["A", "B", "Y", "VCC", "GND"],
+      "required_parameters": [],
+      "optional_parameters": ["logic_family", "supply_range", "output_stage", "unit"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "B", "Y", "VCC", "GND"],
+        "logic_function": "OR",
+        "forbid_unpowered_use": true,
+        "terminal_swap_groups": [["A", "B"]],
+        "floating_terminal_errors": ["A", "B", "Y", "VCC", "GND"]
+      }
+    },
+    "LOGIC_NAND_2IN": {
+      "category": "digital_ic",
+      "prefix": "U",
+      "terminals": ["A", "B", "Y", "VCC", "GND"],
+      "required_parameters": [],
+      "optional_parameters": ["logic_family", "supply_range", "output_stage", "unit"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "B", "Y", "VCC", "GND"],
+        "logic_function": "NAND",
+        "forbid_unpowered_use": true,
+        "terminal_swap_groups": [["A", "B"]],
+        "floating_terminal_errors": ["A", "B", "Y", "VCC", "GND"]
+      }
+    },
+    "LOGIC_NOR_2IN": {
+      "category": "digital_ic",
+      "prefix": "U",
+      "terminals": ["A", "B", "Y", "VCC", "GND"],
+      "required_parameters": [],
+      "optional_parameters": ["logic_family", "supply_range", "output_stage", "unit"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "B", "Y", "VCC", "GND"],
+        "logic_function": "NOR",
+        "forbid_unpowered_use": true,
+        "terminal_swap_groups": [["A", "B"]],
+        "floating_terminal_errors": ["A", "B", "Y", "VCC", "GND"]
+      }
+    },
+    "LOGIC_XOR_2IN": {
+      "category": "digital_ic",
+      "prefix": "U",
+      "terminals": ["A", "B", "Y", "VCC", "GND"],
+      "required_parameters": [],
+      "optional_parameters": ["logic_family", "supply_range", "output_stage", "unit"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "B", "Y", "VCC", "GND"],
+        "logic_function": "XOR",
+        "forbid_unpowered_use": true,
+        "terminal_swap_groups": [["A", "B"]],
+        "floating_terminal_errors": ["A", "B", "Y", "VCC", "GND"]
+      }
+    },
+    "LOGIC_XNOR_2IN": {
+      "category": "digital_ic",
+      "prefix": "U",
+      "terminals": ["A", "B", "Y", "VCC", "GND"],
+      "required_parameters": [],
+      "optional_parameters": ["logic_family", "supply_range", "output_stage", "unit"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "B", "Y", "VCC", "GND"],
+        "logic_function": "XNOR",
+        "forbid_unpowered_use": true,
+        "terminal_swap_groups": [["A", "B"]],
+        "floating_terminal_errors": ["A", "B", "Y", "VCC", "GND"]
+      }
+    },
+    "LOGIC_NOT": {
+      "category": "digital_ic",
+      "prefix": "U",
+      "terminals": ["A", "Y", "VCC", "GND"],
+      "required_parameters": [],
+      "optional_parameters": ["logic_family", "supply_range", "output_stage", "unit", "schmitt_trigger"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "Y", "VCC", "GND"],
+        "logic_function": "NOT",
+        "forbid_unpowered_use": true,
+        "terminal_swap_groups": [],
+        "floating_terminal_errors": ["A", "Y", "VCC", "GND"]
+      }
+    },
+    "LOGIC_BUFFER": {
+      "category": "digital_ic",
+      "prefix": "U",
+      "terminals": ["A", "Y", "OE", "VCC", "GND"],
+      "required_parameters": [],
+      "optional_parameters": ["logic_family", "supply_range", "output_stage", "unit", "enable_polarity"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "Y", "VCC", "GND"],
+        "optional_unconnected_terminals": ["OE"],
+        "logic_function": "BUFFER",
+        "forbid_unpowered_use": true,
+        "terminal_swap_groups": [],
+        "floating_terminal_errors": ["A", "Y", "VCC", "GND"],
+        "warnings": ["output_enable_must_not_float_unless_datasheet_allows"]
+      }
+    },
+    "OPTOCOUPLER_PHOTOTRANSISTOR": {
+      "category": "opto",
+      "prefix": "U",
+      "terminals": ["A", "K", "C", "E"],
+      "required_parameters": [],
+      "optional_parameters": ["current_transfer_ratio", "isolation_voltage", "forward_current", "collector_emitter_voltage"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "K", "C", "E"],
+        "polarity": "isolated_led_to_phototransistor",
+        "terminal_swap_groups": [],
+        "requires_current_limit": true,
+        "isolation_barrier_between": [["A", "K"], ["C", "E"]]
+      }
+    },
+    "OPTOCOUPLER_PHOTODARLINGTON": {
+      "category": "opto",
+      "prefix": "U",
+      "terminals": ["A", "K", "C", "E", "B"],
+      "required_parameters": [],
+      "optional_parameters": ["current_transfer_ratio", "isolation_voltage", "forward_current", "collector_emitter_voltage"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "K", "C", "E"],
+        "optional_unconnected_terminals": ["B"],
+        "polarity": "isolated_led_to_photodarlington",
+        "terminal_swap_groups": [],
+        "requires_current_limit": true,
+        "isolation_barrier_between": [["A", "K"], ["C", "E", "B"]],
+        "warnings": ["base_terminal_may_be_unbonded_or_optional_by_part"]
+      }
+    },
+    "OPTOCOUPLER_PHOTOTRIAC": {
+      "category": "opto",
+      "prefix": "U",
+      "terminals": ["A", "K", "MT1", "MT2"],
+      "required_parameters": [],
+      "optional_parameters": ["isolation_voltage", "forward_current", "zero_cross", "off_state_voltage", "trigger_current"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "K", "MT1", "MT2"],
+        "polarity": "isolated_led_to_bidirectional_phototriac",
+        "terminal_swap_groups": [["MT1", "MT2"]],
+        "requires_current_limit": true,
+        "isolation_barrier_between": [["A", "K"], ["MT1", "MT2"]],
+        "warnings": ["not_for_dc_load_switching", "main_triac_gate_network_may_be_required"]
+      }
+    },
+    "OPTOCOUPLER_PHOTOMOS": {
+      "category": "opto",
+      "prefix": "U",
+      "terminals": ["A", "K", "S1", "S2"],
+      "required_parameters": [],
+      "optional_parameters": ["isolation_voltage", "forward_current", "load_voltage", "load_current", "on_resistance"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "K", "S1", "S2"],
+        "polarity": "isolated_led_to_solid_state_relay_output",
+        "terminal_swap_groups": [["S1", "S2"]],
+        "requires_current_limit": true,
+        "isolation_barrier_between": [["A", "K"], ["S1", "S2"]],
+        "warnings": ["output_leakage_current_may_matter", "on_resistance_causes_load_voltage_drop"]
+      }
+    },
+    "RELAY_SPST_NO": {
+      "category": "relay",
+      "prefix": "K",
+      "terminals": ["COIL+", "COIL-", "COM", "NO"],
+      "required_parameters": ["coil_voltage"],
+      "optional_parameters": ["coil_resistance", "contact_current_rating", "contact_voltage_rating", "coil_power"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["COIL+", "COIL-", "COM", "NO"],
+        "polarity": "coil_polarity_matters_only_if_integrated_diode_or_led",
+        "terminal_swap_groups": [["COM", "NO"]],
+        "isolation_barrier_between": [["COIL+", "COIL-"], ["COM", "NO"]],
+        "switch_contact_groups": [["COM", "NO"]],
+        "warnings": ["coil_flyback_suppression_required_unless_integrated", "contacts_have_default_open_state"]
+      }
+    },
+    "RELAY_SPDT": {
+      "category": "relay",
+      "prefix": "K",
+      "terminals": ["COIL+", "COIL-", "COM", "NO", "NC"],
+      "required_parameters": ["coil_voltage"],
+      "optional_parameters": ["coil_resistance", "contact_current_rating", "contact_voltage_rating", "coil_power"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["COIL+", "COIL-", "COM", "NO", "NC"],
+        "polarity": "coil_polarity_matters_only_if_integrated_diode_or_led",
+        "terminal_swap_groups": [["NO", "NC"]],
+        "isolation_barrier_between": [["COIL+", "COIL-"], ["COM", "NO", "NC"]],
+        "switch_contact_groups": [["COM", "NO"], ["COM", "NC"]],
+        "warnings": ["coil_flyback_suppression_required_unless_integrated", "no_and_nc_are_functional_not_swappable_for_behavior"]
+      }
+    },
+    "TRANSFORMER_1P1S": {
+      "category": "magnetic",
+      "prefix": "T",
+      "terminals": ["P1_DOT", "P1", "S1_DOT", "S1"],
+      "required_parameters": ["turns_ratio"],
+      "optional_parameters": ["power_rating", "frequency_range", "isolation_voltage", "primary_inductance", "winding_resistance"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["P1_DOT", "P1", "S1_DOT", "S1"],
+        "polarity": "dot_convention",
+        "terminal_swap_groups": [],
+        "coupled_windings": [["P1_DOT", "P1"], ["S1_DOT", "S1"]],
+        "isolation_barrier_between": [["P1_DOT", "P1"], ["S1_DOT", "S1"]],
+        "warnings": ["dot_orientation_matters_for_phase", "dc_current_may_saturate_core"]
+      }
+    },
+    "TRANSFORMER_MULTI_WINDING": {
+      "category": "magnetic",
+      "prefix": "T",
+      "terminal_pattern": "^(W[0-9]+_DOT|W[0-9]+)$",
+      "required_parameters": ["winding_list"],
+      "optional_parameters": ["turns_ratios", "power_rating", "frequency_range", "isolation_voltage", "winding_resistance"],
+      "boundary_conditions": {
+        "declared_terminal_list_required": true,
+        "winding_pairs_required": true,
+        "polarity": "dot_convention",
+        "terminal_swap_groups": [],
+        "warnings": ["each_winding_requires_dot_and_return_terminal", "dot_orientation_matters_for_phase"]
+      }
+    },
+    "REGULATOR_LDO_FIXED": {
+      "category": "power_ic",
+      "prefix": "U",
+      "terminals": ["IN", "OUT", "GND", "EN"],
+      "required_parameters": ["output_voltage"],
+      "optional_parameters": ["input_voltage_range", "output_current", "dropout_voltage", "quiescent_current", "enable_polarity", "psrr"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["IN", "OUT", "GND"],
+        "optional_unconnected_terminals": ["EN"],
+        "polarity": "positive_low_dropout_regulator",
+        "terminal_swap_groups": [],
+        "forbid_unpowered_use": true,
+        "warnings": ["input_output_capacitors_required_by_datasheet", "enable_terminal_must_not_float_unless_datasheet_allows"]
+      }
+    },
+    "REGULATOR_LDO_ADJUSTABLE": {
+      "category": "power_ic",
+      "prefix": "U",
+      "terminals": ["IN", "OUT", "GND", "FB", "EN"],
+      "required_parameters": [],
+      "optional_parameters": ["output_voltage", "input_voltage_range", "output_current", "dropout_voltage", "reference_voltage", "enable_polarity", "psrr"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["IN", "OUT", "GND", "FB"],
+        "optional_unconnected_terminals": ["EN"],
+        "polarity": "positive_adjustable_low_dropout_regulator",
+        "terminal_swap_groups": [],
+        "forbid_unpowered_use": true,
+        "warnings": ["feedback_divider_required_for_adjustable_output", "input_output_capacitors_required_by_datasheet"]
+      }
+    },
+    "REGULATOR_BUCK": {
+      "category": "power_ic",
+      "prefix": "U",
+      "terminals": ["VIN", "SW", "GND", "FB", "EN", "BOOT"],
+      "required_parameters": [],
+      "optional_parameters": ["output_voltage", "input_voltage_range", "output_current", "switching_frequency", "current_limit", "synchronous"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["VIN", "SW", "GND", "FB"],
+        "optional_unconnected_terminals": ["EN", "BOOT"],
+        "polarity": "step_down_switching_regulator",
+        "terminal_swap_groups": [],
+        "forbid_unpowered_use": true,
+        "requires_external_energy_storage": ["inductor", "input_capacitor", "output_capacitor"],
+        "warnings": ["feedback_network_required", "boot_capacitor_required_when_boot_terminal_present", "layout_current_loops_are_critical"]
+      }
+    },
+    "REGULATOR_BOOST": {
+      "category": "power_ic",
+      "prefix": "U",
+      "terminals": ["VIN", "SW", "GND", "FB", "EN"],
+      "required_parameters": [],
+      "optional_parameters": ["output_voltage", "input_voltage_range", "output_current", "switching_frequency", "current_limit", "synchronous"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["VIN", "SW", "GND", "FB"],
+        "optional_unconnected_terminals": ["EN"],
+        "polarity": "step_up_switching_regulator",
+        "terminal_swap_groups": [],
+        "forbid_unpowered_use": true,
+        "requires_external_energy_storage": ["inductor", "input_capacitor", "output_capacitor", "rectifier_or_synchronous_switch"],
+        "warnings": ["feedback_network_required", "output_disconnect_behavior_depends_on_topology", "layout_current_loops_are_critical"]
+      }
+    },
+    "VOLTAGE_SOURCE_DC": {
+      "category": "source",
+      "prefix": "V",
+      "terminals": ["POS", "NEG"],
+      "required_parameters": ["voltage"],
+      "optional_parameters": ["source_resistance"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["POS", "NEG"],
+        "polarity": "positive_negative"
+      }
+    },
+    "CURRENT_SOURCE_DC": {
+      "category": "source",
+      "prefix": "I",
+      "terminals": ["POS", "NEG"],
+      "required_parameters": ["current"],
+      "optional_parameters": ["compliance_voltage"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["POS", "NEG"],
+        "polarity": "current_from_pos_to_neg"
+      }
+    },
+    "VOLTAGE_SOURCE_AC": {
+      "category": "source",
+      "prefix": "V",
+      "terminals": ["POS", "NEG"],
+      "required_parameters": ["amplitude", "frequency"],
+      "optional_parameters": ["phase", "offset", "source_resistance"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["POS", "NEG"],
+        "polarity": "positive_negative_reference"
+      }
+    },
+    "SIGNAL_SOURCE": {
+      "category": "source",
+      "prefix": "V",
+      "terminals": ["OUT", "REF"],
+      "required_parameters": ["waveform"],
+      "optional_parameters": ["amplitude", "frequency", "offset", "duty_cycle", "source_resistance"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["OUT", "REF"],
+        "polarity": "output_reference"
+      }
+    },
+    "FUSE": {
+      "category": "protection",
+      "prefix": "F",
+      "terminals": ["A", "B"],
+      "required_parameters": ["current_rating"],
+      "optional_parameters": ["voltage_rating", "trip_time", "interrupt_rating", "resettable"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "B"],
+        "polarity": "none",
+        "terminal_swap_groups": [["A", "B"]]
+      }
+    },
+    "SWITCH_SPST": {
+      "category": "switch",
+      "prefix": "SW",
+      "terminals": ["A", "B"],
+      "required_parameters": [],
+      "optional_parameters": ["default_state", "voltage_rating", "current_rating", "actuator"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "B"],
+        "polarity": "none",
+        "terminal_swap_groups": [["A", "B"]],
+        "switch_contact_groups": [["A", "B"]]
+      }
+    },
+    "SWITCH_SPDT": {
+      "category": "switch",
+      "prefix": "SW",
+      "terminals": ["COM", "NO", "NC"],
+      "required_parameters": [],
+      "optional_parameters": ["default_throw", "voltage_rating", "current_rating", "actuator"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["COM", "NO", "NC"],
+        "polarity": "none",
+        "terminal_swap_groups": [["NO", "NC"]],
+        "switch_contact_groups": [["COM", "NO"], ["COM", "NC"]]
+      }
+    },
+    "CRYSTAL": {
+      "category": "timing",
+      "prefix": "Y",
+      "terminals": ["A", "B"],
+      "required_parameters": ["frequency"],
+      "optional_parameters": ["load_capacitance", "motional_resistance", "frequency_tolerance"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["A", "B"],
+        "polarity": "none",
+        "terminal_swap_groups": [["A", "B"]]
+      }
+    },
+    "TEST_POINT": {
+      "category": "mechanical_electrical",
+      "prefix": "TP",
+      "terminals": ["TP"],
+      "required_parameters": [],
+      "optional_parameters": ["color", "loop_style", "access_side"],
+      "boundary_conditions": {
+        "required_connected_terminals": ["TP"],
+        "allow_single_terminal_device": true
+      }
+    },
+    "CONNECTOR_N": {
+      "category": "connector",
+      "prefix": "J",
+      "terminal_pattern": "^P[0-9]+$",
+      "required_parameters": ["pin_count"],
+      "optional_parameters": ["pitch", "gender", "orientation"],
+      "boundary_conditions": {
+        "allow_unconnected_terminals": true,
+        "physical_pin_equals_terminal_number": true
+      }
+    },
+    "CONNECTOR_MULTI_PIN": {
+      "category": "connector",
+      "prefix": "J",
+      "terminal_pattern": "^P[0-9]+$",
+      "required_parameters": ["pin_count"],
+      "optional_parameters": ["pitch", "gender", "orientation", "rows", "keying", "shielded"],
+      "boundary_conditions": {
+        "allow_unconnected_terminals": true,
+        "physical_pin_equals_terminal_number": true,
+        "declared_pin_count_must_match_terminals": true,
+        "forbid_implicit_pins_above_pin_count": true,
+        "warnings": ["pin_numbering_must_follow_connector_datasheet_or_footprint"]
+      }
+    },
+    "CONNECTOR_MULTI_PIN_SHIELDED": {
+      "category": "connector",
+      "prefix": "J",
+      "terminal_pattern": "^(P[0-9]+|SHIELD)$",
+      "required_parameters": ["pin_count"],
+      "optional_parameters": ["pitch", "gender", "orientation", "rows", "keying", "shell_material"],
+      "boundary_conditions": {
+        "allow_unconnected_terminals": true,
+        "physical_pin_equals_terminal_number": true,
+        "declared_pin_count_must_match_p_terminals": true,
+        "shield_terminal_policy": "connect_to_chassis_or_declared_no_connect",
+        "warnings": ["shield_is_not_a_signal_pin", "pin_numbering_must_follow_connector_datasheet_or_footprint"]
+      }
+    },
+    "IC_GENERIC": {
+      "category": "digital_ic",
+      "prefix": "U",
+      "terminal_pattern": "^[A-Z][A-Z0-9_+\\-]*$",
+      "required_parameters": ["terminal_list"],
+      "optional_parameters": ["function", "supply_pins", "logic_family", "datasheet"],
+      "boundary_conditions": {
+        "declared_terminal_list_required": true,
+        "forbid_implicit_pins": true,
+        "warnings": ["prefer_specific_component_type_when_available"]
+      }
+    }
+  }
+}
