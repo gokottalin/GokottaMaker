@@ -176,6 +176,23 @@
   background: #f6fbff;
 }
 
+.ge-handoff-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 9px 12px;
+  border-top: 1px solid #b7d8ee;
+  background: #f9fcff;
+}
+
+.ge-handoff-bar span {
+  min-width: 106px;
+  color: #0d4885;
+  font-size: 13px;
+  font-weight: 850;
+}
+
 #svgPreview {
   flex: 1;
   min-height: 480px;

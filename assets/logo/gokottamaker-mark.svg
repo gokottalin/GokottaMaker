@@ -1,0 +1,14 @@
+<svg width="92" height="88" viewBox="0 0 92 88" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">GokottaMaker Icon Mark</title>
+  <desc id="desc">A modular blue hexagon icon with an open-source circuit path.</desc>
+  <path d="M46 10L75.4 27V61L46 78L16.6 61V27L46 10Z" fill="#0B1220"/>
+  <path d="M46 10L75.4 27L46 44L16.6 27L46 10Z" fill="#0EA5E9"/>
+  <path d="M46 44L75.4 27V61L46 78V44Z" fill="#0D6FD3"/>
+  <path d="M46 44V78L16.6 61V27L46 44Z" fill="#0B5FC6"/>
+  <path d="M32 50V37C32 31.5 36.5 27 42 27H56" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+  <path d="M55 27L63 35L55 43" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M32 50L46 58L60 50" stroke="#CFFAFE" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="32" cy="50" r="4.3" fill="#CFFAFE"/>
+  <circle cx="46" cy="58" r="4.3" fill="#FFFFFF"/>
+  <circle cx="60" cy="50" r="4.3" fill="#CFFAFE"/>
+</svg>

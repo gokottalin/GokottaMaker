@@ -1,18 +1,62 @@
 ﻿:root {
-  --bg: #f5f8fc;
+  --brand-logo: url("../assets/logo/options/gokottamaker-logo-option-15.svg");
+  --brand-ink: #0b1220;
+  --brand-blue: #0f4ea8;
+  --brand-blue-2: #0d6fd3;
+  --brand-cyan: #38bdf8;
+  --brand-amber: #f2a316;
+  --bg: #f4f7fb;
   --surface: #ffffff;
-  --surface-2: #f8fbff;
+  --surface-2: #e6f1fb;
   --ink: #0b1220;
-  --muted: #64748b;
-  --line: #d9e3ef;
-  --blue: #0d6fd3;
-  --blue-2: #0a56b4;
-  --cyan: #12a8e8;
+  --muted: #52657a;
+  --line: #cddbea;
+  --blue: var(--brand-blue);
+  --blue-2: var(--brand-blue-2);
+  --cyan: var(--brand-cyan);
   --green: #16a376;
-  --warning: #f2a316;
+  --warning: var(--brand-amber);
+  --theme-accent: var(--brand-amber);
+  --body-bg: linear-gradient(180deg, rgba(230, 241, 251, 0.9), rgba(244, 247, 251, 0) 360px), var(--bg);
+  --header-bg: rgba(255, 255, 255, 0.9);
+  --header-line: rgba(205, 219, 234, 0.9);
   --shadow: 0 18px 45px rgba(15, 35, 70, 0.1);
   --radius: 8px;
   --page: 1880px;
+}
+
+[data-theme="dark"] {
+  --bg: #0b1220;
+  --surface: #111c32;
+  --surface-2: #17243a;
+  --ink: #ffffff;
+  --muted: #a8b6c8;
+  --line: rgba(168, 182, 200, 0.24);
+  --blue: var(--brand-cyan);
+  --blue-2: var(--brand-blue-2);
+  --theme-accent: var(--brand-cyan);
+  --body-bg: var(--bg);
+  --header-bg: rgba(17, 28, 50, 0.88);
+  --header-line: rgba(168, 182, 200, 0.18);
+  --shadow: 0 20px 52px rgba(0, 0, 0, 0.34);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b1220;
+    --surface: #111c32;
+    --surface-2: #17243a;
+    --ink: #ffffff;
+    --muted: #a8b6c8;
+    --line: rgba(168, 182, 200, 0.24);
+    --blue: var(--brand-cyan);
+    --blue-2: var(--brand-blue-2);
+    --theme-accent: var(--brand-cyan);
+    --body-bg: var(--bg);
+    --header-bg: rgba(17, 28, 50, 0.88);
+    --header-line: rgba(168, 182, 200, 0.18);
+    --shadow: 0 20px 52px rgba(0, 0, 0, 0.34);
+  }
 }
 
 * {
@@ -25,9 +69,7 @@ html {
 
 body {
   margin: 0;
-  background:
-    linear-gradient(180deg, rgba(232, 241, 253, 0.72), rgba(245, 248, 252, 0) 340px),
-    var(--bg);
+  background: var(--body-bg);
   color: var(--ink);
   font-family:
     Inter, "Segoe UI", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
@@ -80,9 +122,10 @@ img {
   position: sticky;
   top: 0;
   z-index: 50;
-  border-bottom: 1px solid rgba(217, 227, 239, 0.92);
-  background: rgba(255, 255, 255, 0.88);
+  border-bottom: 1px solid var(--header-line);
+  background: var(--header-bg);
   backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 .header-inner {
@@ -99,24 +142,27 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  min-width: 0;
-  font-size: 24px;
+  min-width: fit-content;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 28px;
   font-weight: 850;
   letter-spacing: 0;
 }
 
 .brand-symbol {
-  width: 42px;
-  height: 42px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
-  border: 1px solid #c8d9ed;
+  border: 1px solid #d7e3f2;
   border-radius: var(--radius);
-  background: white;
+  background: #ffffff;
   padding: 4px;
+  box-shadow: var(--shadow-soft);
 }
 
 .brand span:last-child {
-  white-space: nowrap;
+  display: inline;
 }
 
 .brand b {
@@ -141,7 +187,7 @@ img {
 }
 
 .main-nav a {
-  color: #1f2937;
+  color: var(--ink);
 }
 
 .main-nav a:hover {
@@ -162,7 +208,7 @@ img {
   padding: 0 14px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: white;
+  background: var(--surface);
   color: var(--muted);
   box-shadow: 0 8px 24px rgba(30, 70, 120, 0.04);
 }
@@ -187,8 +233,8 @@ img {
   padding: 0 16px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: white;
-  color: #111827;
+  background: var(--surface);
+  color: var(--ink);
   font-weight: 800;
   white-space: nowrap;
 }

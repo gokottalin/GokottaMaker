@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GokottaMaker Project Style Options</title>
+    <style>
+      :root {
+        --page-bg: #f5f8fc;
+        --ink: #0b1220;
+        --muted: #64748b;
+        --line: #d9e3ef;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--page-bg);
+        color: var(--ink);
+        font-family: Inter, "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+      }
+
+      main {
+        width: min(1220px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 48px 0 64px;
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 28px;
+        align-items: center;
+        margin-bottom: 28px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 34px;
+        line-height: 1.16;
+        letter-spacing: 0;
+      }
+
+      .intro {
+        max-width: 720px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      .chosen-logo {
+        width: min(320px, 100%);
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      .decision {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 14px;
+        margin: 0 0 24px;
+      }
+
+      .decision-item {
+        padding: 16px 18px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 12px 30px rgba(15, 35, 70, 0.08);
+      }
+
+      .decision-item strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 15px;
+      }
+
+      .decision-item span {
+        display: block;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .style-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 20px;
+      }
+
+      .style-card {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 18px 45px rgba(15, 35, 70, 0.1);
+      }
+
+      .style-card.selected {
+        border-color: #0d6fd3;
+        box-shadow: 0 20px 48px rgba(13, 111, 211, 0.18);
+      }
+
+      .selected-badge {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        z-index: 2;
+        padding: 7px 10px;
+        border-radius: 6px;
+        background: #0d6fd3;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 850;
+      }
+
+      .mock {
+        min-height: 304px;
+        padding: 18px;
+      }
+
+      .mock-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 26px;
+      }
+
+      .mini-logo {
+        width: 178px;
+        height: auto;
+      }
+
+      .nav-lines {
+        display: flex;
+        gap: 8px;
+      }
+
+      .nav-lines span {
+        display: block;
+        width: 34px;
+        height: 8px;
+        border-radius: 99px;
+      }
+
+      .mock-body {
+        display: grid;
+        grid-template-columns: 1fr 136px;
+        gap: 18px;
+        align-items: end;
+      }
+
+      .eyebrow {
+        width: 92px;
+        height: 20px;
+        border-radius: 99px;
+        margin-bottom: 14px;
+      }
+
+      .headline {
+        height: 18px;
+        border-radius: 4px;
+        margin-bottom: 10px;
+      }
+
+      .headline.large {
+        height: 32px;
+        width: 92%;
+      }
+
+      .copy-line {
+        height: 10px;
+        border-radius: 99px;
+        margin-bottom: 8px;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .button {
+        width: 92px;
+        height: 34px;
+        border-radius: 6px;
+      }
+
+      .visual {
+        aspect-ratio: 1;
+        border-radius: 8px;
+        padding: 16px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        gap: 8px;
+      }
+
+      .visual span {
+        border-radius: 5px;
+      }
+
+      .visual span:nth-child(2) {
+        grid-column: span 2;
+      }
+
+      .visual span:nth-child(4) {
+        grid-column: span 2;
+      }
+
+      .meta {
+        padding: 18px 20px 20px;
+        border-top: 1px solid var(--line);
+      }
+
+      h2 {
+        margin: 0 0 8px;
+        font-size: 18px;
+        letter-spacing: 0;
+      }
+
+      .meta p {
+        margin: 0 0 14px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      .swatches {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .swatch {
+        width: 34px;
+        height: 22px;
+        border: 1px solid rgba(11, 18, 32, 0.1);
+        border-radius: 5px;
+      }
+
+      .s1 .mock {
+        background: #f6fbff;
+      }
+
+      .s1 .nav-lines span,
+      .s1 .eyebrow,
+      .s1 .button:first-child,
+      .s1 .visual span:nth-child(odd) {
+        background: #0d6fd3;
+      }
+
+      .s1 .headline,
+      .s1 .copy-line,
+      .s1 .visual span:nth-child(even) {
+        background: #0b1220;
+      }
+
+      .s1 .button:last-child,
+      .s1 .visual {
+        background: #eaf6ff;
+      }
+
+      .s1 .visual span:nth-child(3),
+      .s1 .visual span:nth-child(6) {
+        background: #0ea5e9;
+      }
+
+      .s2 .mock {
+        background: #0b1220;
+      }
+
+      .s2 .nav-lines span,
+      .s2 .eyebrow,
+      .s2 .button:first-child,
+      .s2 .visual span:nth-child(odd) {
+        background: #38bdf8;
+      }
+
+      .s2 .headline,
+      .s2 .copy-line {
+        background: #ffffff;
+      }
+
+      .s2 .button:last-child,
+      .s2 .visual {
+        background: #111c32;
+      }
+
+      .s2 .visual span:nth-child(even) {
+        background: #0d6fd3;
+      }
+
+      .s3 .mock {
+        background: #eef7ff;
+      }
+
+      .s3 .nav-lines span,
+      .s3 .eyebrow,
+      .s3 .button:first-child,
+      .s3 .visual span:nth-child(odd) {
+        background: #075bc1;
+      }
+
+      .s3 .headline {
+        background: #0b1220;
+      }
+
+      .s3 .copy-line {
+        background: #486178;
+      }
+
+      .s3 .button:last-child,
+      .s3 .visual {
+        background: #ffffff;
+      }
+
+      .s3 .visual span:nth-child(even) {
+        background: #16a376;
+      }
+
+      .s4 .mock {
+        background: #ffffff;
+      }
+
+      .s4 .nav-lines span,
+      .s4 .eyebrow,
+      .s4 .button:first-child,
+      .s4 .visual span:nth-child(odd) {
+        background: #0b5fc6;
+      }
+
+      .s4 .headline {
+        background: #0b1220;
+      }
+
+      .s4 .copy-line {
+        background: #64748b;
+      }
+
+      .s4 .button:last-child,
+      .s4 .visual {
+        background: #f8fbff;
+      }
+
+      .s4 .visual span:nth-child(even) {
+        background: #7dd3fc;
+      }
+
+      .s5 .mock {
+        background: #f4f7fb;
+      }
+
+      .s5 .nav-lines span,
+      .s5 .eyebrow,
+      .s5 .button:first-child,
+      .s5 .visual span:nth-child(odd) {
+        background: #0f4ea8;
+      }
+
+      .s5 .headline {
+        background: #0b1220;
+      }
+
+      .s5 .copy-line {
+        background: #52657a;
+      }
+
+      .s5 .button:last-child,
+      .s5 .visual {
+        background: #e6f1fb;
+      }
+
+      .s5 .visual span:nth-child(even) {
+        background: #f2a316;
+      }
+
+      @media (max-width: 760px) {
+        header,
+        .mock-body {
+          grid-template-columns: 1fr;
+        }
+
+        .chosen-logo {
+          width: 100%;
+        }
+
+        .visual {
+          max-width: 160px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <h1>GokottaMaker 项目视觉风格</h1>
+          <p class="intro">已确定使用 15 号 LOGO。项目主题确定为昼夜双模式：白天使用 05 创客产品展示，夜晚使用 02 深色工程控制台。</p>
+        </div>
+        <img class="chosen-logo" src="./gokottamaker-logo-option-15.svg" alt="Selected GokottaMaker logo" />
+      </header>
+
+      <section class="decision" aria-label="Selected style decision">
+        <div class="decision-item">
+          <strong>白天主题：05 创客产品展示</strong>
+          <span>浅灰蓝页面底色、深蓝主色、琥珀强调，用于默认浅色浏览体验和项目成果展示。</span>
+        </div>
+        <div class="decision-item">
+          <strong>夜晚主题：02 深色工程控制台</strong>
+          <span>深色背景、蓝青高亮、白色正文，用于深色模式和工具型页面氛围。</span>
+        </div>
+      </section>
+
+      <section class="style-grid" aria-label="Project style options">
+        <article class="style-card s1">
+          <div class="mock">
+            <div class="mock-nav">
+              <img class="mini-logo" src="./gokottamaker-logo-option-15.svg" alt="" />
+              <div class="nav-lines"><span></span><span></span><span></span></div>
+            </div>
+            <div class="mock-body">
+              <div>
+                <div class="eyebrow"></div>
+                <div class="headline large"></div>
+                <div class="headline" style="width: 72%;"></div>
+                <div class="copy-line" style="width: 88%;"></div>
+                <div class="copy-line" style="width: 64%;"></div>
+                <div class="actions"><div class="button"></div><div class="button"></div></div>
+              </div>
+              <div class="visual"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            </div>
+          </div>
+          <div class="meta">
+            <h2>01 清爽开源实验室</h2>
+            <p>白底浅蓝、主蓝高亮，最贴近现在站点，改造成本低，适合技术博客、项目文档和教程内容。</p>
+            <div class="swatches">
+              <span class="swatch" style="background:#f6fbff"></span><span class="swatch" style="background:#0d6fd3"></span><span class="swatch" style="background:#0ea5e9"></span><span class="swatch" style="background:#0b1220"></span>
+            </div>
+          </div>
+        </article>
+
+        <article class="style-card s2 selected">
+          <div class="selected-badge">夜晚主题</div>
+          <div class="mock">
+            <div class="mock-nav">
+              <img class="mini-logo" src="./gokottamaker-logo-option-15.svg" alt="" />
+              <div class="nav-lines"><span></span><span></span><span></span></div>
+            </div>
+            <div class="mock-body">
+              <div>
+                <div class="eyebrow"></div>
+                <div class="headline large"></div>
+                <div class="headline" style="width: 76%;"></div>
+                <div class="copy-line" style="width: 92%;"></div>
+                <div class="copy-line" style="width: 58%;"></div>
+                <div class="actions"><div class="button"></div><div class="button"></div></div>
+              </div>
+              <div class="visual"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            </div>
+          </div>
+          <div class="meta">
+            <h2>02 深色工程控制台</h2>
+            <p>深色背景、蓝青高亮，更像专业工具和开发者平台；视觉冲击强，但整站可读性需要更细打磨。</p>
+            <div class="swatches">
+              <span class="swatch" style="background:#0b1220"></span><span class="swatch" style="background:#111c32"></span><span class="swatch" style="background:#38bdf8"></span><span class="swatch" style="background:#ffffff"></span>
+            </div>
+          </div>
+        </article>
+
+        <article class="style-card s3">
+          <div class="mock">
+            <div class="mock-nav">
+              <img class="mini-logo" src="./gokottamaker-logo-option-15.svg" alt="" />
+              <div class="nav-lines"><span></span><span></span><span></span></div>
+            </div>
+            <div class="mock-body">
+              <div>
+                <div class="eyebrow"></div>
+                <div class="headline large"></div>
+                <div class="headline" style="width: 68%;"></div>
+                <div class="copy-line" style="width: 86%;"></div>
+                <div class="copy-line" style="width: 70%;"></div>
+                <div class="actions"><div class="button"></div><div class="button"></div></div>
+              </div>
+              <div class="visual"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            </div>
+          </div>
+          <div class="meta">
+            <h2>03 开源硬件社区</h2>
+            <p>蓝色为主，绿色作为开源协作和发布状态色，适合项目列表、版本记录、贡献说明和社区入口。</p>
+            <div class="swatches">
+              <span class="swatch" style="background:#eef7ff"></span><span class="swatch" style="background:#075bc1"></span><span class="swatch" style="background:#16a376"></span><span class="swatch" style="background:#0b1220"></span>
+            </div>
+          </div>
+        </article>
+
+        <article class="style-card s4">
+          <div class="mock">
+            <div class="mock-nav">
+              <img class="mini-logo" src="./gokottamaker-logo-option-15.svg" alt="" />
+              <div class="nav-lines"><span></span><span></span><span></span></div>
+            </div>
+            <div class="mock-body">
+              <div>
+                <div class="eyebrow"></div>
+                <div class="headline large"></div>
+                <div class="headline" style="width: 74%;"></div>
+                <div class="copy-line" style="width: 90%;"></div>
+                <div class="copy-line" style="width: 66%;"></div>
+                <div class="actions"><div class="button"></div><div class="button"></div></div>
+              </div>
+              <div class="visual"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            </div>
+          </div>
+          <div class="meta">
+            <h2>04 精密技术文档</h2>
+            <p>大面积白底、低饱和灰蓝分割线，信息密度高，适合教程、参数表、BOM、原理图说明等专业内容。</p>
+            <div class="swatches">
+              <span class="swatch" style="background:#ffffff"></span><span class="swatch" style="background:#f8fbff"></span><span class="swatch" style="background:#0b5fc6"></span><span class="swatch" style="background:#64748b"></span>
+            </div>
+          </div>
+        </article>
+
+        <article class="style-card s5 selected">
+          <div class="selected-badge">白天主题</div>
+          <div class="mock">
+            <div class="mock-nav">
+              <img class="mini-logo" src="./gokottamaker-logo-option-15.svg" alt="" />
+              <div class="nav-lines"><span></span><span></span><span></span></div>
+            </div>
+            <div class="mock-body">
+              <div>
+                <div class="eyebrow"></div>
+                <div class="headline large"></div>
+                <div class="headline" style="width: 70%;"></div>
+                <div class="copy-line" style="width: 88%;"></div>
+                <div class="copy-line" style="width: 62%;"></div>
+                <div class="actions"><div class="button"></div><div class="button"></div></div>
+              </div>
+              <div class="visual"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            </div>
+          </div>
+          <div class="meta">
+            <h2>05 创客产品展示</h2>
+            <p>蓝色主调加少量琥珀强调，更适合项目成果、硬件产品、案例展示和首页视觉焦点。</p>
+            <div class="swatches">
+              <span class="swatch" style="background:#f4f7fb"></span><span class="swatch" style="background:#0f4ea8"></span><span class="swatch" style="background:#f2a316"></span><span class="swatch" style="background:#0b1220"></span>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
@@ -6,13 +6,13 @@
     <title>GokottaElec 在线预览 | GokottaMaker</title>
     <meta name="description" content="粘贴 CNL 电路描述，生成 SVG 原理图、IR JSON 和 ERC 诊断。" />
     <link rel="manifest" href="../site.webmanifest" />
-    <link rel="stylesheet" href="../styles.css?v=20260509-1346" />
+    <link rel="stylesheet" href="../styles.css?v=20260509-1956" />
   </head>
   <body class="ge-page">
     <a class="skip-link" href="#mainContent">跳到工具</a>
     <header class="site-header">
       <div class="header-inner">
-        <a class="brand" href="../index.html"><img class="brand-symbol" src="../assets/logo/gokottamaker-icon.png" alt="" /><span>Gokotta<b>Maker</b></span></a>
+        <a class="brand" href="../index.html"><img class="brand-symbol" src="../assets/logo/gokottamaker-mark.svg" alt="GokottaMaker" /><span>Gokotta<b>Maker</b></span></a>
         <nav class="main-nav" aria-label="主导航">
           <a href="../category.html?category=analog">模拟电子</a>
           <a href="../category.html?category=stm32">STM32</a>
@@ -29,7 +29,7 @@
         <img class="ge-brand-icon" src="./assets/gokotta-elec-icon.png" alt="" aria-hidden="true" />
         <div>
           <h1>GokottaElec 在线预览</h1>
-          <p>粘贴 LLM 输出的 CNL 文本，调用 GokottaElec V1.1 生成 SVG 原理图、IR JSON 与 ERC 诊断。</p>
+          <p>粘贴 LLM 输出的 CNL 文本，调用 GokottaElec V1.3 生成 SVG 原理图、IR JSON 与 ERC 诊断。</p>
         </div>
         <div class="ge-reserved-actions" aria-label="预留功能">
           <button type="button" disabled>保存工程</button>
@@ -47,6 +47,11 @@
             </select>
           </div>
           <textarea id="cnlInput" spellcheck="false" placeholder="请粘贴 LLM 输出的 CNL 文本。"></textarea>
+          <div class="ge-handoff-bar" aria-label="LLM 对接复制">
+            <span>LLM 对接复制</span>
+            <button id="copyBasicHandoffButton" type="button">复制基础LLM</button>
+            <button id="copyFullHandoffButton" type="button">复制完整LLM</button>
+          </div>
           <div class="ge-toolbar">
             <button id="renderButton" type="button">生成预览</button>
             <button id="clearButton" type="button">清空</button>
@@ -83,8 +88,8 @@
       </section>
     </main>
 
-    <script src="./gokotta-elec.js?v=20260509-1346"></script>
-    <script src="../data/site-meta.js?v=20260509-1346"></script>
-    <script src="../data/footer.js?v=20260509-1346"></script>
+    <script src="./gokotta-elec.js?v=20260509-1956"></script>
+    <script src="../data/site-meta.js?v=20260509-1956"></script>
+    <script src="../data/footer.js?v=20260509-1956"></script>
   </body>
 </html>

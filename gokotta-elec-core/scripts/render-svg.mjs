@@ -44,8 +44,12 @@ const width = 1120;
 const height = 760;
 const inputTagVerticalOffset = 54;
 const inputTagTipOffset = 74;
+const inputTagRotatedTipOffset = 54;
+const inputTagCollisionPadding = 6;
 const lines = [];
 const add = (line) => lines.push(line);
+const drawnSegments = [];
+const placedInputTagBoxes = [];
 
 const netOf = (refdes, terminal) => netByTerminal.get(`${refdes}.${terminal}`);
 const findDevice = (predicate) => devices.find(predicate);
@@ -105,8 +109,62 @@ const beginSvg = () => {
 };
 
 const endSvg = () => add(`</svg>`);
+const segmentBounds = (segment) => ({
+  x1: Math.min(segment.a.x, segment.b.x),
+  y1: Math.min(segment.a.y, segment.b.y),
+  x2: Math.max(segment.a.x, segment.b.x),
+  y2: Math.max(segment.a.y, segment.b.y)
+});
+const inflateRect = (rect, padding) => ({
+  x1: rect.x1 - padding,
+  y1: rect.y1 - padding,
+  x2: rect.x2 + padding,
+  y2: rect.y2 + padding
+});
+const rectsIntersect = (a, b) =>
+  a.x1 <= b.x2 && a.x2 >= b.x1 && a.y1 <= b.y2 && a.y2 >= b.y1;
+const pointInRect = (point, rect) =>
+  point.x >= rect.x1 && point.x <= rect.x2 && point.y >= rect.y1 && point.y <= rect.y2;
+const orientation = (a, b, c) => {
+  const value = (b.y - a.y) * (c.x - b.x) - (b.x - a.x) * (c.y - b.y);
+  if (Math.abs(value) < 0.001) return 0;
+  return value > 0 ? 1 : 2;
+};
+const pointOnSegment = (a, b, c) =>
+  b.x <= Math.max(a.x, c.x) + 0.001 && b.x >= Math.min(a.x, c.x) - 0.001
+  && b.y <= Math.max(a.y, c.y) + 0.001 && b.y >= Math.min(a.y, c.y) - 0.001;
+const segmentsIntersect = (s1, s2) => {
+  const { a: p1, b: q1 } = s1;
+  const { a: p2, b: q2 } = s2;
+  const o1 = orientation(p1, q1, p2);
+  const o2 = orientation(p1, q1, q2);
+  const o3 = orientation(p2, q2, p1);
+  const o4 = orientation(p2, q2, q1);
+  if (o1 !== o2 && o3 !== o4) return true;
+  if (o1 === 0 && pointOnSegment(p1, p2, q1)) return true;
+  if (o2 === 0 && pointOnSegment(p1, q2, q1)) return true;
+  if (o3 === 0 && pointOnSegment(p2, p1, q2)) return true;
+  return o4 === 0 && pointOnSegment(p2, q1, q2);
+};
+const segmentIntersectsRect = (segment, rect) => {
+  if (!rectsIntersect(segmentBounds(segment), rect)) return false;
+  if (pointInRect(segment.a, rect) || pointInRect(segment.b, rect)) return true;
+  const edges = [
+    { a: { x: rect.x1, y: rect.y1 }, b: { x: rect.x2, y: rect.y1 } },
+    { a: { x: rect.x2, y: rect.y1 }, b: { x: rect.x2, y: rect.y2 } },
+    { a: { x: rect.x2, y: rect.y2 }, b: { x: rect.x1, y: rect.y2 } },
+    { a: { x: rect.x1, y: rect.y2 }, b: { x: rect.x1, y: rect.y1 } }
+  ];
+  return edges.some((edge) => segmentsIntersect(segment, edge));
+};
+const recordWireSegments = (points) => {
+  for (let i = 1; i < points.length; i += 1) {
+    drawnSegments.push({ a: points[i - 1], b: points[i] });
+  }
+};
 const wire = (points) => {
   if (points.length < 2) return;
+  recordWireSegments(points);
   add(`<path class="wire" d="${points.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ")}" />`);
 };
 const junction = (x, y) => add(`<circle class="junction" cx="${x}" cy="${y}" r="4" />`);
@@ -131,19 +189,63 @@ const inputPort = (netId, x, y) => {
   add(`<path class="net-tag" d="M ${x} ${y - 14} L ${x + 54} ${y - 14} L ${x + 74} ${y} L ${x + 54} ${y + 14} L ${x} ${y + 14} Z" />`);
   add(`<text class="net-tag-text${klass}" x="${x + 32}" y="${y + 5}" text-anchor="middle">${esc(netId)}</text>`);
 };
-const inputTagYFor = (mainY, placement = "above") =>
-  mainY + (placement === "below" ? inputTagVerticalOffset : -inputTagVerticalOffset);
-const inputPortToNet = (netId, x, mainY, joinX, placement = "above") => {
+const inputPortRotated = (netId, x, y) => {
+  const klass = netById.get(netId)?.type ? ` net-${netById.get(netId).type}` : "";
+  add(`<path class="net-tag" d="M ${x} ${y - 37} L ${x + 34} ${y - 37} L ${x + 54} ${y} L ${x + 34} ${y + 37} L ${x} ${y + 37} Z" />`);
+  add(`<text class="net-tag-text${klass}" x="${x + 23}" y="${y + 4}" text-anchor="middle" transform="rotate(-90 ${x + 23} ${y + 4})">${esc(netId)}</text>`);
+};
+const inputTagYFor = (mainY, placement = "normal") => {
+  if (placement === "above") return mainY - inputTagVerticalOffset;
+  if (placement === "below") return mainY + inputTagVerticalOffset;
+  if (placement === "far-above") return mainY - inputTagVerticalOffset * 2;
+  if (placement === "far-below") return mainY + inputTagVerticalOffset * 2;
+  return mainY;
+};
+const inputTagRect = (x, y, rotated = false) => rotated
+  ? { x1: x, y1: y - 37, x2: x + 54, y2: y + 37 }
+  : { x1: x, y1: y - 14, x2: x + 74, y2: y + 14 };
+const inputTagIsClear = (rect) => {
+  const padded = inflateRect(rect, inputTagCollisionPadding);
+  if (padded.x1 < 34 || padded.x2 > width - 34 || padded.y1 < 92 || padded.y2 > height - 48) return false;
+  if (placedInputTagBoxes.some((box) => rectsIntersect(padded, inflateRect(box, inputTagCollisionPadding)))) return false;
+  return !drawnSegments.some((segment) => segmentIntersectsRect(segment, padded));
+};
+const inputPortCandidate = (x, mainY, joinX, placement, rotated = false) => {
   const tagY = inputTagYFor(mainY, placement);
-  if (tagY === mainY) {
-    throw new Error(`Input tag ${netId} must not share y=${mainY} with its main signal wire`);
+  const tipOffset = rotated ? inputTagRotatedTipOffset : inputTagTipOffset;
+  const path = tagY === mainY
+    ? [{ x: x + tipOffset, y: tagY }, { x: joinX, y: mainY }]
+    : [{ x: x + tipOffset, y: tagY }, { x: joinX, y: tagY }, { x: joinX, y: mainY }];
+  return {
+    x,
+    tagY,
+    rotated,
+    path,
+    rect: inputTagRect(x, tagY, rotated)
+  };
+};
+const inputPortToNet = (netId, x, mainY, joinX, placement = "auto") => {
+  const normalPlacements = placement === "auto"
+    ? ["normal", "above", "below", "far-above", "far-below"]
+    : [placement, "above", "below", "normal", "far-above", "far-below"];
+  const rotatedPlacements = placement === "auto"
+    ? ["normal", "above", "below", "far-above", "far-below"]
+    : [placement, "normal", "above", "below", "far-above", "far-below"];
+  const candidates = [
+    ...normalPlacements.map((candidatePlacement) => inputPortCandidate(x, mainY, joinX, candidatePlacement, false)),
+    ...rotatedPlacements.map((candidatePlacement) => inputPortCandidate(x, mainY, joinX, candidatePlacement, true))
+  ];
+  const chosen = candidates.find((candidate) => inputTagIsClear(candidate.rect))
+    ?? candidates.find((candidate) => candidate.rotated)
+    ?? candidates[0];
+
+  if (chosen.rotated) {
+    inputPortRotated(netId, chosen.x, chosen.tagY);
+  } else {
+    inputPort(netId, chosen.x, chosen.tagY);
   }
-  inputPort(netId, x, tagY);
-  wire([
-    { x: x + inputTagTipOffset, y: tagY },
-    { x: joinX, y: tagY },
-    { x: joinX, y: mainY }
-  ]);
+  placedInputTagBoxes.push(chosen.rect);
+  wire(chosen.path);
   return { x: joinX, y: mainY };
 };
 const outputPort = (netId, x, y) => {
@@ -686,7 +788,10 @@ const renderOpampNonInverting = () => {
   const rFeedback = findTwoTerminalBetween("RESISTOR", outputNet, feedbackNet);
   const rGround = findTwoTerminalBetween("RESISTOR", feedbackNet, groundNet, new Set([rFeedback?.refdes].filter(Boolean)));
   const vcc = devices.find((d) => d.component_type === "VOLTAGE_SOURCE_DC" && deviceHasNets(d, positiveSupplyNet, groundNet));
-  const vee = devices.find((d) => d.component_type === "VOLTAGE_SOURCE_DC" && deviceHasNets(d, negativeSupplyNet, groundNet));
+  const negativeSupplyIsGround = negativeSupplyNet === groundNet || netById.get(negativeSupplyNet)?.type === "ground";
+  const vee = negativeSupplyIsGround
+    ? undefined
+    : devices.find((d) => d.component_type === "VOLTAGE_SOURCE_DC" && d.refdes !== vcc?.refdes && deviceHasNets(d, negativeSupplyNet, groundNet));
   const sig = devices.find((d) => d.component_type === "SIGNAL_SOURCE" && deviceHasNets(d, inputNet, groundNet));
   if (!rFeedback || !rGround) return false;
 
@@ -696,8 +801,13 @@ const renderOpampNonInverting = () => {
   powerPort(positiveSupplyNet, pins["V+"].x, railY);
   wire([{ x: pins["V+"].x, y: railY + 22 }, pins["V+"]]);
   junction(pins["V+"].x, railY + 22);
-  wire([pins["V-"], { x: pins["V-"].x, y: groundY - 22 }]);
-  negativePort(negativeSupplyNet, pins["V-"].x, groundY);
+  if (negativeSupplyIsGround) {
+    wire([pins["V-"], { x: pins["V-"].x, y: groundY - 34 }]);
+    groundPort(pins["V-"].x, groundY - 34, groundNet);
+  } else {
+    wire([pins["V-"], { x: pins["V-"].x, y: groundY - 22 }]);
+    negativePort(negativeSupplyNet, pins["V-"].x, groundY);
+  }
   if (vcc) {
     drawVoltageSource({ device: vcc, x: vccSourceX, topY: railY + 22, bottomY: groundY });
     wire([{ x: vccSourceX, y: railY + 22 }, { x: pins["V+"].x, y: railY + 22 }]);

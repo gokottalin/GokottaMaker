@@ -123,40 +123,10 @@
     if (!heroCards) return;
     const dots = document.querySelector(".pagination-dots");
     if (dots) dots.innerHTML = featuredItems.map((_, index) => `<span class="${index === 0 ? "active" : ""}"></span>`).join("");
-    const flowShapes = [
-      {
-        primary: "M -16 26 C 18 4 48 18 72 54 S 104 94 120 128",
-        secondary: "M 10 -18 C 42 26 46 58 24 118"
-      },
-      {
-        primary: "M 72 -20 C 52 16 70 42 98 62 S 116 98 82 126",
-        secondary: "M -12 88 C 28 50 54 42 120 18"
-      },
-      {
-        primary: "M 82 -18 C 38 14 30 42 42 66 S 82 90 62 126",
-        secondary: "M 110 -14 C 74 34 70 74 10 118"
-      },
-      {
-        primary: "M 62 -18 C 92 16 100 44 72 68 S 24 92 12 128",
-        secondary: "M -18 34 C 30 18 70 48 118 110"
-      }
-    ];
-    const flowLayer = (index) => {
-      const flow = flowShapes[index % flowShapes.length];
-      return `
-        <svg class="flow-map" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-          <path class="flow-line flow-line-primary" d="${flow.primary}" />
-          <path class="flow-line flow-line-secondary" d="${flow.secondary}" />
-        </svg>
-        <span class="glass-caustic glass-caustic-a" aria-hidden="true"></span>
-        <span class="glass-caustic glass-caustic-b" aria-hidden="true"></span>
-      `;
-    };
     heroCards.innerHTML = featuredItems
       .map(
         (item, index) => `
           <article class="hero-card hero-list-card" data-hero-index="${index}">
-            ${flowLayer(index)}
             <span class="hero-card-index">${String(index + 1).padStart(2, "0")}</span>
             <div class="hero-card-body">
               <span class="category-pill">${safe(itemLabel(item))}</span>

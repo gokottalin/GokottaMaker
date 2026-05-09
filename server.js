@@ -33,11 +33,11 @@ const contentStore = createContentStore(db);
 const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword });
 const uploadStore = createUploadStore(uploadDir);
 
-const siteVersion = "V2.3.0";
-const siteBuild = "20260509-1346";
+const siteVersion = "V2.4.0";
+const siteBuild = "20260509-1956";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
-const elecVersion = "V1.1";
+const elecVersion = "V1.3";
 const elecInputLimitBytes = 200 * 1024;
 const elecMaxCircuits = 10;
 const elecTmpRoot = path.resolve(process.env.ELEC_TMP_DIR || path.join(dataDir, ".tmp", "gokotta-elec"));
@@ -368,6 +368,94 @@ function elecSamples() {
       samples: [],
       diagnostics: [elecDiagnostic("ERROR", "SAMPLES_UNAVAILABLE", "Sample 文件不可用。", { detail: error.message })]
     };
+  }
+}
+
+const elecBasicHandoffFiles = [
+  { relativePath: "llm-handoff/README_先读_给其他LLM的文件说明.md", title: "文件说明", fence: "markdown" },
+  { relativePath: "llm-handoff/01_必需_系统提示词_直接复制给LLM.txt", title: "必需：系统提示词", fence: "text" },
+  { relativePath: "llm-handoff/02_必需_CNL输出契约_必须遵守.md", title: "必需：CNL 输出契约", fence: "markdown" },
+  { relativePath: "llm-handoff/03_可选增强_输出模板_让LLM套用.txt", title: "推荐：输出模板", fence: "text" }
+];
+
+const elecFullHandoffFiles = [
+  ...elecBasicHandoffFiles,
+  { relativePath: "llm-handoff/11_可选增强_完整器件库_端子和边界条件.json", title: "完整器件库：端子和边界条件", fence: "json" },
+  { relativePath: "llm-handoff/12_可选增强_型号封装引脚库_PinMap.json", title: "型号封装引脚库 PinMap", fence: "json" },
+  { relativePath: "schema/circuit-ir.schema.json", title: "IR Schema", fence: "json" },
+  { relativePath: "docs/circuit-cnl-v0.1.md", title: "CNL 语法说明", fence: "markdown" },
+  { relativePath: "docs/llm-cnl-contract-v0.1.md", title: "LLM CNL 契约", fence: "markdown" },
+  { relativePath: "docs/erc-rules-v0.1.md", title: "ERC 规则", fence: "markdown" },
+  { relativePath: "docs/component-library-notes-v0.1.md", title: "器件库说明", fence: "markdown" },
+  { relativePath: "samples/Sample-01-voltage-divider.txt", title: "Sample 01：电阻分压", fence: "text" },
+  { relativePath: "samples/Sample-02-npn-low-side-switch.txt", title: "Sample 02：NPN 低边 LED 开关", fence: "text" },
+  { relativePath: "samples/Sample-03-pnp-high-side-switch.txt", title: "Sample 03：PNP 高边 LED 开关", fence: "text" },
+  { relativePath: "samples/Sample-04-cmos-inverter-nmos-pmos.txt", title: "Sample 04：NMOS + PMOS CMOS 反相器", fence: "text" },
+  { relativePath: "samples/Sample-05-opamp-noninverting-amplifier.txt", title: "Sample 05：运放同相放大器", fence: "text" }
+];
+
+function appendElecHandoffFile(lines, file) {
+  const filePath = path.join(elecCoreDir, file.relativePath);
+  lines.push(`## ${file.title}`, "", `来源：\`${file.relativePath}\``, "");
+
+  if (!fs.existsSync(filePath)) {
+    lines.push(`> 文件不存在：${file.relativePath}`, "");
+    return;
+  }
+
+  const content = fs.readFileSync(filePath, "utf8");
+  lines.push(`\`\`\`\`${file.fence}`);
+  lines.push(content.endsWith("\n") ? content.trimEnd() : content);
+  lines.push("````", "");
+}
+
+function buildElecHandoffMarkdown(mode) {
+  const full = mode === "full";
+  const title = full ? "GokottaElec LLM 完整对接包" : "GokottaElec LLM 基础对接包";
+  const lines = [
+    `# ${title}`,
+    "",
+    `- 软件版本：${elecVersion}`,
+    "- 目标：让其他 LLM 严格输出 GokottaElec 可解析、可 ERC 检查、可脚本渲染的受控自然语言电路描述。",
+    "- 使用方式：把本文完整粘贴给目标 LLM，并要求它只按契约输出电路 CNL。",
+    "",
+    full ? "## 总要求" : "## 基础要求",
+    "",
+    full
+      ? "请你作为电路设计与 CNL 输出助手，严格遵守下面所有文件定义的格式、器件端子、网络规则、边界条件和示例风格。输出时不要自由发挥格式，不要省略网络、器件、连接、约束；无法确定时必须显式给出未连接原因或诊断说明。"
+      : "请你严格遵守系统提示词、CNL 输出契约和输出模板。优先保证格式可解析、端子名准确、网络连接明确。",
+    ""
+  ];
+
+  const files = full ? elecFullHandoffFiles : elecBasicHandoffFiles;
+  files.forEach((file) => appendElecHandoffFile(lines, file));
+  return `${lines.join("\n")}\n`;
+}
+
+function elecHandoff(req, res) {
+  if (!elecCoreReady()) {
+    return elecResponse(res, 503, {
+      ok: false,
+      markdown: "",
+      diagnostics: [elecDiagnostic("ERROR", "ELEC_CORE_UNAVAILABLE", "GokottaElec 核心目录不可用。")]
+    });
+  }
+
+  const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+  const mode = url.searchParams.get("mode") === "full" ? "full" : "basic";
+  try {
+    return elecResponse(res, 200, {
+      ok: true,
+      mode,
+      markdown: buildElecHandoffMarkdown(mode)
+    });
+  } catch (error) {
+    return elecResponse(res, 500, {
+      ok: false,
+      mode,
+      markdown: "",
+      diagnostics: [elecDiagnostic("ERROR", "LLM_HANDOFF_UNAVAILABLE", "LLM 对接文件不可用。", { detail: error.message })]
+    });
   }
 }
 
@@ -751,6 +839,7 @@ async function api(req, res, pathname) {
   if (pathname === "/api/content.js" && req.method === "GET") return contentScript(res);
   if (pathname === "/api/content" && req.method === "GET") return json(res, 200, { posts: allPosts(false), projects: allProjects(false) });
   if (pathname === "/api/elec/samples" && req.method === "GET") return elecResponse(res, 200, elecSamples());
+  if (pathname === "/api/elec/llm-handoff" && req.method === "GET") return elecHandoff(req, res);
   if (pathname === "/api/elec/build" && req.method === "POST") return elecBuild(res, await readBody(req, elecInputLimitBytes + 4096));
   if (pathname === "/api/session" && req.method === "GET") {
     const user = currentUser(req);
@@ -885,6 +974,7 @@ const mime = {
   ".jpeg": "image/jpeg",
   ".webp": "image/webp",
   ".gif": "image/gif",
+  ".svg": "image/svg+xml; charset=utf-8",
   ".md": "text/markdown; charset=utf-8",
   ".webmanifest": "application/manifest+json; charset=utf-8"
 };
@@ -922,7 +1012,7 @@ function serveStatic(res, pathname) {
     return;
   }
   const ext = path.extname(target).toLowerCase();
-  const isImage = /\.(png|jpe?g|webp|gif)$/i.test(target);
+  const isImage = /\.(png|jpe?g|webp|gif|svg)$/i.test(target);
   const isCodeAsset = /\.(css|js|webmanifest)$/i.test(target);
   const cacheControl = ext === ".html" || isCodeAsset ? "no-cache" : isImage ? "public, max-age=604800" : "public, max-age=300";
   res.writeHead(200, {

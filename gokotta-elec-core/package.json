@@ -1,12 +1,12 @@
 {
   "name": "gokottaelec",
-  "version": "1.1.0",
+  "version": "1.3.0",
   "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/gokottalin/GokottaElec.git"
   },
-  "gokottaVersion": "V1.1",
+  "gokottaVersion": "V1.3",
   "type": "module",
   "scripts": {
     "parse:sample": "node scripts/parse-cnl.mjs samples/Sample-01-voltage-divider.txt output/sample-01.ir.json",

@@ -1,0 +1,21 @@
+<svg width="320" height="88" viewBox="0 0 320 88" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">GokottaMaker Logo Option 24</title>
+  <desc id="desc">A flat modular blue hex logo with board pin details and an open-source circuit route.</desc>
+  <path d="M46 10L75.4 27V61L46 78L16.6 61V27L46 10Z" fill="#0B1220"/>
+  <path d="M46 10L75.4 27L46 44L16.6 27L46 10Z" fill="#22D3EE"/>
+  <path d="M46 44L75.4 27V61L46 78V44Z" fill="#0D6FD3"/>
+  <path d="M46 44V78L16.6 61V27L46 44Z" fill="#0F4EA8"/>
+  <path d="M20 34H14.5" stroke="#7DD3FC" stroke-width="3" stroke-linecap="round"/>
+  <path d="M20 54H14.5" stroke="#7DD3FC" stroke-width="3" stroke-linecap="round"/>
+  <path d="M72 34H77.5" stroke="#7DD3FC" stroke-width="3" stroke-linecap="round"/>
+  <path d="M72 54H77.5" stroke="#7DD3FC" stroke-width="3" stroke-linecap="round"/>
+  <path d="M31.5 49.8V37.3C31.5 31.8 35.9 27.4 41.4 27.4H56" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+  <path d="M55 27.4L63 35.4L55 43.4" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M31.5 49.8L46 58.3L60.5 49.8" stroke="#CFFAFE" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="31.5" cy="49.8" r="4.3" fill="#CFFAFE"/>
+  <circle cx="46" cy="58.3" r="4.3" fill="#FFFFFF"/>
+  <circle cx="60.5" cy="49.8" r="4.3" fill="#CFFAFE"/>
+  <text x="94" y="43" fill="#0B1220" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="28" font-weight="850" letter-spacing="0">Gokotta</text>
+  <text x="203" y="43" fill="#0D6FD3" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="28" font-weight="850" letter-spacing="0">Maker</text>
+  <text x="96" y="63" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="1.8">OPEN BOARD SYSTEMS</text>
+</svg>

@@ -1,0 +1,118 @@
+{
+  "url": "http://127.0.0.1:4177/",
+  "generatedAt": "2026-05-09T10:29:30.777Z",
+  "results": [
+    {
+      "case": {
+        "name": "desktop-light",
+        "width": 1366,
+        "height": 768,
+        "colorScheme": "light"
+      },
+      "metrics": {
+        "title": "GokottaMaker | 嵌入式与模拟电子技术",
+        "logoSrc": "./assets/logo/options/gokottamaker-logo-option-15.svg",
+        "logoComplete": true,
+        "logoNaturalWidth": 320,
+        "flowMapCount": 0,
+        "glassCausticCount": 0,
+        "cardCount": 4,
+        "activeCardCount": 1,
+        "horizontalOverflow": false,
+        "scrollWidth": 1366,
+        "innerWidth": 1366,
+        "bg": "rgb(244, 247, 251)",
+        "surface": "#ffffff",
+        "accent": "#f2a316",
+        "cardBackdrop": "blur(24px) saturate(1.5)",
+        "cardBackground": "linear-gradient(135deg, rgba(255, 255, 255, 0.42), rgba(230, 241, 251, 0.2))"
+      },
+      "consoleMessages": [],
+      "failures": []
+    },
+    {
+      "case": {
+        "name": "desktop-dark",
+        "width": 1366,
+        "height": 768,
+        "colorScheme": "dark"
+      },
+      "metrics": {
+        "title": "GokottaMaker | 嵌入式与模拟电子技术",
+        "logoSrc": "./assets/logo/options/gokottamaker-logo-option-15.svg",
+        "logoComplete": true,
+        "logoNaturalWidth": 320,
+        "flowMapCount": 0,
+        "glassCausticCount": 0,
+        "cardCount": 4,
+        "activeCardCount": 1,
+        "horizontalOverflow": false,
+        "scrollWidth": 1366,
+        "innerWidth": 1366,
+        "bg": "rgb(11, 18, 32)",
+        "surface": "#111c32",
+        "accent": "#38bdf8",
+        "cardBackdrop": "blur(24px) saturate(1.5)",
+        "cardBackground": "linear-gradient(135deg, rgba(17, 28, 50, 0.78), rgba(13, 111, 211, 0.2))"
+      },
+      "consoleMessages": [],
+      "failures": []
+    },
+    {
+      "case": {
+        "name": "mobile-light",
+        "width": 390,
+        "height": 844,
+        "colorScheme": "light"
+      },
+      "metrics": {
+        "title": "GokottaMaker | 嵌入式与模拟电子技术",
+        "logoSrc": "./assets/logo/options/gokottamaker-logo-option-15.svg",
+        "logoComplete": true,
+        "logoNaturalWidth": 320,
+        "flowMapCount": 0,
+        "glassCausticCount": 0,
+        "cardCount": 4,
+        "activeCardCount": 1,
+        "horizontalOverflow": false,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "bg": "rgb(244, 247, 251)",
+        "surface": "#ffffff",
+        "accent": "#f2a316",
+        "cardBackdrop": "blur(24px) saturate(1.5)",
+        "cardBackground": "linear-gradient(135deg, rgba(255, 255, 255, 0.42), rgba(230, 241, 251, 0.2))"
+      },
+      "consoleMessages": [],
+      "failures": []
+    },
+    {
+      "case": {
+        "name": "mobile-dark",
+        "width": 390,
+        "height": 844,
+        "colorScheme": "dark"
+      },
+      "metrics": {
+        "title": "GokottaMaker | 嵌入式与模拟电子技术",
+        "logoSrc": "./assets/logo/options/gokottamaker-logo-option-15.svg",
+        "logoComplete": true,
+        "logoNaturalWidth": 320,
+        "flowMapCount": 0,
+        "glassCausticCount": 0,
+        "cardCount": 4,
+        "activeCardCount": 1,
+        "horizontalOverflow": false,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "bg": "rgb(11, 18, 32)",
+        "surface": "#111c32",
+        "accent": "#38bdf8",
+        "cardBackdrop": "blur(24px) saturate(1.5)",
+        "cardBackground": "linear-gradient(135deg, rgba(17, 28, 50, 0.78), rgba(13, 111, 211, 0.2))"
+      },
+      "consoleMessages": [],
+      "failures": []
+    }
+  ]
+}

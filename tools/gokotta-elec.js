@@ -1,7 +1,8 @@
 (function () {
   const api = {
     samples: "/api/elec/samples",
-    build: "/api/elec/build"
+    build: "/api/elec/build",
+    handoff: "/api/elec/llm-handoff"
   };
 
   const fallbackSamples = [
@@ -33,6 +34,8 @@
     renderButton: document.querySelector("#renderButton"),
     clearButton: document.querySelector("#clearButton"),
     copyButton: document.querySelector("#copyButton"),
+    copyBasicHandoffButton: document.querySelector("#copyBasicHandoffButton"),
+    copyFullHandoffButton: document.querySelector("#copyFullHandoffButton"),
     fitButton: document.querySelector("#fitButton"),
     downloadSvgButton: document.querySelector("#downloadSvgButton"),
     copyIrButton: document.querySelector("#copyIrButton"),
@@ -179,6 +182,30 @@
     }
   }
 
+  async function copyLlmHandoff(mode) {
+    const full = mode === "full";
+    const button = full ? el.copyFullHandoffButton : el.copyBasicHandoffButton;
+    const label = full ? "完整 LLM 对接 Markdown" : "基础 LLM 对接 Markdown";
+
+    button.disabled = true;
+    setLog(`正在调用 ${api.handoff}?mode=${mode} ...`);
+
+    try {
+      const response = await fetch(`${api.handoff}?mode=${encodeURIComponent(mode)}`);
+      const contentType = response.headers.get("content-type") || "";
+      const data = contentType.includes("application/json")
+        ? await response.json()
+        : { ok: response.ok, markdown: await response.text() };
+
+      if (!response.ok || data.ok === false || !data.markdown) throw data;
+      await copyText(data.markdown, `已复制：${label}`);
+    } catch (error) {
+      setLog(formatError(error, `LLM 对接接口未接入。请确认 GokottaMaker 后端已实现 GET /api/elec/llm-handoff?mode=${mode}。`), "error");
+    } finally {
+      button.disabled = false;
+    }
+  }
+
   function formatError(error, fallback) {
     if (error && Array.isArray(error.diagnostics)) {
       return error.diagnostics.map((item) => {
@@ -217,6 +244,8 @@
   });
 
   el.renderButton.addEventListener("click", buildCircuit);
+  el.copyBasicHandoffButton.addEventListener("click", () => copyLlmHandoff("basic"));
+  el.copyFullHandoffButton.addEventListener("click", () => copyLlmHandoff("full"));
   el.clearButton.addEventListener("click", () => {
     el.cnlInput.value = "";
     setPreviewEmpty("等待生成预览");

@@ -3,6 +3,16 @@
 日期：2026-05-09
 对接对象：Agent0
 范围：访客端小程序中心、GokottaElec 第一个小程序、`/api/elec/*` 最小后端接口
+当前同步版本：GokottaElec `V1.2`
+
+## 2026-05-09 V1.2 同步记录
+
+- 源头仓库：`D:\Project\2605-Elec`
+- 源头提交：`c9cc7ee Release GokottaElec V1.2`
+- 源头 tag：`v1.2`
+- 拉取状态：`git fetch origin` 成功，确认 `HEAD`、`origin/main`、`v1.2` 一致；`git pull --ff-only` 重试时 GitHub 连接重置，但无落后提交需要合并。
+- 网页侧已同步：`gokotta-elec-core/package.json`、`gokotta-elec-core/scripts/render-svg.mjs`、`gokotta-elec-core/scripts/generate-20-circuit-gallery.mjs`
+- 网页侧版本标注已同步：`server.js`、`data/miniapps.js`、`tools/gokotta-elec.html`
 
 ## 本次完成
 
@@ -41,7 +51,7 @@ tools/assets/<miniapp-id>*       小程序图标或专属资产
 ```json
 {
   "ok": true,
-  "version": "V1.1",
+  "version": "V1.2",
   "samples": []
 }
 ```
@@ -75,10 +85,10 @@ node gokotta-elec-core/scripts/build-paste.mjs <input> <output-dir>
 
 - `node --check server.js`：通过。
 - `node --check tools/gokotta-elec.js`：通过。
-- `node gokotta-elec-core/scripts/build-paste.mjs samples/Sample-01-voltage-divider.txt output/web-api-smoke`：通过。
+- `node gokotta-elec-core/scripts/build-paste.mjs samples/Sample-01-voltage-divider.txt output/web-api-v12-smoke`：通过。
 - Node fetch 冒烟：
-  - `/api/elec/samples` 返回 5 个 Sample。
-  - `/api/elec/build` 返回 `ok: true`、1 个 circuit、SVG 长度约 3694、diagnostics 为空。
+  - `/api/elec/samples` 返回 5 个 Sample，`version: "V1.2"`。
+  - `/api/elec/build` 返回 `ok: true`、`version: "V1.2"`、1 个 circuit、SVG 长度约 3694、diagnostics 为空。
 - Playwright 可视化验证：
   - `docs/Agent6-miniapps/visual-20260509/miniapps-1366.png`
   - `docs/Agent6-miniapps/visual-20260509/gokotta-elec-1366.png`
@@ -88,4 +98,3 @@ node gokotta-elec-core/scripts/build-paste.mjs <input> <output-dir>
 ## 需要 Agent0 知悉
 
 本次已经把“小程序”作为独立访客功能域建立起来。后续增加第二个、第三个小程序时，不建议塞进开源项目或文章体系，直接登记到 `data/miniapps.js` 并新增 `tools/` 独立页面即可。
-

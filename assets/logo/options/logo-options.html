@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GokottaMaker Logo Options</title>
+    <style>
+      :root {
+        --bg: #f5f8fc;
+        --surface: #ffffff;
+        --ink: #0b1220;
+        --muted: #64748b;
+        --line: #d9e3ef;
+        --blue: #0d6fd3;
+        --shadow: 0 18px 45px rgba(15, 35, 70, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background:
+          linear-gradient(180deg, rgba(232, 241, 253, 0.9), rgba(245, 248, 252, 0) 360px),
+          var(--bg);
+        color: var(--ink);
+        font-family: Inter, "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+      }
+
+      main {
+        width: min(1120px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 56px 0;
+      }
+
+      header {
+        margin-bottom: 26px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 34px;
+        line-height: 1.15;
+        letter-spacing: 0;
+      }
+
+      p {
+        max-width: 680px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 18px;
+      }
+
+      .option {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .preview {
+        min-height: 148px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 26px;
+        background:
+          linear-gradient(90deg, rgba(13, 111, 211, 0.06) 1px, transparent 1px),
+          linear-gradient(rgba(13, 111, 211, 0.06) 1px, transparent 1px),
+          #ffffff;
+        background-size: 22px 22px;
+      }
+
+      .preview img {
+        width: min(320px, 100%);
+        height: auto;
+        display: block;
+      }
+
+      .meta {
+        padding: 18px 20px 20px;
+        border-top: 1px solid var(--line);
+      }
+
+      h2 {
+        margin: 0 0 6px;
+        font-size: 18px;
+        letter-spacing: 0;
+      }
+
+      .meta p {
+        font-size: 14px;
+      }
+
+      code {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 6px 8px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #f8fbff;
+        color: var(--blue);
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>GokottaMaker Logo 方案</h1>
+        <p>5 个蓝色现代方向：从电路开拓、开源节点、先锋增长、蓝图构建到分支协作。每个方案都是独立 SVG，可直接用于网页、导航栏和后续图标适配。</p>
+      </header>
+
+      <section class="grid" aria-label="Logo options">
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-1.svg" alt="Logo option 1" /></div>
+          <div class="meta">
+            <h2>01 Circuit Pathfinder</h2>
+            <p>电路路径加前进箭头，偏“技术开创”和“持续推进”，适合主站导航。</p>
+            <code>gokottamaker-logo-option-1.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-2.svg" alt="Logo option 2" /></div>
+          <div class="meta">
+            <h2>02 Open Node</h2>
+            <p>节点环绕形成开放协作感，更强调开源社区、连接和共享。</p>
+            <code>gokottamaker-logo-option-2.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-3.svg" alt="Logo option 3" /></div>
+          <div class="meta">
+            <h2>03 Rising Monogram</h2>
+            <p>GM 字母和上升信号线结合，更利落、更产品化，适合品牌升级。</p>
+            <code>gokottamaker-logo-option-3.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-4.svg" alt="Logo option 4" /></div>
+          <div class="meta">
+            <h2>04 Blueprint Bracket</h2>
+            <p>开放括号和信号线，突出从原理图到代码的工程创造过程。</p>
+            <code>gokottamaker-logo-option-4.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-5.svg" alt="Logo option 5" /></div>
+          <div class="meta">
+            <h2>05 Core Commit</h2>
+            <p>六边形核心加分支节点，最贴近开源硬件、版本迭代和协作发布。</p>
+            <code>gokottamaker-logo-option-5.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-6.svg" alt="Logo option 6" /></div>
+          <div class="meta">
+            <h2>06 Orbit Pathfinder</h2>
+            <p>保留 01 的前进路径，加入轻微环绕轨迹，科技感更强但仍很干净。</p>
+            <code>gokottamaker-logo-option-6.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-7.svg" alt="Logo option 7" /></div>
+          <div class="meta">
+            <h2>07 Branch Forward</h2>
+            <p>主箭头加上下分支节点，更强调开源分支、协作和项目演进。</p>
+            <code>gokottamaker-logo-option-7.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-8.svg" alt="Logo option 8" /></div>
+          <div class="meta">
+            <h2>08 Chip Route</h2>
+            <p>把电路路径放进芯片轮廓里，最贴近嵌入式和硬件开发主题。</p>
+            <code>gokottamaker-logo-option-8.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-9.svg" alt="Logo option 9" /></div>
+          <div class="meta">
+            <h2>09 Gateway Trace</h2>
+            <p>折线路径像从设计入口进入新方向，适合表达开创和工程探索。</p>
+            <code>gokottamaker-logo-option-9.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-10.svg" alt="Logo option 10" /></div>
+          <div class="meta">
+            <h2>10 Spark Route</h2>
+            <p>闪电式路径更有速度和创新感，适合偏年轻、强识别度的视觉方向。</p>
+            <code>gokottamaker-logo-option-10.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-11.svg" alt="Logo option 11" /></div>
+          <div class="meta">
+            <h2>11 Flat Core</h2>
+            <p>纯蓝六边形核心，白色电路箭头和青色节点，最接近 05 的简洁落地版。</p>
+            <code>gokottamaker-logo-option-11.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-12.svg" alt="Logo option 12" /></div>
+          <div class="meta">
+            <h2>12 Release Node</h2>
+            <p>深蓝与主蓝分区，加入绿色发布节点，更强调开源项目的版本发布。</p>
+            <code>gokottamaker-logo-option-12.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-13.svg" alt="Logo option 13" /></div>
+          <div class="meta">
+            <h2>13 Open Outline</h2>
+            <p>浅底描边六边形，更轻、更适合浅色导航栏和小尺寸使用。</p>
+            <code>gokottamaker-logo-option-13.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-14.svg" alt="Logo option 14" /></div>
+          <div class="meta">
+            <h2>14 Hex Shield</h2>
+            <p>双层纯色六边形，整体更稳重，适合做正式品牌主标。</p>
+            <code>gokottamaker-logo-option-14.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-15.svg" alt="Logo option 15" /></div>
+          <div class="meta">
+            <h2>15 Modular Core</h2>
+            <p>多块纯色拼接六边形，强调模块化、开源硬件和工程组合感。</p>
+            <code>gokottamaker-logo-option-15.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-16.svg" alt="Logo option 16" /></div>
+          <div class="meta">
+            <h2>16 Balanced Core</h2>
+            <p>双层蓝色六边形，结构更均衡，保留 05 的开源分支和前进箭头。</p>
+            <code>gokottamaker-logo-option-16.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-17.svg" alt="Logo option 17" /></div>
+          <div class="meta">
+            <h2>17 Release Core</h2>
+            <p>分区色块加绿色节点，表达从开源分支到版本发布的流程。</p>
+            <code>gokottamaker-logo-option-17.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-18.svg" alt="Logo option 18" /></div>
+          <div class="meta">
+            <h2>18 Light Board</h2>
+            <p>浅色内芯让标志更轻，适合白色导航栏和小尺寸图标。</p>
+            <code>gokottamaker-logo-option-18.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-19.svg" alt="Logo option 19" /></div>
+          <div class="meta">
+            <h2>19 Board Pins</h2>
+            <p>加入四个硬件引脚细节，更明确地连接到嵌入式和 PCB 主题。</p>
+            <code>gokottamaker-logo-option-19.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-20.svg" alt="Logo option 20" /></div>
+          <div class="meta">
+            <h2>20 Source G</h2>
+            <p>把内部路径做成 G 形开源回路，品牌识别更强，仍保持六边形核心。</p>
+            <code>gokottamaker-logo-option-20.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-21.svg" alt="Logo option 21" /></div>
+          <div class="meta">
+            <h2>21 Refined Modular</h2>
+            <p>沿用 15 的三面拼接六边形，节点和路径比例更均衡，适合做主标。</p>
+            <code>gokottamaker-logo-option-21.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-22.svg" alt="Logo option 22" /></div>
+          <div class="meta">
+            <h2>22 Modular Release</h2>
+            <p>保留模块拼接，加入绿色发布节点，开源项目属性更明确。</p>
+            <code>gokottamaker-logo-option-22.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-23.svg" alt="Logo option 23" /></div>
+          <div class="meta">
+            <h2>23 Modular Source G</h2>
+            <p>在 15 的色块结构里加入 G 形回路，品牌首字母识别更强。</p>
+            <code>gokottamaker-logo-option-23.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-24.svg" alt="Logo option 24" /></div>
+          <div class="meta">
+            <h2>24 Modular Board</h2>
+            <p>在拼接六边形外加硬件引脚，嵌入式和 PCB 联想更直接。</p>
+            <code>gokottamaker-logo-option-24.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./gokottamaker-logo-option-25.svg" alt="Logo option 25" /></div>
+          <div class="meta">
+            <h2>25 Precision Modular</h2>
+            <p>路径更简化、节点更明确，小尺寸识别度会比复杂版本更稳定。</p>
+            <code>gokottamaker-logo-option-25.svg</code>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>
