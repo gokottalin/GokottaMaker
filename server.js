@@ -22,6 +22,9 @@ const port = Number(process.env.PORT || 4173);
 const adminUsername = process.env.ADMIN_USERNAME || "Gokotta";
 const adminPassword = process.env.ADMIN_PASSWORD || "change-this-before-public-deploy";
 const resetAdminPassword = process.env.ADMIN_RESET_PASSWORD_ON_START === "true";
+const allowHardDelete = process.env.ALLOW_HARD_DELETE === "true";
+const maxBackupAgeHours = Number(process.env.MAX_BACKUP_AGE_HOURS || 26);
+const offsiteBackupTarget = process.env.OFFSITE_BACKUP_TARGET || "";
 const startedAt = new Date();
 
 if (!process.env.ADMIN_PASSWORD) {
@@ -34,7 +37,7 @@ const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword }
 const uploadStore = createUploadStore(uploadDir);
 
 const siteVersion = "V2.4.1";
-const siteBuild = "20260509-2145";
+const siteBuild = "20260510-1320";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
 const elecVersion = "V1.3";
@@ -116,52 +119,41 @@ function reconcileSeedContent() {
   const seed = loadSeedData();
   const updateSeedPost = db.prepare(`
     UPDATE posts
-    SET publish_status = 'published',
-        featured = CASE WHEN featured = 0 THEN ? ELSE featured END,
-        featured_order = CASE WHEN featured_order = 0 THEN ? ELSE featured_order END,
-        tags = CASE WHEN tags IS NULL OR tags = '' THEN ? ELSE tags END,
+    SET tags = CASE WHEN tags IS NULL OR tags = '' THEN ? ELSE tags END,
         created_at = COALESCE(created_at, updated_at, CURRENT_TIMESTAMP),
         published_at = CASE WHEN publish_status = 'published' THEN COALESCE(published_at, date, updated_at, CURRENT_TIMESTAMP) ELSE published_at END,
         updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
       AND deleted_at IS NULL
       AND (
-        publish_status != 'published'
-        OR featured = 0
-        OR featured_order = 0
-        OR tags IS NULL
+        tags IS NULL
         OR tags = ''
+        OR created_at IS NULL
+        OR (publish_status = 'published' AND published_at IS NULL)
       )
   `);
-  seed.posts.forEach((post, index) => {
-    updateSeedPost.run(index < 4 ? 1 : 0, index, post.tags || "", post.id);
+  seed.posts.forEach((post) => {
+    updateSeedPost.run(post.tags || "", post.id);
   });
 
   const updateSeedProject = db.prepare(`
     UPDATE projects
-    SET visibility_status = ?,
-        status = ?,
-        status_key = ?,
-        date = CASE WHEN date IS NULL OR date = '' THEN ? ELSE date END,
+    SET date = CASE WHEN date IS NULL OR date = '' THEN ? ELSE date END,
         version = CASE WHEN version IS NULL OR version = '' THEN ? ELSE version END,
         progress = CASE WHEN progress IS NULL OR progress = 0 THEN ? ELSE progress END,
         tags = CASE WHEN tags IS NULL OR tags = '' THEN ? ELSE tags END,
         created_at = COALESCE(created_at, updated_at, CURRENT_TIMESTAMP),
-        published_at = CASE WHEN ? = 'online' THEN COALESCE(published_at, date, updated_at, CURRENT_TIMESTAMP) ELSE published_at END,
+        published_at = CASE WHEN visibility_status = 'published' THEN COALESCE(published_at, date, updated_at, CURRENT_TIMESTAMP) ELSE published_at END,
         updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
       AND deleted_at IS NULL
   `);
   seed.projects.forEach((project) => {
     updateSeedProject.run(
-      project.statusKey === "online" ? "published" : "draft",
-      project.status,
-      project.statusKey,
       project.date || "",
       project.version || "",
       Number(project.progress || 0),
       project.tags || "",
-      project.statusKey,
       project.id
     );
   });
@@ -273,8 +265,11 @@ function cookieHeader(token, req) {
 }
 
 const {
+  withTransaction,
   allPosts,
   allProjects,
+  listRevisions,
+  restoreRevision,
   savePost,
   saveProject,
   restorePost,
@@ -751,20 +746,38 @@ function latestBackupSummary() {
       })
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
     const latest = backups[0] || null;
-    if (latest) latest.bytes = directorySummary(latest.path).bytes;
+    if (latest) {
+      latest.bytes = directorySummary(latest.path).bytes;
+      latest.ageHours = Math.round(((Date.now() - Date.parse(latest.updatedAt)) / 36_000)) / 100;
+      latest.fresh = Number.isFinite(latest.ageHours) && latest.ageHours <= maxBackupAgeHours;
+    }
+    const warnings = [];
+    if (!latest) warnings.push("no-backup-found");
+    if (latest && !latest.fresh) warnings.push("latest-backup-stale");
+    if (latest && !latest.hasManifest) warnings.push("latest-backup-missing-manifest");
+    if (latest && !latest.hasChecksums) warnings.push("latest-backup-missing-checksums");
+    if (!offsiteBackupTarget) warnings.push("offsite-backup-not-configured");
 
     return {
       root: backupRoot,
       exists: true,
       count: backups.length,
-      latest
+      latest,
+      maxAgeHours: maxBackupAgeHours,
+      ok: warnings.length === 0,
+      warnings,
+      offsiteConfigured: Boolean(offsiteBackupTarget)
     };
   } catch {
     return {
       root: backupRoot,
       exists: false,
       count: 0,
-      latest: null
+      latest: null,
+      maxAgeHours: maxBackupAgeHours,
+      ok: false,
+      warnings: ["backup-root-unreadable"],
+      offsiteConfigured: Boolean(offsiteBackupTarget)
     };
   }
 }
@@ -800,6 +813,9 @@ function healthPayload({ detailed = false } = {}) {
     dbPath,
     uploadDir,
     backupRoot,
+    allowHardDelete,
+    maxBackupAgeHours,
+    offsiteBackupConfigured: Boolean(offsiteBackupTarget),
     databaseReady: dbReady,
     databaseWritable: writable(dbDir),
     uploadsWritable: writable(uploadDir),
@@ -841,6 +857,7 @@ async function api(req, res, pathname) {
   if (pathname === "/api/elec/samples" && req.method === "GET") return elecResponse(res, 200, elecSamples());
   if (pathname === "/api/elec/llm-handoff" && req.method === "GET") return elecHandoff(req, res);
   if (pathname === "/api/elec/build" && req.method === "POST") return elecBuild(res, await readBody(req, elecInputLimitBytes + 4096));
+  if (pathname === "/api/health" && req.method === "GET") return json(res, 200, healthPayload());
   if (pathname === "/api/session" && req.method === "GET") {
     const user = currentUser(req);
     return json(res, 200, { user: publicUser(user), csrfToken: user?.csrfToken || "" });
@@ -894,16 +911,20 @@ async function api(req, res, pathname) {
   if (pathname === "/api/posts" && req.method === "POST") {
     const body = validatePostPayload(await readBody(req));
     assertCarouselSlot(body, "post");
-    savePost(body);
-    logAudit(db, req, user, "post_save", "post", body.id, { publishStatus: body.publishStatus, featured: body.featured });
+    withTransaction(() => {
+      savePost({ ...body, actor: user });
+      logAudit(db, req, user, "post_save", "post", body.id, { publishStatus: body.publishStatus, featured: body.featured });
+    });
     return json(res, 200, { posts: allPosts(true) });
   }
 
   if (pathname === "/api/projects" && req.method === "POST") {
     const body = validateProjectPayload(await readBody(req));
     assertCarouselSlot(body, "project");
-    saveProject(body);
-    logAudit(db, req, user, "project_save", "project", body.id, { visibilityStatus: body.visibilityStatus, statusKey: body.statusKey });
+    withTransaction(() => {
+      saveProject({ ...body, actor: user });
+      logAudit(db, req, user, "project_save", "project", body.id, { visibilityStatus: body.visibilityStatus, statusKey: body.statusKey });
+    });
     return json(res, 200, { projects: allProjects(true) });
   }
 
@@ -914,51 +935,105 @@ async function api(req, res, pathname) {
     return json(res, 200, { url, uploads: uploads() });
   }
 
+  const postRevisions = pathname.match(/^\/api\/posts\/([^/]+)\/revisions$/);
+  if (postRevisions && req.method === "GET") {
+    const id = decodeURIComponent(postRevisions[1]);
+    return json(res, 200, { revisions: listRevisions("post", id) });
+  }
+
+  const projectRevisions = pathname.match(/^\/api\/projects\/([^/]+)\/revisions$/);
+  if (projectRevisions && req.method === "GET") {
+    const id = decodeURIComponent(projectRevisions[1]);
+    return json(res, 200, { revisions: listRevisions("project", id) });
+  }
+
+  const postRevisionRestore = pathname.match(/^\/api\/posts\/([^/]+)\/revisions\/(\d+)\/restore$/);
+  if (postRevisionRestore && req.method === "POST") {
+    const id = decodeURIComponent(postRevisionRestore[1]);
+    const revisionId = Number(postRevisionRestore[2]);
+    withTransaction(() => {
+      restoreRevision("post", id, revisionId, { actor: user });
+      logAudit(db, req, user, "post_revision_restore", "post", id, { revisionId });
+    });
+    return json(res, 200, { posts: allPosts(true), revisions: listRevisions("post", id) });
+  }
+
+  const projectRevisionRestore = pathname.match(/^\/api\/projects\/([^/]+)\/revisions\/(\d+)\/restore$/);
+  if (projectRevisionRestore && req.method === "POST") {
+    const id = decodeURIComponent(projectRevisionRestore[1]);
+    const revisionId = Number(projectRevisionRestore[2]);
+    withTransaction(() => {
+      restoreRevision("project", id, revisionId, { actor: user });
+      logAudit(db, req, user, "project_revision_restore", "project", id, { revisionId });
+    });
+    return json(res, 200, { projects: allProjects(true), revisions: listRevisions("project", id) });
+  }
+
   const postRestore = pathname.match(/^\/api\/posts\/([^/]+)\/restore$/);
   if (postRestore && req.method === "POST") {
     const id = decodeURIComponent(postRestore[1]);
-    restorePost(id);
-    logAudit(db, req, user, "post_restore", "post", id);
+    withTransaction(() => {
+      restorePost(id, { actor: user });
+      logAudit(db, req, user, "post_restore", "post", id);
+    });
     return json(res, 200, { posts: allPosts(true) });
   }
 
   const projectRestore = pathname.match(/^\/api\/projects\/([^/]+)\/restore$/);
   if (projectRestore && req.method === "POST") {
     const id = decodeURIComponent(projectRestore[1]);
-    restoreProject(id);
-    logAudit(db, req, user, "project_restore", "project", id);
+    withTransaction(() => {
+      restoreProject(id, { actor: user });
+      logAudit(db, req, user, "project_restore", "project", id);
+    });
     return json(res, 200, { projects: allProjects(true) });
   }
 
   const hardDeletePostMatch = pathname.match(/^\/api\/posts\/([^/]+)\/hard$/);
   if (hardDeletePostMatch && req.method === "DELETE") {
     const id = decodeURIComponent(hardDeletePostMatch[1]);
-    hardDeletePost(id);
-    logAudit(db, req, user, "post_hard_delete", "post", id);
+    if (!allowHardDelete) {
+      logAudit(db, req, user, "post_hard_delete_blocked", "post", id);
+      return json(res, 403, { error: "hard delete is disabled; use soft delete and revisions" });
+    }
+    withTransaction(() => {
+      hardDeletePost(id, { actor: user });
+      logAudit(db, req, user, "post_hard_delete", "post", id);
+    });
     return json(res, 200, { posts: allPosts(true) });
   }
 
   const hardDeleteProjectMatch = pathname.match(/^\/api\/projects\/([^/]+)\/hard$/);
   if (hardDeleteProjectMatch && req.method === "DELETE") {
     const id = decodeURIComponent(hardDeleteProjectMatch[1]);
-    hardDeleteProject(id);
-    logAudit(db, req, user, "project_hard_delete", "project", id);
+    if (!allowHardDelete) {
+      logAudit(db, req, user, "project_hard_delete_blocked", "project", id);
+      return json(res, 403, { error: "hard delete is disabled; use soft delete and revisions" });
+    }
+    withTransaction(() => {
+      hardDeleteProject(id, { actor: user });
+      logAudit(db, req, user, "project_hard_delete", "project", id);
+    });
     return json(res, 200, { projects: allProjects(true) });
   }
 
   const deletePost = pathname.match(/^\/api\/posts\/([^/]+)$/);
   if (deletePost && req.method === "DELETE") {
     const id = decodeURIComponent(deletePost[1]);
-    softDeletePost(id);
-    logAudit(db, req, user, "post_soft_delete", "post", id);
+    withTransaction(() => {
+      softDeletePost(id, { actor: user });
+      logAudit(db, req, user, "post_soft_delete", "post", id);
+    });
     return json(res, 200, { posts: allPosts(true) });
   }
 
   const deleteProject = pathname.match(/^\/api\/projects\/([^/]+)$/);
   if (deleteProject && req.method === "DELETE") {
     const id = decodeURIComponent(deleteProject[1]);
-    softDeleteProject(id);
-    logAudit(db, req, user, "project_soft_delete", "project", id);
+    withTransaction(() => {
+      softDeleteProject(id, { actor: user });
+      logAudit(db, req, user, "project_soft_delete", "project", id);
+    });
     return json(res, 200, { projects: allProjects(true) });
   }
 

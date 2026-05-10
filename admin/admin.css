@@ -11,6 +11,7 @@
 }
 
 .login-panel {
+  position: relative;
   width: min(620px, calc(100% - 32px));
   margin: 8vh auto;
   padding: 42px;
@@ -592,13 +593,23 @@ button:disabled {
   height: auto;
   padding: 16px 32px;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 28px;
   align-items: center;
   border-right: 0;
   border-bottom: 1px solid var(--line);
   background: rgba(245, 249, 255, 0.94);
   backdrop-filter: blur(18px);
+}
+
+.admin-theme-toggle {
+  justify-self: end;
+}
+
+.admin-login-theme-toggle {
+  position: absolute;
+  top: 24px;
+  right: 24px;
 }
 
 .sidebar-toggle {
@@ -889,6 +900,11 @@ button:disabled {
 .file-picker-control:hover .file-picker-button {
   border-color: rgba(13, 111, 211, 0.48);
   box-shadow: 0 10px 24px rgba(13, 111, 211, 0.12);
+}
+
+.file-picker-control:focus-within .file-picker-button {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(13, 111, 211, 0.14);
 }
 
 .file-picker-control .file-hint {
@@ -1320,13 +1336,31 @@ button:disabled {
 }
 
 @media (max-width: 1320px) {
+  .content-meta-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "type title"
+      "category publish"
+      "featured featured"
+      "excerpt excerpt"
+      "tags tags"
+      "cover cover"
+      "carousel carousel"
+      "project project"
+      "library library";
+  }
+
   .meta-featured {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(180px, 0.8fr) minmax(220px, 1fr);
   }
 
   .meta-featured .checkbox-field,
   .meta-featured select {
     width: 100%;
+  }
+
+  .featured-slot-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -1674,6 +1708,158 @@ button:disabled {
   justify-content: end;
 }
 
+[data-theme="dark"] .admin-shell:has(.dashboard:not([hidden])) {
+  background:
+    linear-gradient(180deg, rgba(17, 28, 50, 0.46), rgba(11, 18, 32, 0) 320px),
+    var(--bg);
+}
+
+[data-theme="dark"] .login-panel,
+[data-theme="dark"] .admin-sidebar,
+[data-theme="dark"] .content-meta-panel,
+[data-theme="dark"] .editor-form,
+[data-theme="dark"] .preview-panel,
+[data-theme="dark"] .library-panel,
+[data-theme="dark"] .image-library-panel,
+[data-theme="dark"] .crop-dialog,
+[data-theme="dark"] .admin-recommendation-card,
+[data-theme="dark"] .admin-row,
+[data-theme="dark"] .health-card,
+[data-theme="dark"] .bulk-actions {
+  border-color: var(--line);
+  background: rgba(17, 28, 50, 0.92);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+
+[data-theme="dark"] .admin-sidebar {
+  background: rgba(11, 18, 32, 0.9);
+  backdrop-filter: blur(18px);
+}
+
+[data-theme="dark"] .nav-group,
+[data-theme="dark"] .meta-featured,
+[data-theme="dark"] .meta-featured-manager,
+[data-theme="dark"] .file-picker-control,
+[data-theme="dark"] .featured-slot,
+[data-theme="dark"] .editor-dock-handle,
+[data-theme="dark"] .preview-toolbar,
+[data-theme="dark"] .segmented,
+[data-theme="dark"] .library-tools {
+  border-color: var(--line);
+  background: rgba(23, 36, 58, 0.88);
+  color: var(--ink);
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea,
+[data-theme="dark"] .meta-featured .checkbox-field,
+[data-theme="dark"] .image-choice {
+  border-color: var(--line);
+  background: rgba(11, 18, 32, 0.82);
+  color: var(--ink);
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: rgba(168, 182, 200, 0.72);
+}
+
+[data-theme="dark"] .nav-group > span,
+[data-theme="dark"] label,
+[data-theme="dark"] .file-hint,
+[data-theme="dark"] .image-choice span,
+[data-theme="dark"] .image-meta,
+[data-theme="dark"] .admin-row p,
+[data-theme="dark"] .health-card p,
+[data-theme="dark"] .admin-recommendation-card span,
+[data-theme="dark"] .admin-recommendation-card p {
+  color: var(--muted);
+}
+
+[data-theme="dark"] .admin-sidebar nav a {
+  color: #dbeafe;
+}
+
+[data-theme="dark"] .admin-sidebar nav a:hover,
+[data-theme="dark"] .admin-sidebar nav a.is-active,
+[data-theme="dark"] .segmented label:has(input:checked) {
+  background: rgba(56, 189, 248, 0.13);
+  color: var(--brand-cyan);
+}
+
+[data-theme="dark"] .content-meta-panel {
+  background:
+    linear-gradient(135deg, rgba(17, 28, 50, 0.96), rgba(11, 18, 32, 0.9)),
+    radial-gradient(circle at 86% 0%, rgba(56, 189, 248, 0.14), transparent 28%);
+}
+
+[data-theme="dark"] .content-meta-header,
+[data-theme="dark"] .preview-toolbar,
+[data-theme="dark"] .editor-floating-actions {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .editor-floating-actions,
+[data-theme="dark"] .preview-panel .markdown-preview {
+  background: rgba(11, 18, 32, 0.94);
+}
+
+[data-theme="dark"] .draft-status {
+  border-color: rgba(242, 163, 22, 0.34);
+  background: rgba(242, 163, 22, 0.11);
+  color: #f8d58b;
+}
+
+[data-theme="dark"] .draft-status strong,
+[data-theme="dark"] .draft-status span {
+  color: #f8d58b;
+}
+
+[data-theme="dark"] .admin-notice.is-success,
+[data-theme="dark"] .health-card.is-ok {
+  border-color: rgba(22, 163, 118, 0.34);
+  background: rgba(22, 163, 118, 0.13);
+  color: #7de5bf;
+}
+
+[data-theme="dark"] .admin-notice.is-warning {
+  border-color: rgba(242, 163, 22, 0.34);
+  background: rgba(242, 163, 22, 0.13);
+  color: #f8d58b;
+}
+
+[data-theme="dark"] .admin-notice.is-error,
+[data-theme="dark"] .health-card.is-bad,
+[data-theme="dark"] .featured-slot-actions .button.danger,
+[data-theme="dark"] .admin-row.is-deleted {
+  border-color: rgba(248, 113, 113, 0.32);
+  background: rgba(127, 29, 29, 0.22);
+  color: #fecaca;
+}
+
+[data-theme="dark"] .featured-slot-empty-mark,
+[data-theme="dark"] .crop-stage {
+  border-color: var(--line);
+  background: rgba(11, 18, 32, 0.62);
+  color: var(--muted);
+}
+
+[data-theme="dark"] .file-picker-button {
+  border-color: rgba(56, 189, 248, 0.32);
+  background: rgba(56, 189, 248, 0.1);
+  color: var(--brand-cyan);
+}
+
+[data-theme="dark"] .cover-preview,
+[data-theme="dark"] .admin-row img,
+[data-theme="dark"] .admin-recommendation-card > img,
+[data-theme="dark"] .featured-slot img {
+  border-color: var(--line);
+  background: rgba(230, 241, 251, 0.08);
+}
+
 @media (max-width: 900px) {
   .admin-main {
     padding: 28px;
@@ -1738,10 +1924,6 @@ button:disabled {
     overflow: visible;
   }
 
-  .featured-slot-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .preview-panel {
     position: static;
     min-height: 0;
@@ -1791,6 +1973,10 @@ button:disabled {
   }
 
   .featured-slot-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .featured-slot-actions {
     grid-template-columns: 1fr;
   }
 

@@ -23,6 +23,7 @@
     document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
       button.setAttribute("aria-label", isDark ? "切换日间模式" : "切换夜间模式");
       button.setAttribute("title", isDark ? "切换日间模式" : "切换夜间模式");
+      button.setAttribute("aria-pressed", String(isDark));
       button.dataset.themeState = theme;
     });
   };
@@ -35,6 +36,28 @@
     updateThemeControls(theme);
   };
 
+  const setThemeOrigin = (button) => {
+    const rect = button.getBoundingClientRect();
+    root.style.setProperty("--theme-x", `${Math.round(rect.left + rect.width / 2)}px`);
+    root.style.setProperty("--theme-y", `${Math.round(rect.top + rect.height / 2)}px`);
+  };
+
+  const prefersReducedMotion = () => window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const transitionTheme = (theme, button) => {
+    setThemeOrigin(button);
+    const commit = () => applyTheme(theme, true);
+    if (!document.startViewTransition || prefersReducedMotion()) {
+      root.classList.add("theme-switching");
+      commit();
+      window.setTimeout(() => root.classList.remove("theme-switching"), 560);
+      return;
+    }
+    root.classList.add("theme-switching");
+    const transition = document.startViewTransition(commit);
+    transition.finished.finally(() => root.classList.remove("theme-switching"));
+  };
+
   const systemTheme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   applyTheme(getStoredTheme() || systemTheme);
 
@@ -43,7 +66,7 @@
     if (!button) {
       return;
     }
-    applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true);
+    transitionTheme(root.dataset.theme === "dark" ? "light" : "dark", button);
   });
 
   const meta = window.GOKOTTA_SITE_META || {};

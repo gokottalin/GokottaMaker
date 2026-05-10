@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GokottaMaker 管理端</title>
     <meta name="robots" content="noindex,nofollow" />
-    <link rel="stylesheet" href="../styles.css?v=20260509-2145" />
-    <link rel="stylesheet" href="./admin.css?v=20260509-2145" />
+    <link rel="stylesheet" href="../styles.css?v=20260510-1320" />
+    <link rel="stylesheet" href="./admin.css?v=20260510-1320" />
   </head>
   <body>
     <main class="admin-shell">
@@ -47,6 +47,7 @@
           <img class="brand-symbol" src="../assets/logo/gokottamaker-mark.svg" alt="GokottaMaker" />
           <span>Gokotta<b>Maker</b></span>
         </a>
+        <button class="theme-toggle admin-theme-toggle admin-login-theme-toggle" type="button" data-theme-toggle aria-label="切换夜间模式" title="切换夜间模式"><span class="theme-toggle-icon" aria-hidden="true"></span></button>
         <h1>管理端登录</h1>
         <form id="loginForm">
           <label>
@@ -84,6 +85,7 @@
               <a href="../index.html" data-short="首">访客首页</a>
             </div>
           </nav>
+          <button class="theme-toggle admin-theme-toggle" type="button" data-theme-toggle aria-label="切换夜间模式" title="切换夜间模式"><span class="theme-toggle-icon" aria-hidden="true"></span></button>
         </aside>
 
         <div class="admin-main">
@@ -170,7 +172,7 @@
                   <div class="inline-fields meta-featured">
                     <label class="checkbox-field">
                       <input name="featured" type="checkbox" />
-                      加入首页轮播
+                      <span>加入首页轮播</span>
                     </label>
                     <label>
                       轮播排序
@@ -256,9 +258,13 @@
                   </article>
 
                   <section class="editor-form markdown-editor-panel">
-                    <label>
+                    <label class="markdown-import-field">
                       Markdown 文件导入
-                      <input id="markdownFile" type="file" accept=".md,text/markdown,text/plain" />
+                      <span class="file-picker-control">
+                        <input id="markdownFile" class="visually-hidden-file" type="file" accept=".md,text/markdown,text/plain" />
+                        <span class="file-picker-button">选择 Markdown 文件</span>
+                        <span class="file-hint" id="markdownHint">支持 .md 或纯文本</span>
+                      </span>
                     </label>
 
                     <label class="markdown-body-field">
@@ -381,13 +387,13 @@
       </section>
     </div>
 
-    <script src="../data/posts.js?v=20260509-2145"></script>
-    <script src="../data/seed.js?v=20260509-2145"></script>
-    <script src="../api/content.js?v=20260509-2145"></script>
-    <script src="../data/content-store.js?v=20260509-2145"></script>
-    <script src="../data/markdown-renderer.js?v=20260509-2145"></script>
-    <script src="./admin.js?v=20260509-2145"></script>
-    <script src="../data/site-meta.js?v=20260509-2145"></script>
-    <script src="../data/footer.js?v=20260509-2145"></script>
+    <script src="../data/posts.js?v=20260510-1320"></script>
+    <script src="../data/seed.js?v=20260510-1320"></script>
+    <script src="../api/content.js?v=20260510-1320"></script>
+    <script src="../data/content-store.js?v=20260510-1320"></script>
+    <script src="../data/markdown-renderer.js?v=20260510-1320"></script>
+    <script src="./admin.js?v=20260510-1320"></script>
+    <script src="../data/site-meta.js?v=20260510-1320"></script>
+    <script src="../data/footer.js?v=20260510-1320"></script>
   </body>
 </html>

@@ -5,10 +5,12 @@ SOURCE_DIR="${1:-/srv/gokottamaker-data}"
 BACKUP_ROOT="${2:-/srv/gokottamaker-backups}"
 RETENTION_DAYS="${RETENTION_DAYS:-14}"
 MIN_BACKUPS="${MIN_BACKUPS:-5}"
+OFFSITE_BACKUP_TARGET="${OFFSITE_BACKUP_TARGET:-}"
 STAMP="$(date +%Y-%m-%d_%H-%M-%S)"
 TARGET="${BACKUP_ROOT}/${STAMP}"
 MANIFEST="${TARGET}/manifest.txt"
 CHECKSUMS="${TARGET}/manifest.sha256"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 command_exists() {
   command -v "$1" >/dev/null 2>&1
@@ -91,6 +93,7 @@ TARGET_DB_INTEGRITY="$(sqlite_integrity_check "$TARGET_DB" || true)"
   echo "source_uploads_files=$(file_count_for_path "${SOURCE_DIR}/uploads")"
   echo "backup_uploads_files=$(file_count_for_path "${TARGET}/uploads")"
   echo "backup_total_bytes=$(bytes_for_path "$TARGET")"
+  echo "offsite_backup_target=${OFFSITE_BACKUP_TARGET}"
 } > "$MANIFEST"
 
 if command_exists sha256sum; then
@@ -129,6 +132,12 @@ if [ "$MIN_BACKUPS" -gt 0 ]; then
   done
 else
   find "$BACKUP_ROOT" -mindepth 1 -maxdepth 1 -type d -mtime +"$RETENTION_DAYS" -exec rm -rf {} +
+fi
+
+if [ -n "$OFFSITE_BACKUP_TARGET" ]; then
+  bash "${SCRIPT_DIR}/sync-backups-offsite.sh" "$BACKUP_ROOT" "$OFFSITE_BACKUP_TARGET"
+else
+  echo "Offsite backup skipped: OFFSITE_BACKUP_TARGET is not configured"
 fi
 
 echo "Backup created: $TARGET"

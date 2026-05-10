@@ -143,6 +143,11 @@
   background: linear-gradient(90deg, var(--blue), rgba(13, 111, 211, 0.08));
 }
 
+.miniapp-heading .category-summary {
+  max-width: 680px;
+  font-size: 17px;
+}
+
 .tutorial-grid,
 .project-grid {
   display: grid;

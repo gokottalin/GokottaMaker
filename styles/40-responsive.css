@@ -52,12 +52,17 @@
   }
 
   .brand {
+    gap: 0;
     font-size: 20px;
   }
 
+  .site-header .brand span:last-child {
+    display: none;
+  }
+
   .brand-symbol {
-    width: 50px;
-    height: 50px;
+    width: 56px;
+    height: 56px;
   }
 
   .header-actions {
@@ -175,8 +180,8 @@
   }
 
   .brand-symbol {
-    width: 44px;
-    height: 44px;
+    width: 52px;
+    height: 52px;
     padding: 0;
   }
 

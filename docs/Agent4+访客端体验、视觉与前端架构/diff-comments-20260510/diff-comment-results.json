@@ -1,0 +1,63 @@
+{
+  "base": "http://127.0.0.1:4178",
+  "generatedAt": "2026-05-10T06:20:55.035Z",
+  "browserFallbackReason": "in-app browser direct navigation returned ERR_ABORTED and kept an older cached document; Playwright opened the fresh local URL for deterministic visual checks.",
+  "screenshots": {
+    "miniDesktopDark": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\diff-comments-20260510\\miniapps-1279-dark-fixed.png",
+    "miniMobileDark": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\diff-comments-20260510\\miniapps-390-dark-logo-fixed.png",
+    "adminDesktopDark": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\diff-comments-20260510\\admin-1279-dark-fixed.png"
+  },
+  "miniLogs": [],
+  "adminLogs": [],
+  "miniMetrics": {
+    "theme": "dark",
+    "title": "小程序 | GokottaMaker",
+    "cardCount": 1,
+    "cardBackgroundColor": "rgba(0, 0, 0, 0)",
+    "cardBackgroundImage": "linear-gradient(135deg, rgba(17, 28, 50, 0.94), rgba(11, 18, 32, 0.88)), radial-gradient(circle at 16% 0%, rgba(56, 189, 248, 0.12), rgba(0, 0, 0, 0) 30%)",
+    "cardBorderColor": "rgba(56, 189, 248, 0.24)",
+    "titleColor": "rgb(255, 255, 255)",
+    "summaryColor": "rgb(196, 210, 228)",
+    "chipBg": "rgba(56, 189, 248, 0.1)",
+    "brandText": {
+      "exists": true,
+      "display": "block",
+      "visibility": "visible",
+      "width": 199,
+      "height": 45
+    },
+    "pageSummary": "收纳可直接使用的网页小工具。每个工具保持独立页面、样式与 API 契约，便于后续扩展。",
+    "pageSummaryWidth": 680,
+    "horizontalOverflow": false
+  },
+  "mobileMetrics": {
+    "theme": "dark",
+    "brandText": {
+      "exists": true,
+      "display": "none",
+      "visibility": "visible",
+      "width": 0,
+      "height": 0
+    },
+    "logo": {
+      "exists": true,
+      "display": "block",
+      "visibility": "visible",
+      "width": 52,
+      "height": 52
+    },
+    "horizontalOverflow": false
+  },
+  "adminMetrics": {
+    "theme": "dark",
+    "dashboardVisible": true,
+    "visibleThemeToggles": 1,
+    "sidebarBg": "rgba(11, 18, 32, 0.9)",
+    "sidebarTextColor": "rgb(255, 255, 255)",
+    "panelBg": "rgba(0, 0, 0, 0)",
+    "bodyBg": "rgb(11, 18, 32)",
+    "horizontalOverflow": false,
+    "footerVersionText": "GokottaMaker\n      Version V2.4.1+20260510-1320"
+  },
+  "failures": []
+}

@@ -21,6 +21,7 @@
   const contentForm = document.querySelector("#contentForm");
   const preview = document.querySelector("#markdownPreview");
   const markdownFile = document.querySelector("#markdownFile");
+  const markdownHint = document.querySelector("#markdownHint");
   const coverFile = document.querySelector("#coverFile");
   const coverPreview = document.querySelector("#coverPreview");
   const coverHint = document.querySelector("#coverHint");
@@ -1183,6 +1184,7 @@
     if (!file) return;
     contentForm.markdown.value = await file.text();
     if (!contentForm.title.value) contentForm.title.value = file.name.replace(/\.md$/i, "");
+    if (markdownHint) markdownHint.textContent = `已导入：${file.name}`;
     updatePreview();
     markDirty();
   });

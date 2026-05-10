@@ -5,6 +5,12 @@ BACKUP_DIR="${1:-}"
 TARGET_DIR="${2:-/srv/gokottamaker-data}"
 DRY_RUN="${DRY_RUN:-false}"
 
+if [ "${1:-}" = "--dry-run" ]; then
+  DRY_RUN="true"
+  BACKUP_DIR="${2:-}"
+  TARGET_DIR="${3:-/srv/gokottamaker-data}"
+fi
+
 command_exists() {
   command -v "$1" >/dev/null 2>&1
 }
@@ -61,7 +67,8 @@ validate_backup() {
 
 if [ -z "$BACKUP_DIR" ] || [ ! -d "$BACKUP_DIR" ]; then
   echo "Usage: sudo bash scripts/restore-linux.sh /srv/gokottamaker-backups/YYYY-MM-DD_HH-MM-SS [/srv/gokottamaker-data]"
-  echo "Dry run: DRY_RUN=true sudo bash scripts/restore-linux.sh /srv/gokottamaker-backups/YYYY-MM-DD_HH-MM-SS"
+  echo "Dry run: sudo bash scripts/restore-linux.sh --dry-run /srv/gokottamaker-backups/YYYY-MM-DD_HH-MM-SS"
+  echo "Legacy dry run: sudo env DRY_RUN=true bash scripts/restore-linux.sh /srv/gokottamaker-backups/YYYY-MM-DD_HH-MM-SS"
   exit 1
 fi
 

@@ -1,0 +1,570 @@
+{
+  "base": "http://127.0.0.1:4178",
+  "generatedAt": "2026-05-10T05:01:15.407Z",
+  "results": [
+    {
+      "page": {
+        "name": "home",
+        "url": "/"
+      },
+      "viewport": {
+        "name": "390",
+        "width": 390,
+        "height": 844
+      },
+      "consoleMessages": [],
+      "lightMetrics": {
+        "theme": "light",
+        "themeTransitionApi": true,
+        "themeX": "100vw",
+        "logoComplete": true,
+        "logoWidth": 52,
+        "logoHeight": 52,
+        "logoBorderWidth": "0px",
+        "brandTextDisplay": "none",
+        "toggleCount": 1,
+        "toggleInsideViewport": true,
+        "toggleState": "light",
+        "iconTransform": "matrix(0.776656, -0.564274, 0.564274, 0.776656, 0, 0)",
+        "iconBoxShadow": "rgb(255, 255, 255) -7px -5px 0px 0px inset",
+        "iconColor": "rgb(15, 78, 168)",
+        "heroCards": 3,
+        "heroBackdrop": "blur(4px) saturate(1.32)",
+        "heroHeight": 450,
+        "horizontalOverflow": false,
+        "scrollWidth": 390,
+        "innerWidth": 390
+      },
+      "darkMetrics": {
+        "theme": "dark",
+        "toggleState": "dark",
+        "ariaPressed": "true",
+        "iconTransform": "matrix(-1, 0, 0, -1, 0, 0)",
+        "iconBoxShadow": "rgba(242, 182, 65, 0.18) 0px 0px 0px 4px",
+        "iconColor": "rgb(242, 182, 65)",
+        "heroBackdrop": "blur(4px) saturate(1.32)",
+        "horizontalOverflow": false,
+        "scrollWidth": 390,
+        "innerWidth": 390
+      },
+      "failures": []
+    },
+    {
+      "page": {
+        "name": "category",
+        "url": "/category.html?category=analog"
+      },
+      "viewport": {
+        "name": "390",
+        "width": 390,
+        "height": 844
+      },
+      "consoleMessages": [],
+      "lightMetrics": {
+        "theme": "light",
+        "themeTransitionApi": true,
+        "themeX": "100vw",
+        "logoComplete": true,
+        "logoWidth": 52,
+        "logoHeight": 52,
+        "logoBorderWidth": "0px",
+        "brandTextDisplay": "none",
+        "toggleCount": 1,
+        "toggleInsideViewport": true,
+        "toggleState": "light",
+        "iconTransform": "matrix(0.776656, -0.564274, 0.564274, 0.776656, 0, 0)",
+        "iconBoxShadow": "rgb(255, 255, 255) -7px -5px 0px 0px inset",
+        "iconColor": "rgb(15, 78, 168)",
+        "heroCards": 0,
+        "heroBackdrop": "",
+        "heroHeight": 0,
+        "horizontalOverflow": false,
+        "scrollWidth": 390,
+        "innerWidth": 390
+      },
+      "darkMetrics": {
+        "theme": "dark",
+        "toggleState": "dark",
+        "ariaPressed": "true",
+        "iconTransform": "matrix(-1, 0, 0, -1, 0, 0)",
+        "iconBoxShadow": "rgba(242, 182, 65, 0.18) 0px 0px 0px 4px",
+        "iconColor": "rgb(242, 182, 65)",
+        "heroBackdrop": "",
+        "horizontalOverflow": false,
+        "scrollWidth": 390,
+        "innerWidth": 390
+      },
+      "failures": []
+    },
+    {
+      "page": {
+        "name": "projects",
+        "url": "/projects.html"
+      },
+      "viewport": {
+        "name": "390",
+        "width": 390,
+        "height": 844
+      },
+      "consoleMessages": [],
+      "lightMetrics": {
+        "theme": "light",
+        "themeTransitionApi": true,
+        "themeX": "100vw",
+        "logoComplete": true,
+        "logoWidth": 52,
+        "logoHeight": 52,
+        "logoBorderWidth": "0px",
+        "brandTextDisplay": "none",
+        "toggleCount": 1,
+        "toggleInsideViewport": true,
+        "toggleState": "light",
+        "iconTransform": "matrix(0.776656, -0.564274, 0.564274, 0.776656, 0, 0)",
+        "iconBoxShadow": "rgb(255, 255, 255) -7px -5px 0px 0px inset",
+        "iconColor": "rgb(15, 78, 168)",
+        "heroCards": 0,
+        "heroBackdrop": "",
+        "heroHeight": 0,
+        "horizontalOverflow": false,
+        "scrollWidth": 390,
+        "innerWidth": 390
+      },
+      "darkMetrics": {
+        "theme": "dark",
+        "toggleState": "dark",
+        "ariaPressed": "true",
+        "iconTransform": "matrix(-1, 0, 0, -1, 0, 0)",
+        "iconBoxShadow": "rgba(242, 182, 65, 0.18) 0px 0px 0px 4px",
+        "iconColor": "rgb(242, 182, 65)",
+        "heroBackdrop": "",
+        "horizontalOverflow": false,
+        "scrollWidth": 390,
+        "innerWidth": 390
+      },
+      "failures": []
+    },
+    {
+      "page": {
+        "name": "miniapps",
+        "url": "/miniapps.html"
+      },
+      "viewport": {
+        "name": "390",
+        "width": 390,
+        "height": 844
+      },
+      "consoleMessages": [],
+      "lightMetrics": {
+        "theme": "light",
+        "themeTransitionApi": true,
+        "themeX": "100vw",
+        "logoComplete": true,
+        "logoWidth": 52,
+        "logoHeight": 52,
+        "logoBorderWidth": "0px",
+        "brandTextDisplay": "none",
+        "toggleCount": 1,
+        "toggleInsideViewport": true,
+        "toggleState": "light",
+        "iconTransform": "matrix(0.776656, -0.564274, 0.564274, 0.776656, 0, 0)",
+        "iconBoxShadow": "rgb(255, 255, 255) -7px -5px 0px 0px inset",
+        "iconColor": "rgb(15, 78, 168)",
+        "heroCards": 0,
+        "heroBackdrop": "",
+        "heroHeight": 0,
+        "horizontalOverflow": false,
+        "scrollWidth": 390,
+        "innerWidth": 390
+      },
+      "darkMetrics": {
+        "theme": "dark",
+        "toggleState": "dark",
+        "ariaPressed": "true",
+        "iconTransform": "matrix(-1, 0, 0, -1, 0, 0)",
+        "iconBoxShadow": "rgba(242, 182, 65, 0.18) 0px 0px 0px 4px",
+        "iconColor": "rgb(242, 182, 65)",
+        "heroBackdrop": "",
+        "horizontalOverflow": false,
+        "scrollWidth": 390,
+        "innerWidth": 390
+      },
+      "failures": []
+    },
+    {
+      "page": {
+        "name": "home",
+        "url": "/"
+      },
+      "viewport": {
+        "name": "1279",
+        "width": 1279,
+        "height": 589
+      },
+      "consoleMessages": [],
+      "lightMetrics": {
+        "theme": "light",
+        "themeTransitionApi": true,
+        "themeX": "100vw",
+        "logoComplete": true,
+        "logoWidth": 64,
+        "logoHeight": 64,
+        "logoBorderWidth": "0px",
+        "brandTextDisplay": "none",
+        "toggleCount": 1,
+        "toggleInsideViewport": true,
+        "toggleState": "light",
+        "iconTransform": "matrix(0.776656, -0.564274, 0.564274, 0.776656, 0, 0)",
+        "iconBoxShadow": "rgb(255, 255, 255) -7px -5px 0px 0px inset",
+        "iconColor": "rgb(15, 78, 168)",
+        "heroCards": 3,
+        "heroBackdrop": "blur(4px) saturate(1.32)",
+        "heroHeight": 662,
+        "horizontalOverflow": false,
+        "scrollWidth": 1279,
+        "innerWidth": 1279
+      },
+      "darkMetrics": {
+        "theme": "dark",
+        "toggleState": "dark",
+        "ariaPressed": "true",
+        "iconTransform": "matrix(-1, 0, 0, -1, 0, 0)",
+        "iconBoxShadow": "rgba(242, 182, 65, 0.18) 0px 0px 0px 4px",
+        "iconColor": "rgb(242, 182, 65)",
+        "heroBackdrop": "blur(4px) saturate(1.32)",
+        "horizontalOverflow": false,
+        "scrollWidth": 1279,
+        "innerWidth": 1279
+      },
+      "failures": []
+    },
+    {
+      "page": {
+        "name": "category",
+        "url": "/category.html?category=analog"
+      },
+      "viewport": {
+        "name": "1279",
+        "width": 1279,
+        "height": 589
+      },
+      "consoleMessages": [],
+      "lightMetrics": {
+        "theme": "light",
+        "themeTransitionApi": true,
+        "themeX": "100vw",
+        "logoComplete": true,
+        "logoWidth": 64,
+        "logoHeight": 64,
+        "logoBorderWidth": "0px",
+        "brandTextDisplay": "none",
+        "toggleCount": 1,
+        "toggleInsideViewport": true,
+        "toggleState": "light",
+        "iconTransform": "matrix(0.776656, -0.564274, 0.564274, 0.776656, 0, 0)",
+        "iconBoxShadow": "rgb(255, 255, 255) -7px -5px 0px 0px inset",
+        "iconColor": "rgb(15, 78, 168)",
+        "heroCards": 0,
+        "heroBackdrop": "",
+        "heroHeight": 0,
+        "horizontalOverflow": false,
+        "scrollWidth": 1279,
+        "innerWidth": 1279
+      },
+      "darkMetrics": {
+        "theme": "dark",
+        "toggleState": "dark",
+        "ariaPressed": "true",
+        "iconTransform": "matrix(-1, 0, 0, -1, 0, 0)",
+        "iconBoxShadow": "rgba(242, 182, 65, 0.18) 0px 0px 0px 4px",
+        "iconColor": "rgb(242, 182, 65)",
+        "heroBackdrop": "",
+        "horizontalOverflow": false,
+        "scrollWidth": 1279,
+        "innerWidth": 1279
+      },
+      "failures": []
+    },
+    {
+      "page": {
+        "name": "projects",
+        "url": "/projects.html"
+      },
+      "viewport": {
+        "name": "1279",
+        "width": 1279,
+        "height": 589
+      },
+      "consoleMessages": [],
+      "lightMetrics": {
+        "theme": "light",
+        "themeTransitionApi": true,
+        "themeX": "100vw",
+        "logoComplete": true,
+        "logoWidth": 64,
+        "logoHeight": 64,
+        "logoBorderWidth": "0px",
+        "brandTextDisplay": "none",
+        "toggleCount": 1,
+        "toggleInsideViewport": true,
+        "toggleState": "light",
+        "iconTransform": "matrix(0.776656, -0.564274, 0.564274, 0.776656, 0, 0)",
+        "iconBoxShadow": "rgb(255, 255, 255) -7px -5px 0px 0px inset",
+        "iconColor": "rgb(15, 78, 168)",
+        "heroCards": 0,
+        "heroBackdrop": "",
+        "heroHeight": 0,
+        "horizontalOverflow": false,
+        "scrollWidth": 1279,
+        "innerWidth": 1279
+      },
+      "darkMetrics": {
+        "theme": "dark",
+        "toggleState": "dark",
+        "ariaPressed": "true",
+        "iconTransform": "matrix(-1, 0, 0, -1, 0, 0)",
+        "iconBoxShadow": "rgba(242, 182, 65, 0.18) 0px 0px 0px 4px",
+        "iconColor": "rgb(242, 182, 65)",
+        "heroBackdrop": "",
+        "horizontalOverflow": false,
+        "scrollWidth": 1279,
+        "innerWidth": 1279
+      },
+      "failures": []
+    },
+    {
+      "page": {
+        "name": "miniapps",
+        "url": "/miniapps.html"
+      },
+      "viewport": {
+        "name": "1279",
+        "width": 1279,
+        "height": 589
+      },
+      "consoleMessages": [],
+      "lightMetrics": {
+        "theme": "light",
+        "themeTransitionApi": true,
+        "themeX": "100vw",
+        "logoComplete": true,
+        "logoWidth": 64,
+        "logoHeight": 64,
+        "logoBorderWidth": "0px",
+        "brandTextDisplay": "none",
+        "toggleCount": 1,
+        "toggleInsideViewport": true,
+        "toggleState": "light",
+        "iconTransform": "matrix(0.776656, -0.564274, 0.564274, 0.776656, 0, 0)",
+        "iconBoxShadow": "rgb(255, 255, 255) -7px -5px 0px 0px inset",
+        "iconColor": "rgb(15, 78, 168)",
+        "heroCards": 0,
+        "heroBackdrop": "",
+        "heroHeight": 0,
+        "horizontalOverflow": false,
+        "scrollWidth": 1279,
+        "innerWidth": 1279
+      },
+      "darkMetrics": {
+        "theme": "dark",
+        "toggleState": "dark",
+        "ariaPressed": "true",
+        "iconTransform": "matrix(-1, 0, 0, -1, 0, 0)",
+        "iconBoxShadow": "rgba(242, 182, 65, 0.18) 0px 0px 0px 4px",
+        "iconColor": "rgb(242, 182, 65)",
+        "heroBackdrop": "",
+        "horizontalOverflow": false,
+        "scrollWidth": 1279,
+        "innerWidth": 1279
+      },
+      "failures": []
+    },
+    {
+      "page": {
+        "name": "home",
+        "url": "/"
+      },
+      "viewport": {
+        "name": "1920",
+        "width": 1920,
+        "height": 1080
+      },
+      "consoleMessages": [],
+      "lightMetrics": {
+        "theme": "light",
+        "themeTransitionApi": true,
+        "themeX": "100vw",
+        "logoComplete": true,
+        "logoWidth": 64,
+        "logoHeight": 64,
+        "logoBorderWidth": "0px",
+        "brandTextDisplay": "none",
+        "toggleCount": 1,
+        "toggleInsideViewport": true,
+        "toggleState": "light",
+        "iconTransform": "matrix(0.776656, -0.564274, 0.564274, 0.776656, 0, 0)",
+        "iconBoxShadow": "rgb(255, 255, 255) -7px -5px 0px 0px inset",
+        "iconColor": "rgb(15, 78, 168)",
+        "heroCards": 3,
+        "heroBackdrop": "blur(4px) saturate(1.32)",
+        "heroHeight": 662,
+        "horizontalOverflow": false,
+        "scrollWidth": 1920,
+        "innerWidth": 1920
+      },
+      "darkMetrics": {
+        "theme": "dark",
+        "toggleState": "dark",
+        "ariaPressed": "true",
+        "iconTransform": "matrix(-1, 0, 0, -1, 0, 0)",
+        "iconBoxShadow": "rgba(242, 182, 65, 0.18) 0px 0px 0px 4px",
+        "iconColor": "rgb(242, 182, 65)",
+        "heroBackdrop": "blur(4px) saturate(1.32)",
+        "horizontalOverflow": false,
+        "scrollWidth": 1920,
+        "innerWidth": 1920
+      },
+      "failures": []
+    },
+    {
+      "page": {
+        "name": "category",
+        "url": "/category.html?category=analog"
+      },
+      "viewport": {
+        "name": "1920",
+        "width": 1920,
+        "height": 1080
+      },
+      "consoleMessages": [],
+      "lightMetrics": {
+        "theme": "light",
+        "themeTransitionApi": true,
+        "themeX": "100vw",
+        "logoComplete": true,
+        "logoWidth": 64,
+        "logoHeight": 64,
+        "logoBorderWidth": "0px",
+        "brandTextDisplay": "none",
+        "toggleCount": 1,
+        "toggleInsideViewport": true,
+        "toggleState": "light",
+        "iconTransform": "matrix(0.776656, -0.564274, 0.564274, 0.776656, 0, 0)",
+        "iconBoxShadow": "rgb(255, 255, 255) -7px -5px 0px 0px inset",
+        "iconColor": "rgb(15, 78, 168)",
+        "heroCards": 0,
+        "heroBackdrop": "",
+        "heroHeight": 0,
+        "horizontalOverflow": false,
+        "scrollWidth": 1920,
+        "innerWidth": 1920
+      },
+      "darkMetrics": {
+        "theme": "dark",
+        "toggleState": "dark",
+        "ariaPressed": "true",
+        "iconTransform": "matrix(-1, 0, 0, -1, 0, 0)",
+        "iconBoxShadow": "rgba(242, 182, 65, 0.18) 0px 0px 0px 4px",
+        "iconColor": "rgb(242, 182, 65)",
+        "heroBackdrop": "",
+        "horizontalOverflow": false,
+        "scrollWidth": 1920,
+        "innerWidth": 1920
+      },
+      "failures": []
+    },
+    {
+      "page": {
+        "name": "projects",
+        "url": "/projects.html"
+      },
+      "viewport": {
+        "name": "1920",
+        "width": 1920,
+        "height": 1080
+      },
+      "consoleMessages": [],
+      "lightMetrics": {
+        "theme": "light",
+        "themeTransitionApi": true,
+        "themeX": "100vw",
+        "logoComplete": true,
+        "logoWidth": 64,
+        "logoHeight": 64,
+        "logoBorderWidth": "0px",
+        "brandTextDisplay": "none",
+        "toggleCount": 1,
+        "toggleInsideViewport": true,
+        "toggleState": "light",
+        "iconTransform": "matrix(0.776656, -0.564274, 0.564274, 0.776656, 0, 0)",
+        "iconBoxShadow": "rgb(255, 255, 255) -7px -5px 0px 0px inset",
+        "iconColor": "rgb(15, 78, 168)",
+        "heroCards": 0,
+        "heroBackdrop": "",
+        "heroHeight": 0,
+        "horizontalOverflow": false,
+        "scrollWidth": 1920,
+        "innerWidth": 1920
+      },
+      "darkMetrics": {
+        "theme": "dark",
+        "toggleState": "dark",
+        "ariaPressed": "true",
+        "iconTransform": "matrix(-1, 0, 0, -1, 0, 0)",
+        "iconBoxShadow": "rgba(242, 182, 65, 0.18) 0px 0px 0px 4px",
+        "iconColor": "rgb(242, 182, 65)",
+        "heroBackdrop": "",
+        "horizontalOverflow": false,
+        "scrollWidth": 1920,
+        "innerWidth": 1920
+      },
+      "failures": []
+    },
+    {
+      "page": {
+        "name": "miniapps",
+        "url": "/miniapps.html"
+      },
+      "viewport": {
+        "name": "1920",
+        "width": 1920,
+        "height": 1080
+      },
+      "consoleMessages": [],
+      "lightMetrics": {
+        "theme": "light",
+        "themeTransitionApi": true,
+        "themeX": "100vw",
+        "logoComplete": true,
+        "logoWidth": 64,
+        "logoHeight": 64,
+        "logoBorderWidth": "0px",
+        "brandTextDisplay": "none",
+        "toggleCount": 1,
+        "toggleInsideViewport": true,
+        "toggleState": "light",
+        "iconTransform": "matrix(0.776656, -0.564274, 0.564274, 0.776656, 0, 0)",
+        "iconBoxShadow": "rgb(255, 255, 255) -7px -5px 0px 0px inset",
+        "iconColor": "rgb(15, 78, 168)",
+        "heroCards": 0,
+        "heroBackdrop": "",
+        "heroHeight": 0,
+        "horizontalOverflow": false,
+        "scrollWidth": 1920,
+        "innerWidth": 1920
+      },
+      "darkMetrics": {
+        "theme": "dark",
+        "toggleState": "dark",
+        "ariaPressed": "true",
+        "iconTransform": "matrix(-1, 0, 0, -1, 0, 0)",
+        "iconBoxShadow": "rgba(242, 182, 65, 0.18) 0px 0px 0px 4px",
+        "iconColor": "rgb(242, 182, 65)",
+        "heroBackdrop": "",
+        "horizontalOverflow": false,
+        "scrollWidth": 1920,
+        "innerWidth": 1920
+      },
+      "failures": []
+    }
+  ]
+}
