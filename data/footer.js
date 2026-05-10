@@ -36,6 +36,30 @@
     updateThemeControls(theme);
   };
 
+  const setupNavControls = () => {
+    document.querySelectorAll(".site-header").forEach((header, index) => {
+      const inner = header.querySelector(".header-inner");
+      const nav = header.querySelector(".main-nav");
+      const brand = header.querySelector(".brand");
+      if (!inner || !nav || !brand || header.querySelector("[data-nav-toggle]")) {
+        return;
+      }
+
+      const navId = nav.id || `siteNav-${index + 1}`;
+      nav.id = navId;
+
+      const button = document.createElement("button");
+      button.className = "nav-toggle";
+      button.type = "button";
+      button.dataset.navToggle = "";
+      button.setAttribute("aria-controls", navId);
+      button.setAttribute("aria-expanded", "false");
+      button.setAttribute("aria-label", "展开导航");
+      button.innerHTML = '<span class="nav-toggle-bars" aria-hidden="true"></span><span class="visually-hidden">导航</span>';
+      brand.insertAdjacentElement("afterend", button);
+    });
+  };
+
   const setThemeOrigin = (button) => {
     const rect = button.getBoundingClientRect();
     root.style.setProperty("--theme-x", `${Math.round(rect.left + rect.width / 2)}px`);
@@ -60,13 +84,34 @@
 
   const systemTheme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   applyTheme(getStoredTheme() || systemTheme);
+  setupNavControls();
 
   document.addEventListener("click", (event) => {
+    const navButton = event.target.closest("[data-nav-toggle]");
+    if (navButton) {
+      const header = navButton.closest(".site-header");
+      const expanded = navButton.getAttribute("aria-expanded") === "true";
+      navButton.setAttribute("aria-expanded", String(!expanded));
+      navButton.setAttribute("aria-label", expanded ? "展开导航" : "收起导航");
+      header?.classList.toggle("is-nav-open", !expanded);
+      return;
+    }
+
     const button = event.target.closest("[data-theme-toggle]");
     if (!button) {
       return;
     }
     transitionTheme(root.dataset.theme === "dark" ? "light" : "dark", button);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    document.querySelectorAll(".site-header.is-nav-open").forEach((header) => {
+      header.classList.remove("is-nav-open");
+      const button = header.querySelector("[data-nav-toggle]");
+      button?.setAttribute("aria-expanded", "false");
+      button?.setAttribute("aria-label", "展开导航");
+    });
   });
 
   const meta = window.GOKOTTA_SITE_META || {};

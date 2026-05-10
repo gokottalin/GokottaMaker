@@ -23,24 +23,124 @@
       .replace(/\b(\d+)\b/g, '<span class="token-number">$1</span>');
   }
 
+  function isLocalFilePath(value) {
+    return /^[a-z]:[\\/]/i.test(String(value || "").replaceAll("&amp;", "&"));
+  }
+
+  function normalizeUrl(value) {
+    const decoded = String(value || "")
+      .trim()
+      .replace(/^&quot;|&quot;$/g, "")
+      .replaceAll("&amp;", "&")
+      .replaceAll("&quot;", '"')
+      .replaceAll("&#039;", "'");
+    if (!decoded) return "#";
+    if (isLocalFilePath(decoded)) return decoded;
+    if (/^(javascript|data|vbscript|file):/i.test(decoded)) return "#";
+    if (/^[a-z][a-z0-9+.-]*:/i.test(decoded) && !/^(https?|mailto|tel):/i.test(decoded)) return "#";
+    return decoded;
+  }
+
+  function renderImage(alt, src) {
+    const normalized = normalizeUrl(src);
+    if (normalized === "#") {
+      return '<span class="markdown-local-image">图片链接无效或不受支持。</span>';
+    }
+    if (isLocalFilePath(normalized)) {
+      return `<span class="markdown-local-image">本地图片路径无法直接预览：<code>${escapeHtml(normalized)}</code></span>`;
+    }
+    return `<img src="${escapeHtml(normalized)}" alt="${escapeHtml(alt)}" loading="lazy" />`;
+  }
+
   function inline(value) {
-    return escapeHtml(value)
-      .replace(/!\[([^\]]*)\]\((https?:\/\/[^)\s]+|\.\/[^)\s]+|\/[^)\s]+)\)/g, '<img src="$2" alt="$1" loading="lazy" />')
-      .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+|\.\/[^)\s]+|\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
-      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-      .replace(/`([^`]+)`/g, "<code>$1</code>");
+    const codeSpans = [];
+    let text = escapeHtml(value).replace(/`([^`]+)`/g, (_, code) => {
+      const token = `@@GOKOTTACODE${codeSpans.length}@@`;
+      codeSpans.push(`<code>${code}</code>`);
+      return token;
+    });
+
+    text = text
+      .replace(/!\[([^\]]*)\]\(((?:\\.|[^()\\\n]|\([^()\n]*\))+?)\)/g, (_, alt, src) => renderImage(alt, src))
+      .replace(/\[([^\]]+)\]\(((?:\\.|[^()\\\n]|\([^()\n]*\))+?)\)/g, (_, label, href) => {
+        const normalized = normalizeUrl(href);
+        if (isLocalFilePath(normalized)) {
+          return `<span class="markdown-local-image">本地链接路径无法直接访问：<code>${escapeHtml(normalized)}</code></span>`;
+        }
+        const external = /^(https?:)?\/\//i.test(normalized);
+        const target = external ? ' target="_blank" rel="noopener noreferrer"' : "";
+        return `<a href="${escapeHtml(normalized)}"${target}>${label}</a>`;
+      })
+      .replace(/~~(.+?)~~/g, "<del>$1</del>")
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/__(.+?)__/g, "<strong>$1</strong>")
+      .replace(/(^|[^\*])\*([^*\n]+)\*/g, "$1<em>$2</em>")
+      .replace(/(^|[^_])_([^_\n]+)_/g, "$1<em>$2</em>");
+
+    codeSpans.forEach((html, index) => {
+      text = text.replaceAll(`@@GOKOTTACODE${index}@@`, html);
+    });
+    return text;
+  }
+
+  function isTableRow(line) {
+    return /^\s*\|.*\|\s*$/.test(line);
+  }
+
+  function isTableDivider(line) {
+    return /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(line);
+  }
+
+  function splitTableRow(line) {
+    return line
+      .trim()
+      .replace(/^\|/, "")
+      .replace(/\|$/, "")
+      .split("|")
+      .map((cell) => cell.trim());
+  }
+
+  function tableAlign(cell) {
+    const value = cell.trim();
+    if (value.startsWith(":") && value.endsWith(":")) return "center";
+    if (value.endsWith(":")) return "right";
+    return "left";
+  }
+
+  function renderTable(headerLine, dividerLine, bodyLines) {
+    const headers = splitTableRow(headerLine);
+    const aligns = splitTableRow(dividerLine).map(tableAlign);
+    const header = headers
+      .map((cell, index) => `<th style="text-align:${aligns[index] || "left"}">${inline(cell)}</th>`)
+      .join("");
+    const body = bodyLines
+      .map((row) => {
+        const cells = splitTableRow(row);
+        return `<tr>${cells.map((cell, index) => `<td style="text-align:${aligns[index] || "left"}">${inline(cell)}</td>`).join("")}</tr>`;
+      })
+      .join("");
+    return `<div class="markdown-table-wrap"><table><thead><tr>${header}</tr></thead><tbody>${body}</tbody></table></div>`;
   }
 
   function render(markdown) {
     const headings = [];
     const blocks = [];
     const lines = String(markdown || "").split(/\r?\n/);
+    const usedSlugs = new Map();
     let paragraph = [];
     let list = [];
+    let listType = "ul";
     let quote = [];
     let inCode = false;
     let codeLang = "";
     let code = [];
+
+    function uniqueId(text) {
+      const base = slugify(text) || "section";
+      const count = usedSlugs.get(base) || 0;
+      usedSlugs.set(base, count + 1);
+      return count ? `${base}-${count + 1}` : base;
+    }
 
     function flushParagraph() {
       if (!paragraph.length) return;
@@ -50,8 +150,9 @@
 
     function flushList() {
       if (!list.length) return;
-      blocks.push(`<ul>${list.map((item) => `<li>${inline(item)}</li>`).join("")}</ul>`);
+      blocks.push(`<${listType}>${list.join("")}</${listType}>`);
       list = [];
+      listType = "ul";
     }
 
     function flushQuote() {
@@ -60,7 +161,26 @@
       quote = [];
     }
 
-    for (const line of lines) {
+    function flushLooseBlocks() {
+      flushParagraph();
+      flushList();
+      flushQuote();
+    }
+
+    function pushListItem(type, value) {
+      if (list.length && listType !== type) flushList();
+      listType = type;
+      const task = value.match(/^\[([ xX])\]\s+(.+)$/);
+      if (task) {
+        const checked = task[1].toLowerCase() === "x" ? " checked" : "";
+        list.push(`<li class="task-list-item"><input type="checkbox" disabled${checked} /> <span>${inline(task[2])}</span></li>`);
+        return;
+      }
+      list.push(`<li>${inline(value)}</li>`);
+    }
+
+    for (let index = 0; index < lines.length; index += 1) {
+      const line = lines[index];
       const codeFence = line.match(/^```(.*)$/);
       if (codeFence) {
         if (inCode) {
@@ -69,9 +189,7 @@
           code = [];
           codeLang = "";
         } else {
-          flushParagraph();
-          flushList();
-          flushQuote();
+          flushLooseBlocks();
           inCode = true;
           codeLang = codeFence[1].trim();
         }
@@ -84,35 +202,59 @@
       }
 
       if (!line.trim()) {
-        flushParagraph();
-        flushList();
-        flushQuote();
+        flushLooseBlocks();
         continue;
       }
 
-      const heading = line.match(/^(#{1,3})\s+(.+)$/);
+      if (isTableRow(line) && isTableDivider(lines[index + 1] || "")) {
+        flushLooseBlocks();
+        const divider = lines[index + 1];
+        const bodyRows = [];
+        index += 2;
+        while (index < lines.length && isTableRow(lines[index])) {
+          bodyRows.push(lines[index]);
+          index += 1;
+        }
+        index -= 1;
+        blocks.push(renderTable(line, divider, bodyRows));
+        continue;
+      }
+
+      const heading = line.match(/^(#{1,4})\s+(.+?)\s*#*$/);
       if (heading) {
-        flushParagraph();
-        flushList();
-        flushQuote();
+        flushLooseBlocks();
         const level = heading[1].length;
         const text = heading[2].trim();
         if (level === 1) continue;
-        const id = slugify(text);
+        const id = uniqueId(text);
         headings.push({ id, text, level });
         blocks.push(`<h${level} id="${id}">${inline(text)}</h${level}>`);
         continue;
       }
 
-      const listItem = line.match(/^-\s+(.+)$/);
-      if (listItem) {
-        flushParagraph();
-        flushQuote();
-        list.push(listItem[1]);
+      if (/^\s{0,3}(-{3,}|\*{3,}|_{3,})\s*$/.test(line)) {
+        flushLooseBlocks();
+        blocks.push("<hr />");
         continue;
       }
 
-      const quoteItem = line.match(/^>\s+(.+)$/);
+      const unordered = line.match(/^\s*[-*+]\s+(.+)$/);
+      if (unordered) {
+        flushParagraph();
+        flushQuote();
+        pushListItem("ul", unordered[1]);
+        continue;
+      }
+
+      const ordered = line.match(/^\s*\d+[.)]\s+(.+)$/);
+      if (ordered) {
+        flushParagraph();
+        flushQuote();
+        pushListItem("ol", ordered[1]);
+        continue;
+      }
+
+      const quoteItem = line.match(/^>\s?(.+)$/);
       if (quoteItem) {
         flushParagraph();
         flushList();
@@ -123,11 +265,12 @@
       paragraph.push(line.trim());
     }
 
-    flushParagraph();
-    flushList();
-    flushQuote();
+    if (inCode) {
+      blocks.push(`<pre data-lang="${escapeHtml(codeLang)}"><code>${highlight(escapeHtml(code.join("\n")))}</code></pre>`);
+    }
+    flushLooseBlocks();
     return { html: blocks.join("\n"), headings };
   }
 
-  window.GokottaMarkdown = { render, escapeHtml };
+  window.GokottaMarkdown = { render, escapeHtml, inline };
 })();
