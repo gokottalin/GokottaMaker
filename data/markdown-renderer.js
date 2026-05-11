@@ -17,10 +17,45 @@
   }
 
   function highlight(code) {
-    return code
-      .replace(/\b(const|let|var|for|if|else|return|void|uint16_t|uint32_t|define|include|HAL_ADC_Start_DMA)\b/g, '<span class="token-keyword">$1</span>')
-      .replace(/(".*?"|'.*?')/g, '<span class="token-string">$1</span>')
-      .replace(/\b(\d+)\b/g, '<span class="token-number">$1</span>');
+    const source = String(code || "");
+    const keywordPattern =
+      /\b(const|let|var|for|if|else|return|void|uint16_t|uint32_t|define|include|HAL_ADC_Start_DMA)\b/y;
+    const numberPattern = /\b\d+\b/y;
+    const stringPattern = /(&quot;.*?&quot;|&#039;.*?&#039;)/y;
+    let output = "";
+    let index = 0;
+
+    while (index < source.length) {
+      stringPattern.lastIndex = index;
+      keywordPattern.lastIndex = index;
+      numberPattern.lastIndex = index;
+
+      const stringMatch = stringPattern.exec(source);
+      if (stringMatch) {
+        output += `<span class="token-string">${stringMatch[0]}</span>`;
+        index += stringMatch[0].length;
+        continue;
+      }
+
+      const keywordMatch = keywordPattern.exec(source);
+      if (keywordMatch) {
+        output += `<span class="token-keyword">${keywordMatch[0]}</span>`;
+        index += keywordMatch[0].length;
+        continue;
+      }
+
+      const numberMatch = numberPattern.exec(source);
+      if (numberMatch) {
+        output += `<span class="token-number">${numberMatch[0]}</span>`;
+        index += numberMatch[0].length;
+        continue;
+      }
+
+      output += source[index];
+      index += 1;
+    }
+
+    return output;
   }
 
   function isLocalFilePath(value) {

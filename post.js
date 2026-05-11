@@ -237,13 +237,15 @@
   window.renderMarkdownPage = function renderMarkdownPage(options) {
     const id = new URLSearchParams(location.search).get("id");
     const collection = options.collection || [];
-    const item = collection.find((entry) => entry.id === id || entry.slug === id) || collection[0];
+    const item = id ? collection.find((entry) => entry.id === id || entry.slug === id) : collection[0];
     const hero = document.querySelector(`#${options.heroId}`);
     const content = document.querySelector(`#${options.contentId}`);
     const toc = document.querySelector(`#${options.tocId}`);
 
     if (!item) {
+      if (hero) hero.innerHTML = "";
       content.innerHTML = `<div class="empty-state">没有找到内容。</div>`;
+      if (toc) toc.innerHTML = "";
       return;
     }
 
