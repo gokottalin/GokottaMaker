@@ -1,0 +1,13 @@
+<svg width="320" height="88" viewBox="0 0 320 88" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">MD2File Logo Option 5</title>
+  <desc id="desc">A compact app icon combining markdown brackets, number 2, and file output.</desc>
+  <rect x="14" y="12" width="64" height="64" rx="16" fill="#0D6FD3"/>
+  <path d="M27 33L20 44L27 55" stroke="#CFFAFE" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M65 33L72 44L65 55" stroke="#CFFAFE" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M34 52V36L41 45L48 36V52" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M53 35H61C63.8 35 66 37.2 66 40C66 43.6 63.2 45.4 58.2 48.4L53 52H67" stroke="#0B1220" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M57 61H69" stroke="#F2A316" stroke-width="4" stroke-linecap="round"/>
+  <text x="94" y="45" fill="#0B1220" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="30" font-weight="850" letter-spacing="0">MD2</text>
+  <text x="157" y="45" fill="#0D6FD3" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="30" font-weight="850" letter-spacing="0">File</text>
+  <text x="96" y="64" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="1.8">FAST FILE MAKER</text>
+</svg>

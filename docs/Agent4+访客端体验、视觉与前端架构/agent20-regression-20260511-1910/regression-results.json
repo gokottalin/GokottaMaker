@@ -1,0 +1,242 @@
+{
+  "base": "http://127.0.0.1:4333",
+  "expectedVersion": "V2.4.5+20260511-1910",
+  "outDir": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\agent20-regression-20260511-1910",
+  "results": [
+    {
+      "case": "index",
+      "viewport": "desktop",
+      "url": "http://127.0.0.1:4333/index.html",
+      "status": 200,
+      "title": "有源低通滤波器设计与仿真分析",
+      "empty": "",
+      "hrefAll": "./category.html?category=all",
+      "hasHorizontalOverflow": false,
+      "content": "精选内容 有源低通滤波器设计与仿真分析 从指标拆解、拓扑选择、参数计算到示波器验证，整理一套可复用的模拟前端设计流程。 模拟电子 12 分钟阅读 2026-05-03 阅读全文 进入管理端 01 模拟电子 有源低通滤波器设计与仿真分析 02 STM32 STM32 ADC 模拟采样从原理到精度优化 03 ESP32 ESP32 低功耗智能家居节点设计指南 04 开源项目 开源桌面功率放大器项目规划 网页小程序 Mini App Updates 查看小程序中心 电路生成 V1.",
+      "version": "V2.4.5+20260511-1910",
+      "screenshot": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\agent20-regression-20260511-1910\\desktop-index.png",
+      "consoleErrors": []
+    },
+    {
+      "case": "category-all",
+      "viewport": "desktop",
+      "url": "http://127.0.0.1:4333/category.html?category=all",
+      "status": 200,
+      "title": "全部教程",
+      "empty": "",
+      "hrefAll": "",
+      "hasHorizontalOverflow": false,
+      "content": "全部教程 All Tutorials 集中浏览 GokottaMaker 当前已发布的所有技术文章，覆盖模拟电子、STM32、ESP32 与开源硬件实践。 当前共 4 篇内容。 返回首页 模拟电子 有源低通滤波器设计与仿真分析 从指标拆解、拓扑选择、参数计算到示波器验证，整理一套可复用的模拟前端设计流程。 12 分钟阅读2026-05-03 STM32 STM32 ADC 模拟采样从原理到精度优化 围绕采样时间、DMA 环形缓冲、参考电压和软件滤波，建立稳定可信的 ADC 采",
+      "version": "V2.4.5+20260511-1910",
+      "screenshot": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\agent20-regression-20260511-1910\\desktop-category-all.png",
+      "consoleErrors": []
+    },
+    {
+      "case": "post-invalid",
+      "viewport": "desktop",
+      "url": "http://127.0.0.1:4333/post.html?id=not-existing-post",
+      "status": 200,
+      "title": "文章详情 | GokottaMaker",
+      "empty": "没有找到内容。",
+      "hrefAll": "",
+      "hasHorizontalOverflow": false,
+      "content": "文章目录 没有找到内容。",
+      "version": "V2.4.5+20260511-1910",
+      "screenshot": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\agent20-regression-20260511-1910\\desktop-post-invalid.png",
+      "consoleErrors": []
+    },
+    {
+      "case": "project-invalid",
+      "viewport": "desktop",
+      "url": "http://127.0.0.1:4333/project.html?id=not-existing-project",
+      "status": 200,
+      "title": "项目详情 | GokottaMaker",
+      "empty": "没有找到内容。",
+      "hrefAll": "",
+      "hasHorizontalOverflow": false,
+      "content": "项目目录 没有找到内容。",
+      "version": "V2.4.5+20260511-1910",
+      "screenshot": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\agent20-regression-20260511-1910\\desktop-project-invalid.png",
+      "consoleErrors": []
+    },
+    {
+      "case": "project-planned",
+      "viewport": "desktop",
+      "url": "http://127.0.0.1:4333/project.html?id=power-amp",
+      "status": 200,
+      "title": "桌面功率放大器",
+      "empty": "该项目尚未上线，访客暂时只能查看首页和项目列表中的概述。",
+      "hrefAll": "",
+      "hasHorizontalOverflow": false,
+      "content": "规划中 桌面功率放大器 Open Hardware Project 面向音频实验和桌面音箱的小型功放项目，沉淀原理图、PCB、BOM 与调试记录。 MIT License 2026-05-03 开源硬件功率放大器音频BOMPCB项目规划复现指南 规划中 项目目录 该项目尚未上线，访客暂时只能查看首页和项目列表中的概述。",
+      "version": "V2.4.5+20260511-1910",
+      "screenshot": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\agent20-regression-20260511-1910\\desktop-project-planned.png",
+      "consoleErrors": []
+    },
+    {
+      "case": "miniapps",
+      "viewport": "desktop",
+      "url": "http://127.0.0.1:4333/miniapps.html",
+      "status": 200,
+      "title": "小程序中心",
+      "empty": "",
+      "hrefAll": "",
+      "hasHorizontalOverflow": false,
+      "content": "小程序中心 Mini Apps 收纳可直接使用的网页小工具。每个工具保持独立页面、样式与 API 契约，便于后续扩展。 返回首页 电路生成 V1.3 GokottaElec 在线预览 把 LLM 输出的 CNL 电路描述转换为 SVG 原理图、IR JSON 和 ERC 诊断。 CNL 输入Sample 加载SVG 预览IR / ERC 诊断 一期接入 打开工具",
+      "version": "V2.4.5+20260511-1910",
+      "screenshot": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\agent20-regression-20260511-1910\\desktop-miniapps.png",
+      "consoleErrors": []
+    },
+    {
+      "case": "index",
+      "viewport": "mobile",
+      "url": "http://127.0.0.1:4333/index.html",
+      "status": 200,
+      "title": "有源低通滤波器设计与仿真分析",
+      "empty": "",
+      "hrefAll": "./category.html?category=all",
+      "hasHorizontalOverflow": false,
+      "content": "精选内容 有源低通滤波器设计与仿真分析 从指标拆解、拓扑选择、参数计算到示波器验证，整理一套可复用的模拟前端设计流程。 模拟电子 12 分钟阅读 2026-05-03 阅读全文 进入管理端 01 模拟电子 有源低通滤波器设计与仿真分析 02 STM32 STM32 ADC 模拟采样从原理到精度优化 03 ESP32 ESP32 低功耗智能家居节点设计指南 04 开源项目 开源桌面功率放大器项目规划 网页小程序 Mini App Updates 查看小程序中心 电路生成 V1.",
+      "version": "V2.4.5+20260511-1910",
+      "screenshot": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\agent20-regression-20260511-1910\\mobile-index.png",
+      "consoleErrors": []
+    },
+    {
+      "case": "category-all",
+      "viewport": "mobile",
+      "url": "http://127.0.0.1:4333/category.html?category=all",
+      "status": 200,
+      "title": "全部教程",
+      "empty": "",
+      "hrefAll": "",
+      "hasHorizontalOverflow": false,
+      "content": "全部教程 All Tutorials 集中浏览 GokottaMaker 当前已发布的所有技术文章，覆盖模拟电子、STM32、ESP32 与开源硬件实践。 当前共 4 篇内容。 返回首页 模拟电子 有源低通滤波器设计与仿真分析 从指标拆解、拓扑选择、参数计算到示波器验证，整理一套可复用的模拟前端设计流程。 12 分钟阅读2026-05-03 STM32 STM32 ADC 模拟采样从原理到精度优化 围绕采样时间、DMA 环形缓冲、参考电压和软件滤波，建立稳定可信的 ADC 采",
+      "version": "V2.4.5+20260511-1910",
+      "screenshot": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\agent20-regression-20260511-1910\\mobile-category-all.png",
+      "consoleErrors": []
+    },
+    {
+      "case": "post-invalid",
+      "viewport": "mobile",
+      "url": "http://127.0.0.1:4333/post.html?id=not-existing-post",
+      "status": 200,
+      "title": "文章详情 | GokottaMaker",
+      "empty": "没有找到内容。",
+      "hrefAll": "",
+      "hasHorizontalOverflow": false,
+      "content": "文章目录 没有找到内容。",
+      "version": "V2.4.5+20260511-1910",
+      "screenshot": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\agent20-regression-20260511-1910\\mobile-post-invalid.png",
+      "consoleErrors": []
+    },
+    {
+      "case": "project-invalid",
+      "viewport": "mobile",
+      "url": "http://127.0.0.1:4333/project.html?id=not-existing-project",
+      "status": 200,
+      "title": "项目详情 | GokottaMaker",
+      "empty": "没有找到内容。",
+      "hrefAll": "",
+      "hasHorizontalOverflow": false,
+      "content": "项目目录 没有找到内容。",
+      "version": "V2.4.5+20260511-1910",
+      "screenshot": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\agent20-regression-20260511-1910\\mobile-project-invalid.png",
+      "consoleErrors": []
+    },
+    {
+      "case": "project-planned",
+      "viewport": "mobile",
+      "url": "http://127.0.0.1:4333/project.html?id=power-amp",
+      "status": 200,
+      "title": "桌面功率放大器",
+      "empty": "该项目尚未上线，访客暂时只能查看首页和项目列表中的概述。",
+      "hrefAll": "",
+      "hasHorizontalOverflow": false,
+      "content": "规划中 桌面功率放大器 Open Hardware Project 面向音频实验和桌面音箱的小型功放项目，沉淀原理图、PCB、BOM 与调试记录。 MIT License 2026-05-03 开源硬件功率放大器音频BOMPCB项目规划复现指南 规划中 项目目录 该项目尚未上线，访客暂时只能查看首页和项目列表中的概述。",
+      "version": "V2.4.5+20260511-1910",
+      "screenshot": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\agent20-regression-20260511-1910\\mobile-project-planned.png",
+      "consoleErrors": []
+    },
+    {
+      "case": "miniapps",
+      "viewport": "mobile",
+      "url": "http://127.0.0.1:4333/miniapps.html",
+      "status": 200,
+      "title": "小程序中心",
+      "empty": "",
+      "hrefAll": "",
+      "hasHorizontalOverflow": false,
+      "content": "小程序中心 Mini Apps 收纳可直接使用的网页小工具。每个工具保持独立页面、样式与 API 契约，便于后续扩展。 返回首页 电路生成 V1.3 GokottaElec 在线预览 把 LLM 输出的 CNL 电路描述转换为 SVG 原理图、IR JSON 和 ERC 诊断。 CNL 输入Sample 加载SVG 预览IR / ERC 诊断 一期接入 打开工具",
+      "version": "V2.4.5+20260511-1910",
+      "screenshot": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\agent20-regression-20260511-1910\\mobile-miniapps.png",
+      "consoleErrors": []
+    }
+  ],
+  "checks": [
+    {
+      "check": "desktop invalid post empty",
+      "ok": true
+    },
+    {
+      "check": "desktop invalid project empty",
+      "ok": true
+    },
+    {
+      "check": "desktop planned project blocked",
+      "ok": true
+    },
+    {
+      "check": "desktop category all title/count",
+      "ok": true
+    },
+    {
+      "check": "desktop index all tutorials link",
+      "ok": true
+    },
+    {
+      "check": "desktop no horizontal overflow",
+      "ok": true
+    },
+    {
+      "check": "desktop site meta version",
+      "ok": true
+    },
+    {
+      "check": "desktop no console errors",
+      "ok": true
+    },
+    {
+      "check": "mobile invalid post empty",
+      "ok": true
+    },
+    {
+      "check": "mobile invalid project empty",
+      "ok": true
+    },
+    {
+      "check": "mobile planned project blocked",
+      "ok": true
+    },
+    {
+      "check": "mobile category all title/count",
+      "ok": true
+    },
+    {
+      "check": "mobile index all tutorials link",
+      "ok": true
+    },
+    {
+      "check": "mobile no horizontal overflow",
+      "ok": true
+    },
+    {
+      "check": "mobile site meta version",
+      "ok": true
+    },
+    {
+      "check": "mobile no console errors",
+      "ok": true
+    }
+  ],
+  "ok": true
+}

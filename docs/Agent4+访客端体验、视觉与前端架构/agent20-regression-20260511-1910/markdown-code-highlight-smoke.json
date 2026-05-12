@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "result": {
+    "text": "const ok = true;\nlet count = 42;\nreturn \"token-keyword\";",
+    "html": "<span class=\"token-keyword\">const</span> ok = true;\n<span class=\"token-keyword\">let</span> count = <span class=\"token-number\">42</span>;\n<span class=\"token-keyword\">return</span> <span class=\"token-string\">\"token-keyword\"</span>;",
+    "spanCount": 5,
+    "keywordText": [
+      "const",
+      "let",
+      "return"
+    ],
+    "stringText": "\"token-keyword\"",
+    "brokenNestedSpan": false
+  }
+}

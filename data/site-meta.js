@@ -1,6 +1,5 @@
 window.GOKOTTA_SITE_META = {
-  version: "V2.4.3",
-  build: "20260511-1327",
-  versionLabel: "V2.4.3+20260511-1327"
+  version: "V2.4.7",
+  build: "20260512-0838",
+  versionLabel: "V2.4.7+20260512-0838"
 };
-

@@ -3,6 +3,7 @@
   min-height: 660px;
   margin: 24px auto 28px;
   overflow: hidden;
+  touch-action: pan-y;
   border: 1px solid rgba(185, 203, 224, 0.9);
   border-radius: var(--radius);
   background: #0c1727;
@@ -62,6 +63,10 @@
 .hero-slide-content.is-active {
   opacity: 1;
   transform: translateY(0);
+}
+
+.hero.is-swipe-active .hero-slide-content {
+  transition-duration: 360ms;
 }
 
 .badge {
@@ -469,11 +474,24 @@
   gap: 8px;
 }
 
-.pagination-dots span {
+.pagination-dots span,
+.pagination-dots button {
   width: 12px;
   height: 5px;
+  padding: 0;
+  border: 0;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  transition:
+    width 240ms ease,
+    background-color 240ms ease,
+    opacity 240ms ease;
+}
+
+.pagination-dots button:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 4px;
 }
 
 .pagination-dots .active {
@@ -601,4 +619,3 @@
     color: #ffffff;
   }
 }
-

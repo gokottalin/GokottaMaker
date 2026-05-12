@@ -1,14 +1,19 @@
 (function () {
   const posts = window.GokottaContent.getPosts();
-  const projects = window.GokottaContent.getProjects();
+  const publicProjects = window.GokottaContent.getProjects();
+  const projects = window.GokottaContent.getProjectDirectory();
   const list = document.querySelector("#articleList");
+  const hero = document.querySelector(".hero");
   const heroCards = document.querySelector("#heroCards");
   const projectList = document.querySelector("#projectList");
+  const miniappUpdateList = document.querySelector("#miniappUpdateList");
   const search = document.querySelector("#siteSearch");
+  const miniapps = window.GOKOTTA_MINIAPPS || [];
   let featuredItems = [];
   let activeHeroIndex = 0;
   let activeBg = "A";
   let heroTimer = null;
+  let heroCopyTimer = null;
 
   function safe(value) {
     return String(value || "");
@@ -54,6 +59,29 @@
     `;
   }
 
+  function miniappUpdateCard(app) {
+    return `
+      <article class="miniapp-card home-miniapp-card">
+        <img class="miniapp-icon" src="${safe(app.icon)}" alt="" loading="lazy" />
+        <div class="miniapp-card-body">
+          <div class="miniapp-card-kicker">
+            <span>${safe(app.category)}</span>
+            <span>${safe(app.version)}</span>
+          </div>
+          <h3><a href="${safe(app.href)}">${safe(app.name || app.title)}</a></h3>
+          <p>${safe(app.summary)}</p>
+          <div class="miniapp-capabilities">
+            ${(app.capabilities || []).map((item) => `<span>${safe(item)}</span>`).join("")}
+          </div>
+          <div class="miniapp-card-footer">
+            <span>${safe(app.status)}</span>
+            <a class="card-link" href="${safe(app.href)}">打开工具</a>
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
   function renderArticles(items) {
     if (!list) return;
     list.innerHTML = items.map(articleCard).join("") || `<div class="empty-state">没有找到匹配的文章。</div>`;
@@ -83,7 +111,13 @@
     return item.type !== "project" || item.statusKey === "online";
   }
 
+  function normalizeHeroIndex(index) {
+    if (!featuredItems.length) return 0;
+    return (Number(index) + featuredItems.length) % featuredItems.length;
+  }
+
   function renderFeatured(index = 0) {
+    index = normalizeHeroIndex(index);
     const featured = featuredItems[index] || posts[0];
     if (!featured) return;
     const copy = document.querySelector("#heroCopy");
@@ -92,8 +126,10 @@
     const nextBg = activeBg === "A" ? bgB : bgA;
     const currentBg = activeBg === "A" ? bgA : bgB;
 
+    if (hero) hero.dataset.heroIndex = String(index);
+    if (heroCopyTimer) window.clearTimeout(heroCopyTimer);
     copy.classList.remove("is-active");
-    window.setTimeout(() => {
+    heroCopyTimer = window.setTimeout(() => {
       document.querySelector("#featuredTitle").textContent = featured.title;
       document.querySelector("#featuredExcerpt").textContent = itemSummary(featured);
       document.querySelector("#featuredCategory").textContent = itemLabel(featured);
@@ -102,6 +138,7 @@
       document.querySelector("#featuredLink").href = canOpen(featured) ? itemUrl(featured) : "#projectList";
       document.querySelector("#featuredLink").textContent = canOpen(featured) ? "阅读全文" : "查看项目概述";
       copy.classList.add("is-active");
+      heroCopyTimer = null;
     }, 240);
 
     if (nextBg && currentBg) {
@@ -111,18 +148,37 @@
       activeBg = activeBg === "A" ? "B" : "A";
     }
 
-    document.querySelectorAll(".pagination-dots span").forEach((dot, dotIndex) => {
+    document.querySelectorAll(".pagination-dots span, .pagination-dots button").forEach((dot, dotIndex) => {
       dot.classList.toggle("active", dotIndex === index);
+      if (dot.tagName === "BUTTON") dot.setAttribute("aria-current", dotIndex === index ? "true" : "false");
     });
     document.querySelectorAll(".hero-card").forEach((card, cardIndex) => {
       card.classList.toggle("is-active", cardIndex === index);
     });
   }
 
+  function activateHero(index, { restart = true } = {}) {
+    activeHeroIndex = normalizeHeroIndex(index);
+    renderFeatured(activeHeroIndex);
+    if (restart) restartHeroTimer();
+  }
+
   function renderHeroCards() {
     if (!heroCards) return;
     const dots = document.querySelector(".pagination-dots");
-    if (dots) dots.innerHTML = featuredItems.map((_, index) => `<span class="${index === 0 ? "active" : ""}"></span>`).join("");
+    if (dots) {
+      dots.removeAttribute("aria-hidden");
+      dots.setAttribute("aria-label", "精选内容切换");
+      dots.innerHTML = featuredItems
+        .map(
+          (_, index) =>
+            `<button type="button" class="${index === 0 ? "active" : ""}" aria-label="切换到第 ${index + 1} 项精选内容" aria-current="${index === 0 ? "true" : "false"}"></button>`
+        )
+        .join("");
+      dots.querySelectorAll("button").forEach((button, index) => {
+        button.addEventListener("click", () => activateHero(index));
+      });
+    }
     heroCards.innerHTML = featuredItems
       .map(
         (item, index) => `
@@ -140,16 +196,76 @@
     heroCards.querySelectorAll(".hero-card").forEach((card) => {
       card.addEventListener("click", (event) => {
         event.preventDefault();
-        activeHeroIndex = Number(card.dataset.heroIndex || 0);
-        renderFeatured(activeHeroIndex);
-        restartHeroTimer();
+        activateHero(Number(card.dataset.heroIndex || 0));
       });
+    });
+  }
+
+  function bindHeroSwipe() {
+    if (!hero || featuredItems.length < 2) return;
+    let startX = 0;
+    let startY = 0;
+    let pointerId = null;
+    let tracking = false;
+    let lockedHorizontal = false;
+
+    function resetSwipeState() {
+      tracking = false;
+      lockedHorizontal = false;
+      pointerId = null;
+      hero.classList.remove("is-swipe-active");
+    }
+
+    hero.addEventListener("pointerdown", (event) => {
+      if (event.button && event.button !== 0) return;
+      if (event.target.closest("a, button, input, textarea, select, label")) return;
+      startX = event.clientX;
+      startY = event.clientY;
+      pointerId = event.pointerId;
+      tracking = true;
+      lockedHorizontal = false;
+    });
+
+    hero.addEventListener(
+      "pointermove",
+      (event) => {
+        if (!tracking || event.pointerId !== pointerId) return;
+        const deltaX = event.clientX - startX;
+        const deltaY = event.clientY - startY;
+        if (!lockedHorizontal && Math.abs(deltaX) > 12 && Math.abs(deltaX) > Math.abs(deltaY) * 1.15) {
+          lockedHorizontal = true;
+          hero.classList.add("is-swipe-active");
+        }
+        if (lockedHorizontal) event.preventDefault();
+      },
+      { passive: false }
+    );
+
+    hero.addEventListener("pointerup", (event) => {
+      if (!tracking || event.pointerId !== pointerId) return;
+      const deltaX = event.clientX - startX;
+      const deltaY = event.clientY - startY;
+      const threshold = Math.max(44, Math.min(72, hero.clientWidth * 0.14));
+      if (Math.abs(deltaX) >= threshold && Math.abs(deltaX) > Math.abs(deltaY) * 1.18) {
+        activateHero(activeHeroIndex + (deltaX < 0 ? 1 : -1));
+      }
+      resetSwipeState();
+    });
+
+    hero.addEventListener("pointercancel", resetSwipeState);
+    hero.addEventListener("pointerleave", (event) => {
+      if (tracking && event.pointerType === "mouse") resetSwipeState();
     });
   }
 
   function renderProjects(items) {
     if (!projectList) return;
     projectList.innerHTML = items.map(projectCard).join("");
+  }
+
+  function renderMiniappUpdates(items) {
+    if (!miniappUpdateList) return;
+    miniappUpdateList.innerHTML = items.map(miniappUpdateCard).join("") || `<div class="empty-state">当前还没有可用小程序。</div>`;
   }
 
   function restartHeroTimer() {
@@ -188,7 +304,7 @@
       .map((entry) => entry.item);
   }
 
-  featuredItems = [...posts, ...projects]
+  featuredItems = [...posts, ...publicProjects]
     .filter((item) => item.featured)
     .sort((a, b) => Number(a.featuredOrder || 0) - Number(b.featuredOrder || 0))
     .slice(0, 4);
@@ -204,8 +320,10 @@
   renderArticles(posts);
   renderHeroCards();
   renderFeatured(0);
+  bindHeroSwipe();
   restartHeroTimer();
   renderProjects(projects);
+  renderMiniappUpdates(miniapps);
 
   if (search) {
     search.addEventListener("input", () => {

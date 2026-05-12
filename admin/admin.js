@@ -37,6 +37,7 @@
   const categoryField = document.querySelector("#categoryField");
   const statusField = document.querySelector("#statusField");
   const projectExtra = document.querySelector("#projectExtra");
+  const visibilityHint = document.querySelector("#visibilityHint");
   const imageLibrary = document.querySelector("#imageLibrary");
   const refreshImagesButton = document.querySelector("#refreshImagesButton");
   const draftStatus = document.querySelector("#draftStatus");
@@ -268,10 +269,34 @@
     categoryField.hidden = type === "project";
     statusField.hidden = type !== "project";
     projectExtra.hidden = type !== "project";
+    updateVisibilityHint();
   }
 
   function updatePreview() {
     preview.innerHTML = renderMarkdown(contentForm.markdown.value);
+  }
+
+  function visibilityMessage(snapshot = currentSnapshot()) {
+    const isProject = snapshot.type === "project";
+    const isPublished = snapshot.publishStatus === "published";
+    if (!isPublished) {
+      return { tone: "warning", text: "草稿不会进入访客端、RSS 或 sitemap；当前预览仅用于编辑校对。" };
+    }
+    if (isProject && snapshot.statusKey !== "online") {
+      return { tone: "warning", text: "规划中或开发中的项目保存后不会公开正文；访客直链只显示“尚未上线”提示。" };
+    }
+    if (snapshot.featured) {
+      return { tone: "success", text: `保存后将公开展示，并进入首页轮播 Slot ${featuredOrderValue(snapshot.featuredOrder)}。` };
+    }
+    return { tone: "success", text: "保存后将作为公开内容展示；如需进入首页首屏，请选择 0-3 的轮播槽位。" };
+  }
+
+  function updateVisibilityHint() {
+    if (!visibilityHint) return;
+    const message = visibilityMessage();
+    visibilityHint.textContent = message.text;
+    visibilityHint.classList.toggle("is-warning", message.tone === "warning");
+    visibilityHint.classList.toggle("is-success", message.tone === "success");
   }
 
   function currentSnapshot() {
@@ -467,6 +492,7 @@
     setCover("", "", { dirty: false });
     updateTypeFields();
     updatePreview();
+    updateVisibilityHint();
     isRestoringForm = false;
     if (clearLocalDraft) clearDraft();
     dirty ? markDirty() : markClean();
@@ -605,6 +631,7 @@
           const meta = item.contentType === "project" ? `${item.status || ""} / ${item.license || ""}` : `${item.category || ""} / ${item.readTime || ""}`;
           const tags = item.tags ? ` / ${item.tags}` : "";
           const deleted = Boolean(item.deletedAt);
+          const slot = item.featured ? ` / 轮播 Slot ${featuredOrderValue(item.featuredOrder)}` : "";
           const key = itemKey(item);
           return `
             <article class="admin-row ${deleted ? "is-deleted" : ""}">
@@ -617,7 +644,7 @@
                   <span class="content-kind">${kind}</span>${escapeHtml(item.title)}
                   <span class="content-status">${deleted ? "回收站" : publish === "published" ? "已发布" : "草稿"}</span>
                 </strong>
-                <p>${escapeHtml(meta)}${escapeHtml(tags)} / ${escapeHtml(item.date || "暂无日期")} ${item.featured ? " / 首页轮播" : ""}</p>
+                <p>${escapeHtml(meta)}${escapeHtml(tags)} / ${escapeHtml(item.date || "暂无日期")}${escapeHtml(slot)}</p>
                 <p>${escapeHtml(item.excerpt || item.summary)}</p>
               </div>
               <div class="row-actions">
@@ -728,6 +755,7 @@
     setCover(snapshot.cover, snapshot.cover ? "已从本地草稿恢复封面" : "", { dirty: false });
     updateTypeFields();
     updatePreview();
+    updateVisibilityHint();
     isRestoringForm = false;
     dirty ? markDirty() : markClean();
   }
@@ -858,6 +886,7 @@
   function assignCurrentToFeaturedSlot(order) {
     contentForm.featured.checked = true;
     contentForm.featuredOrder.value = String(featuredOrderValue(order));
+    updateVisibilityHint();
     markDirty();
     renderFeaturedSlots();
     setNotice(`已把当前编辑内容安排到首页轮播槽位 ${order}，保存后生效。`, "warning");
@@ -1157,6 +1186,7 @@
   contentForm.addEventListener("input", () => {
     markDirty();
     updatePreview();
+    updateVisibilityHint();
     renderFeaturedSlots();
   });
 
@@ -1166,6 +1196,7 @@
       event.target.value = String(featuredOrderValue(event.target.value));
     }
     markDirty();
+    updateVisibilityHint();
     renderFeaturedSlots();
   });
 

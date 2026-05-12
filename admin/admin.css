@@ -768,6 +768,7 @@ button:disabled {
   grid-template-columns: minmax(220px, 0.68fr) minmax(280px, 1fr) minmax(280px, 1fr) minmax(320px, 0.98fr);
   grid-template-areas:
     "type title category publish"
+    "visibility visibility visibility visibility"
     "excerpt excerpt tags featured"
     "excerpt excerpt cover cover"
     "carousel carousel carousel carousel"
@@ -798,6 +799,34 @@ button:disabled {
 
 .meta-publish {
   grid-area: publish;
+}
+
+.meta-visibility {
+  grid-area: visibility;
+  align-self: stretch;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  border: 1px solid rgba(156, 185, 214, 0.42);
+  border-radius: 8px;
+  background: #f8fbff;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.meta-visibility.is-warning {
+  border-color: rgba(192, 126, 0, 0.28);
+  background: #fff8e8;
+  color: #8a5c00;
+}
+
+.meta-visibility.is-success {
+  border-color: rgba(11, 143, 103, 0.22);
+  background: #effaf5;
+  color: #0b7656;
 }
 
 .meta-excerpt {
@@ -1341,6 +1370,7 @@ button:disabled {
     grid-template-areas:
       "type title"
       "category publish"
+      "visibility visibility"
       "featured featured"
       "excerpt excerpt"
       "tags tags"
@@ -1878,7 +1908,8 @@ button:disabled {
     grid-template-areas:
       "type type"
       "title category"
-      "publish featured"
+      "publish visibility"
+      "featured featured"
       "excerpt excerpt"
       "tags tags"
       "cover cover"
@@ -1987,6 +2018,7 @@ button:disabled {
       "title"
       "category"
       "publish"
+      "visibility"
       "featured"
       "carousel"
       "excerpt"

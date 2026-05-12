@@ -10,6 +10,7 @@ const { createContentStore } = require("./lib/content");
 const { createDatabase } = require("./lib/db");
 const { createSeo } = require("./lib/seo");
 const { createUploadStore } = require("./lib/uploads");
+const { markdownToDocx } = require("./lib/md2doc");
 const { validatePostPayload, validateProjectPayload, validateUploadPayload } = require("./lib/validators");
 
 const root = __dirname;
@@ -36,8 +37,8 @@ const contentStore = createContentStore(db);
 const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword });
 const uploadStore = createUploadStore(uploadDir);
 
-const siteVersion = "V2.4.3";
-const siteBuild = "20260511-1327";
+const siteVersion = "V2.4.7";
+const siteBuild = "20260512-0838";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
 const elecVersion = "V1.3";
@@ -45,6 +46,7 @@ const elecInputLimitBytes = 200 * 1024;
 const elecMaxCircuits = 10;
 const elecTmpRoot = path.resolve(process.env.ELEC_TMP_DIR || path.join(dataDir, ".tmp", "gokotta-elec"));
 const elecCoreDir = path.resolve(process.env.ELEC_CORE_DIR || path.join(root, "gokotta-elec-core"));
+const md2docInputLimitBytes = 512 * 1024;
 
 function loadSeedData() {
   const sandbox = { window: {} };
@@ -283,7 +285,7 @@ const { saveUpload, uploads } = uploadStore;
 const seo = createSeo({ siteUrl, allPosts, allProjects, text });
 
 function contentScript(res) {
-  const body = `window.GOKOTTA_SERVER_CONTENT = ${JSON.stringify({ posts: allPosts(false), projects: allProjects(false) })};`;
+  const body = `window.GOKOTTA_SERVER_CONTENT = ${JSON.stringify(publicContentPayload())};`;
   res.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8", "Cache-Control": "no-store" });
   res.end(body);
 }
@@ -540,6 +542,44 @@ function parseBuildOutput(outputDir) {
   };
 }
 
+function publicProjectPreview(project) {
+  return {
+    id: project.id,
+    slug: project.slug || project.id,
+    type: "project",
+    title: project.title,
+    status: project.status,
+    statusKey: project.statusKey,
+    summary: project.summary || "",
+    cover: project.cover || "",
+    license: project.license || "",
+    stars: Number(project.stars || 0),
+    date: project.date || "",
+    version: project.version || "",
+    progress: Number(project.progress || 0),
+    tags: project.tags || ""
+  };
+}
+
+function publicProjectDirectory() {
+  const seedProjects = loadSeedData().projects || [];
+  const projectMap = new Map(seedProjects.map((project) => [project.id, publicProjectPreview(project)]));
+  for (const project of allProjects(true)) {
+    if (project.deletedAt) continue;
+    if (!projectMap.has(project.id)) continue;
+    projectMap.set(project.id, publicProjectPreview(project));
+  }
+  return [...projectMap.values()];
+}
+
+function publicContentPayload() {
+  return {
+    posts: allPosts(false),
+    projects: allProjects(false),
+    projectDirectory: publicProjectDirectory()
+  };
+}
+
 function spawnElecBuild(inputPath, outputDir) {
   return new Promise((resolve) => {
     const child = childProcess.spawn(process.execPath, [
@@ -635,6 +675,63 @@ async function elecBuild(res, body) {
   } finally {
     fs.rmSync(runDir, { recursive: true, force: true });
   }
+}
+
+function safeDownloadName(value, fallback) {
+  const name = String(value || fallback || "document")
+    .trim()
+    .replace(/[<>:"/\\|?*\x00-\x1f]+/g, "-")
+    .replace(/\s+/g, "-")
+    .slice(0, 80)
+    .replace(/^-+|-+$/g, "");
+  return name || fallback || "document";
+}
+
+function md2docResponse(res, status, payload) {
+  return json(res, status, {
+    version: "V0.2",
+    diagnostics: [],
+    ...payload
+  });
+}
+
+function md2docConvert(res, body) {
+  const markdown = typeof body.markdown === "string" ? body.markdown : "";
+  const markdownBytes = Buffer.byteLength(markdown, "utf8");
+  const format = typeof body.format === "string" ? body.format.trim().toLowerCase() : "docx";
+  if (format !== "docx") {
+    return md2docResponse(res, 400, {
+      ok: false,
+      diagnostics: [{ level: "ERROR", code: "FORMAT_UNSUPPORTED", message: "当前仅支持导出 DOCX，PDF 等格式将在后续版本接入。" }]
+    });
+  }
+  if (!markdown.trim()) {
+    return md2docResponse(res, 400, {
+      ok: false,
+      diagnostics: [{ level: "ERROR", code: "MARKDOWN_REQUIRED", message: "Markdown 内容不能为空。" }]
+    });
+  }
+  if (markdownBytes > md2docInputLimitBytes) {
+    return md2docResponse(res, 413, {
+      ok: false,
+      diagnostics: [{ level: "ERROR", code: "MARKDOWN_TOO_LARGE", message: "单次 Markdown 内容不能超过 512 KB。" }]
+    });
+  }
+
+  const title = typeof body.title === "string" ? body.title.trim().slice(0, 120) : "";
+  const fileBase = safeDownloadName(body.filename || title, "md2file").replace(/\.docx$/i, "") || "md2file";
+  const filename = `${fileBase}.docx`;
+  const docx = markdownToDocx({ markdown, title });
+  res.writeHead(200, {
+    "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "Content-Disposition": `attachment; filename="${filename}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
+    "Cache-Control": "no-store",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    "Content-Length": docx.length
+  });
+  res.end(docx);
 }
 
 function carouselItems() {
@@ -853,10 +950,11 @@ function recordLoginFailure(key) {
 
 async function api(req, res, pathname) {
   if (pathname === "/api/content.js" && req.method === "GET") return contentScript(res);
-  if (pathname === "/api/content" && req.method === "GET") return json(res, 200, { posts: allPosts(false), projects: allProjects(false) });
+  if (pathname === "/api/content" && req.method === "GET") return json(res, 200, publicContentPayload());
   if (pathname === "/api/elec/samples" && req.method === "GET") return elecResponse(res, 200, elecSamples());
   if (pathname === "/api/elec/llm-handoff" && req.method === "GET") return elecHandoff(req, res);
   if (pathname === "/api/elec/build" && req.method === "POST") return elecBuild(res, await readBody(req, elecInputLimitBytes + 4096));
+  if ((pathname === "/api/md2file/convert" || pathname === "/api/md2doc/convert") && req.method === "POST") return md2docConvert(res, await readBody(req, md2docInputLimitBytes + 4096));
   if (pathname === "/api/health" && req.method === "GET") return json(res, 200, healthPayload());
   if (pathname === "/api/session" && req.method === "GET") {
     const user = currentUser(req);
@@ -1054,11 +1152,50 @@ const mime = {
   ".webmanifest": "application/manifest+json; charset=utf-8"
 };
 
+const publicStaticFiles = new Set([
+  "/",
+  "/404.html",
+  "/category.html",
+  "/index.html",
+  "/miniapps.html",
+  "/post.html",
+  "/project.html",
+  "/projects.html",
+  "/site.webmanifest",
+  "/styles.css",
+  "/main.js",
+  "/post.js"
+]);
+
+const publicStaticPrefixes = ["/admin/", "/assets/", "/data/", "/styles/", "/tools/"];
+const blockedStaticSegments = new Set([".git", "database", "docs", "gokotta-elec-core", "lib", "node_modules", "scripts"]);
+
+function isPublicStaticRequest(requested) {
+  const normalized = requested.replace(/\\/g, "/");
+  if (!normalized.startsWith("/") || normalized.includes("\0")) return false;
+  const segments = normalized.split("/").filter(Boolean);
+  if (segments.some((segment) => segment === ".." || segment.startsWith(".") || blockedStaticSegments.has(segment))) {
+    return false;
+  }
+  if (normalized.startsWith("/uploads/")) return true;
+  if (publicStaticFiles.has(normalized)) return true;
+  return publicStaticPrefixes.some((prefix) => normalized.startsWith(prefix));
+}
+
 function serveStatic(res, pathname) {
   let requested = decodeURIComponent(pathname === "/" ? "/index.html" : pathname);
   if (requested.endsWith("/")) requested += "index.html";
+  if (!isPublicStaticRequest(requested)) {
+    res.writeHead(403, {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "no-cache",
+      "X-Content-Type-Options": "nosniff"
+    });
+    res.end("Forbidden");
+    return;
+  }
   const staticRoot = requested.startsWith("/uploads/") ? uploadDir : root;
-  const relativeRequest = requested.startsWith("/uploads/") ? requested.slice("/uploads/".length) : requested;
+  const relativeRequest = requested.startsWith("/uploads/") ? requested.slice("/uploads/".length) : requested.replace(/^\/+/, "");
   let target = path.normalize(path.join(staticRoot, relativeRequest));
   const relativeTarget = path.relative(staticRoot, target);
   if (relativeTarget.startsWith("..") || path.isAbsolute(relativeTarget)) {

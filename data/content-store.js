@@ -45,6 +45,30 @@
     return mergeDefaults(window.GOKOTTA_PROJECTS || window.GOKOTTA_SEED?.projects || [], read(projectStorageKey, []), deleted("projects"));
   }
 
+  function sanitizeProjectPreview(project) {
+    return {
+      id: project.id,
+      slug: project.slug || project.id,
+      type: "project",
+      title: project.title,
+      status: project.status,
+      statusKey: project.statusKey,
+      summary: project.summary || "",
+      cover: project.cover || "",
+      license: project.license || "",
+      stars: Number(project.stars || 0),
+      date: project.date || "",
+      version: project.version || "",
+      progress: Number(project.progress || 0),
+      tags: project.tags || ""
+    };
+  }
+
+  function getProjectDirectory() {
+    if (window.GOKOTTA_SERVER_CONTENT?.projectDirectory) return window.GOKOTTA_SERVER_CONTENT.projectDirectory;
+    return mergeDefaults(window.GOKOTTA_PROJECTS || window.GOKOTTA_SEED?.projects || [], read(projectStorageKey, []), deleted("projects")).map(sanitizeProjectPreview);
+  }
+
   function savePost(post) {
     const items = read(postStorageKey, []);
     const next = items.some((item) => item.id === post.id) ? items.map((item) => (item.id === post.id ? post : item)) : [post, ...items];
@@ -74,6 +98,7 @@
   window.GokottaContent = {
     getPosts,
     getProjects,
+    getProjectDirectory,
     savePost,
     saveProject,
     remove

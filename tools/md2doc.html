@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MD2File Markdown 转换器 | GokottaMaker</title>
+    <meta name="description" content="把 Markdown 转换为可下载文件，当前支持 Word DOCX，后续可扩展 PDF。" />
+    <link rel="manifest" href="../site.webmanifest" />
+    <link rel="stylesheet" href="../styles.css?v=20260512-0838" />
+    <link rel="stylesheet" href="../styles/md2doc.css?v=20260512-0838" />
+  </head>
+  <body class="md2doc-page">
+    <a class="skip-link" href="#mainContent">跳到工具</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="../index.html"><img class="brand-symbol" src="../assets/logo/gokottamaker-mark.svg" alt="GokottaMaker" /><span>Gokotta<b>Maker</b></span></a>
+        <nav class="main-nav" aria-label="主导航">
+          <a href="../category.html?category=analog">模拟电子</a>
+          <a href="../category.html?category=stm32">STM32</a>
+          <a href="../category.html?category=esp32">ESP32</a>
+          <a href="../projects.html">开源项目</a>
+          <a href="../miniapps.html" aria-current="page">小程序</a>
+        </nav>
+        <div class="header-actions"><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换夜间模式" title="切换夜间模式"><span class="theme-toggle-icon" aria-hidden="true"></span></button><a class="return-link" href="../miniapps.html">小程序中心</a></div>
+      </div>
+    </header>
+
+    <main class="md2doc-shell" id="mainContent">
+      <header class="md2doc-header">
+        <img class="md2doc-icon" src="./assets/md2doc-icon.svg" alt="" aria-hidden="true" />
+        <div>
+          <h1>MD2File Markdown 转换器</h1>
+          <p>Markdown 输入、HTML 预览、当前导出 DOCX，后续可扩展 PDF。</p>
+        </div>
+        <div class="md2doc-header-actions">
+          <button id="sampleButton" type="button">示例</button>
+          <button id="importButton" type="button">导入 .md</button>
+          <button id="downloadButton" type="button">下载 DOCX</button>
+          <input id="fileInput" type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" hidden />
+        </div>
+      </header>
+
+      <section class="md2doc-meta" aria-label="文档设置">
+        <label>
+          <span>文档标题</span>
+          <input id="docTitle" type="text" value="GokottaMaker Markdown 文档" />
+        </label>
+        <label>
+          <span>文件名</span>
+          <input id="fileName" type="text" value="gokotta-md2file" />
+        </label>
+        <div class="md2doc-stat" id="docStats">0 字符</div>
+      </section>
+
+      <section class="md2doc-workspace" aria-label="Markdown 多格式转换工作台">
+        <section class="md2doc-panel">
+          <div class="md2doc-panel-head">
+            <h2>Markdown</h2>
+            <div class="md2doc-actions">
+              <button id="copyButton" type="button">复制</button>
+              <button id="clearButton" type="button">清空</button>
+            </div>
+          </div>
+          <textarea id="markdownInput" spellcheck="false"></textarea>
+        </section>
+
+        <section class="md2doc-panel">
+          <div class="md2doc-panel-head">
+            <h2>预览</h2>
+            <div class="md2doc-actions">
+              <button id="refreshButton" type="button">刷新</button>
+            </div>
+          </div>
+          <article class="md2doc-preview markdown-article" id="previewPane"></article>
+        </section>
+      </section>
+
+      <pre class="md2doc-log" id="diagnosticsLog">等待转换。</pre>
+    </main>
+
+    <script src="../data/markdown-renderer.js?v=20260512-0838"></script>
+    <script src="./md2doc.js?v=20260512-0838"></script>
+    <script src="../data/site-meta.js?v=20260512-0838"></script>
+    <script src="../data/footer.js?v=20260512-0838"></script>
+  </body>
+</html>

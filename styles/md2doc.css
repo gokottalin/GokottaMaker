@@ -1,0 +1,214 @@
+.md2doc-page {
+  background:
+    linear-gradient(90deg, rgba(13, 111, 211, 0.06) 1px, transparent 1px) 0 0 / 36px 36px,
+    var(--body-bg);
+}
+
+.md2doc-shell {
+  width: min(1500px, calc(100% - 40px));
+  min-height: calc(100vh - 76px);
+  margin: 0 auto;
+  padding: 22px 0 48px;
+}
+
+.md2doc-header,
+.md2doc-meta,
+.md2doc-panel,
+.md2doc-log {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 14px 32px rgba(15, 35, 70, 0.06);
+}
+
+.md2doc-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px;
+}
+
+.md2doc-icon {
+  width: 58px;
+  height: 58px;
+}
+
+.md2doc-header h1 {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.2;
+}
+
+.md2doc-header p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.md2doc-header-actions,
+.md2doc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.md2doc-page button {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 820;
+}
+
+.md2doc-page button:hover:not(:disabled) {
+  border-color: var(--blue);
+  background: var(--surface-2);
+}
+
+#downloadButton {
+  border-color: var(--blue);
+  background: var(--blue);
+  color: #ffffff;
+}
+
+.md2doc-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+  margin: 14px 0;
+  padding: 12px;
+}
+
+.md2doc-meta label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.md2doc-meta input {
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface-2);
+  color: var(--ink);
+  font: inherit;
+}
+
+.md2doc-stat {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.md2doc-workspace {
+  display: grid;
+  grid-template-columns: minmax(340px, 0.96fr) minmax(420px, 1.04fr);
+  gap: 14px;
+  min-height: 620px;
+}
+
+.md2doc-panel {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.md2doc-panel-head {
+  display: flex;
+  min-height: 50px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+}
+
+.md2doc-panel-head h2 {
+  margin: 0;
+  font-size: 15px;
+}
+
+#markdownInput {
+  flex: 1;
+  min-height: 540px;
+  padding: 14px;
+  border: 0;
+  outline: 0;
+  resize: none;
+  background:
+    linear-gradient(90deg, rgba(13, 111, 211, 0.05) 1px, transparent 1px) 0 0 / 28px 28px,
+    var(--surface);
+  color: var(--ink);
+  font-family: Consolas, "Microsoft YaHei UI", monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.md2doc-preview {
+  flex: 1;
+  min-height: 540px;
+  overflow: auto;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--surface);
+}
+
+.md2doc-log {
+  min-height: 48px;
+  margin: 14px 0 0;
+  padding: 12px;
+  overflow: auto;
+  color: var(--muted);
+  font-family: Consolas, monospace;
+  font-size: 13px;
+}
+
+.md2doc-log.is-error {
+  color: #b42318;
+}
+
+@media (max-width: 1100px) {
+  .md2doc-header,
+  .md2doc-meta,
+  .md2doc-workspace {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .md2doc-shell {
+    width: min(100% - 24px, 1500px);
+    padding-top: 14px;
+  }
+
+  .md2doc-header h1 {
+    font-size: 23px;
+  }
+
+  #markdownInput,
+  .md2doc-preview {
+    min-height: 420px;
+  }
+}

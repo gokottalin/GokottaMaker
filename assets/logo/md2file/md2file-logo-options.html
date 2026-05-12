@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MD2File Logo Options</title>
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --surface: #ffffff;
+        --ink: #0b1220;
+        --muted: #52657a;
+        --line: #d9e3ef;
+        --blue: #0d6fd3;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: Inter, "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+      }
+
+      main {
+        width: min(1120px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 48px 0 64px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 34px;
+        line-height: 1.15;
+        letter-spacing: 0;
+      }
+
+      .intro {
+        max-width: 720px;
+        margin: 0 0 28px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 18px;
+      }
+
+      .option {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: 0 18px 45px rgba(15, 35, 70, 0.1);
+      }
+
+      .preview {
+        min-height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 28px;
+        background:
+          linear-gradient(90deg, rgba(13, 111, 211, 0.06) 1px, transparent 1px),
+          linear-gradient(rgba(13, 111, 211, 0.06) 1px, transparent 1px),
+          #ffffff;
+        background-size: 22px 22px;
+      }
+
+      img {
+        width: min(320px, 100%);
+        height: auto;
+        display: block;
+      }
+
+      .meta {
+        padding: 18px 20px 20px;
+        border-top: 1px solid var(--line);
+      }
+
+      h2 {
+        margin: 0 0 6px;
+        font-size: 18px;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      code {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 6px 8px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #f8fbff;
+        color: var(--blue);
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>MD2File LOGO 方案</h1>
+      <p class="intro">5 个备选都沿用 GokottaMaker 的纯色蓝色体系：模块化、工具感、Markdown 转文件。没有渐变，适合网页导航、工具入口和小程序卡片。</p>
+      <section class="grid" aria-label="MD2File logo options">
+        <article class="option">
+          <div class="preview"><img src="./md2file-logo-option-1.svg" alt="MD2File logo option 1" /></div>
+          <div class="meta">
+            <h2>01 Hex Doc Convert</h2>
+            <p>最贴近主站 15 号 LOGO，六边形模块核心加文档转换箭头。</p>
+            <code>md2file-logo-option-1.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./md2file-logo-option-2.svg" alt="MD2File logo option 2" /></div>
+          <div class="meta">
+            <h2>02 Clean Export</h2>
+            <p>更清爽的工具图标，文档页角和输出线条更明确。</p>
+            <code>md2file-logo-option-2.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./md2file-logo-option-3.svg" alt="MD2File logo option 3" /></div>
+          <div class="meta">
+            <h2>03 Markdown M</h2>
+            <p>突出 Markdown 的 M 字母，适合作为独立应用图标。</p>
+            <code>md2file-logo-option-3.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./md2file-logo-option-4.svg" alt="MD2File logo option 4" /></div>
+          <div class="meta">
+            <h2>04 Modular Flow</h2>
+            <p>模块块状输入到文件输出，最强调“转换流程”。</p>
+            <code>md2file-logo-option-4.svg</code>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./md2file-logo-option-5.svg" alt="MD2File logo option 5" /></div>
+          <div class="meta">
+            <h2>05 App Mark</h2>
+            <p>更偏应用 icon，MD、2、文件输出合在一个紧凑标志里。</p>
+            <code>md2file-logo-option-5.svg</code>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

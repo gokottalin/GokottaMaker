@@ -1,0 +1,17 @@
+<svg width="320" height="88" viewBox="0 0 320 88" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">MD2File Logo Option 1</title>
+  <desc id="desc">A flat blue markdown document converted into a file stack.</desc>
+  <path d="M46 10L75.4 27V61L46 78L16.6 61V27L46 10Z" fill="#0B1220"/>
+  <path d="M46 10L75.4 27L46 44L16.6 27L46 10Z" fill="#7DD3FC"/>
+  <path d="M46 44L75.4 27V61L46 78V44Z" fill="#0D6FD3"/>
+  <path d="M46 44V78L16.6 61V27L46 44Z" fill="#075BC1"/>
+  <path d="M30 33H45.5C49.6 33 53 36.4 53 40.5V56H30V33Z" fill="#FFFFFF"/>
+  <path d="M53 40.5H45.5V33" stroke="#0B5FC6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M34 50V42L38 47L42 42V50" stroke="#0D6FD3" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M58 40H66" stroke="#CFFAFE" stroke-width="4" stroke-linecap="round"/>
+  <path d="M63 35L68 40L63 45" stroke="#CFFAFE" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M58 51H68" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+  <text x="94" y="45" fill="#0B1220" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="30" font-weight="850" letter-spacing="0">MD2</text>
+  <text x="157" y="45" fill="#0D6FD3" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="30" font-weight="850" letter-spacing="0">File</text>
+  <text x="96" y="64" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="1.8">MARKDOWN TO FILE</text>
+</svg>

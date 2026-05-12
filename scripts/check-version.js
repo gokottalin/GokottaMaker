@@ -40,7 +40,20 @@ if (metaBuild !== serverBuild) fail(`data/site-meta.js build ${metaBuild} does n
 if (metaLabel !== serverLabel) fail(`data/site-meta.js versionLabel ${metaLabel} does not match ${serverLabel}.`);
 if (packageVersion !== semverFromSite) fail(`package.json version ${packageVersion} does not match site semver ${semverFromSite}.`);
 
-const htmlFiles = fs.readdirSync(root).filter((name) => name.endsWith(".html"));
+const skippedDirs = new Set([".git", "database", "docs", "gokotta-elec-core", "node_modules", "uploads"]);
+
+function htmlFilesIn(relativeDir = "") {
+  const dir = path.join(root, relativeDir);
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const relativePath = path.join(relativeDir, entry.name);
+    if (entry.isDirectory()) {
+      return skippedDirs.has(entry.name) ? [] : htmlFilesIn(relativePath);
+    }
+    return entry.isFile() && entry.name.endsWith(".html") ? [relativePath] : [];
+  });
+}
+
+const htmlFiles = htmlFilesIn();
 for (const htmlFile of htmlFiles) {
   const html = read(htmlFile);
   const resourceVersions = [...html.matchAll(/[?&]v=([0-9]{8}-[0-9]{4})/g)].map((match) => match[1]);

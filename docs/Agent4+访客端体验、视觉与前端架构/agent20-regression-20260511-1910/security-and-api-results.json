@@ -1,0 +1,130 @@
+﻿{
+    "Base":  "http://127.0.0.1:4333",
+    "Version":  "V2.4.5+20260511-1910",
+    "Static":  [
+                   {
+                       "Path":  "/database/gokottamaker.sqlite",
+                       "Status":  403,
+                       "ContentType":  "text/plain; charset=utf-8",
+                       "Bytes":  9
+                   },
+                   {
+                       "Path":  "/database/gokottamaker.sqlite-wal",
+                       "Status":  403,
+                       "ContentType":  "text/plain; charset=utf-8",
+                       "Bytes":  9
+                   },
+                   {
+                       "Path":  "/server.js",
+                       "Status":  403,
+                       "ContentType":  "text/plain; charset=utf-8",
+                       "Bytes":  9
+                   },
+                   {
+                       "Path":  "/.git/config",
+                       "Status":  403,
+                       "ContentType":  "text/plain; charset=utf-8",
+                       "Bytes":  9
+                   },
+                   {
+                       "Path":  "/.env.example",
+                       "Status":  403,
+                       "ContentType":  "text/plain; charset=utf-8",
+                       "Bytes":  9
+                   },
+                   {
+                       "Path":  "/docs/2026-05-11_Agent20测试修复与Agent分工.md",
+                       "Status":  403,
+                       "ContentType":  "text/plain; charset=utf-8",
+                       "Bytes":  9
+                   },
+                   {
+                       "Path":  "/lib/content.js",
+                       "Status":  403,
+                       "ContentType":  "text/plain; charset=utf-8",
+                       "Bytes":  9
+                   },
+                   {
+                       "Path":  "/scripts/check-version.js",
+                       "Status":  403,
+                       "ContentType":  "text/plain; charset=utf-8",
+                       "Bytes":  9
+                   },
+                   {
+                       "Path":  "/gokotta-elec-core/package.json",
+                       "Status":  403,
+                       "ContentType":  "text/plain; charset=utf-8",
+                       "Bytes":  9
+                   },
+                   {
+                       "Path":  "/index.html",
+                       "Status":  200,
+                       "ContentType":  "text/html; charset=utf-8",
+                       "Bytes":  6037
+                   },
+                   {
+                       "Path":  "/assets/logo/gokottamaker-mark.svg",
+                       "Status":  200,
+                       "ContentType":  "image/svg+xml; charset=utf-8",
+                       "Bytes":  1020
+                   },
+                   {
+                       "Path":  "/tools/gokotta-elec.html",
+                       "Status":  200,
+                       "ContentType":  "text/html; charset=utf-8",
+                       "Bytes":  4418
+                   },
+                   {
+                       "Path":  "/admin/index.html",
+                       "Status":  200,
+                       "ContentType":  "text/html; charset=utf-8",
+                       "Bytes":  20152
+                   }
+               ],
+    "Api":  {
+                "ProjectsCount":  2,
+                "ProjectStatuses":  [
+                                        {
+                                            "id":  "logic-analyzer",
+                                            "statusKey":  "online",
+                                            "visibilityStatus":  "published",
+                                            "hasMarkdown":  true
+                                        },
+                                        {
+                                            "id":  "smart-home-hub",
+                                            "statusKey":  "online",
+                                            "visibilityStatus":  "published",
+                                            "hasMarkdown":  true
+                                        }
+                                    ],
+                "DirectoryCount":  4,
+                "DirectoryItems":  [
+                                       {
+                                           "id":  "power-amp",
+                                           "statusKey":  "planned",
+                                           "hasMarkdown":  false,
+                                           "hasRepoUrl":  false
+                                       },
+                                       {
+                                           "id":  "logic-analyzer",
+                                           "statusKey":  "online",
+                                           "hasMarkdown":  false,
+                                           "hasRepoUrl":  false
+                                       },
+                                       {
+                                           "id":  "smart-home-hub",
+                                           "statusKey":  "online",
+                                           "hasMarkdown":  false,
+                                           "hasRepoUrl":  false
+                                       },
+                                       {
+                                           "id":  "programmable-power",
+                                           "statusKey":  "development",
+                                           "hasMarkdown":  false,
+                                           "hasRepoUrl":  false
+                                       }
+                                   ],
+                "HasPlannedMarkdownLeak":  false,
+                "HasNonOnlineFullProject":  false
+            }
+}

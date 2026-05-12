@@ -1,0 +1,12 @@
+<svg width="320" height="88" viewBox="0 0 320 88" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">MD2File Logo Option 3</title>
+  <desc id="desc">An M shaped markdown mark flowing into a file tab.</desc>
+  <path d="M16 22C16 15.4 21.4 10 28 10H64C70.6 10 76 15.4 76 22V66C76 72.6 70.6 78 64 78H28C21.4 78 16 72.6 16 66V22Z" fill="#0B1220"/>
+  <path d="M25 61V27H35L46 44L57 27H67V61H58V42L49.5 55H42.5L34 42V61H25Z" fill="#38BDF8"/>
+  <path d="M39 31H55" stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round"/>
+  <path d="M55 31L63 39L55 47" stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M52 51H66" stroke="#F2A316" stroke-width="3.4" stroke-linecap="round"/>
+  <text x="94" y="45" fill="#0B1220" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="30" font-weight="850" letter-spacing="0">MD2</text>
+  <text x="157" y="45" fill="#0B5FC6" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="30" font-weight="850" letter-spacing="0">File</text>
+  <text x="96" y="64" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="1.8">WRITE CONVERT SAVE</text>
+</svg>

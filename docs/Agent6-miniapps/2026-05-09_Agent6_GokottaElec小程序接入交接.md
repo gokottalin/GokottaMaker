@@ -11,6 +11,16 @@
 - 后端 `/api/elec/*` 返回版本同步为 `V1.3`，避免工具页、接口和小程序中心显示不一致。
 - 本轮未改变 Agent6 的接口边界：新增小程序仍统一登记在 `data/miniapps.js`，工具页仍保持独立于文章、项目和 CMS 数据模型。
 
+## 2026-05-11 主页 Elec 更新呈现
+
+- 依据 `docs/2026-05-11_Agent20测试修复与Agent分工.md`，Agent6 只处理 miniapps 版本一致性与工具页加载结果。
+- 首页新增“网页小程序 / Mini App Updates”区块，直接读取 `data/miniapps.js`，展示 GokottaElec 当前版本 `V1.3`、状态、能力标签和工具入口。
+- 主页、小程序中心、工具页、后端接口、`gokotta-elec-core/package.json` 当前版本核对均为 `V1.3`。
+- Playwright DOM 验证：首页区块显示 `电路生成 / V1.3 / GokottaElec`，入口指向 `./tools/gokotta-elec.html`；小程序中心和工具页同步显示 `V1.3`。
+- 新增截图证据：
+  - `docs/Agent6-miniapps/visual-20260511/home-elec-update-1366.png`
+  - `docs/Agent6-miniapps/visual-20260511/home-elec-update-390.png`
+
 ## 2026-05-09 V1.2 同步记录
 
 - 源头仓库：`D:\Project\2605-Elec`
@@ -57,7 +67,7 @@ tools/assets/<miniapp-id>*       小程序图标或专属资产
 ```json
 {
   "ok": true,
-  "version": "V1.2",
+  "version": "V1.3",
   "samples": []
 }
 ```
@@ -91,10 +101,10 @@ node gokotta-elec-core/scripts/build-paste.mjs <input> <output-dir>
 
 - `node --check server.js`：通过。
 - `node --check tools/gokotta-elec.js`：通过。
-- `node gokotta-elec-core/scripts/build-paste.mjs samples/Sample-01-voltage-divider.txt output/web-api-v12-smoke`：通过。
+- `node gokotta-elec-core/scripts/build-paste.mjs samples/Sample-01-voltage-divider.txt output/web-api-v13-smoke`：通过。
 - Node fetch 冒烟：
-  - `/api/elec/samples` 返回 5 个 Sample，`version: "V1.2"`。
-  - `/api/elec/build` 返回 `ok: true`、`version: "V1.2"`、1 个 circuit、SVG 长度约 3694、diagnostics 为空。
+  - `/api/elec/samples` 返回 5 个 Sample，`version: "V1.3"`。
+  - `/api/elec/build` 返回 `ok: true`、`version: "V1.3"`、1 个 circuit、SVG 长度约 3694、diagnostics 为空。
 - Playwright 可视化验证：
   - `docs/Agent6-miniapps/visual-20260509/miniapps-1366.png`
   - `docs/Agent6-miniapps/visual-20260509/gokotta-elec-1366.png`
