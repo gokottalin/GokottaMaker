@@ -68,7 +68,7 @@ href: ./tools/md2doc.html
 
 ## 2026-05-12 最终复核
 
-- 站点版本检查：`node scripts/check-version.js` 通过，当前为 `V2.4.7+20260512-0838`。
+- 站点版本检查：`node scripts/check-version.js` 通过，当前为 `V2.4.8+20260512-2002`。
 - 差异检查：`git diff --check` 通过，仅输出当前工作区已有的 CRLF 提示。
 - DOCX 接口烟测：`POST /api/md2file/convert` 返回 `200`、MIME 为 `application/vnd.openxmlformats-officedocument.wordprocessingml.document`、文件头为 `504b0304`。
 - 文件名处理：用户传入 `smoke.docx` 时下载名保持 `smoke.docx`，不会重复追加扩展名。

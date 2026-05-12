@@ -97,8 +97,8 @@ DEPLOY_STARTED_AT=$(date -Iseconds)
 EOF
 
 echo
-echo "== Pull latest =="
-git -c http.version=HTTP/1.1 pull --ff-only origin main
+echo "== Fast-forward to fetched origin/main =="
+git merge --ff-only origin/main
 POST_DEPLOY_COMMIT="$(git rev-parse HEAD)"
 echo "Now commit:   $(git rev-parse --short HEAD)"
 echo "File version: $(version_from_file)"
