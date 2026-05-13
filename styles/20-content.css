@@ -314,7 +314,13 @@
 .toc-card {
   position: sticky;
   top: 98px;
+  max-height: calc(100vh - 124px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
   padding: 20px;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
 }
 
 .toc-card strong {
@@ -325,10 +331,34 @@
 
 .toc-card a {
   display: block;
-  padding: 8px 0;
+  position: relative;
+  padding: 8px 0 8px var(--toc-indent, 0px);
   color: var(--muted);
   font-size: 14px;
   border-bottom: 1px solid #edf2f8;
+}
+
+.toc-card a.toc-level-3 {
+  --toc-indent: 16px;
+  font-size: 13px;
+}
+
+.toc-card a.toc-level-4 {
+  --toc-indent: 30px;
+  color: color-mix(in srgb, var(--muted) 88%, var(--blue));
+  font-size: 12px;
+}
+
+.toc-card a.toc-level-3::before,
+.toc-card a.toc-level-4::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--toc-indent) - 10px);
+  top: 50%;
+  width: 5px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.46;
 }
 
 .toc-card a:hover {
@@ -408,6 +438,127 @@
   color: #0756a7;
   font-family: "Cascadia Code", Consolas, monospace;
   font-size: 0.92em;
+}
+
+.markdown-math {
+  font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif;
+  color: #0b1220;
+  letter-spacing: 0;
+}
+
+.markdown-math-inline {
+  display: inline;
+  padding: 0 0.12em;
+  white-space: nowrap;
+}
+
+.markdown-math-display {
+  display: block;
+  overflow-x: auto;
+  margin: 24px 0;
+  padding: 18px 22px;
+  border: 1px solid #d7e4f3;
+  border-radius: 8px;
+  background: #f8fbff;
+  font-size: 1.08em;
+  line-height: 1.9;
+  text-align: center;
+}
+
+.markdown-math .math-frac {
+  display: inline-grid;
+  min-width: 1.6em;
+  margin: 0 0.18em;
+  vertical-align: -0.72em;
+  text-align: center;
+}
+
+.markdown-math .math-num,
+.markdown-math .math-den {
+  display: block;
+  padding: 0 0.24em;
+  line-height: 1.25;
+}
+
+.markdown-math .math-num {
+  border-bottom: 1px solid currentColor;
+}
+
+.markdown-math .math-root {
+  display: inline-flex;
+  align-items: flex-start;
+  margin: 0 0.14em;
+}
+
+.markdown-math .math-root-degree {
+  margin-right: -0.12em;
+  font-size: 0.62em;
+  line-height: 1;
+}
+
+.markdown-math .math-radical {
+  font-size: 1.16em;
+  line-height: 1;
+}
+
+.markdown-math .math-radicand {
+  padding: 0 0.14em 0 0.18em;
+  border-top: 1px solid currentColor;
+}
+
+.markdown-math .math-op {
+  margin: 0 0.12em;
+  font-style: normal;
+}
+
+.markdown-math .math-vector,
+.markdown-math .math-hat,
+.markdown-math .math-bar,
+.markdown-math .math-dot,
+.markdown-math .math-ddot {
+  position: relative;
+  display: inline-block;
+  padding-top: 0.1em;
+}
+
+.markdown-math .math-vector::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -0.58em;
+  font-size: 0.78em;
+  line-height: 1;
+  text-align: center;
+}
+
+.markdown-math .math-hat::before,
+.markdown-math .math-bar::before,
+.markdown-math .math-dot::before,
+.markdown-math .math-ddot::before {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -0.48em;
+  font-size: 0.72em;
+  line-height: 1;
+  text-align: center;
+}
+
+.markdown-math .math-hat::before {
+  content: "^";
+}
+
+.markdown-math .math-bar::before {
+  content: "¯";
+}
+
+.markdown-math .math-dot::before {
+  content: "·";
+}
+
+.markdown-math .math-ddot::before {
+  content: "··";
 }
 
 .markdown-article pre {
@@ -619,6 +770,15 @@
   background: var(--surface-2);
 }
 
+[data-theme="dark"] .markdown-math {
+  color: #e5edf8;
+}
+
+[data-theme="dark"] .markdown-math-display {
+  border-color: #21466e;
+  background: #0e2035;
+}
+
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .themed-page::before {
     background:
@@ -636,6 +796,15 @@
   :root:not([data-theme="light"]) .is-planned,
   :root:not([data-theme="light"]) .markdown-article blockquote {
     background: var(--surface-2);
+  }
+
+  :root:not([data-theme="light"]) .markdown-math {
+    color: #e5edf8;
+  }
+
+  :root:not([data-theme="light"]) .markdown-math-display {
+    border-color: #21466e;
+    background: #0e2035;
   }
 }
 

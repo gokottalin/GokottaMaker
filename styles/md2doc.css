@@ -30,8 +30,12 @@
 }
 
 .md2doc-icon {
-  width: 58px;
-  height: 58px;
+  display: block;
+  width: clamp(142px, 16vw, 182px);
+  height: auto;
+  max-height: 58px;
+  object-fit: contain;
+  object-position: left center;
 }
 
 .md2doc-header h1 {
@@ -72,6 +76,12 @@
   background: var(--surface-2);
 }
 
+.md2doc-actions button.is-active {
+  border-color: color-mix(in srgb, var(--blue) 70%, #ffffff);
+  background: color-mix(in srgb, var(--blue) 12%, var(--surface));
+  color: var(--blue);
+}
+
 #downloadButton {
   border-color: var(--blue);
   background: var(--blue);
@@ -80,7 +90,7 @@
 
 .md2doc-meta {
   display: grid;
-  grid-template-columns: 1fr 1fr auto;
+  grid-template-columns: minmax(180px, 1.25fr) minmax(150px, 1fr) repeat(4, minmax(112px, 0.72fr)) auto;
   gap: 12px;
   align-items: end;
   margin: 14px 0;
@@ -95,7 +105,8 @@
   font-weight: 850;
 }
 
-.md2doc-meta input {
+.md2doc-meta input,
+.md2doc-meta select {
   min-height: 38px;
   padding: 0 12px;
   border: 1px solid var(--line);
@@ -165,14 +176,70 @@
   line-height: 1.6;
 }
 
-.md2doc-preview {
+.md2doc-preview-stage {
   flex: 1;
   min-height: 540px;
   overflow: auto;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  background: var(--surface);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 30px;
+  background:
+    linear-gradient(90deg, rgba(15, 35, 70, 0.04) 1px, transparent 1px) 0 0 / 24px 24px,
+    #e9eef5;
+}
+
+.md2doc-preview {
+  --paper-width: 210;
+  --paper-height: 297;
+  --page-margin: 22;
+  --preview-scale: 3.05px;
+  --doc-line-height: 1.65;
+  width: calc(var(--paper-width) * var(--preview-scale));
+  min-height: calc(var(--paper-height) * var(--preview-scale));
+  aspect-ratio: var(--paper-width) / var(--paper-height);
+  box-sizing: border-box;
+  padding: calc(var(--page-margin) * var(--preview-scale));
+  border: 1px solid #cfd9e8;
+  border-radius: 2px;
+  background: #ffffff;
+  box-shadow: 0 18px 46px rgba(15, 35, 70, 0.18);
+  color: #111827;
+  font-size: 14px;
+  line-height: var(--doc-line-height);
+  overflow-wrap: anywhere;
+}
+
+.md2doc-preview.markdown-article h2 {
+  margin-top: 20px;
+  font-size: 21px;
+}
+
+.md2doc-preview.markdown-article h3 {
+  font-size: 18px;
+}
+
+.md2doc-preview.markdown-article p,
+.md2doc-preview.markdown-article li {
+  margin-top: 9px;
+  margin-bottom: 9px;
+}
+
+.md2doc-preview.markdown-article pre,
+.md2doc-preview.markdown-article .markdown-table-wrap,
+.md2doc-preview.markdown-article blockquote,
+.md2doc-preview.markdown-article .markdown-math-display {
+  margin: 16px 0;
+}
+
+body.md2doc-page .md2doc-preview .markdown-math {
+  color: #111827 !important;
+}
+
+body.md2doc-page .md2doc-preview .markdown-math-display {
+  border-color: #d7e4f3 !important;
+  background: #f8fbff !important;
+  color: #111827 !important;
 }
 
 .md2doc-log {
@@ -207,8 +274,18 @@
     font-size: 23px;
   }
 
+  .md2doc-icon {
+    width: clamp(128px, 44vw, 168px);
+    max-height: 52px;
+  }
+
   #markdownInput,
-  .md2doc-preview {
+  .md2doc-preview-stage {
     min-height: 420px;
+  }
+
+  .md2doc-preview-stage {
+    justify-content: flex-start;
+    padding: 18px;
   }
 }

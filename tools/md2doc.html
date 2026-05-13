@@ -6,8 +6,8 @@
     <title>MD2File Markdown 转换器 | GokottaMaker</title>
     <meta name="description" content="把 Markdown 转换为可下载文件，当前支持 Word DOCX，后续可扩展 PDF。" />
     <link rel="manifest" href="../site.webmanifest" />
-    <link rel="stylesheet" href="../styles.css?v=20260512-2002" />
-    <link rel="stylesheet" href="../styles/md2doc.css?v=20260512-2002" />
+    <link rel="stylesheet" href="../styles.css?v=20260513-1148" />
+    <link rel="stylesheet" href="../styles/md2doc.css?v=20260513-1148" />
   </head>
   <body class="md2doc-page">
     <a class="skip-link" href="#mainContent">跳到工具</a>
@@ -27,7 +27,7 @@
 
     <main class="md2doc-shell" id="mainContent">
       <header class="md2doc-header">
-        <img class="md2doc-icon" src="./assets/md2doc-icon.svg" alt="" aria-hidden="true" />
+        <img class="md2doc-icon" src="../assets/logo/md2file/md2file-logo-option-1.svg" alt="MD2File" />
         <div>
           <h1>MD2File Markdown 转换器</h1>
           <p>Markdown 输入、HTML 预览、当前导出 DOCX，后续可扩展 PDF。</p>
@@ -49,6 +49,39 @@
           <span>文件名</span>
           <input id="fileName" type="text" value="gokotta-md2file" />
         </label>
+        <label>
+          <span>页面规格</span>
+          <select id="pageSize">
+            <option value="a4" selected>A4 210x297</option>
+            <option value="letter">Letter 8.5x11</option>
+            <option value="a5">A5 148x210</option>
+          </select>
+        </label>
+        <label>
+          <span>页边距</span>
+          <select id="pageMargin">
+            <option value="normal" selected>标准</option>
+            <option value="narrow">窄</option>
+            <option value="wide">宽</option>
+          </select>
+        </label>
+        <label>
+          <span>行距</span>
+          <select id="lineSpacing">
+            <option value="compact">紧凑</option>
+            <option value="normal">常规</option>
+            <option value="relaxed" selected>舒展</option>
+            <option value="loose">宽松</option>
+          </select>
+        </label>
+        <label>
+          <span>预览缩放</span>
+          <select id="previewZoom">
+            <option value="0.75">75%</option>
+            <option value="1" selected>100%</option>
+            <option value="1.25">125%</option>
+          </select>
+        </label>
         <div class="md2doc-stat" id="docStats">0 字符</div>
       </section>
 
@@ -68,19 +101,23 @@
           <div class="md2doc-panel-head">
             <h2>预览</h2>
             <div class="md2doc-actions">
+              <button id="syncScrollToggle" class="is-active" type="button" aria-pressed="true">同步滚动</button>
+              <button id="alignScrollButton" type="button">对齐当前位置</button>
               <button id="refreshButton" type="button">刷新</button>
             </div>
           </div>
-          <article class="md2doc-preview markdown-article" id="previewPane"></article>
+          <div class="md2doc-preview-stage" id="previewStage">
+            <article class="md2doc-preview markdown-article" id="previewPane"></article>
+          </div>
         </section>
       </section>
 
       <pre class="md2doc-log" id="diagnosticsLog">等待转换。</pre>
     </main>
 
-    <script src="../data/markdown-renderer.js?v=20260512-2002"></script>
-    <script src="./md2doc.js?v=20260512-2002"></script>
-    <script src="../data/site-meta.js?v=20260512-2002"></script>
-    <script src="../data/footer.js?v=20260512-2002"></script>
+    <script src="../data/markdown-renderer.js?v=20260513-1148"></script>
+    <script src="./md2doc.js?v=20260513-1148"></script>
+    <script src="../data/site-meta.js?v=20260513-1148"></script>
+    <script src="../data/footer.js?v=20260513-1148"></script>
   </body>
 </html>

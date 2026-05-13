@@ -18,9 +18,9 @@ window.GOKOTTA_MINIAPPS = [
     summary: "把 Markdown 文档转换为可下载文件，当前支持 Word DOCX，并为 PDF 等格式预留扩展。",
     category: "文档转换",
     status: "新增设计",
-    version: "V0.2",
+    version: "V0.3",
     href: "./tools/md2doc.html",
-    icon: "./tools/assets/md2doc-icon.svg",
+    icon: "./assets/logo/md2file/md2file-logo-option-5.svg",
     capabilities: ["Markdown 输入", "实时预览", "DOCX 导出", "PDF 预留"]
   }
 ];

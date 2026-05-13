@@ -64,7 +64,7 @@
       "模拟电子": "Analog Electronics",
       STM32: "STM32 Lab",
       ESP32: "ESP32 Systems",
-      开源项目: "Open Projects"
+      "开源项目": "Open Projects"
     };
     return map[item.category] || "Technical Note";
   }
@@ -132,7 +132,7 @@
     return `
       <section class="related-content" aria-labelledby="relatedContentTitle">
         <div class="related-heading">
-          <h2 id="relatedContentTitle">相关内容</h2>
+          <h2 id="relatedContentTitle">相关推荐</h2>
         </div>
         <div class="related-grid">
           ${items
@@ -289,7 +289,10 @@
     content.innerHTML = `${parsed.html}${renderRelated(item)}`;
     toc.innerHTML = parsed.headings
       .filter((heading) => heading.level > 1)
-      .map((heading) => `<a href="#${heading.id}">${escapeHtml(heading.text)}</a>`)
+      .map((heading) => {
+        const level = Math.min(4, Math.max(2, Number(heading.level) || 2));
+        return `<a class="toc-level-${level}" data-level="${level}" href="#${heading.id}">${escapeHtml(heading.text)}</a>`;
+      })
       .join("");
     enhanceReading(content, toc);
   };

@@ -37,8 +37,8 @@ const contentStore = createContentStore(db);
 const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword });
 const uploadStore = createUploadStore(uploadDir);
 
-const siteVersion = "V2.4.8";
-const siteBuild = "20260512-2002";
+const siteVersion = "V2.4.9";
+const siteBuild = "20260513-1148";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
 const elecVersion = "V1.3";
@@ -194,17 +194,26 @@ function text(res, status, body, type = "text/plain; charset=utf-8", cache = "pu
 
 function readBody(req, limitBytes = 25_000_000) {
   return new Promise((resolve, reject) => {
-    let body = "";
+    const chunks = [];
+    let totalBytes = 0;
+    let overflowError = null;
     req.on("data", (chunk) => {
-      body += chunk;
-      if (Buffer.byteLength(body, "utf8") > limitBytes) {
-        const error = new Error("Payload too large");
-        error.status = 413;
-        reject(error);
-        req.destroy();
+      if (overflowError) return;
+      const piece = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+      totalBytes += piece.length;
+      if (totalBytes > limitBytes) {
+        overflowError = new Error("Payload too large");
+        overflowError.status = 413;
+        return;
       }
+      chunks.push(piece);
     });
     req.on("end", () => {
+      if (overflowError) {
+        reject(overflowError);
+        return;
+      }
+      const body = Buffer.concat(chunks).toString("utf8");
       try {
         resolve(body ? JSON.parse(body) : {});
       } catch {
@@ -213,7 +222,7 @@ function readBody(req, limitBytes = 25_000_000) {
         reject(error);
       }
     });
-    req.on("error", reject);
+    req.on("error", (error) => reject(overflowError || error));
   });
 }
 
@@ -408,19 +417,19 @@ function appendElecHandoffFile(lines, file) {
 
 function buildElecHandoffMarkdown(mode) {
   const full = mode === "full";
-  const title = full ? "GokottaElec LLM 完整对接包" : "GokottaElec LLM 基础对接包";
+  const title = full ? "GokottaElec LLM 完整交接" : "GokottaElec LLM 基础交接";
   const lines = [
     `# ${title}`,
     "",
-    `- 软件版本：${elecVersion}`,
-    "- 目标：让其他 LLM 严格输出 GokottaElec 可解析、可 ERC 检查、可脚本渲染的受控自然语言电路描述。",
-    "- 使用方式：把本文完整粘贴给目标 LLM，并要求它只按契约输出电路 CNL。",
+    `- 当前版本：${elecVersion}`,
+    "- 用途：把 LLM 输出的 CNL 电路描述交给 GokottaElec，生成 SVG 原理图、IR JSON 与 ERC 诊断。",
+    "- 建议：先阅读格式约束，再输出可被工具直接解析的 CNL。",
     "",
-    full ? "## 总要求" : "## 基础要求",
+    full ? "## 完整上下文" : "## 快速上下文",
     "",
     full
-      ? "请你作为电路设计与 CNL 输出助手，严格遵守下面所有文件定义的格式、器件端子、网络规则、边界条件和示例风格。输出时不要自由发挥格式，不要省略网络、器件、连接、约束；无法确定时必须显式给出未连接原因或诊断说明。"
-      : "请你严格遵守系统提示词、CNL 输出契约和输出模板。优先保证格式可解析、端子名准确、网络连接明确。",
+      ? "下面包含 CNL 输入规范、样例、工具契约和常见诊断说明，适合需要完整生成或排查电路文本时使用。"
+      : "下面包含最小必要的 CNL 格式说明和示例，适合快速生成可预览的电路文本。",
     ""
   ];
 
@@ -434,7 +443,7 @@ function elecHandoff(req, res) {
     return elecResponse(res, 503, {
       ok: false,
       markdown: "",
-      diagnostics: [elecDiagnostic("ERROR", "ELEC_CORE_UNAVAILABLE", "GokottaElec 核心目录不可用。")]
+      diagnostics: [elecDiagnostic("ERROR", "ELEC_CORE_UNAVAILABLE", "GokottaElec 核心不可用。")]
     });
   }
 
@@ -451,7 +460,7 @@ function elecHandoff(req, res) {
       ok: false,
       mode,
       markdown: "",
-      diagnostics: [elecDiagnostic("ERROR", "LLM_HANDOFF_UNAVAILABLE", "LLM 对接文件不可用。", { detail: error.message })]
+      diagnostics: [elecDiagnostic("ERROR", "LLM_HANDOFF_UNAVAILABLE", "LLM 交接内容生成失败。", { detail: error.message })]
     });
   }
 }
@@ -515,7 +524,7 @@ function parseBuildOutput(outputDir) {
       diagnostics.push(elecDiagnostic("ERROR", "ELEC_BUILD", artifacts.buildError.trim().slice(0, 2000), { target: circuitId }));
     }
     if (artifacts.svg && !svgLooksValid) {
-      diagnostics.push(elecDiagnostic("ERROR", "SVG_INVALID", "SVG 产物格式不正确。", { target: circuitId }));
+      diagnostics.push(elecDiagnostic("ERROR", "SVG_INVALID", "SVG 输出无效。", { target: circuitId }));
     }
     diagnostics.push(...ercDiagnostics.map((item) => ({ ...item, target: item.target || circuitId })));
 
@@ -619,7 +628,7 @@ async function elecBuild(res, body) {
       ok: false,
       circuits: [],
       artifacts: {},
-      diagnostics: [elecDiagnostic("ERROR", "ELEC_CORE_UNAVAILABLE", "GokottaElec 核心目录不可用。")]
+      diagnostics: [elecDiagnostic("ERROR", "ELEC_CORE_UNAVAILABLE", "GokottaElec 核心不可用。")]
     });
   }
 
@@ -630,7 +639,7 @@ async function elecBuild(res, body) {
       ok: false,
       circuits: [],
       artifacts: {},
-      diagnostics: [elecDiagnostic("ERROR", "SOURCE_REQUIRED", "source 不能为空。")]
+      diagnostics: [elecDiagnostic("ERROR", "SOURCE_REQUIRED", "source 内容不能为空。")]
     });
   }
   if (sourceBytes > elecInputLimitBytes) {
@@ -638,7 +647,7 @@ async function elecBuild(res, body) {
       ok: false,
       circuits: [],
       artifacts: {},
-      diagnostics: [elecDiagnostic("ERROR", "SOURCE_TOO_LARGE", "单次输入文本不能超过 200 KB。")]
+      diagnostics: [elecDiagnostic("ERROR", "SOURCE_TOO_LARGE", "单次输入内容不能超过 200 KB。")]
     });
   }
   const circuitCount = countCnlCircuits(source);
@@ -647,7 +656,7 @@ async function elecBuild(res, body) {
       ok: false,
       circuits: [],
       artifacts: {},
-      diagnostics: [elecDiagnostic("ERROR", "TOO_MANY_CIRCUITS", "单次最多处理 10 个电路块。")]
+      diagnostics: [elecDiagnostic("ERROR", "TOO_MANY_CIRCUITS", "单次最多生成 10 个电路。")]
     });
   }
 
@@ -689,7 +698,7 @@ function safeDownloadName(value, fallback) {
 
 function md2docResponse(res, status, payload) {
   return json(res, status, {
-    version: "V0.2",
+    version: "V0.3",
     diagnostics: [],
     ...payload
   });
@@ -721,7 +730,8 @@ function md2docConvert(res, body) {
   const title = typeof body.title === "string" ? body.title.trim().slice(0, 120) : "";
   const fileBase = safeDownloadName(body.filename || title, "md2file").replace(/\.docx$/i, "") || "md2file";
   const filename = `${fileBase}.docx`;
-  const docx = markdownToDocx({ markdown, title });
+  const options = body && typeof body.options === "object" && body.options ? body.options : {};
+  const docx = markdownToDocx({ markdown, title, options });
   res.writeHead(200, {
     "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     "Content-Disposition": `attachment; filename="${filename}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
