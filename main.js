@@ -7,8 +7,11 @@
   const heroCards = document.querySelector("#heroCards");
   const projectList = document.querySelector("#projectList");
   const miniappUpdateList = document.querySelector("#miniappUpdateList");
+  const coursePathList = document.querySelector("#coursePathList");
+  const recentLessonFeature = document.querySelector("#recentLessonFeature");
   const search = document.querySelector("#siteSearch");
   const miniapps = window.GOKOTTA_MINIAPPS || [];
+  const courseMeta = window.GokottaCourseMeta || {};
   let featuredItems = [];
   let activeHeroIndex = 0;
   let activeBg = "A";
@@ -17,6 +20,13 @@
 
   function safe(value) {
     return String(value || "");
+  }
+
+  function safeToken(value) {
+    return String(value || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
   }
 
   function articleCard(post) {
@@ -32,6 +42,49 @@
           <div class="card-footer">
             <span>${safe(post.readTime)}</span>
             <span>${safe(post.date)}</span>
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  function lessonFeatureCard(post) {
+    if (!post) return `<div class="empty-state">还没有可展示的课程更新。</div>`;
+    return `
+      <div class="lesson-feature-copy">
+        <div class="lesson-row-meta">
+          <span class="category-pill">${safe(post.category)}</span>
+          <span>推荐学习起点</span>
+        </div>
+        <h3><a href="./post.html?id=${post.id}">${safe(post.title)}</a></h3>
+        <p>${safe(post.excerpt)}</p>
+        <div class="card-footer">
+          <span>${safe(post.readTime)}</span>
+          <span>${safe(post.date)}</span>
+        </div>
+      </div>
+      <a class="lesson-feature-media" href="./post.html?id=${post.id}">
+        ${window.GokottaMedia.image(post.cover, `${safe(post.title)}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 360px" })}
+      </a>
+    `;
+  }
+
+  function lessonListCard(post) {
+    return `
+      <article class="lesson-row">
+        <a href="./post.html?id=${post.id}" aria-label="${safe(post.title)}">
+          ${window.GokottaMedia.image(post.cover, `${safe(post.title)}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 180px" })}
+        </a>
+        <div>
+          <div class="lesson-row-meta">
+            <span class="category-pill">${safe(post.category)}</span>
+            <span>${safe(post.date)}</span>
+          </div>
+          <h3><a href="./post.html?id=${post.id}">${safe(post.title)}</a></h3>
+          <p>${safe(post.excerpt)}</p>
+          <div class="card-footer">
+            <span>${safe(post.readTime)}</span>
+            <a class="card-link" href="./post.html?id=${post.id}">进入课程</a>
           </div>
         </div>
       </article>
@@ -60,9 +113,10 @@
   }
 
   function miniappUpdateCard(app) {
+    const appToken = safeToken(app.id || app.name);
     return `
-      <article class="miniapp-card home-miniapp-card">
-        <img class="miniapp-icon" src="${safe(app.icon)}" alt="" loading="lazy" />
+      <article class="miniapp-card home-miniapp-card miniapp-card-${appToken}">
+        <img class="miniapp-icon miniapp-icon-${appToken}" src="${safe(app.icon)}" alt="" loading="lazy" />
         <div class="miniapp-card-body">
           <div class="miniapp-card-kicker">
             <span>${safe(app.category)}</span>
@@ -84,6 +138,12 @@
 
   function renderArticles(items) {
     if (!list) return;
+    if (recentLessonFeature) {
+      const [lead, ...rest] = items;
+      recentLessonFeature.innerHTML = lessonFeatureCard(lead);
+      list.innerHTML = rest.map(lessonListCard).join("") || `<div class="empty-state">没有找到更多匹配的文章。</div>`;
+      return;
+    }
     list.innerHTML = items.map(articleCard).join("") || `<div class="empty-state">没有找到匹配的文章。</div>`;
   }
 
@@ -268,6 +328,54 @@
     miniappUpdateList.innerHTML = items.map(miniappUpdateCard).join("") || `<div class="empty-state">当前还没有可用小程序。</div>`;
   }
 
+  function resolveRecommended(ids) {
+    return ids
+      .map((id) => posts.find((item) => item.id === id) || projects.find((item) => item.id === id) || publicProjects.find((item) => item.id === id))
+      .filter(Boolean)
+      .slice(0, 3);
+  }
+
+  function renderCoursePaths() {
+    if (!coursePathList) return;
+    const orderedKeys = ["analog", "stm32", "esp32"];
+    coursePathList.innerHTML = orderedKeys
+      .map((key) => {
+        const meta = courseMeta[key];
+        if (!meta) return "";
+        const recommended = resolveRecommended(meta.recommendedPosts || []);
+        return `
+          <article class="course-path-card">
+            <a class="course-path-media" href="${safe(meta.href)}" aria-hidden="true" tabindex="-1">
+              ${window.GokottaMedia.image(meta.cover, safe(meta.coverAlt || `${meta.title}课程路线配图`), { loading: "lazy", sizes: "(max-width: 1100px) 100vw, 320px" })}
+            </a>
+            <div class="course-path-copy">
+              <div class="section-title-line course-path-title-line">
+                <h3>${safe(meta.title)}</h3>
+                <span>${safe(meta.english)}</span>
+              </div>
+              <p>${safe(meta.summary)}</p>
+              <div class="course-steps">
+                ${(meta.stages || []).map((step, index) => `<span class="course-step"><b>${String(index + 1).padStart(2, "0")}</b>${safe(step)}</span>`).join("")}
+              </div>
+            </div>
+            <div class="course-path-side">
+              <strong>推荐内容</strong>
+              <div class="course-path-links">
+                ${recommended
+                  .map((item) => {
+                    const href = item.type === "project" || item.status ? `./project.html?id=${item.id}` : `./post.html?id=${item.id}`;
+                    return `<a href="${href}">${safe(item.title)}</a>`;
+                  })
+                  .join("")}
+              </div>
+              <a class="button secondary course-path-cta" href="${safe(meta.href)}">${safe(meta.cta)}</a>
+            </div>
+          </article>
+        `;
+      })
+      .join("");
+  }
+
   function restartHeroTimer() {
     if (heroTimer) window.clearInterval(heroTimer);
     if (!featuredItems.length) return;
@@ -318,6 +426,7 @@
   }
 
   renderArticles(posts);
+  renderCoursePaths();
   renderHeroCards();
   renderFeatured(0);
   bindHeroSwipe();

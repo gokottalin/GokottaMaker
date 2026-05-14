@@ -1,0 +1,14 @@
+<svg width="88" height="88" viewBox="18 15 52 58" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">MD2File Miniapp Icon</title>
+  <desc id="desc">Cropped icon mark from the MD2File option 1 logo for miniapp cards.</desc>
+  <path d="M44 10L73.4 27V61L44 78L14.6 61V27L44 10Z" fill="#0B1220"/>
+  <path d="M44 10L73.4 27L44 44L14.6 27L44 10Z" fill="#7DD3FC"/>
+  <path d="M44 44L73.4 27V61L44 78V44Z" fill="#0D6FD3"/>
+  <path d="M44 44V78L14.6 61V27L44 44Z" fill="#075BC1"/>
+  <path d="M28 33H43.5C47.6 33 51 36.4 51 40.5V56H28V33Z" fill="#FFFFFF"/>
+  <path d="M51 40.5H43.5V33" stroke="#0B5FC6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M32 50V42L36 47L40 42V50" stroke="#0D6FD3" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M56 40H64" stroke="#CFFAFE" stroke-width="4" stroke-linecap="round"/>
+  <path d="M61 35L66 40L61 45" stroke="#CFFAFE" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M56 51H66" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+</svg>

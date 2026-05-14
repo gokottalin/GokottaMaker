@@ -38,7 +38,7 @@ const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword }
 const uploadStore = createUploadStore(uploadDir);
 
 const siteVersion = "V2.4.9";
-const siteBuild = "20260513-1148";
+const siteBuild = "20260514-1635";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
 const elecVersion = "V1.3";
@@ -1166,6 +1166,7 @@ const publicStaticFiles = new Set([
   "/",
   "/404.html",
   "/category.html",
+  "/category-page.js",
   "/index.html",
   "/miniapps.html",
   "/post.html",

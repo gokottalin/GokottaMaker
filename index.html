@@ -12,7 +12,7 @@
     <link rel="canonical" href="http://81.71.156.122:4173/" />
     <link rel="manifest" href="./site.webmanifest" />
     <link rel="preload" as="image" href="./assets/hero/electronics-lab-hero-1600.webp" imagesrcset="./assets/hero/electronics-lab-hero-960.webp 960w, ./assets/hero/electronics-lab-hero-1600.webp 1600w" imagesizes="100vw" type="image/webp" />
-    <link rel="stylesheet" href="./styles.css?v=20260513-1148" />
+    <link rel="stylesheet" href="./styles.css?v=20260514-1635" />
   </head>
   <body>
     <a class="skip-link" href="#mainContent">跳到主要内容</a>
@@ -66,6 +66,19 @@
         </div>
       </section>
 
+      <section class="site-shell section-row course-path-section" aria-labelledby="coursePathTitle">
+        <div class="section-heading">
+          <div class="section-title-block split-title">
+            <div class="section-title-line">
+              <h2 id="coursePathTitle">课程路径</h2>
+              <span>Learning Paths</span>
+            </div>
+            <p class="category-summary">按模拟电子、STM32 与 ESP32 三条路线系统学习，把文章内容、项目实践和工具入口串成连续的学习节奏。</p>
+          </div>
+        </div>
+        <div class="course-path-list" id="coursePathList"></div>
+      </section>
+
       <section class="site-shell section-row home-miniapp-section">
         <div class="section-heading">
           <div class="section-title-block split-title">
@@ -80,12 +93,15 @@
       <section class="site-shell section-row">
         <div class="section-heading">
           <div class="section-title-block split-title">
-            <h2>最新教程</h2>
-            <span>Latest Tutorials</span>
+            <h2>近期更新</h2>
+            <span>Recent Lessons</span>
           </div>
           <a href="./category.html?category=all">查看全部</a>
         </div>
-        <div class="tutorial-grid" id="articleList"></div>
+        <div class="home-lesson-layout">
+          <article class="lesson-feature" id="recentLessonFeature"></article>
+          <div class="lesson-list" id="articleList"></div>
+        </div>
       </section>
 
       <section class="site-shell section-row">
@@ -100,13 +116,14 @@
       </section>
     </main>
 
-    <script src="./data/posts.js?v=20260513-1148"></script>
-    <script src="./api/content.js?v=20260513-1148"></script>
-    <script src="./data/content-store.js?v=20260513-1148"></script>
-    <script src="./data/media.js?v=20260513-1148"></script>
-    <script src="./data/miniapps.js?v=20260513-1148"></script>
-    <script src="./main.js?v=20260513-1148"></script>
-    <script src="./data/site-meta.js?v=20260513-1148"></script>
-    <script src="./data/footer.js?v=20260513-1148"></script>
+    <script src="./data/posts.js?v=20260514-1635"></script>
+    <script src="./api/content.js?v=20260514-1635"></script>
+    <script src="./data/content-store.js?v=20260514-1635"></script>
+    <script src="./data/media.js?v=20260514-1635"></script>
+    <script src="./data/course-meta.js?v=20260514-1635"></script>
+    <script src="./data/miniapps.js?v=20260514-1635"></script>
+    <script src="./main.js?v=20260514-1635"></script>
+    <script src="./data/site-meta.js?v=20260514-1635"></script>
+    <script src="./data/footer.js?v=20260514-1635"></script>
   </body>
 </html>

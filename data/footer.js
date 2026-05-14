@@ -74,7 +74,7 @@
     if (!document.startViewTransition || prefersReducedMotion()) {
       root.classList.add("theme-switching");
       commit();
-      window.setTimeout(() => root.classList.remove("theme-switching"), 560);
+      window.setTimeout(() => root.classList.remove("theme-switching"), 360);
       return;
     }
     root.classList.add("theme-switching");

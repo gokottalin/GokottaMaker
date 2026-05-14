@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>课程路径配置 | GokottaMaker</title>
+    <meta name="robots" content="noindex,nofollow" />
+    <link rel="stylesheet" href="../styles.css?v=20260514-1635" />
+    <link rel="stylesheet" href="./admin.css?v=20260514-1635" />
+    <style>
+      .course-admin-shell {
+        width: min(100% - 40px, 1320px);
+        margin: 28px auto 52px;
+        display: grid;
+        gap: 22px;
+      }
+
+      .course-admin-topbar,
+      .course-admin-panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: 0 14px 32px rgba(15, 35, 70, 0.06);
+      }
+
+      .course-admin-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 22px 24px;
+      }
+
+      .course-admin-topbar h1,
+      .course-admin-panel h2 {
+        margin: 0;
+      }
+
+      .course-admin-topbar p,
+      .course-admin-panel p,
+      .course-admin-panel li {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .course-admin-layout {
+        display: grid;
+        grid-template-columns: 240px minmax(0, 1fr) 320px;
+        gap: 20px;
+      }
+
+      .course-auth-gate {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 18px 20px;
+        border: 1px solid rgba(192, 126, 0, 0.28);
+        border-radius: 8px;
+        background: #fff8e8;
+      }
+
+      .course-auth-gate h2 {
+        margin: 0 0 4px;
+        font-size: 18px;
+      }
+
+      .course-auth-gate p {
+        margin: 0;
+        color: #8a5c00;
+        font-weight: 700;
+        line-height: 1.6;
+      }
+
+      .course-auth-gate.is-ok {
+        border-color: rgba(11, 143, 103, 0.22);
+        background: #effaf5;
+      }
+
+      .course-auth-gate.is-ok p {
+        color: #0b7656;
+      }
+
+      .course-admin-panel {
+        padding: 22px;
+      }
+
+      .course-route-nav {
+        display: grid;
+        gap: 10px;
+      }
+
+      .course-route-button {
+        min-height: 46px;
+        padding: 0 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface-2);
+        color: var(--ink);
+        font: inherit;
+        font-weight: 800;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .course-route-button.is-active {
+        border-color: color-mix(in srgb, var(--blue) 55%, var(--line));
+        background: color-mix(in srgb, var(--blue) 12%, var(--surface));
+        color: var(--blue);
+      }
+
+      .course-admin-editor {
+        display: grid;
+        gap: 16px;
+      }
+
+      .course-admin-editor textarea {
+        width: 100%;
+        min-height: 560px;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface-2);
+        color: var(--ink);
+        font: 14px/1.7 Consolas, "SFMono-Regular", Monaco, Menlo, monospace;
+        resize: vertical;
+      }
+
+      .course-admin-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .course-admin-preview {
+        display: grid;
+        gap: 14px;
+      }
+
+      .course-admin-preview section {
+        display: grid;
+        gap: 8px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+      }
+
+      .course-admin-preview section:first-of-type {
+        padding-top: 0;
+        border-top: 0;
+      }
+
+      .course-admin-preview ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      .course-admin-notice {
+        min-height: 24px;
+        font-weight: 700;
+      }
+
+      .course-admin-shell.is-locked .course-admin-editor textarea,
+      .course-admin-shell.is-locked .course-admin-editor button {
+        cursor: not-allowed;
+        opacity: 0.58;
+      }
+
+      @media (max-width: 1020px) {
+        .course-admin-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .course-admin-shell {
+          width: min(100% - 24px, 1320px);
+          margin-top: 18px;
+        }
+
+        .course-admin-topbar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .course-auth-gate {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .course-admin-editor textarea {
+          min-height: 420px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="course-admin-shell is-locked" id="courseAdminShell">
+      <section class="course-admin-topbar">
+        <div>
+          <p class="poster-kicker poster-kicker-small"><span>课程路径</span><em>Course Paths</em></p>
+          <h1>课程页面本地预览配置</h1>
+          <p>这一页是课程路径的本地预览工具，只写入当前浏览器 localStorage，不写入 CMS 或数据库。必须登录后才能编辑本地覆盖值。</p>
+        </div>
+        <div class="course-admin-actions">
+          <a class="button secondary" href="./index.html">返回 CMS</a>
+          <a class="button secondary" href="../index.html">打开访客首页</a>
+        </div>
+      </section>
+
+      <section class="course-auth-gate" id="courseAuthGate" role="status" aria-live="polite">
+        <div>
+          <h2>正在校验登录状态</h2>
+          <p>校验完成前，编辑器和本地覆盖操作保持锁定。</p>
+        </div>
+        <a class="button primary" href="./index.html">前往登录</a>
+      </section>
+
+      <section class="course-admin-layout">
+        <aside class="course-admin-panel">
+          <h2>选择路线</h2>
+          <p>按路线查看默认配置。登录后可编辑当前浏览器的本地预览覆盖值。</p>
+          <div class="course-route-nav" id="routeNav"></div>
+        </aside>
+
+        <section class="course-admin-panel course-admin-editor">
+          <div>
+            <h2 id="editorTitle">analog</h2>
+            <p>登录后可编辑当前路线的 JSON。数组字段如 <code>stages</code>、<code>recommendedPosts</code>、<code>relatedProjects</code> 会整段覆盖。</p>
+          </div>
+          <textarea id="routeEditor" spellcheck="false" aria-label="课程路径 JSON 编辑器" disabled></textarea>
+          <div class="course-admin-actions">
+            <button class="button primary" id="saveRouteButton" type="button" disabled>保存当前路线</button>
+            <button class="button secondary" id="resetRouteButton" type="button" disabled>恢复当前路线默认值</button>
+            <button class="button secondary" id="clearOverrideButton" type="button" disabled>清空全部覆盖</button>
+          </div>
+          <p class="course-admin-notice" id="courseAdminNotice" role="status" aria-live="polite"></p>
+        </section>
+
+        <aside class="course-admin-panel course-admin-preview" id="coursePreview">
+          <section>
+            <h2>字段提示</h2>
+            <ul>
+              <li><code>title</code> / <code>english</code>: 首页与分类页标题。</li>
+              <li><code>summary</code>: 首页课程卡与分类页摘要。</li>
+              <li><code>stages</code>: 左侧课程大纲。</li>
+              <li><code>recommendedPosts</code>: 推荐阅读或项目 ID。</li>
+              <li><code>relatedProjects</code>: 分类页右侧项目栏。</li>
+            </ul>
+          </section>
+          <section id="previewSummary"></section>
+          <section>
+            <h2>存储方式</h2>
+            <p>登录后仅写入当前浏览器本地 <code>localStorage[gokottamaker_course_meta_v1]</code>，不会写入 CMS / 数据库。未登录状态不会读取或保存本地覆盖值。</p>
+          </section>
+        </aside>
+      </section>
+    </main>
+
+    <script src="../data/course-meta.js?v=20260514-1635"></script>
+    <script>
+      (() => {
+        const STORAGE_KEY = "gokottamaker_course_meta_v1";
+        const routeOrder = ["analog", "stm32", "esp32", "all"];
+        const shell = document.querySelector("#courseAdminShell");
+        const authGate = document.querySelector("#courseAuthGate");
+        const nav = document.querySelector("#routeNav");
+        const editor = document.querySelector("#routeEditor");
+        const editorTitle = document.querySelector("#editorTitle");
+        const previewSummary = document.querySelector("#previewSummary");
+        const notice = document.querySelector("#courseAdminNotice");
+        const saveButton = document.querySelector("#saveRouteButton");
+        const resetButton = document.querySelector("#resetRouteButton");
+        const clearButton = document.querySelector("#clearOverrideButton");
+        const baseMeta = structuredClone(window.GokottaDefaultCourseMeta || window.GokottaCourseMeta || {});
+        let overrideMeta = {};
+        let activeRoute = "analog";
+        let canEdit = false;
+
+        function isPlainObject(value) {
+          return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+        }
+
+        function deepMerge(base, override) {
+          const result = structuredClone(base);
+          Object.entries(override || {}).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+              result[key] = value.slice();
+            } else if (isPlainObject(value) && isPlainObject(result[key])) {
+              result[key] = deepMerge(result[key], value);
+            } else {
+              result[key] = value;
+            }
+          });
+          return result;
+        }
+
+        function loadOverride() {
+          if (!canEdit) {
+            overrideMeta = {};
+            return;
+          }
+          try {
+            overrideMeta = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+          } catch {
+            overrideMeta = {};
+          }
+        }
+
+        function currentMerged(route) {
+          return deepMerge(baseMeta[route] || {}, overrideMeta[route] || {});
+        }
+
+        function setNotice(message, tone = "") {
+          notice.textContent = message;
+          notice.className = "course-admin-notice";
+          if (tone) notice.classList.add(`is-${tone}`);
+        }
+
+        function setEditMode(enabled, message = "") {
+          canEdit = enabled;
+          shell.classList.toggle("is-locked", !enabled);
+          editor.disabled = !enabled;
+          saveButton.disabled = !enabled;
+          resetButton.disabled = !enabled;
+          clearButton.disabled = !enabled;
+          if (authGate) {
+            authGate.classList.toggle("is-ok", enabled);
+            authGate.querySelector("h2").textContent = enabled ? "已登录，可编辑本地预览覆盖值" : "未登录，编辑器已锁定";
+            authGate.querySelector("p").textContent = enabled
+              ? "当前操作只影响本浏览器 localStorage，不会写入 CMS 或数据库。"
+              : "请先返回 CMS 登录；未登录时不会读取、保存、恢复或清空课程路径本地覆盖配置。";
+          }
+          setNotice(message, enabled ? "success" : "warning");
+        }
+
+        async function ensureAuthenticated() {
+          try {
+            const response = await fetch("../api/session", { credentials: "same-origin" });
+            if (!response.ok) throw new Error("session unavailable");
+            const payload = await response.json();
+            if (!payload.user) {
+              setEditMode(false, "未登录：课程路径本地覆盖编辑已锁定。");
+              return false;
+            }
+            setEditMode(true, `已登录为 ${payload.user.username}，可编辑本地预览覆盖值。`);
+            return true;
+          } catch {
+            setEditMode(false, "无法确认登录状态：课程路径本地覆盖编辑已锁定。");
+            return false;
+          }
+        }
+
+        function renderNav() {
+          nav.innerHTML = routeOrder
+            .map((route) => {
+              const title = currentMerged(route).title || route;
+              return `<button class="course-route-button ${route === activeRoute ? "is-active" : ""}" type="button" data-route="${route}">${title}</button>`;
+            })
+            .join("");
+        }
+
+        function renderPreview(routeConfig) {
+          previewSummary.innerHTML = `
+            <h2>当前预览</h2>
+            <p><strong>${routeConfig.title || activeRoute}</strong> / ${routeConfig.english || ""}</p>
+            <p>${routeConfig.summary || "暂无摘要"}</p>
+            <ul>
+              <li>阶段数：${Array.isArray(routeConfig.stages) ? routeConfig.stages.length : 0}</li>
+              <li>推荐内容：${Array.isArray(routeConfig.recommendedPosts) ? routeConfig.recommendedPosts.join(", ") || "无" : "无"}</li>
+              <li>关联项目：${Array.isArray(routeConfig.relatedProjects) ? routeConfig.relatedProjects.join(", ") || "无" : "无"}</li>
+            </ul>
+          `;
+        }
+
+        function renderEditor() {
+          const merged = currentMerged(activeRoute);
+          editorTitle.textContent = `${activeRoute} 路线`;
+          editor.value = JSON.stringify(merged, null, 2);
+          renderNav();
+          renderPreview(merged);
+        }
+
+        nav.addEventListener("click", (event) => {
+          const button = event.target.closest("[data-route]");
+          if (!button) return;
+          activeRoute = button.dataset.route;
+          renderEditor();
+        });
+
+        saveButton.addEventListener("click", () => {
+          if (!canEdit) {
+            setEditMode(false, "未登录：不能保存课程路径本地覆盖配置。");
+            return;
+          }
+          try {
+            const value = JSON.parse(editor.value);
+            if (!isPlainObject(value)) throw new Error("当前路线必须保存为对象");
+            overrideMeta[activeRoute] = value;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(overrideMeta));
+            setNotice("已保存当前路线本地预览覆盖值。刷新同一浏览器的访客端页面即可预览。", "success");
+            renderEditor();
+          } catch (error) {
+            setNotice(error.message || "JSON 解析失败，请检查格式。", "error");
+          }
+        });
+
+        resetButton.addEventListener("click", () => {
+          if (!canEdit) {
+            setEditMode(false, "未登录：不能恢复课程路径本地覆盖配置。");
+            return;
+          }
+          delete overrideMeta[activeRoute];
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(overrideMeta));
+          setNotice("当前路线已恢复为默认配置。", "success");
+          renderEditor();
+        });
+
+        clearButton.addEventListener("click", () => {
+          if (!canEdit) {
+            setEditMode(false, "未登录：不能清空课程路径本地覆盖配置。");
+            return;
+          }
+          overrideMeta = {};
+          localStorage.removeItem(STORAGE_KEY);
+          setNotice("已清空全部课程路径覆盖值。", "success");
+          renderEditor();
+        });
+
+        setEditMode(false, "正在校验登录状态，编辑器暂时锁定。");
+        renderEditor();
+        ensureAuthenticated().then((authenticated) => {
+          if (authenticated) loadOverride();
+          renderEditor();
+        });
+      })();
+    </script>
+  </body>
+</html>

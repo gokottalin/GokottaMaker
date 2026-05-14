@@ -1,8 +1,18 @@
-﻿@media (max-width: 1280px) {
+@media (max-width: 1280px) {
   .hero-content,
   .tutorial-grid,
-  .project-grid {
+  .project-grid,
+  .category-course-layout {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .category-course-layout {
+    grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+  }
+
+  .resource-panel {
+    position: static;
+    grid-column: 1 / -1;
   }
 }
 
@@ -38,6 +48,30 @@
   .hero-content {
     grid-template-columns: minmax(300px, 0.66fr) minmax(440px, 1fr);
     padding: 42px;
+  }
+
+  .home-lesson-layout,
+  .lesson-feature,
+  .category-course-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .course-path-card {
+    grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+  }
+
+  .course-path-side {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .course-path-media img {
+    min-height: 220px;
+  }
+
+  .syllabus-rail {
+    position: static;
   }
 
   .hero-card h3 {
@@ -121,7 +155,11 @@
   .related-grid,
   .article-card,
   .project-card,
-  .post-layout {
+  .post-layout,
+  .lesson-feature,
+  .lesson-row,
+  .home-lesson-layout,
+  .category-course-layout {
     grid-template-columns: 1fr;
   }
 
@@ -238,7 +276,9 @@
   .article-card picture,
   .project-card picture,
   .article-card img,
-  .project-card img {
+  .project-card img,
+  .lesson-row img,
+  .lesson-feature img {
     width: 100%;
     height: 210px;
   }
@@ -249,10 +289,103 @@
     gap: 12px;
   }
 
+  .category-heading {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 12px;
+  }
+
+  .category-heading-actions {
+    width: 100%;
+    justify-items: stretch;
+  }
+
+  .category-search-box,
+  .category-search-box input {
+    width: 100%;
+    min-width: 0;
+  }
+
   .section-title-block.split-title {
     align-items: flex-start;
     flex-direction: column;
     gap: 3px;
+  }
+
+  .course-steps,
+  .syllabus-list,
+  .resource-chip-list {
+    overflow: visible;
+    flex-wrap: wrap;
+    padding-bottom: 0;
+  }
+
+  .syllabus-rail,
+  .resource-panel {
+    position: static;
+  }
+
+  .lesson-feature,
+  .lesson-row,
+  .course-path-card {
+    padding: 18px;
+  }
+
+  .course-path-card {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    overflow: hidden;
+  }
+
+  .course-path-card > *,
+  .course-path-copy,
+  .course-path-side,
+  .course-steps,
+  .course-path-title-line {
+    min-width: 0;
+  }
+
+  .course-step {
+    max-width: 100%;
+  }
+
+  .course-path-media {
+    position: relative;
+    inset: auto;
+    min-height: 200px;
+    margin: 0;
+    border-radius: 8px;
+    pointer-events: auto;
+  }
+
+  .course-path-media img {
+    min-height: 200px;
+    height: 200px;
+  }
+
+  .course-path-copy,
+  .course-path-side {
+    padding: 0;
+    border-left: 0;
+    background: none;
+  }
+
+  .course-path-side {
+    grid-template-columns: 1fr;
+  }
+
+  .lesson-feature h2,
+  .lesson-feature h3 {
+    font-size: 26px;
+  }
+
+  .course-path-title-line {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .course-path-cta {
+    width: auto;
   }
 
   .section-title-block h1,

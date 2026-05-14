@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>课程布局设计 5 选 1</title>
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --surface: #ffffff;
+        --ink: #0b1220;
+        --muted: #52657a;
+        --line: #d9e3ef;
+        --blue: #0d6fd3;
+        --shadow: 0 18px 45px rgba(15, 35, 70, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: Inter, "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+      }
+
+      main {
+        width: min(1280px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 48px 0 72px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 34px;
+        line-height: 1.16;
+        letter-spacing: 0;
+      }
+
+      .intro {
+        max-width: 840px;
+        margin: 0 0 28px;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      .grid {
+        display: grid;
+        gap: 22px;
+      }
+
+      .option {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .option img {
+        width: 100%;
+        height: auto;
+        display: block;
+        background: #eef4fb;
+      }
+
+      .meta {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 20px;
+        align-items: start;
+        padding: 18px 20px 20px;
+        border-top: 1px solid var(--line);
+      }
+
+      h2 {
+        margin: 0 0 6px;
+        font-size: 20px;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      code {
+        padding: 7px 9px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #f8fbff;
+        color: var(--blue);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      @media (max-width: 760px) {
+        main {
+          width: min(100% - 24px, 1280px);
+          padding-top: 28px;
+        }
+
+        .meta {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>课程布局设计 5 选 1</h1>
+      <p class="intro">每张设计图都包含首页、模拟电子页、STM32 页和 ESP32 页的布局方向。视觉语言沿用 GokottaMaker 15 号 LOGO、白天 05 主题和蓝色模块化体系。</p>
+
+      <section class="grid" aria-label="Course layout design options">
+        <article class="option">
+          <img src="./course-layout-option-1.png" alt="课程布局设计 1：学习路径中心" />
+          <div class="meta">
+            <div>
+              <h2>01 学习路径中心</h2>
+              <p>把首页做成三条课程路线入口；分类页用左侧大纲、中心课程卡、右侧资源面板，适合强调系统学习路径。</p>
+            </div>
+            <code>course-layout-option-1.png</code>
+          </div>
+        </article>
+        <article class="option">
+          <img src="./course-layout-option-2.png" alt="课程布局设计 2：课程仪表盘" />
+          <div class="meta">
+            <div>
+              <h2>02 课程仪表盘</h2>
+              <p>首页和分类页都偏工具化，课程、实验、工具、项目并列展示，适合内容多以后快速检索和对比。</p>
+            </div>
+            <code>course-layout-option-2.png</code>
+          </div>
+        </article>
+        <article class="option">
+          <img src="./course-layout-option-3.png" alt="课程布局设计 3：技术杂志式课程" />
+          <div class="meta">
+            <div>
+              <h2>03 技术杂志式课程</h2>
+              <p>更偏高质量技术出版物：首页用强封面文章带动课程入口；分类页用大图、章节 tabs、图文混排增强阅读欲。</p>
+            </div>
+            <code>course-layout-option-3.png</code>
+          </div>
+        </article>
+        <article class="option">
+          <img src="./course-layout-option-4.png" alt="课程布局设计 4：实验笔记时间线" />
+          <div class="meta">
+            <div>
+              <h2>04 实验笔记时间线</h2>
+              <p>把教程组织成实验记录和时间线，适合模拟电子、ADC、调试过程这类一步步验证的内容。</p>
+            </div>
+            <code>course-layout-option-4.png</code>
+          </div>
+        </article>
+        <article class="option">
+          <img src="./course-layout-option-5.png" alt="课程布局设计 5：模块矩阵与项目优先" />
+          <div class="meta">
+            <div>
+              <h2>05 模块矩阵与项目优先</h2>
+              <p>用 Learn、Build、Measure、Debug、Release 的项目化矩阵组织内容，最贴近开源硬件和实战导向。</p>
+            </div>
+            <code>course-layout-option-5.png</code>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

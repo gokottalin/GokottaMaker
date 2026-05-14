@@ -20,7 +20,7 @@ window.GOKOTTA_MINIAPPS = [
     status: "新增设计",
     version: "V0.3",
     href: "./tools/md2doc.html",
-    icon: "./assets/logo/md2file/md2file-logo-option-5.svg",
+    icon: "./assets/logo/md2file/md2file-miniapp-icon.svg",
     capabilities: ["Markdown 输入", "实时预览", "DOCX 导出", "PDF 预留"]
   }
 ];

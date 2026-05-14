@@ -1,14 +1,15 @@
-# GokottaMaker 当前交接总览
+﻿# GokottaMaker 当前交接总览
 
-更新时间：2026-05-13 17:59
-当前候选版本：V2.4.9+20260513-1148
-当前用途：整合各 Agent 输出，准备交给 Agent20 做体验测试与问题上报。
+更新时间：2026-05-15 00:20
+当前候选版本：V2.4.9+20260514-1635
+当前用途：Agent20 第5次移动端横向滚动复测已通过，Agent1 已清理旧测试端口并进入发布准备。
 
 ## 关键结论
 
-- 本地候选版本为 `V2.4.9+20260513-1148`。
-- 本轮整合后，代码验证已通过：版本一致性、Markdown 渲染回归、语法检查、API 回归。
-- 交接重点已收敛到 Agent20 测试清单：访客端视觉、管理端 CMS、上传图片、轮播槽位、小程序、Markdown 渲染。
+- 本地候选版本为 `V2.4.9+20260514-1635`，主测入口为 `http://127.0.0.1:4335`。
+- Agent20 第5次复测已确认 360px、375px、390px、414px 移动端页面级横向滚动均通过。
+- 已通过项包括：`/category-page.js` 可访问、分类页课程结构渲染、Markdown 回归、API 回归、小程序版本、夜间模式状态保持、AUTH-011 管理页未登录锁定、COPY-013 分类页项目计数文案。
+- Agent1 已清理旧测试端口 `4173`、`4197`、`4402`；当前仅保留主测候选服务 `4335`。
 - 云端发布仍由 Agent1 负责执行。若腾讯云拉取 GitHub 时再次出现 TLS/GnuTLS 中断，需要按 Agent1 发布文档使用重试或代理/镜像策略。
 
 ## Agent 成果汇总
@@ -22,7 +23,7 @@
 ### Agent1 运维与发布稳定性
 
 - 已给出 V2.4.9 云端发布准备说明。
-- 本地发布前检查通过。
+- 本地发布前检查通过，并完成旧测试端口清理。
 - 云端如果仍停留在旧版本，需要在服务器执行 `scripts/deploy-update.sh`。
 - 已知风险：云端 GitHub 拉取偶发网络中断，不属于应用代码问题。
 
@@ -91,7 +92,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify-api.ps1
 
 ## Agent20 测试入口建议
 
-优先测试本地候选版本，确认无误后再由 Agent1 发布云端。
+优先测试本地候选版本 `http://127.0.0.1:4335`，确认无误后再由 Agent1 发布云端。旧端口如 `4173`、`4197`、`4402`，以及异常端口如 `5040` 不作为本轮验收依据。
 
 重点页面：
 
@@ -112,11 +113,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify-api.ps1
 
 ```powershell
 $env:PORT='4414'
+$env:DATA_DIR='.tmp\agent20-admin-retest-data'
 $env:ADMIN_PASSWORD='Agent20LocalTest!2026'
 node --experimental-sqlite server.js
 ```
 
-临时服务账号为 `Gokotta`，密码为上面命令中的 `Agent20LocalTest!2026`。该密码仅用于本地临时测试，不用于云端。
+临时服务账号为 `Gokotta`，密码为上面命令中的 `Agent20LocalTest!2026`。该密码仅用于本地临时测试，不用于云端。`DATA_DIR` 必须保留，用于隔离测试数据库，避免污染默认 `database/gokottamaker.sqlite`。
 
 重点测试：
 

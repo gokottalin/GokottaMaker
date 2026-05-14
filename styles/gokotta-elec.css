@@ -545,19 +545,20 @@
   font-size: 14px;
 }
 
-.miniapp-card-md2file {
-  grid-template-columns: 84px minmax(0, 1fr);
-  gap: 18px;
+.home-miniapp-card.miniapp-card-md2file {
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 8px 18px;
 }
 
-.miniapp-icon-md2file {
-  width: 84px;
-  height: 84px;
+.home-miniapp-card .miniapp-icon-md2file {
+  width: 152px;
+  height: 152px;
   max-height: none;
   padding: 0;
   border-color: #cfe0f2;
   background: #ffffff;
-  justify-self: stretch;
+  justify-self: start;
+  margin: -12px 0 -18px -10px;
   object-fit: contain;
 }
 
@@ -703,5 +704,11 @@
 
   .miniapp-card {
     grid-template-columns: 1fr;
+  }
+
+  .home-miniapp-card .miniapp-icon-md2file {
+    width: 116px;
+    height: 116px;
+    margin: 0;
   }
 }
