@@ -6,9 +6,9 @@
     <title>文章详情 | GokottaMaker</title>
     <meta name="description" content="阅读 GokottaMaker 的嵌入式与模拟电子 Markdown 技术文章。" />
     <link rel="manifest" href="./site.webmanifest" />
-    <link rel="stylesheet" href="./styles.css?v=20260514-1635" />
+    <link rel="stylesheet" href="./styles.css?v=20260517-003" />
   </head>
-  <body>
+  <body data-layout-page="postPage">
     <a class="skip-link" href="#postContent">跳到正文</a>
     <header class="site-header">
       <div class="header-inner">
@@ -29,9 +29,9 @@
       </div>
     </header>
 
-    <main>
-      <section class="site-shell post-hero" id="postHero"></section>
-      <section class="post-layout">
+    <main data-layout-container>
+      <section class="site-shell post-hero" id="postHero" data-layout-section="postHero"></section>
+      <section class="post-layout" data-layout-section="postBody">
         <aside class="toc-card">
           <strong>文章目录</strong>
           <nav id="tocList" aria-label="文章目录"></nav>
@@ -40,14 +40,15 @@
       </section>
     </main>
 
-    <script src="./data/posts.js?v=20260514-1635"></script>
-    <script src="./api/content.js?v=20260514-1635"></script>
-    <script src="./data/content-store.js?v=20260514-1635"></script>
-    <script src="./data/media.js?v=20260514-1635"></script>
-    <script src="./data/markdown-renderer.js?v=20260514-1635"></script>
-    <script src="./post.js?v=20260514-1635"></script>
-    <script src="./data/site-meta.js?v=20260514-1635"></script>
-    <script src="./data/footer.js?v=20260514-1635"></script>
+    <script src="./data/posts.js?v=20260517-003"></script>
+    <script src="./api/content.js?v=20260517-003"></script>
+    <script src="./data/content-store.js?v=20260517-003"></script>
+    <script src="./data/media.js?v=20260517-003"></script>
+    <script src="./data/markdown-renderer.js?v=20260517-003"></script>
+    <script src="./post.js?v=20260517-003"></script>
+    <script src="./site-layout.js?v=20260517-003"></script>
+    <script src="./data/site-meta.js?v=20260517-003"></script>
+    <script src="./data/footer.js?v=20260517-003"></script>
   </body>
 </html>
 

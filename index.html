@@ -12,7 +12,7 @@
     <link rel="canonical" href="http://81.71.156.122:4173/" />
     <link rel="manifest" href="./site.webmanifest" />
     <link rel="preload" as="image" href="./assets/hero/electronics-lab-hero-1600.webp" imagesrcset="./assets/hero/electronics-lab-hero-960.webp 960w, ./assets/hero/electronics-lab-hero-1600.webp 1600w" imagesizes="100vw" type="image/webp" />
-    <link rel="stylesheet" href="./styles.css?v=20260514-1635" />
+    <link rel="stylesheet" href="./styles.css?v=20260517-003" />
   </head>
   <body>
     <a class="skip-link" href="#mainContent">跳到主要内容</a>
@@ -41,7 +41,7 @@
     </header>
 
     <main id="mainContent">
-      <section class="site-shell hero">
+      <section class="site-shell hero" id="homeHero" data-layout-section="hero">
         <img class="hero-bg is-active" id="heroBgA" src="./assets/hero/electronics-lab-hero-1600.webp" srcset="./assets/hero/electronics-lab-hero-960.webp 960w, ./assets/hero/electronics-lab-hero-1600.webp 1600w" sizes="100vw" width="1600" height="900" fetchpriority="high" alt="电子实验台、示波器、开发板和电路图" />
         <img class="hero-bg" id="heroBgB" src="./assets/hero/electronics-lab-hero-1600.webp" srcset="./assets/hero/electronics-lab-hero-960.webp 960w, ./assets/hero/electronics-lab-hero-1600.webp 1600w" sizes="100vw" width="1600" height="900" alt="" />
         <div class="hero-content">
@@ -66,35 +66,11 @@
         </div>
       </section>
 
-      <section class="site-shell section-row course-path-section" aria-labelledby="coursePathTitle">
+      <section class="site-shell section-row" id="homeRecommended" data-layout-section="recommended">
         <div class="section-heading">
           <div class="section-title-block split-title">
-            <div class="section-title-line">
-              <h2 id="coursePathTitle">课程路径</h2>
-              <span>Learning Paths</span>
-            </div>
-            <p class="category-summary">按模拟电子、STM32 与 ESP32 三条路线系统学习，把文章内容、项目实践和工具入口串成连续的学习节奏。</p>
-          </div>
-        </div>
-        <div class="course-path-list" id="coursePathList"></div>
-      </section>
-
-      <section class="site-shell section-row home-miniapp-section">
-        <div class="section-heading">
-          <div class="section-title-block split-title">
-            <h2>网页小程序</h2>
-            <span>Mini App Updates</span>
-          </div>
-          <a href="./miniapps.html">查看小程序中心</a>
-        </div>
-        <div class="home-miniapp-grid" id="miniappUpdateList"></div>
-      </section>
-
-      <section class="site-shell section-row">
-        <div class="section-heading">
-          <div class="section-title-block split-title">
-            <h2>近期更新</h2>
-            <span>Recent Lessons</span>
+            <h2>推荐内容</h2>
+            <span>Recommended Picks</span>
           </div>
           <a href="./category.html?category=all">查看全部</a>
         </div>
@@ -104,7 +80,7 @@
         </div>
       </section>
 
-      <section class="site-shell section-row">
+      <section class="site-shell section-row" id="homeProjects" data-layout-section="projects">
         <div class="section-heading">
           <div class="section-title-block split-title">
             <h2>开源项目</h2>
@@ -114,16 +90,27 @@
         </div>
         <div class="project-grid" id="projectList"></div>
       </section>
+
+      <section class="site-shell section-row home-miniapp-section" id="homeMiniapps" data-layout-section="miniapps">
+        <div class="section-heading">
+          <div class="section-title-block split-title">
+            <h2>网页小程序</h2>
+            <span>Mini App Updates</span>
+          </div>
+          <a href="./miniapps.html">查看小程序中心</a>
+        </div>
+        <div class="home-miniapp-grid" id="miniappUpdateList"></div>
+      </section>
     </main>
 
-    <script src="./data/posts.js?v=20260514-1635"></script>
-    <script src="./api/content.js?v=20260514-1635"></script>
-    <script src="./data/content-store.js?v=20260514-1635"></script>
-    <script src="./data/media.js?v=20260514-1635"></script>
-    <script src="./data/course-meta.js?v=20260514-1635"></script>
-    <script src="./data/miniapps.js?v=20260514-1635"></script>
-    <script src="./main.js?v=20260514-1635"></script>
-    <script src="./data/site-meta.js?v=20260514-1635"></script>
-    <script src="./data/footer.js?v=20260514-1635"></script>
+    <script src="./data/posts.js?v=20260517-003"></script>
+    <script src="./api/content.js?v=20260517-003"></script>
+    <script src="./data/content-store.js?v=20260517-003"></script>
+    <script src="./data/media.js?v=20260517-003"></script>
+    <script src="./data/course-meta.js?v=20260517-003"></script>
+    <script src="./data/miniapps.js?v=20260517-003"></script>
+    <script src="./main.js?v=20260517-003"></script>
+    <script src="./data/site-meta.js?v=20260517-003"></script>
+    <script src="./data/footer.js?v=20260517-003"></script>
   </body>
 </html>

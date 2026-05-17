@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GokottaMaker 管理端</title>
     <meta name="robots" content="noindex,nofollow" />
-    <link rel="stylesheet" href="../styles.css?v=20260514-1635" />
-    <link rel="stylesheet" href="./admin.css?v=20260514-1635" />
+    <link rel="stylesheet" href="../styles.css?v=20260517-003" />
+    <link rel="stylesheet" href="./admin.css?v=20260517-003" />
   </head>
   <body>
     <main class="admin-shell">
@@ -78,7 +78,9 @@
               <span>内容工作台</span>
               <a href="#editor" data-admin-nav="editor" data-short="编">内容编辑</a>
               <a href="#library" data-admin-nav="library" data-short="列">内容列表</a>
-              <a href="./course-paths.html" data-short="R">Course Paths</a>
+              <a href="#carousel" data-admin-nav="carousel" data-short="轮">首页轮播管理</a>
+              <a href="./course-paths.html" data-short="路">课程路径</a>
+              <a href="#layout" data-admin-nav="layout" data-short="排">页面排布</a>
             </div>
             <div class="nav-group">
               <span>系统与访问</span>
@@ -143,6 +145,11 @@
                     </select>
                   </label>
 
+                  <label id="recommendationPriorityField" class="meta-recommendation-priority">
+                    推荐优先级
+                    <input name="recommendationPriority" type="number" min="1" max="999" step="1" value="100" />
+                  </label>
+
                   <label id="statusField" hidden>
                     项目状态
                     <select name="statusKey">
@@ -180,25 +187,14 @@
                     <label>
                       轮播排序
                       <select name="featuredOrder" aria-describedby="featuredOrderHelp">
-                        <option value="0">0 / 第一张</option>
-                        <option value="1">1 / 第二张</option>
-                        <option value="2">2 / 第三张</option>
-                        <option value="3">3 / 第四张</option>
+                        <option value="0">第一张</option>
+                        <option value="1">第二张</option>
+                        <option value="2">第三张</option>
+                        <option value="3">第四张</option>
                       </select>
                     </label>
-                    <small id="featuredOrderHelp">首页轮播最多 4 个，排序仅支持 0-3。</small>
+                    <small id="featuredOrderHelp">首页轮播最多 4 个，按第一张到第四张展示。</small>
                   </div>
-
-                  <section class="featured-manager meta-featured-manager" aria-labelledby="featuredManagerTitle">
-                    <div class="section-heading compact">
-                      <div>
-                        <p class="eyebrow">Carousel</p>
-                        <h3 id="featuredManagerTitle">首页轮播管理</h3>
-                      </div>
-                      <span>4 个固定槽位</span>
-                    </div>
-                    <div id="featuredSlots" class="featured-slot-grid"></div>
-                  </section>
 
                   <div class="project-extra" id="projectExtra" hidden>
                     <label>
@@ -249,7 +245,11 @@
                     <p class="poster-kicker poster-kicker-small"><span>编辑器</span><em>Editorial Bench</em></p>
                     <h2>内容编辑器</h2>
                   </div>
-                  <button class="button secondary" id="editorDockToggle" type="button">收起</button>
+                  <div class="editor-toolbar-actions">
+                    <button class="button primary" type="submit">保存内容</button>
+                    <button class="button secondary" id="resetButton" type="button">新建空白</button>
+                    <button class="button secondary" id="editorDockToggle" type="button">收起</button>
+                  </div>
                 </div>
                 <div class="editor-grid">
                   <article class="preview-panel">
@@ -274,11 +274,6 @@
                       Markdown 正文
                       <textarea name="markdown" rows="22" placeholder="# 标题&#10;&#10;这里输入 Markdown 内容。"></textarea>
                     </label>
-
-                    <div class="form-actions editor-floating-actions">
-                      <button class="button primary" type="submit">保存内容</button>
-                      <button class="button secondary" id="resetButton" type="button">新建空白</button>
-                    </div>
                   </section>
                 </div>
               </div>
@@ -344,6 +339,37 @@
             <div id="adminContentList" class="admin-article-list"></div>
           </section>
 
+          <section id="carousel" class="library-panel carousel-panel admin-view" data-admin-view="carousel" hidden>
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">首页轮播</p>
+                <h2>首页轮播管理</h2>
+              </div>
+              <span class="library-note">4 个固定槽位，可从内容编辑页选择文章或项目后填入。</span>
+            </div>
+            <section class="featured-manager meta-featured-manager" aria-labelledby="featuredManagerTitle">
+              <div class="section-heading compact">
+                <div>
+                  <p class="eyebrow">轮播位置</p>
+                  <h3 id="featuredManagerTitle">轮播槽位</h3>
+                </div>
+                <span>第一张到第四张</span>
+              </div>
+              <div id="featuredSlots" class="featured-slot-grid"></div>
+            </section>
+          </section>
+
+          <section id="layout" class="library-panel layout-panel admin-view" data-admin-view="layout" hidden>
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">游客端排布</p>
+                <h2>游客端页面排布</h2>
+              </div>
+              <span class="library-note">可记录首页、分类页、项目页、小程序页和详情页各区块的顺序、大小与显示状态。</span>
+            </div>
+            <div id="layoutPanel" class="layout-editor-panel"></div>
+          </section>
+
           <section id="health" class="library-panel health-panel admin-view" data-admin-view="health" hidden>
             <div class="section-heading">
               <div>
@@ -390,13 +416,13 @@
       </section>
     </div>
 
-    <script src="../data/posts.js?v=20260514-1635"></script>
-    <script src="../data/seed.js?v=20260514-1635"></script>
-    <script src="../api/content.js?v=20260514-1635"></script>
-    <script src="../data/content-store.js?v=20260514-1635"></script>
-    <script src="../data/markdown-renderer.js?v=20260514-1635"></script>
-    <script src="./admin.js?v=20260514-1635"></script>
-    <script src="../data/site-meta.js?v=20260514-1635"></script>
-    <script src="../data/footer.js?v=20260514-1635"></script>
+    <script src="../data/posts.js?v=20260517-003"></script>
+    <script src="../data/seed.js?v=20260517-003"></script>
+    <script src="../api/content.js?v=20260517-003"></script>
+    <script src="../data/content-store.js?v=20260517-003"></script>
+    <script src="../data/markdown-renderer.js?v=20260517-003"></script>
+    <script src="./admin.js?v=20260517-003"></script>
+    <script src="../data/site-meta.js?v=20260517-003"></script>
+    <script src="../data/footer.js?v=20260517-003"></script>
   </body>
 </html>

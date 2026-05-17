@@ -173,6 +173,8 @@
     "Im"
   ]);
 
+  const mathLimitOperators = new Set(["int", "iint", "iiint", "oint", "oiint", "sum", "prod", "lim"]);
+
   const superscriptChars = {
     "0": "\u2070",
     "1": "\u00b9",
@@ -275,6 +277,49 @@
     const alpha = source.slice(index + 1).match(/^[A-Za-z]+/);
     if (alpha) return { name: alpha[0], end: index + 1 + alpha[0].length };
     return { name: source[index + 1] || "", end: Math.min(source.length, index + 2) };
+  }
+
+  function readMathScript(source, index, mark) {
+    if (source[index] !== mark) return null;
+    const group = readBalanced(source, index + 1, "{", "}");
+    return { value: group.value, end: group.end };
+  }
+
+  function readScriptPair(source, index) {
+    let cursor = index;
+    let lower = null;
+    let upper = null;
+    for (let step = 0; step < 2; step += 1) {
+      while (source[cursor] === " ") cursor += 1;
+      const lowerScript = readMathScript(source, cursor, "_");
+      if (lowerScript) {
+        lower = lowerScript;
+        cursor = lowerScript.end;
+        continue;
+      }
+      const upperScript = readMathScript(source, cursor, "^");
+      if (upperScript) {
+        upper = upperScript;
+        cursor = upperScript.end;
+        continue;
+      }
+      break;
+    }
+    return { lower, upper, end: cursor };
+  }
+
+  function renderLimitOperator(commandName, source, index) {
+    const scripts = readScriptPair(source, index);
+    const symbol = mathSymbols[commandName] || commandName;
+    if (!scripts.lower && !scripts.upper) {
+      return { html: `<span class="math-symbol">${escapeHtml(symbol)}</span>`, end: scripts.end };
+    }
+    const upper = scripts.upper ? mathGroupHtml(scripts.upper.value) : "";
+    const lower = scripts.lower ? mathGroupHtml(scripts.lower.value) : "";
+    return {
+      html: `<span class="math-limit-op"><span class="math-limit-upper">${upper}</span><span class="math-limit-symbol">${escapeHtml(symbol)}</span><span class="math-limit-lower">${lower}</span></span>`,
+      end: scripts.end
+    };
   }
 
   function scriptText(value, map, fallbackMark) {
@@ -406,6 +451,12 @@
           continue;
         }
         index = command.end;
+        if (mathLimitOperators.has(command.name)) {
+          const limitOperator = renderLimitOperator(command.name, source, index);
+          output += limitOperator.html;
+          index = limitOperator.end;
+          continue;
+        }
         if (["frac", "dfrac", "tfrac"].includes(command.name)) {
           const numerator = readBalanced(source, index, "{", "}");
           const denominator = readBalanced(source, numerator.end, "{", "}");

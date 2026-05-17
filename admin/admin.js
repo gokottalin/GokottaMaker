@@ -35,6 +35,7 @@
   const resetButton = document.querySelector("#resetButton");
   const list = document.querySelector("#adminContentList");
   const categoryField = document.querySelector("#categoryField");
+  const recommendationPriorityField = document.querySelector("#recommendationPriorityField");
   const statusField = document.querySelector("#statusField");
   const projectExtra = document.querySelector("#projectExtra");
   const visibilityHint = document.querySelector("#visibilityHint");
@@ -60,20 +61,74 @@
   const bulkRestoreButton = document.querySelector("#bulkRestoreButton");
   const refreshHealthButton = document.querySelector("#refreshHealthButton");
   const healthPanel = document.querySelector("#healthPanel");
+  const layoutPanel = document.querySelector("#layoutPanel");
 
   let editingType = null;
   let editingId = null;
   let currentCover = "";
   let csrfToken = "";
-  let serverContent = { posts: [], projects: [] };
+  let serverContent = { posts: [], projects: [], siteLayout: { home: [] } };
   let isDirty = false;
   let isRestoringForm = false;
   let autosaveTimer = 0;
   let lastDraftSavedAt = "";
   let cropState = null;
+  let layoutDragState = null;
   const selectedContent = new Set();
   const filters = { search: "", type: "all", status: "all" };
   const featuredLimit = 4;
+  const defaultLayoutPages = [
+    {
+      key: "home",
+      label: "首页",
+      sections: [
+        { key: "hero", label: "首页首屏", description: "首页第一屏大海报与轮播内容。", order: 1, visible: true, size: "hero", preview: "hero" },
+        { key: "recommended", label: "推荐内容", description: "按文章主分类与推荐优先级生成的推荐海报和列表。", order: 2, visible: true, size: "wide", preview: "recommended" },
+        { key: "projects", label: "开源项目", description: "游客端首页的开源项目区。", order: 3, visible: true, size: "wide", preview: "cards" },
+        { key: "miniapps", label: "网页小程序", description: "MD2File、GokottaElec 等工具入口，默认排在页面底部。", order: 4, visible: true, size: "wide", preview: "miniapps" }
+      ]
+    },
+    {
+      key: "category",
+      label: "分类课程页",
+      sections: [
+        { key: "categoryHeader", label: "标题与搜索", description: "分类页顶部标题、摘要、搜索和返回入口。", order: 1, visible: true, size: "compact", preview: "header" },
+        { key: "courseContent", label: "课程内容与推荐", description: "课程大纲、推荐起点、文章列表和相关项目。", order: 2, visible: true, size: "hero", preview: "course" }
+      ]
+    },
+    {
+      key: "projectsPage",
+      label: "开源项目页",
+      sections: [
+        { key: "projectsHeader", label: "项目页标题", description: "开源项目页顶部标题、摘要和返回入口。", order: 1, visible: true, size: "compact", preview: "header" },
+        { key: "projectList", label: "项目列表", description: "公开项目卡片列表。", order: 2, visible: true, size: "hero", preview: "cards" }
+      ]
+    },
+    {
+      key: "miniappsPage",
+      label: "小程序中心",
+      sections: [
+        { key: "miniappsHeader", label: "小程序页标题", description: "小程序中心顶部标题、摘要和返回入口。", order: 1, visible: true, size: "compact", preview: "header" },
+        { key: "miniappRegistry", label: "小程序列表", description: "网页小程序卡片列表。", order: 2, visible: true, size: "hero", preview: "miniapps" }
+      ]
+    },
+    {
+      key: "postPage",
+      label: "文章详情页",
+      sections: [
+        { key: "postHero", label: "文章详情头图", description: "文章详情页顶部封面、分类和标题区。", order: 1, visible: true, size: "wide", preview: "hero" },
+        { key: "postBody", label: "文章正文与目录", description: "文章目录和 Markdown 正文区域。", order: 2, visible: true, size: "hero", preview: "article" }
+      ]
+    },
+    {
+      key: "projectDetailPage",
+      label: "项目详情页",
+      sections: [
+        { key: "projectHero", label: "项目详情头图", description: "项目详情页顶部封面、状态和标题区。", order: 1, visible: true, size: "wide", preview: "hero" },
+        { key: "projectBody", label: "项目正文与目录", description: "项目目录和 Markdown 正文区域。", order: 2, visible: true, size: "hero", preview: "article" }
+      ]
+    }
+  ];
 
   function storedBool(key) {
     return localStorage.getItem(key) === "true";
@@ -240,6 +295,42 @@
     return Math.min(featuredLimit - 1, Math.max(0, Math.trunc(order)));
   }
 
+  function featuredSlotLabel(value) {
+    return ["第一张", "第二张", "第三张", "第四张"][featuredOrderValue(value)] || "第一张";
+  }
+
+  function recommendationPriorityValue(value) {
+    const priority = Number(value);
+    if (!Number.isFinite(priority)) return 100;
+    return Math.min(999, Math.max(1, Math.trunc(priority)));
+  }
+
+  function layoutOrderValue(value) {
+    const order = Number(value);
+    if (!Number.isFinite(order)) return 1;
+    return Math.min(99, Math.max(1, Math.trunc(order)));
+  }
+
+  function layoutSizeValue(value) {
+    return ["compact", "standard", "wide", "hero"].includes(value) ? value : "standard";
+  }
+
+  function layoutSizeLabel(value) {
+    return { compact: "紧凑", standard: "标准", wide: "宽版", hero: "大块" }[layoutSizeValue(value)];
+  }
+
+  function layoutNextSize(value) {
+    const sizes = ["compact", "standard", "wide", "hero"];
+    const index = sizes.indexOf(layoutSizeValue(value));
+    return sizes[(index + 1) % sizes.length];
+  }
+
+  function sortedLayoutSections(sections = []) {
+    return sections
+      .slice()
+      .sort((a, b) => layoutOrderValue(a.order) - layoutOrderValue(b.order) || String(a.key).localeCompare(String(b.key)));
+  }
+
   function featuredItems() {
     return combinedItems()
       .filter((item) => item.featured && !item.deletedAt)
@@ -267,6 +358,7 @@
   function updateTypeFields() {
     const type = getType();
     categoryField.hidden = type === "project";
+    recommendationPriorityField.hidden = type === "project";
     statusField.hidden = type !== "project";
     projectExtra.hidden = type !== "project";
     updateVisibilityHint();
@@ -286,9 +378,9 @@
       return { tone: "warning", text: "规划中或开发中的项目保存后不会公开正文；访客直链只显示“尚未上线”提示。" };
     }
     if (snapshot.featured) {
-      return { tone: "success", text: `保存后将公开展示，并进入首页轮播 Slot ${featuredOrderValue(snapshot.featuredOrder)}。` };
+      return { tone: "success", text: `保存后将公开展示，并进入首页轮播${featuredSlotLabel(snapshot.featuredOrder)}。` };
     }
-    return { tone: "success", text: "保存后将作为公开内容展示；如需进入首页首屏，请选择 0-3 的轮播槽位。" };
+    return { tone: "success", text: "保存后将作为公开内容展示；如需进入首页首屏，请选择对应的轮播位置。" };
   }
 
   function updateVisibilityHint() {
@@ -314,6 +406,7 @@
       publishStatus: data.get("publishStatus") || "draft",
       featured: data.get("featured") === "on",
       featuredOrder: String(featuredOrderValue(data.get("featuredOrder") || "0")),
+      recommendationPriority: String(recommendationPriorityValue(data.get("recommendationPriority") || "100")),
       version: data.get("version") || "",
       progress: data.get("progress") || "0",
       repoUrl: data.get("repoUrl") || "",
@@ -489,6 +582,7 @@
     contentForm.type.value = "post";
     contentForm.publishStatus.value = "draft";
     contentForm.featuredOrder.value = "0";
+    contentForm.recommendationPriority.value = "100";
     setCover("", "", { dirty: false });
     updateTypeFields();
     updatePreview();
@@ -589,7 +683,7 @@
         return `
           <article class="featured-slot is-empty" data-slot="${order}">
             <div class="featured-slot-head">
-              <span>Slot ${order}</span>
+              <span>${featuredSlotLabel(order)}</span>
               <small>空槽位</small>
             </div>
             <div class="featured-slot-empty-mark">待安排</div>
@@ -604,7 +698,7 @@
       return `
         <article class="featured-slot is-filled" data-slot="${order}">
           <div class="featured-slot-head">
-            <span>Slot ${order}</span>
+            <span>${featuredSlotLabel(order)}</span>
             <small>${kind} · ${escapeHtml(publish)}</small>
           </div>
           <img src="${adminSrc(cover)}" alt="${escapeHtml(item.title || "未命名内容")}封面" />
@@ -620,6 +714,181 @@
     }).join("");
   }
 
+  function currentSiteLayout() {
+    const saved = serverContent.siteLayout || {};
+    return Object.fromEntries(
+      defaultLayoutPages.map((page) => {
+        const savedRows = Array.isArray(saved[page.key]) ? saved[page.key] : [];
+        const savedMap = new Map(savedRows.map((item) => [item.key, item]));
+        return [
+          page.key,
+          page.sections.map((base) => {
+            const item = savedMap.get(base.key) || {};
+            return {
+              ...base,
+              order: Number(item.order || base.order),
+              visible: item.visible !== false,
+              size: layoutSizeValue(item.size || base.size),
+              preview: base.preview || item.preview || "block"
+            };
+          })
+        ];
+      })
+    );
+  }
+
+  function renderLayoutPanel() {
+    if (!layoutPanel) return;
+    const layout = currentSiteLayout();
+    layoutPanel.innerHTML = `
+      ${defaultLayoutPages
+        .map((page) => {
+          const sections = sortedLayoutSections(layout[page.key] || []);
+          return `
+            <section class="layout-page-group" data-layout-page-group="${page.key}">
+              <div class="layout-page-head">
+                <h3>${escapeHtml(page.label)}</h3>
+                <span>拖动模块调整位置，点右下角调整大小</span>
+              </div>
+              <div class="layout-page-frame">
+                <div class="layout-browser-bar"><span></span><span></span><span></span><strong>${escapeHtml(page.label)}</strong></div>
+                <div class="layout-page-board" data-layout-page-board="${page.key}" aria-label="${escapeHtml(page.label)} 页面快照">
+                ${sections
+                  .map(
+                    (section, index) => `
+                      <article class="layout-snapshot-tile layout-preview-${escapeHtml(section.preview || "block")} size-${layoutSizeValue(section.size)} ${section.visible === false ? "is-hidden" : ""}" draggable="true" data-layout-page="${page.key}" data-layout-key="${section.key}" tabindex="0">
+                        <div class="layout-tile-meta">
+                          <span>${index + 1}</span>
+                          <small>${section.visible === false ? "已隐藏" : layoutSizeLabel(section.size)}</small>
+                        </div>
+                        <strong>${escapeHtml(section.label)}</strong>
+                        <button class="layout-resize-handle" data-layout-resize type="button" title="切换模块大小" aria-label="调整 ${escapeHtml(section.label)} 大小"></button>
+                      </article>
+                    `
+                  )
+                  .join("")}
+                </div>
+              </div>
+              <div class="layout-page-fields">
+                ${sections
+                  .map(
+                    (section) => `
+                      <article class="layout-row" data-layout-page="${page.key}" data-layout-key="${section.key}">
+                        <div>
+                          <strong>${escapeHtml(section.label)}</strong>
+                          <p>${escapeHtml(section.description || "")}</p>
+                        </div>
+                        <div class="layout-row-controls">
+                          <label>
+                            显示顺序
+                            <input name="layoutOrder" type="number" min="1" max="99" step="1" value="${Number(section.order || 1)}" />
+                          </label>
+                          <label>
+                            模块大小
+                            <select name="layoutSize">
+                              <option value="compact" ${layoutSizeValue(section.size) === "compact" ? "selected" : ""}>紧凑</option>
+                              <option value="standard" ${layoutSizeValue(section.size) === "standard" ? "selected" : ""}>标准</option>
+                              <option value="wide" ${layoutSizeValue(section.size) === "wide" ? "selected" : ""}>宽版</option>
+                              <option value="hero" ${layoutSizeValue(section.size) === "hero" ? "selected" : ""}>大块</option>
+                            </select>
+                          </label>
+                          <div class="layout-move-buttons" aria-label="调整 ${escapeHtml(section.label)} 顺序">
+                            <button class="button secondary" data-layout-move="-1" type="button" title="向前移动">↑</button>
+                            <button class="button secondary" data-layout-move="1" type="button" title="向后移动">↓</button>
+                          </div>
+                          <label class="checkbox-field">
+                            <input name="layoutVisible" type="checkbox" ${section.visible !== false ? "checked" : ""} />
+                            显示
+                          </label>
+                        </div>
+                      </article>
+                    `
+                  )
+                  .join("")}
+              </div>
+            </section>
+          `;
+        })
+        .join("")}
+      <div class="layout-actions">
+        <button class="button secondary" id="layoutResetButton" type="button">恢复默认排布</button>
+        <button class="button primary" id="layoutSaveButton" type="button">保存排布</button>
+      </div>
+    `;
+  }
+
+  function readLayoutPanel() {
+    const rows = [...layoutPanel.querySelectorAll(".layout-row[data-layout-key]")];
+    return rows.reduce((result, row) => {
+      const page = row.dataset.layoutPage || "home";
+      if (!result[page]) result[page] = [];
+      result[page].push({
+        key: row.dataset.layoutKey,
+        order: layoutOrderValue(row.querySelector("[name='layoutOrder']").value),
+        visible: row.querySelector("[name='layoutVisible']").checked,
+        size: layoutSizeValue(row.querySelector("[name='layoutSize']").value)
+      });
+      return result;
+    }, {});
+  }
+
+  function writeLayoutPanel(layout) {
+    Object.entries(layout).forEach(([, rows]) => {
+      sortedLayoutSections(rows).forEach((row, index) => {
+        row.order = index + 1;
+      });
+    });
+    serverContent.siteLayout = layout;
+    renderLayoutPanel();
+  }
+
+  function moveLayoutSection(pageKey, sectionKey, direction) {
+    const layout = readLayoutPanel();
+    const rows = sortedLayoutSections(layout[pageKey] || []);
+    const from = rows.findIndex((row) => row.key === sectionKey);
+    const to = from + Number(direction);
+    if (from < 0 || to < 0 || to >= rows.length) return;
+    const [moved] = rows.splice(from, 1);
+    rows.splice(to, 0, moved);
+    layout[pageKey] = rows;
+    writeLayoutPanel(layout);
+  }
+
+  function reorderLayoutSection(pageKey, sectionKey, targetKey) {
+    if (!pageKey || !sectionKey || !targetKey || sectionKey === targetKey) return;
+    const layout = readLayoutPanel();
+    const rows = sortedLayoutSections(layout[pageKey] || []);
+    const from = rows.findIndex((row) => row.key === sectionKey);
+    const to = rows.findIndex((row) => row.key === targetKey);
+    if (from < 0 || to < 0) return;
+    const [moved] = rows.splice(from, 1);
+    rows.splice(to, 0, moved);
+    layout[pageKey] = rows;
+    writeLayoutPanel(layout);
+  }
+
+  function resizeLayoutSection(pageKey, sectionKey) {
+    const layout = readLayoutPanel();
+    const rows = layout[pageKey] || [];
+    const row = rows.find((item) => item.key === sectionKey);
+    if (!row) return;
+    row.size = layoutNextSize(row.size);
+    writeLayoutPanel(layout);
+  }
+
+  async function saveLayoutPanel(button) {
+    if (!layoutPanel) return;
+    await withBusy(button, "保存中...", async () => {
+      const result = await request("/api/admin/site-layout", {
+        method: "POST",
+        body: JSON.stringify({ siteLayout: readLayoutPanel() })
+      });
+      serverContent.siteLayout = result.siteLayout;
+      renderLayoutPanel();
+      setNotice("游客端页面排布已保存，已打开的访客页面会自动同步新顺序。", "success");
+    });
+  }
+
   function renderList() {
     const items = filteredItems();
     updateBulkState(items);
@@ -631,7 +900,7 @@
           const meta = item.contentType === "project" ? `${item.status || ""} / ${item.license || ""}` : `${item.category || ""} / ${item.readTime || ""}`;
           const tags = item.tags ? ` / ${item.tags}` : "";
           const deleted = Boolean(item.deletedAt);
-          const slot = item.featured ? ` / 轮播 Slot ${featuredOrderValue(item.featuredOrder)}` : "";
+          const slot = item.featured ? ` / 轮播${featuredSlotLabel(item.featuredOrder)}` : "";
           const key = itemKey(item);
           return `
             <article class="admin-row ${deleted ? "is-deleted" : ""}">
@@ -745,6 +1014,7 @@
     contentForm.publishStatus.value = snapshot.publishStatus || "draft";
     contentForm.featured.checked = Boolean(snapshot.featured);
     contentForm.featuredOrder.value = String(featuredOrderValue(snapshot.featuredOrder || 0));
+    contentForm.recommendationPriority.value = String(recommendationPriorityValue(snapshot.recommendationPriority || 100));
     contentForm.category.value = snapshot.category || "模拟电子";
     contentForm.statusKey.value = snapshot.statusKey || "planned";
     contentForm.version.value = snapshot.version || "";
@@ -774,6 +1044,7 @@
         publishStatus: type === "post" ? item.publishStatus || "draft" : item.visibilityStatus || "draft",
         featured: Boolean(item.featured),
         featuredOrder: featuredOrderValue(item.featuredOrder || 0),
+        recommendationPriority: recommendationPriorityValue(item.recommendationPriority || 100),
         category: item.category || "模拟电子",
         statusKey: item.statusKey || "planned",
         version: item.version || "",
@@ -816,7 +1087,8 @@
       tags: data.get("tags"),
       date: now,
       featured: data.get("featured") === "on",
-      featuredOrder: featuredOrderValue(data.get("featuredOrder") || 0)
+      featuredOrder: featuredOrderValue(data.get("featuredOrder") || 0),
+      recommendationPriority: recommendationPriorityValue(data.get("recommendationPriority") || 100)
     };
 
     if (type === "post") {
@@ -866,7 +1138,7 @@
     }
     const conflict = existing.find((item) => featuredOrderValue(item.featuredOrder) === order);
     if (conflict) {
-      throw new Error(`轮播排序 ${order} 已被《${conflict.title || "未命名内容"}》使用，请选择 0-3 中的空槽位`);
+      throw new Error(`首页轮播${featuredSlotLabel(order)}已被《${conflict.title || "未命名内容"}》使用，请选择空着的位置`);
     }
   }
 
@@ -889,7 +1161,7 @@
     updateVisibilityHint();
     markDirty();
     renderFeaturedSlots();
-    setNotice(`已把当前编辑内容安排到首页轮播槽位 ${order}，保存后生效。`, "warning");
+    setNotice(`已把当前编辑内容安排到首页轮播${featuredSlotLabel(order)}，保存后生效。`, "warning");
   }
 
   async function replaceFeaturedSlot(order, occupiedItem) {
@@ -900,13 +1172,13 @@
     }
     const currentName = current.title.trim() || "当前编辑内容";
     const occupiedName = occupiedItem.title || "未命名内容";
-    if (!window.confirm(`确认用《${currentName}》替换槽位 ${order} 的《${occupiedName}》吗？旧内容会先取消首页轮播，当前内容仍需点击保存。`)) return;
+    if (!window.confirm(`确认用《${currentName}》替换首页轮播${featuredSlotLabel(order)}的《${occupiedName}》吗？旧内容会先取消首页轮播，当前内容仍需点击保存。`)) return;
     await saveItemFeatured(occupiedItem, false, occupiedItem.featuredOrder);
     assignCurrentToFeaturedSlot(order);
     renderList();
     renderRecentContent();
     renderFeaturedSlots();
-    setNotice(`槽位 ${order} 已腾出。请保存《${currentName}》完成替换。`, "warning");
+    setNotice(`首页轮播${featuredSlotLabel(order)}已腾出。请保存《${currentName}》完成替换。`, "warning");
   }
 
   function selectedItems() {
@@ -969,7 +1241,7 @@
   }
   function currentAdminView() {
     const view = (window.location.hash || "#editor").replace("#", "");
-    return ["editor", "library", "health"].includes(view) ? view : "editor";
+    return ["editor", "library", "carousel", "layout", "health"].includes(view) ? view : "editor";
   }
 
   function setAdminView(view = currentAdminView()) {
@@ -981,6 +1253,8 @@
     });
     if (view === "health") loadHealth().catch(() => renderHealth(null));
     if (view === "editor") renderRecentContent();
+    if (view === "carousel") renderFeaturedSlots();
+    if (view === "layout") renderLayoutPanel();
   }
 
   loginForm.addEventListener("submit", (event) => {
@@ -1176,9 +1450,87 @@
         renderList();
         renderRecentContent();
         renderFeaturedSlots();
-        setNotice("已取消该槽位的首页轮播。", "success");
+        setNotice("已取消该位置的首页轮播。", "success");
       }).catch((error) => setNotice(error.message, "error"));
     }
+  });
+
+  layoutPanel?.addEventListener("click", (event) => {
+    const resizeButton = event.target.closest("[data-layout-resize]");
+    if (resizeButton) {
+      event.preventDefault();
+      const tile = resizeButton.closest(".layout-snapshot-tile");
+      resizeLayoutSection(tile?.dataset.layoutPage, tile?.dataset.layoutKey);
+      setNotice("模块大小已调整，点击保存后写入网站状态。", "warning");
+      return;
+    }
+    const moveButton = event.target.closest("[data-layout-move]");
+    if (moveButton) {
+      const row = moveButton.closest("[data-layout-page][data-layout-key]");
+      moveLayoutSection(row?.dataset.layoutPage, row?.dataset.layoutKey, Number(moveButton.dataset.layoutMove));
+      setNotice("排布顺序已调整，点击保存后写入网站状态。", "warning");
+      return;
+    }
+    const saveButton = event.target.closest("#layoutSaveButton");
+    if (saveButton) {
+      saveLayoutPanel(saveButton).catch((error) => setNotice(error.message, "error"));
+      return;
+    }
+    const resetButton = event.target.closest("#layoutResetButton");
+    if (resetButton) {
+      serverContent.siteLayout = Object.fromEntries(defaultLayoutPages.map((page) => [page.key, page.sections.map((item) => ({ ...item }))]));
+      renderLayoutPanel();
+      setNotice("已恢复默认排布，保存后会写入网站状态。", "info");
+    }
+  });
+
+  layoutPanel?.addEventListener("change", (event) => {
+    if (!event.target.matches("[name='layoutOrder'], [name='layoutVisible'], [name='layoutSize']")) return;
+    const layout = readLayoutPanel();
+    Object.entries(layout).forEach(([pageKey, rows]) => {
+      layout[pageKey] = sortedLayoutSections(rows).map((row, index) => ({ ...row, order: index + 1 }));
+    });
+    serverContent.siteLayout = layout;
+    renderLayoutPanel();
+    setNotice("页面快照已更新，点击保存后写入网站状态。", "warning");
+  });
+
+  layoutPanel?.addEventListener("dragstart", (event) => {
+    if (event.target.closest("[data-layout-resize]")) {
+      event.preventDefault();
+      return;
+    }
+    const tile = event.target.closest(".layout-snapshot-tile");
+    if (!tile) return;
+    layoutDragState = { page: tile.dataset.layoutPage, key: tile.dataset.layoutKey };
+    tile.classList.add("is-dragging");
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", `${layoutDragState.page}:${layoutDragState.key}`);
+  });
+
+  layoutPanel?.addEventListener("dragover", (event) => {
+    const tile = event.target.closest(".layout-snapshot-tile");
+    if (!tile || !layoutDragState || tile.dataset.layoutPage !== layoutDragState.page) return;
+    event.preventDefault();
+    tile.classList.add("is-drag-over");
+  });
+
+  layoutPanel?.addEventListener("dragleave", (event) => {
+    event.target.closest(".layout-snapshot-tile")?.classList.remove("is-drag-over");
+  });
+
+  layoutPanel?.addEventListener("drop", (event) => {
+    const tile = event.target.closest(".layout-snapshot-tile");
+    if (!tile || !layoutDragState || tile.dataset.layoutPage !== layoutDragState.page) return;
+    event.preventDefault();
+    reorderLayoutSection(layoutDragState.page, layoutDragState.key, tile.dataset.layoutKey);
+    layoutDragState = null;
+    setNotice("快照顺序已调整，点击保存后写入网站状态。", "warning");
+  });
+
+  layoutPanel?.addEventListener("dragend", () => {
+    layoutDragState = null;
+    layoutPanel.querySelectorAll(".is-dragging, .is-drag-over").forEach((item) => item.classList.remove("is-dragging", "is-drag-over"));
   });
 
   window.addEventListener("hashchange", () => setAdminView());
@@ -1194,6 +1546,9 @@
     if (event.target.name === "type") updateTypeFields();
     if (event.target.name === "featuredOrder") {
       event.target.value = String(featuredOrderValue(event.target.value));
+    }
+    if (event.target.name === "recommendationPriority") {
+      event.target.value = String(recommendationPriorityValue(event.target.value));
     }
     markDirty();
     updateVisibilityHint();

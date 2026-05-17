@@ -148,9 +148,16 @@ $$
     el.preview.style.setProperty("--paper-height", page.height);
     el.preview.style.setProperty("--page-margin", margin.size);
     el.preview.style.setProperty("--preview-scale", `${3.05 * options.zoom}px`);
+    const pageHeightPx = page.height * 3.05 * options.zoom;
+    el.preview.style.setProperty("--page-height-px", `${pageHeightPx}px`);
+    el.preview.style.minHeight = `${pageHeightPx}px`;
     el.preview.style.setProperty("--doc-line-height", line.value);
     el.preview.dataset.pageSize = options.pageSize;
-    el.stats.textContent = `${markdown.length} \u5b57\u7b26 / ${page.label} / ${margin.label} / ${line.label}`;
+    const contentHeight = Math.max(el.preview.scrollHeight, pageHeightPx);
+    const pageCount = Math.max(1, Math.ceil(contentHeight / pageHeightPx));
+    el.preview.style.minHeight = `${pageHeightPx * pageCount}px`;
+    el.preview.dataset.pageCount = String(pageCount);
+    el.stats.textContent = `${markdown.length} \u5b57\u7b26 / ${page.label} / \u7ea6 ${pageCount} \u9875 / ${margin.label} / ${line.label}`;
   }
 
   function updatePreview() {

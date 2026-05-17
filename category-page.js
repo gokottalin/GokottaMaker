@@ -54,7 +54,7 @@
   const searchLabelNode = document.querySelector(".category-search-box span");
   const returnLinkNode = document.querySelector(".category-heading-actions .return-link");
 
-  const items = key === "all" ? allPosts : allPosts.filter((post) => post.category === category);
+  const items = sortByRecommendation(key === "all" ? allPosts : allPosts.filter((post) => post.categoryKey === key || post.category === category));
   const routeProjects = buildRouteProjects();
   const recommended = buildRecommendedItems();
 
@@ -107,8 +107,24 @@
     }, 0);
   }
 
+  function recommendationPriority(item) {
+    const priority = Number(item.recommendationPriority ?? 999);
+    return Number.isFinite(priority) ? priority : 999;
+  }
+
+  function itemTimestamp(item) {
+    const value = Date.parse(item.date || item.publishedAt || item.updatedAt || item.createdAt || "");
+    return Number.isFinite(value) ? value : 0;
+  }
+
+  function sortByRecommendation(collection) {
+    return collection
+      .slice()
+      .sort((a, b) => recommendationPriority(a) - recommendationPriority(b) || itemTimestamp(b) - itemTimestamp(a));
+  }
+
   function searchItems(collection, tokens) {
-    if (!tokens.length) return collection.slice();
+    if (!tokens.length) return sortByRecommendation(collection);
     return collection
       .map((item) => ({ item, score: scoreItem(item, tokens) }))
       .filter((entry) => entry.score > 0)

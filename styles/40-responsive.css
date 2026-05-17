@@ -9,11 +9,6 @@
   .category-course-layout {
     grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
   }
-
-  .resource-panel {
-    position: static;
-    grid-column: 1 / -1;
-  }
 }
 
 @media (max-width: 1180px) {
@@ -54,6 +49,17 @@
   .lesson-feature,
   .category-course-layout {
     grid-template-columns: 1fr;
+  }
+
+  .lesson-main,
+  .syllabus-rail,
+  .resource-panel {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .home-lesson-layout .lesson-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .course-path-card {
@@ -160,6 +166,10 @@
   .lesson-row,
   .home-lesson-layout,
   .category-course-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .home-lesson-layout .lesson-list {
     grid-template-columns: 1fr;
   }
 

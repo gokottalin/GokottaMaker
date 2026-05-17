@@ -194,20 +194,29 @@
   --paper-height: 297;
   --page-margin: 22;
   --preview-scale: 3.05px;
+  --page-height-px: calc(var(--paper-height) * var(--preview-scale));
   --doc-line-height: 1.65;
   width: calc(var(--paper-width) * var(--preview-scale));
-  min-height: calc(var(--paper-height) * var(--preview-scale));
-  aspect-ratio: var(--paper-width) / var(--paper-height);
+  min-height: var(--page-height-px);
+  height: auto;
   box-sizing: border-box;
   padding: calc(var(--page-margin) * var(--preview-scale));
   border: 1px solid #cfd9e8;
   border-radius: 2px;
-  background: #ffffff;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      #ffffff 0,
+      #ffffff calc(var(--page-height-px) - 2px),
+      #e5edf7 calc(var(--page-height-px) - 2px),
+      #e5edf7 var(--page-height-px)
+    );
   box-shadow: 0 18px 46px rgba(15, 35, 70, 0.18);
   color: #111827;
   font-size: 14px;
   line-height: var(--doc-line-height);
   overflow-wrap: anywhere;
+  overflow: visible;
 }
 
 .md2doc-preview.markdown-article h2 {
@@ -237,9 +246,16 @@ body.md2doc-page .md2doc-preview .markdown-math {
 }
 
 body.md2doc-page .md2doc-preview .markdown-math-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.18em;
+  max-width: 100%;
+  overflow-x: auto;
   border-color: #d7e4f3 !important;
   background: #f8fbff !important;
   color: #111827 !important;
+  line-height: 1.65;
 }
 
 .md2doc-log {

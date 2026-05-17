@@ -546,20 +546,15 @@
 }
 
 .home-miniapp-card.miniapp-card-md2file {
-  grid-template-columns: 150px minmax(0, 1fr);
-  gap: 8px 18px;
+  grid-template-columns: 84px minmax(0, 1fr);
 }
 
-.home-miniapp-card .miniapp-icon-md2file {
-  width: 152px;
-  height: 152px;
-  max-height: none;
+.miniapp-icon-md2file {
   padding: 0;
-  border-color: #cfe0f2;
-  background: #ffffff;
-  justify-self: start;
-  margin: -12px 0 -18px -10px;
   object-fit: contain;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
 }
 
 .miniapp-capabilities {
@@ -598,8 +593,8 @@
 }
 
 [data-theme="dark"] .miniapp-icon-md2file {
-  border-color: rgba(168, 182, 200, 0.28);
-  background: rgba(230, 241, 251, 0.08);
+  border-color: transparent;
+  background: transparent;
 }
 
 [data-theme="dark"] .miniapp-card h2 {
@@ -643,8 +638,8 @@
   }
 
   :root:not([data-theme="light"]) .miniapp-icon-md2file {
-    border-color: rgba(168, 182, 200, 0.28);
-    background: rgba(230, 241, 251, 0.08);
+    border-color: transparent;
+    background: transparent;
   }
 
   :root:not([data-theme="light"]) .miniapp-card h2 {
@@ -707,8 +702,8 @@
   }
 
   .home-miniapp-card .miniapp-icon-md2file {
-    width: 116px;
-    height: 116px;
+    width: 84px;
+    height: 84px;
     margin: 0;
   }
 }

@@ -38,7 +38,7 @@ const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword }
 const uploadStore = createUploadStore(uploadDir);
 
 const siteVersion = "V2.4.9";
-const siteBuild = "20260514-1635";
+const siteBuild = "20260517-003";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
 const elecVersion = "V1.3";
@@ -66,8 +66,8 @@ function seedContent() {
 
   if (!postCount) {
     const insertPost = db.prepare(`
-      INSERT INTO posts (id, slug, title, category, category_key, excerpt, cover, markdown, read_time, date, publish_status, featured, featured_order, tags, created_at, published_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', ?, ?, ?, CURRENT_TIMESTAMP, ?)
+      INSERT INTO posts (id, slug, title, category, category_key, recommendation_priority, excerpt, cover, markdown, read_time, date, publish_status, featured, featured_order, tags, created_at, published_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', ?, ?, ?, CURRENT_TIMESTAMP, ?)
     `);
     seed.posts.forEach((post, index) => {
       insertPost.run(
@@ -76,6 +76,7 @@ function seedContent() {
         post.title,
         post.category,
         post.categoryKey,
+        Number(post.recommendationPriority || 100),
         post.excerpt || "",
         post.cover || "",
         post.markdown || "",
@@ -122,6 +123,7 @@ function reconcileSeedContent() {
   const updateSeedPost = db.prepare(`
     UPDATE posts
     SET tags = CASE WHEN tags IS NULL OR tags = '' THEN ? ELSE tags END,
+        recommendation_priority = CASE WHEN recommendation_priority IS NULL OR recommendation_priority = 100 THEN ? ELSE recommendation_priority END,
         created_at = COALESCE(created_at, updated_at, CURRENT_TIMESTAMP),
         published_at = CASE WHEN publish_status = 'published' THEN COALESCE(published_at, date, updated_at, CURRENT_TIMESTAMP) ELSE published_at END,
         updated_at = CURRENT_TIMESTAMP
@@ -130,12 +132,14 @@ function reconcileSeedContent() {
       AND (
         tags IS NULL
         OR tags = ''
+        OR recommendation_priority IS NULL
+        OR recommendation_priority = 100
         OR created_at IS NULL
         OR (publish_status = 'published' AND published_at IS NULL)
       )
   `);
   seed.posts.forEach((post) => {
-    updateSeedPost.run(post.tags || "", post.id);
+    updateSeedPost.run(post.tags || "", Number(post.recommendationPriority || 100), post.id);
   });
 
   const updateSeedProject = db.prepare(`
@@ -311,6 +315,7 @@ function exportContent() {
     exportedAt: new Date().toISOString(),
     posts: allPosts(true),
     projects: allProjects(true),
+    siteLayout: siteLayout(),
     uploads: uploads()
   };
 }
@@ -581,11 +586,90 @@ function publicProjectDirectory() {
   return [...projectMap.values()];
 }
 
+const defaultSiteLayout = {
+  home: [
+    { key: "hero", label: "首页首屏", order: 1, visible: true, size: "hero" },
+    { key: "recommended", label: "推荐内容", order: 2, visible: true, size: "wide" },
+    { key: "projects", label: "开源项目", order: 3, visible: true, size: "wide" },
+    { key: "miniapps", label: "网页小程序", order: 4, visible: true, size: "wide" }
+  ],
+  category: [
+    { key: "categoryHeader", label: "分类页标题与搜索", order: 1, visible: true, size: "compact" },
+    { key: "courseContent", label: "课程内容与推荐", order: 2, visible: true, size: "hero" }
+  ],
+  projectsPage: [
+    { key: "projectsHeader", label: "开源项目页标题", order: 1, visible: true, size: "compact" },
+    { key: "projectList", label: "项目列表", order: 2, visible: true, size: "hero" }
+  ],
+  miniappsPage: [
+    { key: "miniappsHeader", label: "小程序中心标题", order: 1, visible: true, size: "compact" },
+    { key: "miniappRegistry", label: "小程序列表", order: 2, visible: true, size: "hero" }
+  ],
+  postPage: [
+    { key: "postHero", label: "文章详情头图", order: 1, visible: true, size: "wide" },
+    { key: "postBody", label: "文章正文与目录", order: 2, visible: true, size: "hero" }
+  ],
+  projectDetailPage: [
+    { key: "projectHero", label: "项目详情头图", order: 1, visible: true, size: "wide" },
+    { key: "projectBody", label: "项目正文与目录", order: 2, visible: true, size: "hero" }
+  ]
+};
+
+function siteSetting(key, fallback) {
+  const row = db.prepare("SELECT value_json AS valueJson FROM site_settings WHERE key = ?").get(key);
+  if (!row) return fallback;
+  try {
+    return { ...fallback, ...JSON.parse(row.valueJson) };
+  } catch {
+    return fallback;
+  }
+}
+
+function normalizeSiteLayout(payload = {}) {
+  function layoutSize(value) {
+    return ["compact", "standard", "wide", "hero"].includes(value) ? value : "standard";
+  }
+
+  return Object.fromEntries(
+    Object.entries(defaultSiteLayout).map(([pageKey, sections]) => {
+      const rows = Array.isArray(payload[pageKey]) ? payload[pageKey] : [];
+      const rowMap = new Map(rows.map((item) => [item.key, item]));
+      return [
+        pageKey,
+        sections.map((base) => {
+          const item = rowMap.get(base.key) || {};
+          return {
+            ...base,
+            order: Math.max(1, Math.min(99, Number(item.order || base.order))),
+            visible: item.visible !== false,
+            size: layoutSize(item.size || base.size)
+          };
+        })
+      ];
+    })
+  );
+}
+
+function siteLayout() {
+  return normalizeSiteLayout(siteSetting("site_layout", defaultSiteLayout));
+}
+
+function saveSiteLayout(payload) {
+  const normalized = normalizeSiteLayout(payload);
+  db.prepare(
+    `INSERT INTO site_settings (key, value_json, updated_at)
+     VALUES ('site_layout', ?, CURRENT_TIMESTAMP)
+     ON CONFLICT(key) DO UPDATE SET value_json = excluded.value_json, updated_at = CURRENT_TIMESTAMP`
+  ).run(JSON.stringify(normalized));
+  return normalized;
+}
+
 function publicContentPayload() {
   return {
     posts: allPosts(false),
     projects: allProjects(false),
-    projectDirectory: publicProjectDirectory()
+    projectDirectory: publicProjectDirectory(),
+    siteLayout: siteLayout()
   };
 }
 
@@ -1008,11 +1092,18 @@ async function api(req, res, pathname) {
   if (!user) return;
   if (!requireCsrf(req, res, user)) return;
 
-  if (pathname === "/api/admin/content" && req.method === "GET") return json(res, 200, { posts: allPosts(true), projects: allProjects(true) });
+  if (pathname === "/api/admin/content" && req.method === "GET") return json(res, 200, { posts: allPosts(true), projects: allProjects(true), siteLayout: siteLayout() });
   if (pathname === "/api/admin/health" && req.method === "GET") return json(res, 200, healthPayload({ detailed: true }));
   if (pathname === "/api/admin/export" && req.method === "GET") {
     logAudit(db, req, user, "content_export", "content", "all");
     return json(res, 200, exportContent());
+  }
+  if (pathname === "/api/admin/site-layout" && req.method === "GET") return json(res, 200, { siteLayout: siteLayout() });
+  if (pathname === "/api/admin/site-layout" && req.method === "POST") {
+    const body = await readBody(req);
+    const nextLayout = saveSiteLayout(body.siteLayout || body);
+    logAudit(db, req, user, "site_layout_save", "site_layout", "home");
+    return json(res, 200, { siteLayout: nextLayout });
   }
   if (pathname === "/api/uploads" && req.method === "GET") return json(res, 200, { uploads: uploads() });
 

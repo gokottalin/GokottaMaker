@@ -56,6 +56,7 @@ f(x)=\\int_0^x \\frac{1}{\\sqrt{1+t^2}}dt
   assertIncludes(rendered.html, "markdown-math-inline", "inline math span");
   assert.equal(countMatches(rendered.html, /markdown-math-display/g), 2, "display math block count");
   assertIncludes(rendered.html, "math-frac", "fraction markup");
+  assertIncludes(rendered.html, "math-limit-op", "integral limit markup");
   assertIncludes(rendered.html, "math-root", "root markup");
   assertIncludes(rendered.html, "\u222e", "closed integral glyph");
   assert.ok(!rendered.html.includes("\ufffd"), "rendered math must not contain replacement characters");

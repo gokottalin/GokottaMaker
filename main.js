@@ -12,6 +12,8 @@
   const search = document.querySelector("#siteSearch");
   const miniapps = window.GOKOTTA_MINIAPPS || [];
   const courseMeta = window.GokottaCourseMeta || {};
+  let siteLayout = window.GOKOTTA_SERVER_CONTENT?.siteLayout || {};
+  let siteLayoutSignature = JSON.stringify(siteLayout);
   let featuredItems = [];
   let activeHeroIndex = 0;
   let activeBg = "A";
@@ -165,6 +167,22 @@
 
   function itemReadTime(item) {
     return item.readTime || item.license || item.status || "";
+  }
+
+  function recommendationPriority(item) {
+    const priority = Number(item.recommendationPriority ?? 999);
+    return Number.isFinite(priority) ? priority : 999;
+  }
+
+  function itemTimestamp(item) {
+    const value = Date.parse(item.date || item.publishedAt || item.updatedAt || item.createdAt || "");
+    return Number.isFinite(value) ? value : 0;
+  }
+
+  function sortByRecommendation(items) {
+    return items
+      .slice()
+      .sort((a, b) => recommendationPriority(a) - recommendationPriority(b) || itemTimestamp(b) - itemTimestamp(a));
   }
 
   function canOpen(item) {
@@ -328,6 +346,44 @@
     miniappUpdateList.innerHTML = items.map(miniappUpdateCard).join("") || `<div class="empty-state">当前还没有可用小程序。</div>`;
   }
 
+  function applySiteLayout() {
+    const main = document.querySelector("#mainContent");
+    const sections = [...document.querySelectorAll("[data-layout-section]")];
+    if (!main || !sections.length) return;
+    const orderMap = new Map((siteLayout.home || []).map((item) => [item.key, item]));
+    sections
+      .sort((a, b) => {
+        const left = orderMap.get(a.dataset.layoutSection)?.order ?? 99;
+        const right = orderMap.get(b.dataset.layoutSection)?.order ?? 99;
+        return Number(left) - Number(right);
+      })
+      .forEach((section) => {
+        const config = orderMap.get(section.dataset.layoutSection);
+        section.hidden = config?.visible === false;
+        section.dataset.layoutSize = config?.size || "standard";
+        main.appendChild(section);
+      });
+  }
+
+  function startSiteLayoutPolling() {
+    if (!window.GOKOTTA_SERVER_CONTENT || !window.fetch) return;
+    window.setInterval(async () => {
+      try {
+        const response = await fetch("./api/content", { cache: "no-store" });
+        if (!response.ok) return;
+        const payload = await response.json();
+        const nextLayout = payload.siteLayout || {};
+        const nextSignature = JSON.stringify(nextLayout);
+        if (nextSignature === siteLayoutSignature) return;
+        siteLayout = nextLayout;
+        siteLayoutSignature = nextSignature;
+        applySiteLayout();
+      } catch {
+        return;
+      }
+    }, 3000);
+  }
+
   function resolveRecommended(ids) {
     return ids
       .map((id) => posts.find((item) => item.id === id) || projects.find((item) => item.id === id) || publicProjects.find((item) => item.id === id))
@@ -425,7 +481,7 @@
     ].filter(Boolean);
   }
 
-  renderArticles(posts);
+  renderArticles(sortByRecommendation(posts));
   renderCoursePaths();
   renderHeroCards();
   renderFeatured(0);
@@ -433,13 +489,15 @@
   restartHeroTimer();
   renderProjects(projects);
   renderMiniappUpdates(miniapps);
+  applySiteLayout();
+  startSiteLayoutPolling();
 
   if (search) {
     search.addEventListener("input", () => {
       const keyword = search.value.trim().toLowerCase();
       const filteredPosts = searchItems(posts, keyword);
       const filteredProjects = searchItems(projects, keyword);
-      renderArticles(filteredPosts);
+      renderArticles(keyword ? filteredPosts : sortByRecommendation(filteredPosts));
       renderProjects(filteredProjects);
     });
   }
