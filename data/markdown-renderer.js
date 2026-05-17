@@ -281,8 +281,16 @@
 
   function readMathScript(source, index, mark) {
     if (source[index] !== mark) return null;
-    const group = readBalanced(source, index + 1, "{", "}");
+    const group = readScriptValue(source, index + 1);
     return { value: group.value, end: group.end };
+  }
+
+  function readScriptValue(source, index) {
+    const group = readBalanced(source, index, "{", "}");
+    if (group.grouped) return group;
+    const token = source.slice(index).match(/^[A-Za-z0-9]+/);
+    if (token) return { value: token[0], end: index + token[0].length, grouped: false };
+    return group;
   }
 
   function readScriptPair(source, index) {
@@ -340,7 +348,7 @@
         continue;
       }
       if (char === "^" || char === "_") {
-        const group = readBalanced(source, index + 1, "{", "}");
+        const group = readScriptValue(source, index + 1);
         output += scriptText(group.value, char === "^" ? superscriptChars : subscriptChars, char);
         index = group.end;
         continue;
@@ -416,8 +424,95 @@
     return renderLatexHtml(value);
   }
 
+  const plainMathWords = new Set(["ADC", "CPU", "DMA", "GPIO", "HAL", "LSB", "MCU", "MOS", "PDF", "ST", "TVS"]);
+
+  function identifierHtml(token) {
+    if (!token || plainMathWords.has(token)) return escapeHtml(token);
+    let match = token.match(/^([VRTCI])([A-Z][A-Z0-9]+)(\+?)$/);
+    if (match) return `${escapeHtml(match[1])}<sub>${escapeHtml(match[2])}</sub>${escapeHtml(match[3])}`;
+    match = token.match(/^([VRTCI])([a-z][A-Za-z0-9]+)$/);
+    if (match) return `${escapeHtml(match[1])}<sub>${escapeHtml(match[2])}</sub>`;
+    match = token.match(/^([VRTCI])([0-9]+)$/);
+    if (match) return `${escapeHtml(match[1])}<sub>${escapeHtml(match[2])}</sub>`;
+    return escapeHtml(token);
+  }
+
+  function isTopLevelFormulaOperator(char) {
+    return (
+      char === "=" ||
+      char === "≈" ||
+      char === "≥" ||
+      char === "≤" ||
+      char === ">" ||
+      char === "<" ||
+      char === "+" ||
+      char === "-" ||
+      char === "×" ||
+      char === "÷" ||
+      char === "*" ||
+      char === "\n"
+    );
+  }
+
+  function splitTopLevelFraction(source) {
+    let depth = 0;
+    let slashIndex = -1;
+    for (let index = 0; index < source.length; index += 1) {
+      const char = source[index];
+      if (char === "\\" && index + 1 < source.length) {
+        index += 1;
+        continue;
+      }
+      if (char === "(" || char === "[" || char === "{") depth += 1;
+      if (char === ")" || char === "]" || char === "}") depth = Math.max(0, depth - 1);
+      if (char === "/" && depth === 0 && source[index - 1] !== "/" && source[index + 1] !== "/") {
+        slashIndex = index;
+        break;
+      }
+    }
+    if (slashIndex < 0) return null;
+
+    let leftStart = slashIndex - 1;
+    depth = 0;
+    while (leftStart >= 0) {
+      const char = source[leftStart];
+      if (char === ")" || char === "]" || char === "}") depth += 1;
+      if (char === "(" || char === "[" || char === "{") depth = Math.max(0, depth - 1);
+      if (depth === 0 && isTopLevelFormulaOperator(char)) {
+        leftStart += 1;
+        break;
+      }
+      leftStart -= 1;
+    }
+    leftStart = Math.max(0, leftStart);
+
+    let rightEnd = slashIndex + 1;
+    depth = 0;
+    while (rightEnd < source.length) {
+      const char = source[rightEnd];
+      if (char === "(" || char === "[" || char === "{") depth += 1;
+      if (char === ")" || char === "]" || char === "}") depth = Math.max(0, depth - 1);
+      if (depth === 0 && isTopLevelFormulaOperator(char)) break;
+      rightEnd += 1;
+    }
+
+    const left = source.slice(leftStart, slashIndex).trim();
+    const right = source.slice(slashIndex + 1, rightEnd).trim();
+    if (!left || !right) return null;
+    return {
+      prefix: source.slice(0, leftStart),
+      left,
+      right,
+      suffix: source.slice(rightEnd)
+    };
+  }
+
   function renderLatexHtml(value) {
     const source = normalizeMathSource(value);
+    const fraction = splitTopLevelFraction(source);
+    if (fraction) {
+      return `${renderLatexHtml(fraction.prefix)}<span class="math-frac"><span class="math-num">${renderLatexHtml(fraction.left)}</span><span class="math-den">${renderLatexHtml(fraction.right)}</span></span>${renderLatexHtml(fraction.suffix)}`;
+    }
     let output = "";
     let index = 0;
     while (index < source.length) {
@@ -428,9 +523,21 @@
         continue;
       }
       if (char === "^" || char === "_") {
-        const group = readBalanced(source, index + 1, "{", "}");
+        const group = readScriptValue(source, index + 1);
         const tag = char === "^" ? "sup" : "sub";
         output += `<${tag}>${mathGroupHtml(group.value)}</${tag}>`;
+        index = group.end;
+        continue;
+      }
+      if (char === "(") {
+        const group = readBalanced(source, index, "(", ")");
+        output += `(${mathGroupHtml(group.value)})`;
+        index = group.end;
+        continue;
+      }
+      if (char === "[") {
+        const group = readBalanced(source, index, "[", "]");
+        output += `[${mathGroupHtml(group.value)}]`;
         index = group.end;
         continue;
       }
@@ -507,6 +614,12 @@
         output += escapeHtml(command.name.length === 1 ? command.name : command.name);
         continue;
       }
+      const word = source.slice(index).match(/^[A-Za-z][A-Za-z0-9]*/);
+      if (word) {
+        output += identifierHtml(word[0]);
+        index += word[0].length;
+        continue;
+      }
       output += escapeHtml(char);
       index += 1;
     }
@@ -515,12 +628,31 @@
 
   function renderInlineMath(latex) {
     const source = decodeMathEntities(latex);
-    const normalized = mathToText(source);
-    return `<span class="markdown-math markdown-math-inline" data-latex="${escapeHtml(source)}">${escapeHtml(normalized)}</span>`;
+    return `<span class="markdown-math markdown-math-inline" data-latex="${escapeHtml(source)}">${renderLatexHtml(source)}</span>`;
   }
 
   function renderDisplayMath(latex) {
     return `<div class="markdown-math markdown-math-display" data-latex="${escapeHtml(latex)}">${renderLatexHtml(latex)}</div>`;
+  }
+
+  function looksLikeFormulaText(value) {
+    const source = String(value || "").trim();
+    if (!source || source.length > 240) return false;
+    if (/;|#include|\b(return|if|for|while|static|const|void|uint\d+_t)\b/.test(source)) return false;
+    if (/[=≈≥≤<>×÷/^]|\|\||\b(?:sqrt|frac|sum|int|ln|exp|round)\b/.test(source)) return true;
+    return /^(?:V(?:IN|REF|DDA|SSA|0)|R(?:AIN|ADC|th|source|[12])|C(?:ADC|IN|input)|T(?:SMPL)|I(?:divider)?|N)$/.test(source);
+  }
+
+  function looksLikeFormulaBlock(lang, value) {
+    const normalizedLang = String(lang || "").trim().toLowerCase();
+    if (["math", "formula", "latex", "tex"].includes(normalizedLang)) return true;
+    if (normalizedLang && normalizedLang !== "text") return false;
+    const lines = String(value || "")
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+    if (!lines.length || lines.some((line) => /----|\+\s*-{2,}|#include|;/.test(line))) return false;
+    return lines.some((line) => looksLikeFormulaText(line));
   }
 
   function isLocalFilePath(value) {
@@ -557,7 +689,8 @@
     const mathSpans = [];
     let text = escapeHtml(value).replace(/`([^`]+)`/g, (_, code) => {
       const token = `@@GOKOTTACODE${codeSpans.length}@@`;
-      codeSpans.push(`<code>${code}</code>`);
+      const decoded = decodeMathEntities(code);
+      codeSpans.push(looksLikeFormulaText(decoded) ? renderInlineMath(decoded) : `<code>${code}</code>`);
       return token;
     });
 
@@ -736,7 +869,12 @@
       if (codeFence) {
         if (inCode) {
           if (codeFence[1] === codeFenceMarker) {
-            blocks.push(`<pre data-lang="${escapeHtml(codeLang)}"><code>${highlight(escapeHtml(code.join("\n")))}</code></pre>`);
+            const codeText = code.join("\n");
+            if (looksLikeFormulaBlock(codeLang, codeText)) {
+              blocks.push(renderDisplayMath(codeText));
+            } else {
+              blocks.push(`<pre data-lang="${escapeHtml(codeLang)}"><code>${highlight(escapeHtml(codeText))}</code></pre>`);
+            }
             inCode = false;
             code = [];
             codeLang = "";
@@ -847,7 +985,12 @@
     }
 
     if (inCode) {
-      blocks.push(`<pre data-lang="${escapeHtml(codeLang)}"><code>${highlight(escapeHtml(code.join("\n")))}</code></pre>`);
+      const codeText = code.join("\n");
+      if (looksLikeFormulaBlock(codeLang, codeText)) {
+        blocks.push(renderDisplayMath(codeText));
+      } else {
+        blocks.push(`<pre data-lang="${escapeHtml(codeLang)}"><code>${highlight(escapeHtml(codeText))}</code></pre>`);
+      }
     }
     if (inMath) closeMathBlock();
     flushLooseBlocks();

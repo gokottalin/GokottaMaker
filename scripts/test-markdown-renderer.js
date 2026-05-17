@@ -55,6 +55,8 @@ f(x)=\\int_0^x \\frac{1}{\\sqrt{1+t^2}}dt
 \\]
 `);
   assertIncludes(rendered.html, "markdown-math-inline", "inline math span");
+  assertIncludes(rendered.html, "<sub>i</sub>", "inline math subscript markup");
+  assertIncludes(rendered.html, "<sup>2</sup>", "inline math superscript markup");
   assert.equal(countMatches(rendered.html, /markdown-math-display/g), 2, "display math block count");
   assertIncludes(rendered.html, "math-frac", "fraction markup");
   assertIncludes(rendered.html, "math-limit-op", "integral limit markup");
@@ -76,6 +78,25 @@ const formula = "$x_i^2$";
   assertIncludes(code.html, 'data-lang="js"', "js code fence language");
   assertIncludes(code.html, 'data-lang="c"', "tilde code fence language");
   assert.equal(countMatches(code.html, /markdown-math/g), 0, "math delimiters inside code remain literal");
+}
+
+{
+  const rendered = markdown.render(`\`VIN / VREF × (2^12 - 1)\`
+
+\`\`\`text
+code ≈ round(VIN / VREF × (2^12 - 1))
+1 LSB ≈ VREF / 2^12
+\`\`\`
+
+\`\`\`text
+VBAT ---- R1 ----+---- ADC_INx
+\`\`\`
+`);
+  assert.equal(countMatches(rendered.html, /markdown-math-inline/g), 1, "formula-like inline code renders as inline math");
+  assert.equal(countMatches(rendered.html, /markdown-math-display/g), 1, "formula-like text fence renders as display math");
+  assert.equal(countMatches(rendered.html, /<pre /g), 1, "ASCII circuit text fence stays a code block");
+  assertIncludes(rendered.html, "<sub>IN</sub>", "plain formula identifiers render subscripts");
+  assertIncludes(rendered.html, "<sup>12</sup>", "plain formula powers render superscripts");
 }
 
 {
@@ -136,6 +157,12 @@ const formula = "$x_i^2$";
 
 ### 三级标题
 
+Inline $x_i^2+\\frac{1}{2}$ and \`VIN / VREF × (2^12 - 1)\`.
+
+$$
+\\frac{V_{IN}}{V_{REF}} \\times (2^{12} - 1)
+$$
+
 -----
 `,
     title: "",
@@ -152,7 +179,10 @@ const formula = "$x_i^2$";
     'Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles"',
     "DOCX declares styles relationship"
   );
-  assertIncludes(docxText, '<w:t xml:space="preserve">-----</w:t>', "DOCX horizontal rule fallback text");
+  assertIncludes(docxText, "<m:sSub>", "DOCX math subscript");
+  assertIncludes(docxText, "<m:sSup>", "DOCX math superscript");
+  assertIncludes(docxText, "<m:f>", "DOCX math fraction");
+  assertIncludes(docxText, "<w:pBdr>", "DOCX horizontal rule paragraph border");
 }
 
 console.log("Markdown renderer and MD2File DOCX regression tests passed.");
