@@ -638,7 +638,8 @@
     return `<div class="markdown-table-wrap"><table><thead><tr>${header}</tr></thead><tbody>${body}</tbody></table></div>`;
   }
 
-  function render(markdown) {
+  function render(markdown, options = {}) {
+    const includeH1 = Boolean(options && options.includeH1);
     const headings = [];
     const blocks = [];
     const lines = String(markdown || "").split(/\r?\n/);
@@ -805,7 +806,7 @@
         flushLooseBlocks();
         const level = heading[1].length;
         const text = heading[2].trim();
-        if (level === 1) continue;
+        if (level === 1 && !includeH1) continue;
         const id = uniqueId(text);
         headings.push({ id, text, level });
         blocks.push(`<h${level} id="${id}">${inline(text)}</h${level}>`);

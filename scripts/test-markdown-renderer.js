@@ -2,6 +2,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
+const { markdownToDocx } = require("../lib/md2doc");
 
 function loadRenderer() {
   const source = fs.readFileSync(path.join(__dirname, "..", "data", "markdown-renderer.js"), "utf8");
@@ -98,6 +99,20 @@ const formula = "$x_i^2$";
 }
 
 {
+  const rendered = markdown.render(`# Visible H1
+
+## Visible H2
+### Visible H3
+`, { includeH1: true });
+  assert.deepEqual(
+    Array.from(rendered.headings, (heading) => heading.level),
+    [1, 2, 3],
+    "includeH1 preserves Markdown H1/H2/H3 for DOCX export"
+  );
+  assertIncludes(rendered.html, "<h1", "includeH1 renders h1 markup");
+}
+
+{
   const longMarkdown = Array.from({ length: 120 }, (_, index) => {
     const level = 2 + (index % 3);
     return `${"#".repeat(level)} Long Section ${index % 9}`;
@@ -113,4 +128,31 @@ const formula = "$x_i^2$";
   );
 }
 
-console.log("Markdown renderer regression tests passed.");
+{
+  const docxText = markdownToDocx({
+    markdown: `# 一级标题
+
+## 二级标题
+
+### 三级标题
+
+-----
+`,
+    title: "",
+    options: {}
+  }).toString("utf8");
+  assertIncludes(docxText, '<w:pStyle w:val="Heading1"/>', "DOCX H1 paragraph style");
+  assertIncludes(docxText, '<w:pStyle w:val="Heading2"/>', "DOCX H2 paragraph style");
+  assertIncludes(docxText, '<w:pStyle w:val="Heading3"/>', "DOCX H3 paragraph style");
+  assertIncludes(docxText, '<w:outlineLvl w:val="0"/>', "DOCX Heading1 outline level");
+  assertIncludes(docxText, '<w:outlineLvl w:val="1"/>', "DOCX Heading2 outline level");
+  assertIncludes(docxText, '<w:outlineLvl w:val="2"/>', "DOCX Heading3 outline level");
+  assertIncludes(
+    docxText,
+    'Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles"',
+    "DOCX declares styles relationship"
+  );
+  assertIncludes(docxText, '<w:t xml:space="preserve">-----</w:t>', "DOCX horizontal rule fallback text");
+}
+
+console.log("Markdown renderer and MD2File DOCX regression tests passed.");
