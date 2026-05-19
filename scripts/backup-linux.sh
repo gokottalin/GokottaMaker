@@ -81,7 +81,7 @@ fi
 TARGET_DB_INTEGRITY="$(sqlite_integrity_check "$TARGET_DB" || true)"
 
 {
-  echo "name=GokottaMaker backup"
+  echo "name=LarkixMaker backup"
   echo "created_at=$(date -Iseconds)"
   echo "source_dir=${SOURCE_DIR}"
   echo "backup_dir=${TARGET}"

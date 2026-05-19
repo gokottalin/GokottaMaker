@@ -1,4 +1,4 @@
-# GokottaMaker 当前交接总览
+# LarkixMaker 当前交接总览
 
 更新时间：2026-05-15 01:23
 当前候选版本：V2.4.9+20260514-1635
@@ -57,7 +57,7 @@
 ### Agent6 小程序
 
 - MD2File 已更新到 V0.3。
-- GokottaElec 在线预览为 V1.3。
+- LarkixElec 在线预览为 V1.3。
 - 已修复同步滚动来源判断、Markdown 转文件提示文案、工具页版本同步。
 
 ### Agent7 美观设计
@@ -121,7 +121,7 @@ $env:ADMIN_PASSWORD='Agent20LocalTest!2026'
 node --experimental-sqlite server.js
 ```
 
-临时服务账号为 `Gokotta`，密码为上面命令中的 `Agent20LocalTest!2026`。该密码仅用于本地临时测试，不用于云端。`DATA_DIR` 必须保留，用于隔离测试数据库，避免污染默认 `database/gokottamaker.sqlite`。
+临时服务账号为 `Larkix`，密码为上面命令中的 `Agent20LocalTest!2026`。该密码仅用于本地临时测试，不用于云端。`DATA_DIR` 必须保留，用于隔离测试数据库，避免污染默认 `database/gokottamaker.sqlite`。
 
 重点测试：
 

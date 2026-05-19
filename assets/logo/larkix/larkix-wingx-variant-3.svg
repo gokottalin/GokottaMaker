@@ -1,0 +1,15 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Wing X Variant 3 - Light Gate</title>
+  <desc id="desc">A Wing X mark with a circular dawn gate, emphasizing the first-light opening in the center.</desc>
+  <circle cx="48" cy="48" r="38" fill="#EFF6FF"/>
+  <path d="M48.8 17.3C39.3 25.1 29.6 37.5 21.3 57.7C38.1 56.9 51.6 49.5 61.9 36.8C59.6 29.2 55.3 22.7 48.8 17.3Z" fill="#2563EB"/>
+  <path d="M40.9 79.3C52 70.5 63.6 56.8 73.4 37.8C56.8 39.2 43.7 47 34.1 59.8C35.6 67.4 37.8 73.8 40.9 79.3Z" fill="#38BDF8"/>
+  <path d="M24 25.7L72.8 72.4" stroke="#1E3A8A" stroke-width="6.8" stroke-linecap="round"/>
+  <path d="M25.7 69.3C37.5 54.1 53.3 40.3 76.2 26.4" stroke="#FFFFFF" stroke-width="6.2" stroke-linecap="round"/>
+  <path d="M65.8 23.6L80.2 17.2" stroke="#F59E0B" stroke-width="4.1" stroke-linecap="round"/>
+  <circle cx="48" cy="48" r="6.2" fill="#FFFFFF"/>
+  <circle cx="48" cy="48" r="3" fill="#38BDF8"/>
+  <circle cx="61.6" cy="25.6" r="3.6" fill="#F59E0B"/>
+  <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="780" letter-spacing="0">Larki<tspan fill="#2563EB" font-weight="860">x</tspan></text>
+  <path d="M218 66C226 64.6 233 60.4 238.5 53.4" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+</svg>

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-APP_DIR="${APP_DIR:-/opt/GokottaMaker}"
+APP_DIR="${APP_DIR:-/opt/LarkixMaker}"
 SERVICE_NAME="${SERVICE_NAME:-gokottamaker}"
 HEALTH_URL="${HEALTH_URL:-http://127.0.0.1:4173/healthz}"
 BACKUP_SCRIPT="${BACKUP_SCRIPT:-scripts/backup-linux.sh}"
@@ -53,7 +53,7 @@ cd "$APP_DIR"
 trap failure_help ERR
 mkdir -p "$STATE_DIR"
 
-echo "== GokottaMaker deploy update =="
+echo "== LarkixMaker deploy update =="
 echo "App dir: $APP_DIR"
 echo "Service: $SERVICE_NAME"
 

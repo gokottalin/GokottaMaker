@@ -1,0 +1,13 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Wing X Variant 1 Dark</title>
+  <desc id="desc">A dark-mode version of the refined Wing X mark with a light Larkix wordmark.</desc>
+  <rect x="8" y="8" width="80" height="80" rx="18" fill="#0F1B2D"/>
+  <path d="M48 16.8C37.2 25.4 26.4 38.2 17.8 57.2C35.8 56.7 50.1 49.7 61 37.1C58.1 29.2 53.8 22.4 48 16.8Z" fill="#60A5FA"/>
+  <path d="M41.1 79.2C52.6 70.6 65.1 56.8 75.8 36.8C57.1 38.2 42.6 45.9 32.2 58.9C34.1 66.6 37.1 73.3 41.1 79.2Z" fill="#38BDF8"/>
+  <path d="M24.2 25L72.2 73" stroke="#1E3A8A" stroke-width="7.2" stroke-linecap="round"/>
+  <path d="M26.2 70.2C39.8 52.5 56.8 38 77.2 26.7" stroke="#F8FAFC" stroke-width="5.4" stroke-linecap="round"/>
+  <path d="M66 23.6L78.4 17.4" stroke="#F59E0B" stroke-width="4.2" stroke-linecap="round"/>
+  <circle cx="61.6" cy="25.6" r="3.8" fill="#F59E0B"/>
+  <text x="112" y="58" fill="#F8FAFC" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="780" letter-spacing="0">Larki<tspan fill="#60A5FA" font-weight="860">x</tspan></text>
+  <path d="M218 66C226 64.6 233 60.4 238.5 53.4" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+</svg>

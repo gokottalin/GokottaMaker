@@ -1,0 +1,105 @@
+<svg width="1280" height="980" viewBox="0 0 1280 980" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Logo Options Contact Sheet</title>
+  <desc id="desc">Five Larkix logo options for selection, based on a blue morning bird, X-shaped wings, and first light.</desc>
+  <rect width="1280" height="980" fill="#F8FAFC"/>
+  <path d="M0 0H1280V260H0V0Z" fill="#DBEAFE" opacity="0.58"/>
+  <text x="72" y="92" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="42" font-weight="820" letter-spacing="0">Larkix LOGO 5 Options</text>
+  <text x="74" y="132" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="600" letter-spacing="0">Blue morning bird + X-shaped wings + first light. Pick one direction for final refinement.</text>
+
+  <g transform="translate(72 190)">
+    <rect width="540" height="210" rx="8" fill="#FFFFFF" stroke="#D9E4F1"/>
+    <text x="28" y="42" fill="#2563EB" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">01 Wing X</text>
+    <text x="28" y="70" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Most direct mother-brand mark</text>
+    <svg x="28" y="88" width="340" height="96" viewBox="0 0 340 96" fill="none">
+      <rect x="8" y="8" width="80" height="80" rx="20" fill="#F8FAFC"/>
+      <path d="M48 17C37.5 25.4 26.8 38 18 57.5C35.6 56.8 49.7 49.6 60.6 37.2C57.8 29.6 53.6 22.8 48 17Z" fill="#2563EB"/>
+      <path d="M41 79C52.4 70.3 64.6 56.9 75.5 37C56.8 38.3 42.5 45.7 32.1 58.6C34.2 66.4 37.2 73.2 41 79Z" fill="#38BDF8"/>
+      <path d="M24 25.2L72 72.8" stroke="#1E3A8A" stroke-width="7.2" stroke-linecap="round"/>
+      <path d="M26.5 70C39.7 52.5 56.6 38 77 26.8" stroke="#FFFFFF" stroke-width="5.4" stroke-linecap="round"/>
+      <path d="M66.2 23.6L77.8 17.8" stroke="#F59E0B" stroke-width="4.2" stroke-linecap="round"/>
+      <circle cx="61.8" cy="25.6" r="3.8" fill="#F59E0B"/>
+      <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="780" letter-spacing="0">Larki<tspan fill="#2563EB" font-weight="860">x</tspan></text>
+      <path d="M218 66C226 64.6 233 60.4 238.5 53.4" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+  </g>
+
+  <g transform="translate(668 190)">
+    <rect width="540" height="210" rx="8" fill="#FFFFFF" stroke="#D9E4F1"/>
+    <text x="28" y="42" fill="#2563EB" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">02 Dawn L</text>
+    <text x="28" y="70" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Letter memory, smooth brand upgrade</text>
+    <svg x="28" y="88" width="340" height="96" viewBox="0 0 340 96" fill="none">
+      <path d="M31 18C25.7 28.5 22 41.6 22 56.2C22 70.4 31.1 78 44.5 78H74" stroke="#2563EB" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M40 31.5C51.1 33.1 62 39.4 73.2 50.4C58.4 53.3 45.6 50 35.2 41.2C36.1 37.6 37.8 34.4 40 31.5Z" fill="#38BDF8"/>
+      <path d="M30.5 61.2C41.4 56.4 55.9 55 73.5 57.4C62.1 69.5 49.8 75.5 36.4 75.4C33.6 71.3 31.7 66.5 30.5 61.2Z" fill="#1E3A8A"/>
+      <path d="M36 76L75 31" stroke="#FFFFFF" stroke-width="5.5" stroke-linecap="round"/>
+      <path d="M61.5 28.4L77.5 20.6" stroke="#F59E0B" stroke-width="4.5" stroke-linecap="round"/>
+      <circle cx="56.5" cy="30.5" r="4.2" fill="#F59E0B"/>
+      <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="770" letter-spacing="0">Larki<tspan fill="#1E3A8A" font-weight="860">x</tspan></text>
+      <path d="M218 66C227.4 64.3 235.1 58.6 240 48.8" stroke="#38BDF8" stroke-width="3.2" stroke-linecap="round"/>
+    </svg>
+  </g>
+
+  <g transform="translate(72 438)">
+    <rect width="540" height="210" rx="8" fill="#FFFFFF" stroke="#D9E4F1"/>
+    <text x="28" y="42" fill="#2563EB" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">03 Light Feather</text>
+    <text x="28" y="70" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Light, content-friendly, good for cover marks</text>
+    <svg x="28" y="88" width="340" height="96" viewBox="0 0 340 96" fill="none">
+      <path d="M20 58.5C32.2 28.4 58.4 18.1 80.8 16.6C78.9 39.4 68.4 66.1 38.2 79.4C34.3 71.2 28.8 64.4 20 58.5Z" fill="#2563EB"/>
+      <path d="M32.4 54.6C43.1 38.8 57.1 29.2 74.2 24.8C70.9 42.2 61.4 57.1 45.4 69" stroke="#DBEAFE" stroke-width="8" stroke-linecap="round"/>
+      <path d="M26.5 72L76 22.5" stroke="#FFFFFF" stroke-width="5.5" stroke-linecap="round"/>
+      <path d="M34.8 26.8C41.6 28.8 48.8 33.4 56.4 40.6" stroke="#38BDF8" stroke-width="5" stroke-linecap="round"/>
+      <path d="M50.2 76.2C50.2 66.1 53.8 56.6 61.2 47.9" stroke="#38BDF8" stroke-width="5" stroke-linecap="round"/>
+      <path d="M65 22.5L78.5 15.8" stroke="#F59E0B" stroke-width="4.3" stroke-linecap="round"/>
+      <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="770" letter-spacing="0">Larki<tspan fill="#2563EB" font-weight="860">x</tspan></text>
+      <path d="M218 66C226.5 64.5 233.5 60.1 238.8 52.8" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+  </g>
+
+  <g transform="translate(668 438)">
+    <rect width="540" height="210" rx="8" fill="#FFFFFF" stroke="#D9E4F1"/>
+    <text x="28" y="42" fill="#2563EB" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">04 Orbit X</text>
+    <text x="28" y="70" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">More motion, exploration and simulation feel</text>
+    <svg x="28" y="88" width="340" height="96" viewBox="0 0 340 96" fill="none">
+      <path d="M22.5 64C36.2 37.7 56.1 24.1 82 23.3" stroke="#2563EB" stroke-width="11" stroke-linecap="round"/>
+      <path d="M20.2 31.8C37.9 41.4 57.8 56.3 79.8 76.5" stroke="#38BDF8" stroke-width="11" stroke-linecap="round"/>
+      <path d="M30.2 73.1C45.8 76.7 64.1 69.2 80.1 51.8" stroke="#1E3A8A" stroke-width="5.2" stroke-linecap="round"/>
+      <path d="M27.8 23C49.1 14.5 71.8 17 84.5 29.1" stroke="#DBEAFE" stroke-width="4.5" stroke-linecap="round"/>
+      <path d="M75 21.2L85.7 14.8" stroke="#F59E0B" stroke-width="4.2" stroke-linecap="round"/>
+      <circle cx="48" cy="48" r="5.5" fill="#FFFFFF"/>
+      <circle cx="48" cy="48" r="3.2" fill="#2563EB"/>
+      <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="770" letter-spacing="0">Larki<tspan fill="#2563EB" font-weight="860">x</tspan></text>
+      <path d="M218 65C228.5 63.5 236 58.4 240.8 49.8" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+  </g>
+
+  <g transform="translate(72 686)">
+    <rect width="540" height="210" rx="8" fill="#FFFFFF" stroke="#D9E4F1"/>
+    <text x="28" y="42" fill="#2563EB" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">05 Matrix Dawn</text>
+    <text x="28" y="70" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Best icon stability for apps, avatars and product matrix</text>
+    <svg x="28" y="88" width="340" height="96" viewBox="0 0 340 96" fill="none">
+      <path d="M47.5 13.5L67.7 25.2L57.2 42.5L37.4 30.6L47.5 13.5Z" fill="#2563EB"/>
+      <path d="M73.2 30.5L84.6 50.3L64.6 61.6L53.3 42L73.2 30.5Z" fill="#38BDF8"/>
+      <path d="M42 52.7L31.4 70.5L11.8 58.6L22.3 41L42 52.7Z" fill="#1E3A8A"/>
+      <path d="M58 65.7L47.9 82.8L28.4 71L38.5 53.8L58 65.7Z" fill="#2563EB"/>
+      <path d="M25 23.5C35.5 28.2 47.3 35.8 60.5 46.4" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+      <path d="M27 76C39.4 62.8 54.7 48.8 73 34" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="48" cy="48" r="5.5" fill="#FFFFFF"/>
+      <circle cx="48" cy="48" r="3.1" fill="#2563EB"/>
+      <circle cx="78" cy="24" r="4" fill="#F59E0B"/>
+      <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="770" letter-spacing="0">Larki<tspan fill="#2563EB" font-weight="860">x</tspan></text>
+      <path d="M218 66C227 64.2 234.5 59.7 240.2 52.5" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+  </g>
+
+  <g transform="translate(668 686)">
+    <rect width="540" height="210" rx="8" fill="#07111F" stroke="#1E3A8A"/>
+    <text x="28" y="44" fill="#F8FAFC" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="20" font-weight="820">Dark Mode Check</text>
+    <text x="28" y="74" fill="#A8B6C8" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="650">Primary blue remains readable on blue-black surfaces.</text>
+    <circle cx="70" cy="130" r="32" fill="#0F1B2D" stroke="#1E3A8A"/>
+    <path d="M70 98C61.5 104.8 52.8 115 45.7 130.7C59.9 130.1 71.3 124.3 80.1 114.3C77.8 108.1 74.5 102.7 70 98Z" fill="#60A5FA"/>
+    <path d="M64.4 148C73.6 141 83.4 130.2 92.2 114.1C77.2 115.2 65.6 121.1 57.3 131.5C59 137.8 61.4 143.3 64.4 148Z" fill="#38BDF8"/>
+    <path d="M50.6 104.6L89.4 143" stroke="#1E3A8A" stroke-width="5.8" stroke-linecap="round"/>
+    <path d="M52.6 140.8C63.3 126.7 76.9 115 93.4 105.9" stroke="#F8FAFC" stroke-width="4.3" stroke-linecap="round"/>
+    <text x="122" y="140" fill="#F8FAFC" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="780" letter-spacing="0">Larki<tspan fill="#60A5FA" font-weight="860">x</tspan></text>
+  </g>
+</svg>

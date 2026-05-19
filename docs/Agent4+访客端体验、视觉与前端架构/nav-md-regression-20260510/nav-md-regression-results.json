@@ -2,23 +2,23 @@
   "base": "http://127.0.0.1:4178",
   "generatedAt": "2026-05-10T15:32:52.676Z",
   "screenshots": {
-    "desktop": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\nav-md-regression-20260510\\project-1279-desktop-nav.png",
-    "mobileNavOpen": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\nav-md-regression-20260510\\project-390-mobile-nav-open.png",
-    "markdown": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\nav-md-regression-20260510\\markdown-renderer-sample.png"
+    "desktop": "D:\\Project\\26-WEB\\LarkixMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\nav-md-regression-20260510\\project-1279-desktop-nav.png",
+    "mobileNavOpen": "D:\\Project\\26-WEB\\LarkixMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\nav-md-regression-20260510\\project-390-mobile-nav-open.png",
+    "markdown": "D:\\Project\\26-WEB\\LarkixMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\nav-md-regression-20260510\\markdown-renderer-sample.png"
   },
   "failures": [],
   "desktop": {
-    "title": "GokottaLogic 逻辑分析仪 | GokottaMaker",
+    "title": "LarkixLogic 逻辑分析仪 | LarkixMaker",
     "url": "http://127.0.0.1:4178/project.html?id=logic-analyzer",
     "navDisplay": "flex",
     "toggleDisplay": "none",
     "navLinks": 5,
     "horizontalOverflow": false,
-    "footerVersion": "GokottaMaker\n      Version V2.4.1+20260510-1440"
+    "footerVersion": "LarkixMaker\n      Version V2.4.1+20260510-1440"
   },
   "desktopLogs": [],
   "mobileBefore": {
-    "title": "GokottaLogic 逻辑分析仪 | GokottaMaker",
+    "title": "LarkixLogic 逻辑分析仪 | LarkixMaker",
     "toggleDisplay": "flex",
     "expanded": "false",
     "navDisplay": "none",

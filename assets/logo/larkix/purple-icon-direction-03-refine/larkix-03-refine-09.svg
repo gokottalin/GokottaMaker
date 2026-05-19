@@ -1,0 +1,15 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(77 36) rotate(125) scale(76)">
+      <stop stop-color="#DDD6FE"/>
+      <stop offset=".5" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#2E1065"/>
+    </radialGradient>
+  </defs>
+  <circle cx="64" cy="64" r="52" fill="url(#bg)"/>
+  <path d="M24 75C43 49 67 38 98 40C81 51 69 67 63 87C50 76 37 72 24 75Z" fill="#FFFFFF"/>
+  <path d="M43 91C63 82 78 66 89 44C89 68 76 86 54 97C50 95 46 93 43 91Z" fill="#C4B5FD"/>
+  <path d="M68 47C77 39 88 36 103 40L89 53C81 56 74 67 69 85C63 71 62 59 68 47Z" fill="#5B21B6"/>
+  <path d="M89 43L105 40L92 54Z" fill="#FFFFFF"/>
+  <circle cx="78" cy="48" r="2.5" fill="#F5F3FF"/>
+</svg>

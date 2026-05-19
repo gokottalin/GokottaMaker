@@ -3,7 +3,7 @@
 ## 基本信息
 
 - 更新时间：2026-05-17 19:04
-- 项目：GokottaMaker
+- 项目：LarkixMaker
 - 版本：V2.4.9+20260517-003
 - 分支：main
 - 发布方式：推送到 GitHub origin/main，供线上环境按既有 Render/VPS 流程拉取发布

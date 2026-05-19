@@ -1,0 +1,71 @@
+<svg width="1280" height="900" viewBox="0 0 1280 900" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Purple Soaring Bird Logo Preview</title>
+  <desc id="desc">Preview sheet for the final purple Larkix logo, including horizontal, icon, dark, and small-size examples.</desc>
+  <rect width="1280" height="900" fill="#F7F4FF"/>
+  <rect y="245" width="1280" height="655" fill="#FBFAFF"/>
+  <text x="72" y="92" fill="#111827" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="42" font-weight="850" letter-spacing="0">Larkix Final Purple Logo</text>
+  <text x="72" y="132" fill="#625477" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="600" letter-spacing="0">Minimal bird preparing to fly, purple-led, with a lifted wing and subtle X motion.</text>
+
+  <rect x="72" y="190" width="1136" height="190" rx="8" fill="#FFFFFF" stroke="#DDD6FE"/>
+  <text x="104" y="232" fill="#7C3AED" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="22" font-weight="850" letter-spacing="0">Main lockup</text>
+  <g transform="translate(104 252)">
+    <path d="M20 66.2C36.4 39.8 61.9 24.4 92 22.8C77.7 35.4 66.4 51.2 58.3 71.7C46.1 66.3 33.3 64.5 20 66.2Z" fill="#4C1D95"/>
+    <path d="M34.2 82.6C54.1 73.7 71.2 57.8 85.5 35C83.5 61.1 69.2 79.7 43 90.5C39.3 88.3 36.4 85.7 34.2 82.6Z" fill="#A78BFA"/>
+    <path d="M61.2 40.5C69 31 79.7 25.3 93.5 23.6L82.2 38.1C73.7 44.4 68 55.2 65 70.4C58.9 60 57.6 50 61.2 40.5Z" fill="#7C3AED"/>
+    <path d="M79.3 31.8L96 23.4L84.9 39.5Z" fill="#C084FC"/>
+    <path d="M31.3 80.2L89.4 25.8" stroke="#FFFFFF" stroke-width="5.8" stroke-linecap="round"/>
+    <path d="M34.7 44.4L70.3 75.6" stroke="#8B5CF6" stroke-width="6" stroke-linecap="round"/>
+    <text x="124" y="66" fill="#111827" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="42" font-weight="820" letter-spacing="0">Larki<tspan fill="#7C3AED" font-weight="900">x</tspan></text>
+    <path d="M238 74C248.2 72.2 257.1 67.2 264 58.2" stroke="#A78BFA" stroke-width="3.6" stroke-linecap="round"/>
+  </g>
+
+  <rect x="72" y="420" width="540" height="190" rx="8" fill="#FFFFFF" stroke="#DDD6FE"/>
+  <text x="104" y="462" fill="#7C3AED" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="22" font-weight="850" letter-spacing="0">App icon / avatar</text>
+  <g transform="translate(104 484)">
+    <rect x="0" y="0" width="96" height="96" rx="22" fill="#4C1D95"/>
+    <path d="M14 60.6C27.8 38.4 49.4 25.4 74.8 24.1C62.7 34.7 53.2 48 46.4 65.3C36.1 60.7 25.2 59.2 14 60.6Z" fill="#A78BFA"/>
+    <path d="M26 74.4C42.9 66.8 57.4 53.4 69.5 34.1C67.8 56.1 55.6 71.8 33.5 80.9C30.4 79 27.9 76.9 26 74.4Z" fill="#7C3AED"/>
+    <path d="M48.9 38.8C55.5 30.7 64.6 26 76.2 24.5L66.7 36.8C59.5 42.1 54.7 51.2 52.2 64.1C47 55.4 45.9 46.8 48.9 38.8Z" fill="#EDE9FE"/>
+    <path d="M64.2 31.4L78.3 24.3L68.9 37.9Z" fill="#C084FC"/>
+    <path d="M23.6 72.3L72.6 26.4" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+    <path d="M26.4 42.1L56.4 68.4" stroke="#2E1065" stroke-width="5.3" stroke-linecap="round"/>
+  </g>
+  <text x="224" y="534" fill="#111827" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="40" font-weight="820" letter-spacing="0">Larki<tspan fill="#7C3AED" font-weight="900">x</tspan></text>
+
+  <rect x="668" y="420" width="540" height="190" rx="8" fill="#2E1065" stroke="#DDD6FE"/>
+  <text x="700" y="462" fill="#F5F3FF" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="22" font-weight="850" letter-spacing="0">Dark usage</text>
+  <g transform="translate(700 484)">
+    <path d="M12.5 51.9C25.3 31.3 45.2 19.3 68.8 18C57.6 27.9 48.7 40.3 42.4 56.3C32.8 52.1 22.9 50.6 12.5 51.9Z" fill="#A78BFA"/>
+    <path d="M23.6 64.7C39.2 57.7 52.7 45.2 63.9 27.3C62.4 47.8 51 62.4 30.5 70.8C27.6 69.1 25.3 67 23.6 64.7Z" fill="#7C3AED"/>
+    <path d="M44.8 31.8C50.9 24.4 59.3 20 70.1 18.6L61.3 29.9C54.6 34.9 50.2 43.3 47.9 55.2C43.1 47.1 42 39.1 44.8 31.8Z" fill="#EDE9FE"/>
+    <path d="M59 25L72 18.5L63.4 31.1Z" fill="#C084FC"/>
+    <path d="M21.3 62.8L66.7 20.2" stroke="#FFFFFF" stroke-width="4.6" stroke-linecap="round"/>
+    <path d="M24 34.8L51.7 59.2" stroke="#4C1D95" stroke-width="4.8" stroke-linecap="round"/>
+    <text x="96" y="53" fill="#FFFFFF" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="820" letter-spacing="0">Larki<tspan fill="#C4B5FD" font-weight="900">x</tspan></text>
+    <path d="M202 60C211 58.5 218.8 54.1 224.8 46.2" stroke="#C4B5FD" stroke-width="3.2" stroke-linecap="round"/>
+  </g>
+
+  <rect x="72" y="650" width="1136" height="170" rx="8" fill="#FFFFFF" stroke="#DDD6FE"/>
+  <text x="104" y="692" fill="#7C3AED" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="22" font-weight="850" letter-spacing="0">Small-size check</text>
+  <g transform="translate(104 720) scale(.5)">
+    <path d="M20 66.2C36.4 39.8 61.9 24.4 92 22.8C77.7 35.4 66.4 51.2 58.3 71.7C46.1 66.3 33.3 64.5 20 66.2Z" fill="#4C1D95"/>
+    <path d="M34.2 82.6C54.1 73.7 71.2 57.8 85.5 35C83.5 61.1 69.2 79.7 43 90.5C39.3 88.3 36.4 85.7 34.2 82.6Z" fill="#A78BFA"/>
+    <path d="M61.2 40.5C69 31 79.7 25.3 93.5 23.6L82.2 38.1C73.7 44.4 68 55.2 65 70.4C58.9 60 57.6 50 61.2 40.5Z" fill="#7C3AED"/>
+    <path d="M79.3 31.8L96 23.4L84.9 39.5Z" fill="#C084FC"/>
+    <path d="M31.3 80.2L89.4 25.8" stroke="#FFFFFF" stroke-width="5.8" stroke-linecap="round"/>
+    <path d="M34.7 44.4L70.3 75.6" stroke="#8B5CF6" stroke-width="6" stroke-linecap="round"/>
+    <text x="124" y="66" fill="#111827" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="42" font-weight="820" letter-spacing="0">Larki<tspan fill="#7C3AED" font-weight="900">x</tspan></text>
+    <path d="M238 74C248.2 72.2 257.1 67.2 264 58.2" stroke="#A78BFA" stroke-width="3.6" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(330 716) scale(.34)">
+    <rect x="8" y="8" width="112" height="112" rx="28" fill="#4C1D95"/>
+    <path d="M25 78.1C42 50.8 68.5 34.9 99.7 33.3C84.9 46.3 73.2 62.7 64.8 84C52.1 78.4 38.8 76.4 25 78.1Z" fill="#A78BFA"/>
+    <path d="M39.7 95.1C60.4 85.9 78.1 69.4 92.9 45.8C90.9 72.8 76 92.1 48.9 103.3C45.1 101 42 98.4 39.7 95.1Z" fill="#7C3AED"/>
+    <path d="M67.8 51.5C75.9 41.6 87 35.8 101.3 34L89.6 49C80.8 55.6 74.9 66.7 71.8 82.5C65.4 71.7 64.1 61.3 67.8 51.5Z" fill="#EDE9FE"/>
+    <path d="M86.6 42.5L103.9 33.8L92.4 50.5Z" fill="#C084FC"/>
+    <path d="M36.7 92.6L97 36.2" stroke="#FFFFFF" stroke-width="6.2" stroke-linecap="round"/>
+    <path d="M40.2 55.5L77.1 87.8" stroke="#2E1065" stroke-width="6.5" stroke-linecap="round"/>
+  </g>
+  <text x="414" y="748" fill="#625477" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="650" letter-spacing="0">The bird silhouette stays readable at navigation and avatar sizes.</text>
+  <text x="104" y="792" fill="#625477" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="16" font-weight="650" letter-spacing="0">Palette: Deep #4C1D95, Purple #7C3AED, Light #A78BFA, Soft #EDE9FE, Highlight #C084FC.</text>
+</svg>

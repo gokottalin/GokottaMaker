@@ -1,4 +1,4 @@
-# GokottaMaker Agent Handoff Plan
+# LarkixMaker Agent Handoff Plan
 
 更新时间：2026-05-05 14:08
 当前版本：V1.5.0+20260504-1655
@@ -8,7 +8,7 @@
 
 ## 1. 项目定位
 
-GokottaMaker 是一个面向嵌入式、模拟电子、STM32、ESP32 与独立开源硬件项目的个人技术网站。
+LarkixMaker 是一个面向嵌入式、模拟电子、STM32、ESP32 与独立开源硬件项目的个人技术网站。
 
 当前形态：
 
@@ -29,7 +29,7 @@ GokottaMaker 是一个面向嵌入式、模拟电子、STM32、ESP32 与独立�
 项目目录：
 
 ```text
-D:\Project\26-WEB\GokottaMaker
+D:\Project\26-WEB\LarkixMaker
 ```
 
 启动：
@@ -58,7 +58,7 @@ IPv6: 2402:4e00:c013:8100:5ade:a904:9826:0
 部署目录：
 
 ```text
-/opt/GokottaMaker
+/opt/LarkixMaker
 ```
 
 运行数据：
@@ -89,7 +89,7 @@ gokottamaker.service
 后续更新：
 
 ```bash
-cd /opt/GokottaMaker
+cd /opt/LarkixMaker
 bash scripts/deploy-update.sh
 ```
 
@@ -267,7 +267,7 @@ README.md 的部署章节
 ### 输入
 
 - 当前服务器信息：
-  - `/opt/GokottaMaker`
+  - `/opt/LarkixMaker`
   - `/srv/gokottamaker-data`
   - `/etc/gokottamaker.env`
   - systemd 服务名 `gokottamaker`
@@ -475,8 +475,8 @@ assets/
 
 ### 输入
 
-- `window.GokottaContent.getPosts()`
-- `window.GokottaContent.getProjects()`
+- `window.LarkixContent.getPosts()`
+- `window.LarkixContent.getProjects()`
 - `/api/content.js`
 - 静态图片资产
 - 当前视觉方向：蓝白科技、电子实验室、高质量摄影、玻璃流线 Hero
@@ -760,7 +760,7 @@ YYYY-MM-DD_HH-mm_进度情况_汇报.md
 ## 14. 给新 Agent 的启动命令
 
 ```powershell
-cd D:\Project\26-WEB\GokottaMaker
+cd D:\Project\26-WEB\LarkixMaker
 git status -sb
 git log -5 --oneline
 node --experimental-sqlite --check server.js
@@ -783,7 +783,7 @@ curl http://127.0.0.1:4173/healthz
 
 ## 15. 顶层规划结论
 
-GokottaMaker 当前已经越过“能不能运行”的阶段，进入“能不能长期稳定迭代”的阶段。
+LarkixMaker 当前已经越过“能不能运行”的阶段，进入“能不能长期稳定迭代”的阶段。
 
 后续最好的组织方式是：
 

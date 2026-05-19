@@ -1,0 +1,50 @@
+<svg width="1280" height="900" viewBox="0 0 1280 900" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Power X Variants Contact Sheet</title>
+  <desc id="desc">Five powerful Larkix logo variants with an explicit X element, using only wing or bird head forms.</desc>
+  <rect width="1280" height="900" fill="#F8FAFC"/>
+  <path d="M0 0H1280V245H0V0Z" fill="#DBEAFE" opacity="0.66"/>
+  <text x="72" y="92" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="42" font-weight="820" letter-spacing="0">Larkix Power X Variants</text>
+  <text x="74" y="132" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="600" letter-spacing="0">Explicit X, stronger silhouette, wing/head only. No office-suite visual language.</text>
+
+  <g transform="translate(72 190)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#D9E4F1"/>
+    <text x="28" y="42" fill="#2563EB" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">4A Wing Blade X</text>
+    <text x="28" y="70" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Best balance: wing, X and power</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-powerx-variant-1.svg"/>
+  </g>
+
+  <g transform="translate(668 190)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#D9E4F1"/>
+    <text x="28" y="42" fill="#2563EB" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">4B Crest X Head</text>
+    <text x="28" y="70" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Head-only route, strong differentiation</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-powerx-variant-2.svg"/>
+  </g>
+
+  <g transform="translate(72 420)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#D9E4F1"/>
+    <text x="28" y="42" fill="#2563EB" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">4C Shield Wing X</text>
+    <text x="28" y="70" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Best for avatar, favicon and app icon</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-powerx-variant-3.svg"/>
+  </g>
+
+  <g transform="translate(668 420)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#D9E4F1"/>
+    <text x="28" y="42" fill="#2563EB" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">4D Dual Feather X</text>
+    <text x="28" y="70" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Strongest X visibility</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-powerx-variant-4.svg"/>
+  </g>
+
+  <g transform="translate(72 650)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#D9E4F1"/>
+    <text x="28" y="42" fill="#2563EB" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">4E Angular Head X</text>
+    <text x="28" y="70" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Harder, sharper engineering presence</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-powerx-variant-5.svg"/>
+  </g>
+
+  <g transform="translate(668 650)">
+    <rect width="540" height="190" rx="8" fill="#07111F" stroke="#1E3A8A"/>
+    <text x="28" y="44" fill="#F8FAFC" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="20" font-weight="820">Recommendation</text>
+    <text x="28" y="76" fill="#A8B6C8" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="650">Choose 4A for the main brand. Pair it with 4C for app icon and avatar.</text>
+    <text x="28" y="116" fill="#F8FAFC" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="16" font-weight="760">Powerful, blue-led, explicit X, not Feishu-like.</text>
+  </g>
+</svg>

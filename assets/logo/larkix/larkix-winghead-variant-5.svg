@@ -1,0 +1,12 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Wing Head Variant 5 - Minimal Head</title>
+  <desc id="desc">A minimal head-only bird symbol formed by a blue crest, eye, and first-light beak.</desc>
+  <path d="M20.8 61.7C23.7 43.4 35.2 30.1 55.2 21.8C52.3 31.1 55 39.7 63.2 47.8C52.9 48.7 43.6 52.8 35.3 60C30.8 63.9 25.9 64.5 20.8 61.7Z" fill="#2563EB"/>
+  <path d="M37.2 61.2C44.9 53.8 53.7 49.5 63.6 48.3C60.8 61.7 51.8 72.1 36.7 79.4C34.6 72.4 34.7 66.3 37.2 61.2Z" fill="#38BDF8"/>
+  <path d="M25.8 59C34.3 52 45.1 47.2 58.1 44.6" stroke="#FFFFFF" stroke-width="5.2" stroke-linecap="round"/>
+  <path d="M58.8 39.8L82 28.8L66.6 50.8Z" fill="#F59E0B"/>
+  <circle cx="51.8" cy="33.2" r="3.6" fill="#DBEAFE"/>
+  <path d="M34.5 39.1C40.9 33.2 49.3 29.4 59.8 27.8" stroke="#1E3A8A" stroke-width="4.8" stroke-linecap="round"/>
+  <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="780" letter-spacing="0">Larki<tspan fill="#2563EB" font-weight="860">x</tspan></text>
+  <path d="M218 66C226 64.6 233 60.4 238.5 53.4" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+</svg>

@@ -97,7 +97,7 @@
 任务：
 
 - 复核 `miniapps.html`、`tools/gokotta-elec.html`、工具核心版本和缓存号是否一致。
-- 验证 GokottaElec 工具页可以加载。
+- 验证 LarkixElec 工具页可以加载。
 
 边界：不接管博客详情页和 CMS。
 

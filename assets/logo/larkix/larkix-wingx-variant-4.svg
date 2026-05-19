@@ -1,0 +1,13 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Wing X Variant 4 - Precision Wing</title>
+  <desc id="desc">A more geometric Wing X mark with precise planes, keeping the morning bird and light slash.</desc>
+  <rect x="8" y="8" width="80" height="80" rx="18" fill="#F8FAFC"/>
+  <path d="M48 15.4L62.6 34.8L42.8 56.4L18.4 58.3C25.9 40.2 35.8 26.2 48 15.4Z" fill="#2563EB"/>
+  <path d="M78 36.2L61.1 61.5L41.3 80.7L32.6 58.5C43.4 45.2 58.5 38.1 78 36.2Z" fill="#38BDF8"/>
+  <path d="M23.6 25.4L72.6 72.8" stroke="#1E3A8A" stroke-width="7" stroke-linecap="round"/>
+  <path d="M27.5 69.8L76.3 27" stroke="#FFFFFF" stroke-width="5.5" stroke-linecap="round"/>
+  <path d="M65.8 23.2L78.6 17.5" stroke="#F59E0B" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="61.4" cy="25.4" r="3.7" fill="#F59E0B"/>
+  <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="780" letter-spacing="0">Larki<tspan fill="#2563EB" font-weight="860">x</tspan></text>
+  <path d="M218 66C226 64.6 233 60.4 238.5 53.4" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+</svg>

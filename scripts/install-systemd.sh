@@ -16,24 +16,24 @@ mkdir -p /srv/gokottamaker-data
 cat > /etc/gokottamaker.env <<EOF
 NODE_ENV=production
 DATA_DIR=/srv/gokottamaker-data
-ADMIN_USERNAME=Gokotta
+ADMIN_USERNAME=Larkix
 ADMIN_PASSWORD=${GOKOTTA_ADMIN_PASSWORD}
 ADMIN_RESET_PASSWORD_ON_START=false
 PORT=4173
-SITE_URL=${GOKOTTA_SITE_URL:-http://81.71.156.122:4173}
+SITE_URL=${GOKOTTA_SITE_URL:-https://www.larkix.com}
 EOF
 chmod 600 /etc/gokottamaker.env
 
 cat > /etc/systemd/system/gokottamaker.service <<EOF
 [Unit]
-Description=GokottaMaker Website
+Description=LarkixMaker Website
 After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/opt/GokottaMaker
+WorkingDirectory=/opt/LarkixMaker
 EnvironmentFile=/etc/gokottamaker.env
-ExecStart=/opt/node22/bin/node --experimental-sqlite /opt/GokottaMaker/server.js
+ExecStart=/opt/node22/bin/node --experimental-sqlite /opt/LarkixMaker/server.js
 Restart=always
 RestartSec=5
 

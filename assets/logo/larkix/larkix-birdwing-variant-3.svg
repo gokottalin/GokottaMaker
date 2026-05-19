@@ -1,0 +1,15 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Bird Wing Variant 3 - Feather Bird</title>
+  <desc id="desc">A feather-forward blue bird mark with clear wing feather cuts and a warm first-light beak.</desc>
+  <rect x="8" y="8" width="80" height="80" rx="20" fill="#F8FAFC"/>
+  <path d="M19 56.8C32.9 35.4 50.6 24.4 72.2 23.8C62 33.4 51.3 45.5 40.2 60.2C33 60.5 25.9 59.4 19 56.8Z" fill="#2563EB"/>
+  <path d="M30.6 73.8C46 64 60.7 51.2 74.6 35.2C72.7 57.1 58 75.8 36.4 82.4C34 80.1 32.1 77.2 30.6 73.8Z" fill="#38BDF8"/>
+  <path d="M38.1 61.2C48.2 48.1 59.7 36.2 72.5 25.6" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+  <path d="M24.8 45.5C33.8 48.9 42 54 49.4 60.8" stroke="#DBEAFE" stroke-width="4" stroke-linecap="round"/>
+  <path d="M35.7 37C43.5 42 50.3 47.8 56.1 54.5" stroke="#1E3A8A" stroke-width="4.8" stroke-linecap="round"/>
+  <circle cx="63.7" cy="28.5" r="5.1" fill="#2563EB"/>
+  <path d="M68.4 26.2L80.2 20.3L72.7 31.4Z" fill="#F59E0B"/>
+  <path d="M23.1 62.2L11.6 69.2L27.9 69.5" fill="#1E3A8A"/>
+  <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="780" letter-spacing="0">Larki<tspan fill="#2563EB" font-weight="860">x</tspan></text>
+  <path d="M218 66C226 64.6 233 60.4 238.5 53.4" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+</svg>

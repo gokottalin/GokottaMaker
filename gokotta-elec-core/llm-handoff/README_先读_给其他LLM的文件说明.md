@@ -1,6 +1,6 @@
 # 给其他 LLM 的文件说明
 
-这个文件夹用于把 GokottaElec 的 CNL 规则交给 DeepSeek、ChatGPT、Claude、Qwen 等其他 LLM，让它们输出本软件可解析的电路自然语言。
+这个文件夹用于把 LarkixElec 的 CNL 规则交给 DeepSeek、ChatGPT、Claude、Qwen 等其他 LLM，让它们输出本软件可解析的电路自然语言。
 
 ## 最小必需文件
 
@@ -57,16 +57,16 @@
 
 ## LLM 输出后的使用方式
 
-把 LLM 输出保存为 `.txt`，或直接粘贴进 GokottaElec 窗口。
+把 LLM 输出保存为 `.txt`，或直接粘贴进 LarkixElec 窗口。
 
 命令行：
 
 ```powershell
-dist\GokottaElec.exe "C:\Users\10731\Downloads\deepseek_cnl_20260507_72c637.txt" output\deepseek-test
+dist\LarkixElec.exe "C:\Users\10731\Downloads\deepseek_cnl_20260507_72c637.txt" output\deepseek-test
 ```
 
 窗口：
 
-1. 双击 `dist\GokottaElec.exe`
+1. 双击 `dist\LarkixElec.exe`
 2. 把 LLM 输出粘贴到左侧文本框
 3. 等待实时预览，或点击 `生成文件`

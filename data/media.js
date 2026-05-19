@@ -92,7 +92,7 @@
     }
   }
 
-  window.GokottaMedia = {
+  window.LarkixMedia = {
     image,
     applyToImage,
     normalize,

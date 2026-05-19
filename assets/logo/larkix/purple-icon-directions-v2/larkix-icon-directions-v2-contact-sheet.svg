@@ -1,0 +1,47 @@
+<svg width="1280" height="760" viewBox="0 0 1280 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="760" fill="#FAF7FF"/>
+  <style>
+    .tile { fill: #fff; stroke: #DDD6FE; }
+    .num { font: 800 24px Inter, "Segoe UI", Arial, sans-serif; fill: #7C3AED; }
+  </style>
+  <g transform="translate(48 48)">
+    <rect class="tile" width="208" height="296" rx="10"/><text class="num" x="22" y="40">01</text>
+    <image href="larkix-icon-v2-01.svg" x="40" y="92" width="128" height="128"/>
+  </g>
+  <g transform="translate(292 48)">
+    <rect class="tile" width="208" height="296" rx="10"/><text class="num" x="22" y="40">02</text>
+    <image href="larkix-icon-v2-02.svg" x="40" y="92" width="128" height="128"/>
+  </g>
+  <g transform="translate(536 48)">
+    <rect class="tile" width="208" height="296" rx="10"/><text class="num" x="22" y="40">03</text>
+    <image href="larkix-icon-v2-03.svg" x="40" y="92" width="128" height="128"/>
+  </g>
+  <g transform="translate(780 48)">
+    <rect class="tile" width="208" height="296" rx="10"/><text class="num" x="22" y="40">04</text>
+    <image href="larkix-icon-v2-04.svg" x="40" y="92" width="128" height="128"/>
+  </g>
+  <g transform="translate(1024 48)">
+    <rect class="tile" width="208" height="296" rx="10"/><text class="num" x="22" y="40">05</text>
+    <image href="larkix-icon-v2-05.svg" x="40" y="92" width="128" height="128"/>
+  </g>
+  <g transform="translate(48 416)">
+    <rect class="tile" width="208" height="296" rx="10"/><text class="num" x="22" y="40">06</text>
+    <image href="larkix-icon-v2-06.svg" x="40" y="92" width="128" height="128"/>
+  </g>
+  <g transform="translate(292 416)">
+    <rect class="tile" width="208" height="296" rx="10"/><text class="num" x="22" y="40">07</text>
+    <image href="larkix-icon-v2-07.svg" x="40" y="92" width="128" height="128"/>
+  </g>
+  <g transform="translate(536 416)">
+    <rect class="tile" width="208" height="296" rx="10"/><text class="num" x="22" y="40">08</text>
+    <image href="larkix-icon-v2-08.svg" x="40" y="92" width="128" height="128"/>
+  </g>
+  <g transform="translate(780 416)">
+    <rect class="tile" width="208" height="296" rx="10"/><text class="num" x="22" y="40">09</text>
+    <image href="larkix-icon-v2-09.svg" x="40" y="92" width="128" height="128"/>
+  </g>
+  <g transform="translate(1024 416)">
+    <rect class="tile" width="208" height="296" rx="10"/><text class="num" x="22" y="40">10</text>
+    <image href="larkix-icon-v2-10.svg" x="40" y="92" width="128" height="128"/>
+  </g>
+</svg>

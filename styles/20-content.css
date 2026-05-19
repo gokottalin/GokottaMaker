@@ -104,7 +104,7 @@
 
 .section-title-block span,
 .section-title-line span {
-  color: #7f95ad;
+  color: #8b7aa8;
   font-size: 13px;
   font-weight: 900;
   letter-spacing: 0.08em;
@@ -122,10 +122,12 @@
   justify-content: center;
   min-height: 40px;
   padding: 0 16px;
-  border: 1px solid #cfe0f2;
+  border: 1px solid color-mix(in srgb, var(--larkix-primary, var(--blue)) 28%, var(--line));
   border-radius: 999px;
-  background: linear-gradient(180deg, #ffffff, #f4f9ff);
-  color: #0a56b4;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(250, 245, 255, 0.88)),
+    var(--surface);
+  color: var(--larkix-primary-deep, var(--blue-2));
   font-size: 14px;
   font-weight: 850;
   white-space: nowrap;
@@ -139,8 +141,8 @@
 }
 
 .return-link:hover {
-  border-color: #b6d3f0;
-  color: var(--blue);
+  border-color: color-mix(in srgb, var(--larkix-primary, var(--blue)) 44%, var(--line));
+  color: var(--larkix-primary, var(--blue));
   transform: translateY(-1px);
 }
 
@@ -161,7 +163,7 @@
   width: min(220px, 42vw);
   height: 3px;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--blue), rgba(13, 111, 211, 0.08));
+  background: linear-gradient(90deg, var(--blue), rgba(124, 58, 237, 0.08));
 }
 
 .miniapp-heading .category-summary {
@@ -243,7 +245,7 @@
   inset: 0;
   z-index: 1;
   background:
-    radial-gradient(circle at 18% 18%, rgba(56, 189, 248, 0.12), transparent 32%),
+    radial-gradient(circle at 18% 18%, rgba(167, 139, 250, 0.12), transparent 32%),
     linear-gradient(180deg, transparent 0%, rgba(8, 20, 40, 0.06) 100%);
   pointer-events: none;
 }
@@ -686,7 +688,7 @@
   border: 1px solid var(--line);
   border-radius: 8px;
   background:
-    linear-gradient(135deg, rgba(54, 148, 255, 0.08), rgba(16, 25, 42, 0.04)),
+    linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(245, 158, 11, 0.04)),
     var(--surface);
   color: var(--ink);
 }
@@ -715,10 +717,10 @@
 
 [data-theme="dark"] .empty-state-rich,
 [data-theme="dark"] .empty-state-panel {
-  border-color: rgba(56, 189, 248, 0.24);
+  border-color: rgba(167, 139, 250, 0.28);
   background:
-    linear-gradient(135deg, rgba(17, 28, 50, 0.94), rgba(11, 18, 32, 0.9)),
-    radial-gradient(circle at 12% 0%, rgba(56, 189, 248, 0.14), transparent 34%);
+    linear-gradient(135deg, rgba(42, 23, 64, 0.94), rgba(11, 7, 18, 0.9)),
+    radial-gradient(circle at 12% 0%, rgba(167, 139, 250, 0.16), transparent 34%);
   color: var(--ink);
 }
 
@@ -731,10 +733,10 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .empty-state-rich,
   :root:not([data-theme="light"]) .empty-state-panel {
-    border-color: rgba(56, 189, 248, 0.24);
+    border-color: rgba(167, 139, 250, 0.28);
     background:
-      linear-gradient(135deg, rgba(17, 28, 50, 0.94), rgba(11, 18, 32, 0.9)),
-      radial-gradient(circle at 12% 0%, rgba(56, 189, 248, 0.14), transparent 34%);
+      linear-gradient(135deg, rgba(42, 23, 64, 0.94), rgba(11, 7, 18, 0.9)),
+      radial-gradient(circle at 12% 0%, rgba(167, 139, 250, 0.16), transparent 34%);
     color: var(--ink);
   }
 
@@ -824,7 +826,9 @@
 }
 
 .is-planned {
-  background: #f8fbff;
+  background:
+    linear-gradient(135deg, rgba(124, 58, 237, 0.035), rgba(255, 255, 255, 0)),
+    #ffffff;
 }
 
 .project-card {
@@ -844,7 +848,7 @@
 }
 
 .status {
-  color: var(--green);
+  color: #7c3aed;
   font-size: 13px;
   font-weight: 900;
 }
@@ -1122,6 +1126,40 @@
   line-height: 1;
 }
 
+.markdown-math .math-limit-int {
+  grid-template-columns: auto auto;
+  grid-template-rows: 1fr 1fr;
+  column-gap: 0.03em;
+  align-items: center;
+  margin: 0 0.2em;
+  vertical-align: -0.42em;
+}
+
+.markdown-math .math-limit-int .math-limit-symbol {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  font-size: 1.58em;
+  line-height: 1;
+}
+
+.markdown-math .math-limit-int .math-limit-upper,
+.markdown-math .math-limit-int .math-limit-lower {
+  grid-column: 2;
+  min-height: 0;
+}
+
+.markdown-math .math-limit-int .math-limit-upper {
+  grid-row: 1;
+  align-self: end;
+  transform: translateY(-0.06em);
+}
+
+.markdown-math .math-limit-int .math-limit-lower {
+  grid-row: 2;
+  align-self: start;
+  transform: translateY(0.06em);
+}
+
 .markdown-math .math-limit-symbol {
   display: block;
   font-size: 1.34em;
@@ -1140,6 +1178,10 @@
 .markdown-math-display .math-limit-op {
   margin: 0 0.24em;
   vertical-align: middle;
+}
+
+.markdown-math-display .math-limit-int .math-limit-symbol {
+  font-size: 1.82em;
 }
 
 .markdown-math-display .math-frac {
@@ -1321,7 +1363,7 @@
   inset: 0 0 auto;
   z-index: 100;
   height: 3px;
-  background: rgba(13, 111, 211, 0.08);
+  background: rgba(124, 58, 237, 0.08);
 }
 
 .reading-progress-bar {
@@ -1403,6 +1445,17 @@
   background: var(--surface);
 }
 
+[data-theme="dark"] .return-link {
+  border-color: rgba(167, 139, 250, 0.34);
+  background: rgba(167, 139, 250, 0.08);
+  color: #c4b5fd;
+}
+
+[data-theme="dark"] .section-title-block span,
+[data-theme="dark"] .section-title-line span {
+  color: #a99cbc;
+}
+
 [data-theme="dark"] .course-path-media::before {
   background:
     linear-gradient(90deg, rgba(6, 11, 21, 0.12) 0%, rgba(8, 14, 26, 0.28) 38%, rgba(17, 28, 50, 0.94) 100%),
@@ -1411,13 +1464,17 @@
 
 [data-theme="dark"] .course-path-media::after {
   background:
-    radial-gradient(circle at 18% 18%, rgba(56, 189, 248, 0.2), transparent 32%),
+    radial-gradient(circle at 18% 18%, rgba(167, 139, 250, 0.2), transparent 32%),
     linear-gradient(180deg, transparent 0%, rgba(6, 11, 21, 0.16) 100%);
 }
 
 [data-theme="dark"] .is-planned,
 [data-theme="dark"] .markdown-article blockquote {
   background: var(--surface-2);
+}
+
+[data-theme="dark"] .status {
+  color: #c4b5fd;
 }
 
 [data-theme="dark"] .markdown-math {
@@ -1443,9 +1500,24 @@
     background: var(--surface);
   }
 
+  :root:not([data-theme="light"]) .return-link {
+    border-color: rgba(167, 139, 250, 0.34);
+    background: rgba(167, 139, 250, 0.08);
+    color: #c4b5fd;
+  }
+
+  :root:not([data-theme="light"]) .section-title-block span,
+  :root:not([data-theme="light"]) .section-title-line span {
+    color: #a99cbc;
+  }
+
   :root:not([data-theme="light"]) .is-planned,
   :root:not([data-theme="light"]) .markdown-article blockquote {
     background: var(--surface-2);
+  }
+
+  :root:not([data-theme="light"]) .status {
+    color: #c4b5fd;
   }
 
   :root:not([data-theme="light"]) .markdown-math {

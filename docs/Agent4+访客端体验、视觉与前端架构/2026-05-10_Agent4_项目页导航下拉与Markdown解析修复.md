@@ -73,7 +73,7 @@ in-app browser 验收：
 
 - `http://127.0.0.1:4178/project.html?id=logic-analyzer`
 - 页面正常打开。
-- 标题为 `GokottaLogic 逻辑分析仪 | GokottaMaker`。
+- 标题为 `LarkixLogic 逻辑分析仪 | LarkixMaker`。
 - 控制台无 error / warning。
 
 Playwright 回归：

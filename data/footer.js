@@ -1,5 +1,5 @@
 (function () {
-  const themeKey = "gokottamaker-theme";
+  const themeKey = "larkixmaker-theme";
   const root = document.documentElement;
 
   const getStoredTheme = () => {
@@ -114,12 +114,13 @@
     });
   });
 
-  const meta = window.GOKOTTA_SITE_META || {};
+  const meta = window.LARKIX_SITE_META || {};
+  const siteBrand = document.body.dataset.siteBrand || "LarkixMaker";
   const footer = document.createElement("footer");
   footer.className = "site-footer";
   footer.innerHTML = `
     <div class="site-shell site-footer-inner">
-      <span>GokottaMaker</span>
+      <span>${siteBrand}</span>
       <span>Version ${meta.versionLabel || "V1.0.0+20260504-0149"}</span>
     </div>
   `;

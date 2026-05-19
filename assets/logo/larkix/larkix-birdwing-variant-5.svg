@@ -1,0 +1,14 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Bird Wing Variant 5 - Icon Bird</title>
+  <desc id="desc">A compact app-icon bird with a clear head, beak, wings, tail, and Larkix wordmark.</desc>
+  <rect x="10" y="10" width="76" height="76" rx="22" fill="#2563EB"/>
+  <path d="M21.3 53C34.5 35.6 51.4 28 72.2 30.1C60.3 38.6 49.4 48 39.6 58.3C33.2 57.8 27.1 56 21.3 53Z" fill="#DBEAFE"/>
+  <path d="M30.7 70.4C47.3 63.2 61 52.2 71.9 37.3C70.1 58.2 55.5 73.7 36 78C33.8 75.8 32 73.3 30.7 70.4Z" fill="#38BDF8"/>
+  <path d="M36.4 59.3C46.1 48.5 57.9 38.3 71.7 28.7" stroke="#FFFFFF" stroke-width="5.4" stroke-linecap="round"/>
+  <path d="M27 38.8C39.3 42.6 51 49.4 62.2 59.2" stroke="#1E3A8A" stroke-width="5.6" stroke-linecap="round"/>
+  <circle cx="64.2" cy="29.3" r="5.1" fill="#DBEAFE"/>
+  <path d="M68.8 27.1L80.7 21.5L73.1 31.2Z" fill="#F59E0B"/>
+  <path d="M23.5 59.8L14.2 65L26.3 67.5" fill="#1E3A8A"/>
+  <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="780" letter-spacing="0">Larki<tspan fill="#2563EB" font-weight="860">x</tspan></text>
+  <path d="M218 66C226 64.6 233 60.4 238.5 53.4" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+</svg>

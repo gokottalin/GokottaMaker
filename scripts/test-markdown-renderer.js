@@ -9,7 +9,7 @@ function loadRenderer() {
   const sandbox = { window: {} };
   vm.createContext(sandbox);
   vm.runInContext(source, sandbox);
-  return sandbox.window.GokottaMarkdown;
+  return sandbox.window.LarkixMarkdown;
 }
 
 function countMatches(value, pattern) {

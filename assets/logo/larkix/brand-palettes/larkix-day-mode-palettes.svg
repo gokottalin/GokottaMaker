@@ -1,0 +1,144 @@
+<svg width="1280" height="930" viewBox="0 0 1280 930" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="930" fill="#F8FAFC"/>
+  <style>
+    .title { font: 850 40px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; fill: #111827; }
+    .sub { font: 600 18px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; fill: #64748B; }
+    .num { font: 850 28px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; }
+    .name { font: 800 22px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; }
+    .note { font: 600 13px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; }
+    .label { font: 650 11px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; fill: #64748B; }
+    .ui { font: 700 12px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; }
+  </style>
+  <text x="54" y="62" class="title">Larkix 白天模式网页配色 5 选 1</text>
+  <text x="54" y="94" class="sub">基于已确认的紫色鸟形 LOGO，面向浅色网站、工具页、文章页和项目展示页。</text>
+
+  <g transform="translate(54 120)">
+    <rect width="1172" height="136" rx="14" fill="#F8FAFC" stroke="#E5E7EB"/>
+    <rect x="24" y="24" width="64" height="64" rx="18" fill="#FFFFFF" stroke="#E5E7EB"/>
+    <text x="42" y="66" class="num" fill="#7C3AED">01</text>
+    <text x="112" y="44" class="name" fill="#111827">清爽紫白</text>
+    <text x="112" y="70" class="note" fill="#64748B">最通用，适合主站首页、导航、内容页和工具入口。</text>
+    <g transform="translate(112 88)">
+      <rect width="44" height="24" rx="6" fill="#F8FAFC" stroke="#E5E7EB"/><text x="0" y="42" class="label">BG</text>
+      <rect x="58" width="44" height="24" rx="6" fill="#FFFFFF" stroke="#E5E7EB"/><text x="58" y="42" class="label">SUR</text>
+      <rect x="116" width="44" height="24" rx="6" fill="#7C3AED"/><text x="116" y="42" class="label">PRI</text>
+      <rect x="174" width="44" height="24" rx="6" fill="#4C1D95"/><text x="174" y="42" class="label">DEEP</text>
+      <rect x="232" width="44" height="24" rx="6" fill="#38BDF8"/><text x="232" y="42" class="label">ACC</text>
+      <rect x="290" width="44" height="24" rx="6" fill="#111827"/><text x="290" y="42" class="label">TEXT</text>
+    </g>
+    <g transform="translate(560 24)">
+      <rect width="560" height="88" rx="10" fill="#FFFFFF" stroke="#E5E7EB"/>
+      <circle cx="34" cy="28" r="11" fill="#7C3AED"/>
+      <rect x="56" y="21" width="74" height="14" rx="7" fill="#111827"/>
+      <rect x="392" y="18" width="96" height="24" rx="8" fill="#7C3AED"/>
+      <rect x="32" y="56" width="128" height="12" rx="6" fill="#E5E7EB"/>
+      <rect x="184" y="54" width="86" height="16" rx="8" fill="#DBEAFE"/>
+      <rect x="292" y="54" width="86" height="16" rx="8" fill="#EDE9FE"/>
+      <rect x="400" y="54" width="86" height="16" rx="8" fill="#E0F2FE"/>
+    </g>
+  </g>
+
+  <g transform="translate(54 274)">
+    <rect width="1172" height="136" rx="14" fill="#FCFAFF" stroke="#E9D5FF"/>
+    <rect x="24" y="24" width="64" height="64" rx="18" fill="#FFFFFF" stroke="#E9D5FF"/>
+    <text x="42" y="66" class="num" fill="#7C3AED">02</text>
+    <text x="112" y="44" class="name" fill="#18181B">晨光淡紫</text>
+    <text x="112" y="70" class="note" fill="#71717A">更温和，有一点创作感，适合个人品牌、博客和教程页。</text>
+    <g transform="translate(112 88)">
+      <rect width="44" height="24" rx="6" fill="#FCFAFF" stroke="#E9D5FF"/><text x="0" y="42" class="label">BG</text>
+      <rect x="58" width="44" height="24" rx="6" fill="#FFFFFF" stroke="#E9D5FF"/><text x="58" y="42" class="label">SUR</text>
+      <rect x="116" width="44" height="24" rx="6" fill="#7C3AED"/><text x="116" y="42" class="label">PRI</text>
+      <rect x="174" width="44" height="24" rx="6" fill="#3B0764"/><text x="174" y="42" class="label">DEEP</text>
+      <rect x="232" width="44" height="24" rx="6" fill="#F59E0B"/><text x="232" y="42" class="label">ACC</text>
+      <rect x="290" width="44" height="24" rx="6" fill="#18181B"/><text x="290" y="42" class="label">TEXT</text>
+    </g>
+    <g transform="translate(560 24)">
+      <rect width="560" height="88" rx="10" fill="#FFFFFF" stroke="#E9D5FF"/>
+      <circle cx="34" cy="28" r="11" fill="#7C3AED"/>
+      <rect x="56" y="21" width="74" height="14" rx="7" fill="#18181B"/>
+      <rect x="392" y="18" width="96" height="24" rx="8" fill="#7C3AED"/>
+      <rect x="32" y="56" width="128" height="12" rx="6" fill="#E9D5FF"/>
+      <rect x="184" y="54" width="86" height="16" rx="8" fill="#FEF3C7"/>
+      <rect x="292" y="54" width="86" height="16" rx="8" fill="#F3E8FF"/>
+      <rect x="400" y="54" width="86" height="16" rx="8" fill="#FCE7F3"/>
+    </g>
+  </g>
+
+  <g transform="translate(54 428)">
+    <rect width="1172" height="136" rx="14" fill="#F6FAFF" stroke="#DBEAFE"/>
+    <rect x="24" y="24" width="64" height="64" rx="18" fill="#FFFFFF" stroke="#DBEAFE"/>
+    <text x="42" y="66" class="num" fill="#6D28D9">03</text>
+    <text x="112" y="44" class="name" fill="#0F172A">工程清蓝</text>
+    <text x="112" y="70" class="note" fill="#64748B">更理性、科技和工程感，适合电子、电力、仿真和工具产品。</text>
+    <g transform="translate(112 88)">
+      <rect width="44" height="24" rx="6" fill="#F6FAFF" stroke="#DBEAFE"/><text x="0" y="42" class="label">BG</text>
+      <rect x="58" width="44" height="24" rx="6" fill="#FFFFFF" stroke="#DBEAFE"/><text x="58" y="42" class="label">SUR</text>
+      <rect x="116" width="44" height="24" rx="6" fill="#6D28D9"/><text x="116" y="42" class="label">PRI</text>
+      <rect x="174" width="44" height="24" rx="6" fill="#312E81"/><text x="174" y="42" class="label">DEEP</text>
+      <rect x="232" width="44" height="24" rx="6" fill="#0EA5E9"/><text x="232" y="42" class="label">ACC</text>
+      <rect x="290" width="44" height="24" rx="6" fill="#0F172A"/><text x="290" y="42" class="label">TEXT</text>
+    </g>
+    <g transform="translate(560 24)">
+      <rect width="560" height="88" rx="10" fill="#FFFFFF" stroke="#DBEAFE"/>
+      <circle cx="34" cy="28" r="11" fill="#6D28D9"/>
+      <rect x="56" y="21" width="74" height="14" rx="7" fill="#0F172A"/>
+      <rect x="392" y="18" width="96" height="24" rx="8" fill="#6D28D9"/>
+      <rect x="32" y="56" width="128" height="12" rx="6" fill="#DBEAFE"/>
+      <rect x="184" y="54" width="86" height="16" rx="8" fill="#E0F2FE"/>
+      <rect x="292" y="54" width="86" height="16" rx="8" fill="#EDE9FE"/>
+      <rect x="400" y="54" width="86" height="16" rx="8" fill="#CCFBF1"/>
+    </g>
+  </g>
+
+  <g transform="translate(54 582)">
+    <rect width="1172" height="136" rx="14" fill="#F8FFFC" stroke="#D1FAE5"/>
+    <rect x="24" y="24" width="64" height="64" rx="18" fill="#FFFFFF" stroke="#D1FAE5"/>
+    <text x="42" y="66" class="num" fill="#7C3AED">04</text>
+    <text x="112" y="44" class="name" fill="#102A43">开放青绿</text>
+    <text x="112" y="70" class="note" fill="#52616B">更开放、轻盈，适合实验室、开源项目、成长型工具集合。</text>
+    <g transform="translate(112 88)">
+      <rect width="44" height="24" rx="6" fill="#F8FFFC" stroke="#D1FAE5"/><text x="0" y="42" class="label">BG</text>
+      <rect x="58" width="44" height="24" rx="6" fill="#FFFFFF" stroke="#D1FAE5"/><text x="58" y="42" class="label">SUR</text>
+      <rect x="116" width="44" height="24" rx="6" fill="#7C3AED"/><text x="116" y="42" class="label">PRI</text>
+      <rect x="174" width="44" height="24" rx="6" fill="#4C1D95"/><text x="174" y="42" class="label">DEEP</text>
+      <rect x="232" width="44" height="24" rx="6" fill="#10B981"/><text x="232" y="42" class="label">ACC</text>
+      <rect x="290" width="44" height="24" rx="6" fill="#102A43"/><text x="290" y="42" class="label">TEXT</text>
+    </g>
+    <g transform="translate(560 24)">
+      <rect width="560" height="88" rx="10" fill="#FFFFFF" stroke="#D1FAE5"/>
+      <circle cx="34" cy="28" r="11" fill="#7C3AED"/>
+      <rect x="56" y="21" width="74" height="14" rx="7" fill="#102A43"/>
+      <rect x="392" y="18" width="96" height="24" rx="8" fill="#7C3AED"/>
+      <rect x="32" y="56" width="128" height="12" rx="6" fill="#D1FAE5"/>
+      <rect x="184" y="54" width="86" height="16" rx="8" fill="#CCFBF1"/>
+      <rect x="292" y="54" width="86" height="16" rx="8" fill="#EDE9FE"/>
+      <rect x="400" y="54" width="86" height="16" rx="8" fill="#E0F2FE"/>
+    </g>
+  </g>
+
+  <g transform="translate(54 736)">
+    <rect width="1172" height="136" rx="14" fill="#FFFFFF" stroke="#E2E8F0"/>
+    <rect x="24" y="24" width="64" height="64" rx="18" fill="#F8FAFC" stroke="#E2E8F0"/>
+    <text x="42" y="66" class="num" fill="#5B21B6">05</text>
+    <text x="112" y="44" class="name" fill="#0F172A">纸白专业</text>
+    <text x="112" y="70" class="note" fill="#475569">最克制、最像长期品牌系统，适合文档、项目列表和高频阅读。</text>
+    <g transform="translate(112 88)">
+      <rect width="44" height="24" rx="6" fill="#FFFFFF" stroke="#E2E8F0"/><text x="0" y="42" class="label">BG</text>
+      <rect x="58" width="44" height="24" rx="6" fill="#F8FAFC" stroke="#E2E8F0"/><text x="58" y="42" class="label">SUR</text>
+      <rect x="116" width="44" height="24" rx="6" fill="#5B21B6"/><text x="116" y="42" class="label">PRI</text>
+      <rect x="174" width="44" height="24" rx="6" fill="#2E1065"/><text x="174" y="42" class="label">DEEP</text>
+      <rect x="232" width="44" height="24" rx="6" fill="#6366F1"/><text x="232" y="42" class="label">ACC</text>
+      <rect x="290" width="44" height="24" rx="6" fill="#0F172A"/><text x="290" y="42" class="label">TEXT</text>
+    </g>
+    <g transform="translate(560 24)">
+      <rect width="560" height="88" rx="10" fill="#F8FAFC" stroke="#E2E8F0"/>
+      <circle cx="34" cy="28" r="11" fill="#5B21B6"/>
+      <rect x="56" y="21" width="74" height="14" rx="7" fill="#0F172A"/>
+      <rect x="392" y="18" width="96" height="24" rx="8" fill="#5B21B6"/>
+      <rect x="32" y="56" width="128" height="12" rx="6" fill="#E2E8F0"/>
+      <rect x="184" y="54" width="86" height="16" rx="8" fill="#EEF2FF"/>
+      <rect x="292" y="54" width="86" height="16" rx="8" fill="#F1F5F9"/>
+      <rect x="400" y="54" width="86" height="16" rx="8" fill="#EDE9FE"/>
+    </g>
+  </g>
+</svg>

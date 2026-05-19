@@ -16,11 +16,11 @@
   };
 
   const DESCRIPTION_MAP = {
-    all: "集中浏览 GokottaMaker 当前已发布的全部内容，覆盖模拟电子、STM32、ESP32 与开源项目。",
+    all: "集中浏览 LarkixMaker 当前已发布的全部内容，覆盖模拟电子、STM32、ESP32 与开源项目。",
     analog: "整理运放、滤波器、ADC 前端、电源噪声、输入保护和测量调试相关内容，关注从电路指标到真实验证的工程过程。",
     stm32: "整理 STM32 ADC、DMA、定时器、通信接口、Bootloader 和调试实践，关注可复用的嵌入式工程方法。",
     esp32: "整理 ESP32 低功耗、Wi-Fi、MQTT、OTA、传感器节点和电池供电设计，关注联网设备的长期稳定运行。",
-    projects: "记录 GokottaMaker 的开源硬件项目，包括 BOM、原理图、PCB、固件、外壳与调试记录。"
+    projects: "记录 LarkixMaker 的开源硬件项目，包括 BOM、原理图、PCB、固件、外壳与调试记录。"
   };
 
   const ROUTE_PROJECT_HINTS = {
@@ -34,14 +34,14 @@
   const initialKeyword = params.get("q") || "";
   const category = CATEGORY_MAP[key] || CATEGORY_MAP.analog;
   const description = DESCRIPTION_MAP[key] || DESCRIPTION_MAP.analog;
-  const courseMeta = window.GokottaCourseMeta || {};
+  const courseMeta = window.LarkixCourseMeta || {};
   const meta = courseMeta[key] || courseMeta.all || {};
-  const contentApi = window.GokottaContent;
+  const contentApi = window.LarkixContent;
   const allPosts = contentApi.getPosts();
   const allProjects = contentApi.getProjectDirectory();
   const postMap = new Map(allPosts.map((item) => [item.id, item]));
   const projectMap = new Map(allProjects.map((item) => [item.id, item]));
-  const escapeHtml = window.GokottaMedia.escapeHtml;
+  const escapeHtml = window.LarkixMedia.escapeHtml;
 
   const titleNode = document.querySelector("#categoryTitle");
   const titleEnNode = document.querySelector("#categoryTitleEn");
@@ -199,7 +199,7 @@
   function lessonRow(post) {
     return `
       <article class="lesson-row">
-        <a href="${itemUrl(post)}">${window.GokottaMedia.image(post.cover, `${post.title}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 180px" })}</a>
+        <a href="${itemUrl(post)}">${window.LarkixMedia.image(post.cover, `${post.title}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 180px" })}</a>
         <div>
           <div class="lesson-row-meta">
             <span class="category-pill">${escapeHtml(post.category)}</span>
@@ -222,7 +222,7 @@
 
     return `
       <article class="route-project-card ${online ? "" : "is-planned"}">
-        ${window.GokottaMedia.image(project.cover, `${project.title}项目图片`, { loading: "lazy", sizes: "(max-width: 1100px) 100vw, 280px" })}
+        ${window.LarkixMedia.image(project.cover, `${project.title}项目图片`, { loading: "lazy", sizes: "(max-width: 1100px) 100vw, 280px" })}
         <div class="route-project-copy">
           <span class="status">${escapeHtml(project.status)}</span>
           <h3>${titleMarkup}</h3>
@@ -330,7 +330,7 @@
         <p>${escapeHtml(post.excerpt)}</p>
         <div class="card-footer"><span>${escapeHtml(post.readTime)}</span><span>${escapeHtml(post.date)}</span></div>
       </div>
-      <a class="lesson-feature-media" href="${itemUrl(post)}">${window.GokottaMedia.image(post.cover, `${post.title}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 360px" })}</a>
+      <a class="lesson-feature-media" href="${itemUrl(post)}">${window.LarkixMedia.image(post.cover, `${post.title}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 360px" })}</a>
     `;
   }
 
@@ -436,7 +436,7 @@
   }
 
   document.body.dataset.pageTheme = CATEGORY_MAP[key] ? key : "analog";
-  document.title = `${category} | GokottaMaker`;
+  document.title = `${category} | LarkixMaker`;
   document.querySelector('meta[name="description"]').setAttribute("content", description);
   titleNode.textContent = category;
   titleEnNode.textContent = ENGLISH_MAP[key] || ENGLISH_MAP.analog;

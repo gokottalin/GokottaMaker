@@ -20,7 +20,7 @@ const dbPath = path.resolve(process.env.DB_PATH || path.join(dbDir, "gokottamake
 const uploadDir = path.resolve(process.env.UPLOAD_DIR || path.join(dataDir, "uploads"));
 const backupRoot = path.resolve(process.env.BACKUP_ROOT || "/srv/gokottamaker-backups");
 const port = Number(process.env.PORT || 4173);
-const adminUsername = process.env.ADMIN_USERNAME || "Gokotta";
+const adminUsername = process.env.ADMIN_USERNAME || "Larkix";
 const adminPassword = process.env.ADMIN_PASSWORD || "change-this-before-public-deploy";
 const resetAdminPassword = process.env.ADMIN_RESET_PASSWORD_ON_START === "true";
 const allowHardDelete = process.env.ALLOW_HARD_DELETE === "true";
@@ -38,9 +38,9 @@ const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword }
 const uploadStore = createUploadStore(uploadDir);
 
 const siteVersion = "V2.4.9";
-const siteBuild = "20260517-003";
+const siteBuild = "20260519-003";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
-const siteUrl = (process.env.SITE_URL || "http://81.71.156.122:4173").replace(/\/$/, "");
+const siteUrl = (process.env.SITE_URL || "https://www.larkix.com").replace(/\/$/, "");
 const elecVersion = "V1.3";
 const elecInputLimitBytes = 200 * 1024;
 const elecMaxCircuits = 10;
@@ -54,8 +54,8 @@ function loadSeedData() {
   vm.runInContext(fs.readFileSync(path.join(root, "data", "posts.js"), "utf8"), sandbox);
   vm.runInContext(fs.readFileSync(path.join(root, "data", "seed.js"), "utf8"), sandbox);
   return {
-    posts: sandbox.window.GOKOTTA_POSTS || [],
-    projects: sandbox.window.GOKOTTA_PROJECTS || sandbox.window.GOKOTTA_SEED?.projects || []
+    posts: sandbox.window.LARKIX_POSTS || [],
+    projects: sandbox.window.LARKIX_PROJECTS || sandbox.window.LARKIX_SEED?.projects || []
   };
 }
 
@@ -298,7 +298,7 @@ const { saveUpload, uploads } = uploadStore;
 const seo = createSeo({ siteUrl, allPosts, allProjects, text });
 
 function contentScript(res) {
-  const body = `window.GOKOTTA_SERVER_CONTENT = ${JSON.stringify(publicContentPayload())};`;
+  const body = `window.LARKIX_SERVER_CONTENT = ${JSON.stringify(publicContentPayload())};`;
   res.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8", "Cache-Control": "no-store" });
   res.end(body);
 }
@@ -306,7 +306,7 @@ function contentScript(res) {
 function exportContent() {
   return {
     site: {
-      name: "GokottaMaker",
+      name: "LarkixMaker",
       url: siteUrl,
       version: siteVersion,
       build: siteBuild,
@@ -357,7 +357,7 @@ function elecSamples() {
     return {
       ok: false,
       samples: [],
-      diagnostics: [elecDiagnostic("ERROR", "ELEC_CORE_UNAVAILABLE", "GokottaElec 核心目录不可用。")]
+      diagnostics: [elecDiagnostic("ERROR", "ELEC_CORE_UNAVAILABLE", "LarkixElec 核心目录不可用。")]
     };
   }
 
@@ -422,12 +422,12 @@ function appendElecHandoffFile(lines, file) {
 
 function buildElecHandoffMarkdown(mode) {
   const full = mode === "full";
-  const title = full ? "GokottaElec LLM 完整交接" : "GokottaElec LLM 基础交接";
+  const title = full ? "LarkixElec LLM 完整交接" : "LarkixElec LLM 基础交接";
   const lines = [
     `# ${title}`,
     "",
     `- 当前版本：${elecVersion}`,
-    "- 用途：把 LLM 输出的 CNL 电路描述交给 GokottaElec，生成 SVG 原理图、IR JSON 与 ERC 诊断。",
+    "- 用途：把 LLM 输出的 CNL 电路描述交给 LarkixElec，生成 SVG 原理图、IR JSON 与 ERC 诊断。",
     "- 建议：先阅读格式约束，再输出可被工具直接解析的 CNL。",
     "",
     full ? "## 完整上下文" : "## 快速上下文",
@@ -448,7 +448,7 @@ function elecHandoff(req, res) {
     return elecResponse(res, 503, {
       ok: false,
       markdown: "",
-      diagnostics: [elecDiagnostic("ERROR", "ELEC_CORE_UNAVAILABLE", "GokottaElec 核心不可用。")]
+      diagnostics: [elecDiagnostic("ERROR", "ELEC_CORE_UNAVAILABLE", "LarkixElec 核心不可用。")]
     });
   }
 
@@ -712,7 +712,7 @@ async function elecBuild(res, body) {
       ok: false,
       circuits: [],
       artifacts: {},
-      diagnostics: [elecDiagnostic("ERROR", "ELEC_CORE_UNAVAILABLE", "GokottaElec 核心不可用。")]
+      diagnostics: [elecDiagnostic("ERROR", "ELEC_CORE_UNAVAILABLE", "LarkixElec 核心不可用。")]
     });
   }
 
@@ -757,7 +757,7 @@ async function elecBuild(res, body) {
       : { ok: false, circuits: [], artifacts: {}, diagnostics: [] };
     if (build.signal) {
       parsed.ok = false;
-      parsed.diagnostics.push(elecDiagnostic("ERROR", "ELEC_BUILD_TIMEOUT", "GokottaElec 构建超时。"));
+      parsed.diagnostics.push(elecDiagnostic("ERROR", "ELEC_BUILD_TIMEOUT", "LarkixElec 构建超时。"));
     }
     if (build.stderr.trim()) {
       parsed.diagnostics.push(elecDiagnostic(build.code === 0 ? "INFO" : "ERROR", "ELEC_STDERR", build.stderr.trim().slice(0, 2000)));
@@ -978,7 +978,7 @@ function healthPayload({ detailed = false } = {}) {
   const uploadsSummary = directorySummary(uploadDir);
   const payload = {
     ok: true,
-    name: "GokottaMaker",
+    name: "LarkixMaker",
     version: siteVersion,
     build: siteBuild,
     versionLabel: siteVersionLabel,
@@ -1259,6 +1259,7 @@ const publicStaticFiles = new Set([
   "/category.html",
   "/category-page.js",
   "/index.html",
+  "/maker.html",
   "/miniapps.html",
   "/post.html",
   "/project.html",
@@ -1355,7 +1356,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(port, () => {
-  console.log(`GokottaMaker running at http://localhost:${port}`);
+  console.log(`LarkixMaker running at http://localhost:${port}`);
   console.log(`SQLite database: ${dbPath}`);
   console.log(`Uploads directory: ${uploadDir}`);
 });

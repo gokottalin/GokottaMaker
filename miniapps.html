@@ -3,16 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>小程序 | GokottaMaker</title>
-    <meta name="description" content="GokottaMaker 小程序中心，集中管理在线电路、工具和后续可扩展的小应用。" />
+    <title>小程序 | LarkixMaker</title>
+    <meta name="description" content="LarkixMaker 小程序中心，集中管理在线电路、工具和后续可扩展的小应用。" />
     <link rel="manifest" href="./site.webmanifest" />
-    <link rel="stylesheet" href="./styles.css?v=20260517-003" />
+    <link rel="stylesheet" href="./styles.css?v=20260519-003" />
   </head>
   <body class="themed-page miniapp-page" data-page-theme="projects" data-layout-page="miniappsPage">
     <a class="skip-link" href="#mainContent">跳到主要内容</a>
     <header class="site-header">
       <div class="header-inner">
-        <a class="brand" href="./index.html"><img class="brand-symbol" src="./assets/logo/gokottamaker-mark.svg" alt="GokottaMaker" /><span>Gokotta<b>Maker</b></span></a>
+        <a class="brand" href="./index.html"><img class="brand-symbol" src="./assets/logo/larkix/larkix-final-transparent-icon.svg" alt="" aria-hidden="true" /><span class="brand-wordmark">Larki<span>x</span></span><span class="brand-product">Maker</span></a>
         <nav class="main-nav" aria-label="主导航">
           <a href="./category.html?category=analog">模拟电子</a>
           <a href="./category.html?category=stm32">STM32</a>
@@ -33,15 +33,15 @@
           </div>
           <p class="category-summary">收纳可直接使用的网页小工具。每个工具保持独立页面、样式与 API 契约，便于后续扩展。</p>
         </div>
-        <a class="return-link" href="./index.html">返回首页</a>
+        <a class="return-link" href="./maker.html">返回首页</a>
       </div>
 
       <section class="miniapp-registry" id="miniappRegistry" aria-label="小程序列表" data-layout-section="miniappRegistry"></section>
     </main>
 
-    <script src="./data/miniapps.js?v=20260517-003"></script>
+    <script src="./data/miniapps.js?v=20260519-003"></script>
     <script>
-      const miniapps = window.GOKOTTA_MINIAPPS || [];
+      const miniapps = window.LARKIX_MINIAPPS || [];
       const safe = (value) => String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#039;" })[char]);
       document.querySelector("#miniappRegistry").innerHTML = miniapps
         .map((app) => `
@@ -66,8 +66,8 @@
         `)
         .join("") || `<div class="empty-state">当前还没有可用小程序。</div>`;
     </script>
-    <script src="./site-layout.js?v=20260517-003"></script>
-    <script src="./data/site-meta.js?v=20260517-003"></script>
-    <script src="./data/footer.js?v=20260517-003"></script>
+    <script src="./site-layout.js?v=20260519-003"></script>
+    <script src="./data/site-meta.js?v=20260519-003"></script>
+    <script src="./data/footer.js?v=20260519-003"></script>
   </body>
 </html>

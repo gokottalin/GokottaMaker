@@ -1,0 +1,12 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Logo Option 2 - Dawn L</title>
+  <desc id="desc">An abstract bird body shaped like an L, with blue wings and a first-light slash forming the X idea.</desc>
+  <path d="M31 18C25.7 28.5 22 41.6 22 56.2C22 70.4 31.1 78 44.5 78H74" stroke="#2563EB" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M40 31.5C51.1 33.1 62 39.4 73.2 50.4C58.4 53.3 45.6 50 35.2 41.2C36.1 37.6 37.8 34.4 40 31.5Z" fill="#38BDF8"/>
+  <path d="M30.5 61.2C41.4 56.4 55.9 55 73.5 57.4C62.1 69.5 49.8 75.5 36.4 75.4C33.6 71.3 31.7 66.5 30.5 61.2Z" fill="#1E3A8A"/>
+  <path d="M36 76L75 31" stroke="#FFFFFF" stroke-width="5.5" stroke-linecap="round"/>
+  <path d="M61.5 28.4L77.5 20.6" stroke="#F59E0B" stroke-width="4.5" stroke-linecap="round"/>
+  <circle cx="56.5" cy="30.5" r="4.2" fill="#F59E0B"/>
+  <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="770" letter-spacing="0">Larki<tspan fill="#1E3A8A" font-weight="860">x</tspan></text>
+  <path d="M218 66C227.4 64.3 235.1 58.6 240 48.8" stroke="#38BDF8" stroke-width="3.2" stroke-linecap="round"/>
+</svg>

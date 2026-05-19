@@ -89,9 +89,9 @@ const defaultCourseMeta = {
   }
 
   let merged = structuredClone(defaultCourseMeta);
-  window.GokottaDefaultCourseMeta = structuredClone(defaultCourseMeta);
+  window.LarkixDefaultCourseMeta = structuredClone(defaultCourseMeta);
   try {
-    const raw = localStorage.getItem("gokottamaker_course_meta_v1");
+    const raw = localStorage.getItem("larkixmaker_course_meta_v1");
     if (raw) {
       const override = JSON.parse(raw);
       if (isPlainObject(override)) merged = deepMerge(defaultCourseMeta, override);
@@ -99,5 +99,5 @@ const defaultCourseMeta = {
   } catch (error) {
     console.warn("Failed to load course meta override", error);
   }
-  window.GokottaCourseMeta = merged;
+  window.LarkixCourseMeta = merged;
 })();

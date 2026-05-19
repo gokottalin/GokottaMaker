@@ -1,0 +1,16 @@
+<svg width="360" height="104" viewBox="0 0 360 104" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Purple Soaring Bird Logo</title>
+  <desc id="desc">A minimal purple bird preparing to soar, with an upward wing shape and the Larkix wordmark.</desc>
+  <g aria-label="Larkix symbol">
+    <path d="M20 66.2C36.4 39.8 61.9 24.4 92 22.8C77.7 35.4 66.4 51.2 58.3 71.7C46.1 66.3 33.3 64.5 20 66.2Z" fill="#4C1D95"/>
+    <path d="M34.2 82.6C54.1 73.7 71.2 57.8 85.5 35C83.5 61.1 69.2 79.7 43 90.5C39.3 88.3 36.4 85.7 34.2 82.6Z" fill="#A78BFA"/>
+    <path d="M61.2 40.5C69 31 79.7 25.3 93.5 23.6L82.2 38.1C73.7 44.4 68 55.2 65 70.4C58.9 60 57.6 50 61.2 40.5Z" fill="#7C3AED"/>
+    <path d="M79.3 31.8L96 23.4L84.9 39.5Z" fill="#C084FC"/>
+    <path d="M31.3 80.2L89.4 25.8" stroke="#FFFFFF" stroke-width="5.8" stroke-linecap="round"/>
+    <path d="M34.7 44.4L70.3 75.6" stroke="#8B5CF6" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <g aria-label="Larkix wordmark">
+    <text x="124" y="66" fill="#111827" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="42" font-weight="820" letter-spacing="0">Larki<tspan fill="#7C3AED" font-weight="900">x</tspan></text>
+    <path d="M238 74C248.2 72.2 257.1 67.2 264 58.2" stroke="#A78BFA" stroke-width="3.6" stroke-linecap="round"/>
+  </g>
+</svg>

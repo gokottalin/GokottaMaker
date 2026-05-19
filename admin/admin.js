@@ -1,8 +1,8 @@
 ﻿(function () {
-  const savedLoginKey = "gokottamaker_admin_saved_login";
-  const draftKey = "gokottamaker_admin_autodraft_v1";
-  const sidebarStateKey = "gokottamaker_admin_sidebar_collapsed";
-  const editorDockStateKey = "gokottamaker_admin_editor_dock_collapsed";
+  const savedLoginKey = "larkixmaker_admin_saved_login";
+  const draftKey = "larkixmaker_admin_autodraft_v1";
+  const sidebarStateKey = "larkixmaker_admin_sidebar_collapsed";
+  const editorDockStateKey = "larkixmaker_admin_editor_dock_collapsed";
   const autosaveDelay = 900;
 
   const loginPanel = document.querySelector("#loginPanel");
@@ -85,7 +85,7 @@
         { key: "hero", label: "首页首屏", description: "首页第一屏大海报与轮播内容。", order: 1, visible: true, size: "hero", preview: "hero" },
         { key: "recommended", label: "推荐内容", description: "按文章主分类与推荐优先级生成的推荐海报和列表。", order: 2, visible: true, size: "wide", preview: "recommended" },
         { key: "projects", label: "开源项目", description: "游客端首页的开源项目区。", order: 3, visible: true, size: "wide", preview: "cards" },
-        { key: "miniapps", label: "网页小程序", description: "MD2File、GokottaElec 等工具入口，默认排在页面底部。", order: 4, visible: true, size: "wide", preview: "miniapps" }
+        { key: "miniapps", label: "网页小程序", description: "MD2File、LarkixElec 等工具入口，默认排在页面底部。", order: 4, visible: true, size: "wide", preview: "miniapps" }
       ]
     },
     {
@@ -241,7 +241,7 @@
   }
 
   function renderMarkdown(markdown) {
-    if (window.GokottaMarkdown) return window.GokottaMarkdown.render(markdown).html;
+    if (window.LarkixMarkdown) return window.LarkixMarkdown.render(markdown).html;
     return `<p>${escapeHtml(markdown || "Markdown 预览会显示在这里。")}</p>`;
   }
 
@@ -1322,7 +1322,7 @@
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = `gokottamaker-content-${data.site?.versionLabel || "export"}.json`;
+        link.download = `larkixmaker-content-${data.site?.versionLabel || "export"}.json`;
         link.click();
         URL.revokeObjectURL(url);
         setNotice("内容导出已生成。", "success");

@@ -1,0 +1,12 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Power X Variant 1 - Wing Blade X</title>
+  <desc id="desc">A powerful single-wing logo with a bold X cut, paired with the Larkix wordmark.</desc>
+  <rect x="8" y="8" width="80" height="80" rx="16" fill="#F8FAFC"/>
+  <path d="M17 67.5C29.5 43.8 50.2 27.3 79 18L67.8 45.1C58.2 59.3 45.1 70.8 28.6 79.7C25 75.1 21.1 71 17 67.5Z" fill="#1E3A8A"/>
+  <path d="M29.1 76.4C44.6 69.1 59.9 56.4 75 38.3C70.4 56.9 58.5 72 39.2 83.5C35.2 82 31.9 79.6 29.1 76.4Z" fill="#38BDF8"/>
+  <path d="M25.5 31.2L70.8 76.4" stroke="#2563EB" stroke-width="8.4" stroke-linecap="square"/>
+  <path d="M27.8 74.2L76.2 25.8" stroke="#FFFFFF" stroke-width="6.4" stroke-linecap="square"/>
+  <path d="M66.9 24.1L80.7 17.4L72.8 29.6Z" fill="#F59E0B"/>
+  <text x="112" y="59" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="39" font-weight="820" letter-spacing="0">Larki<tspan fill="#2563EB" font-weight="900">x</tspan></text>
+  <path d="M218 67C226.6 65.5 233.9 61.1 239.4 53.5" stroke="#38BDF8" stroke-width="3.2" stroke-linecap="round"/>
+</svg>

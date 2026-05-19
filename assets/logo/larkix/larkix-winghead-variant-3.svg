@@ -1,0 +1,13 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Wing Head Variant 3 - Wing Gate</title>
+  <desc id="desc">A wing-only mark with a quiet light gate, avoiding full bird body or office-suite icon language.</desc>
+  <rect x="8" y="8" width="80" height="80" rx="18" fill="#F8FAFC"/>
+  <path d="M18.8 63.2C33 41.1 54.1 27.5 82.2 22.4C74.2 35 64.5 46.2 53.1 56C42.3 65.2 32.4 71.1 23.3 73.7C22.5 70.2 21 66.7 18.8 63.2Z" fill="#2563EB"/>
+  <path d="M24.8 74.6C42.5 67 59.4 53.7 75.7 34.8C72.9 55.4 59 72 34 84.8C30.5 82.4 27.5 79 24.8 74.6Z" fill="#38BDF8"/>
+  <path d="M31.8 69.8C43.8 52.9 58.5 39.7 75.8 30.1" stroke="#FFFFFF" stroke-width="5.8" stroke-linecap="round"/>
+  <path d="M28.9 52.1C38.9 53.3 47.9 56.4 55.9 61.4" stroke="#DBEAFE" stroke-width="4.2" stroke-linecap="round"/>
+  <path d="M60.6 34.4L80.3 23" stroke="#F59E0B" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="56.6" cy="36.7" r="3.4" fill="#F59E0B"/>
+  <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="780" letter-spacing="0">Larki<tspan fill="#2563EB" font-weight="860">x</tspan></text>
+  <path d="M218 66C226 64.6 233 60.4 238.5 53.4" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+</svg>

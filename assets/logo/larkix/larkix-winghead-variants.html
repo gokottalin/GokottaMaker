@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Larkix Wing or Head Logo Variants</title>
+    <style>
+      :root {
+        --bg: #f8fafc;
+        --surface: #ffffff;
+        --ink: #0f172a;
+        --muted: #64748b;
+        --line: #d9e4f1;
+        --blue: #2563eb;
+        --sky: #38bdf8;
+        --amber: #f59e0b;
+        --shadow: 0 18px 45px rgba(15, 23, 42, 0.09);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background:
+          linear-gradient(180deg, rgba(219, 234, 254, 0.78), rgba(248, 250, 252, 0) 360px),
+          var(--bg);
+        color: var(--ink);
+        font-family: Inter, "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+      }
+
+      main {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 54px 0 68px;
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 28px;
+        align-items: end;
+        margin-bottom: 26px;
+      }
+
+      h1 {
+        margin: 0 0 10px;
+        font-size: 36px;
+        line-height: 1.12;
+        letter-spacing: 0;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.75;
+      }
+
+      .rules {
+        max-width: 400px;
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: var(--shadow);
+      }
+
+      .rules strong {
+        color: var(--blue);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 18px;
+      }
+
+      .option {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .preview {
+        min-height: 158px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 24px;
+        background:
+          linear-gradient(90deg, rgba(37, 99, 235, 0.055) 1px, transparent 1px),
+          linear-gradient(rgba(37, 99, 235, 0.055) 1px, transparent 1px),
+          #ffffff;
+        background-size: 22px 22px;
+      }
+
+      .preview img {
+        width: min(340px, 100%);
+        height: auto;
+        display: block;
+      }
+
+      .meta {
+        padding: 18px 20px 20px;
+        border-top: 1px solid var(--line);
+      }
+
+      h2 {
+        margin: 0 0 6px;
+        font-size: 18px;
+        letter-spacing: 0;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      code,
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 5px 8px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #f8fbff;
+        color: var(--blue);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .avoid {
+        border-color: #fed7aa;
+        background: #fff7ed;
+        color: #9a3412;
+      }
+
+      @media (max-width: 860px) {
+        header {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <h1>Larkix Wing / Head 5 选 1</h1>
+          <p>按新要求重做：图形只出现“鸟的翅膀”或“鸟头部”，不出现完整鸟身、尾羽组合，也不使用多色拼接、旋转四瓣、办公协作类图标语言。</p>
+        </div>
+        <div class="rules">
+          <p><strong>避让规则：</strong>蓝色单主导、少量晨光琥珀；不做飞书式多色组合，不做聊天、会议、文档套件符号。</p>
+        </div>
+      </header>
+
+      <section class="grid" aria-label="Larkix wing or head logo variants">
+        <article class="option">
+          <div class="preview"><img src="./larkix-winghead-variant-1.svg" alt="Larkix single dawn wing logo variant" /></div>
+          <div class="meta">
+            <h2>3A Single Dawn Wing</h2>
+            <p>单片翅膀为主体，白色切口像第一束光。识别最干净，适合母品牌主标继续精修。</p>
+            <div class="chips"><code>larkix-winghead-variant-1.svg</code><span class="chip">Wing only</span><span class="chip">主标推荐</span></div>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./larkix-winghead-variant-2.svg" alt="Larkix feather stack logo variant" /></div>
+          <div class="meta">
+            <h2>3B Feather Stack</h2>
+            <p>三片羽翼层叠，Wing 感更明确，仍然保持蓝色单主导和轻盈感。</p>
+            <div class="chips"><code>larkix-winghead-variant-2.svg</code><span class="chip">Wing only</span><span class="chip">羽片更明显</span></div>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./larkix-winghead-variant-3.svg" alt="Larkix wing gate logo variant" /></div>
+          <div class="meta">
+            <h2>3C Wing Gate</h2>
+            <p>翅膀轮廓更厚实，中心保留清晨入口感，适合工程工具和内容站共同使用。</p>
+            <div class="chips"><code>larkix-winghead-variant-3.svg</code><span class="chip">Wing only</span><span class="chip">稳重</span></div>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./larkix-winghead-variant-4.svg" alt="Larkix head profile logo variant" /></div>
+          <div class="meta">
+            <h2>3D Head Profile</h2>
+            <p>只取鸟头侧影，喙是第一束光。轮廓更独立，和常见协作软件图标距离更远。</p>
+            <div class="chips"><code>larkix-winghead-variant-4.svg</code><span class="chip">Head only</span><span class="chip">差异化强</span></div>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./larkix-winghead-variant-5.svg" alt="Larkix minimal head logo variant" /></div>
+          <div class="meta">
+            <h2>3E Minimal Head</h2>
+            <p>更简洁的头部符号，适合后续压缩成 favicon 或头像，但需要再做小尺寸微调。</p>
+            <div class="chips"><code>larkix-winghead-variant-5.svg</code><span class="chip">Head only</span><span class="chip">小图标潜力</span></div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

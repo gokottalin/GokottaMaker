@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-APP_DIR="${APP_DIR:-/opt/GokottaMaker}"
-SERVICE_NAME="${SERVICE_NAME:-gokottamaker}"
+APP_DIR="${APP_DIR:-/opt/LarkixMaker}"
+SERVICE_NAME="${SERVICE_NAME:-larkixmaker}"
 HEALTH_URL="${HEALTH_URL:-http://127.0.0.1:4173/healthz}"
 BACKUP_SCRIPT="${BACKUP_SCRIPT:-scripts/backup-linux.sh}"
 STATE_DIR="${STATE_DIR:-.deploy}"
@@ -40,7 +40,7 @@ if [ -z "$TARGET_REF" ]; then
   TARGET_REF="HEAD@{1}"
 fi
 
-echo "== GokottaMaker rollback =="
+echo "== LarkixMaker rollback =="
 echo "App dir: $APP_DIR"
 echo "Service: $SERVICE_NAME"
 echo "Current commit: $(git rev-parse --short HEAD)"

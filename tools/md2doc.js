@@ -1,5 +1,5 @@
 (function () {
-  const sampleMarkdown = `# GokottaMaker 文档示例
+  const sampleMarkdown = `# LarkixMaker 文档示例
 
 ## 项目摘要
 
@@ -124,7 +124,7 @@ $$
 
   function renderPreview() {
     const markdown = el.input.value;
-    const result = window.GokottaMarkdown.render(markdown);
+    const result = window.LarkixMarkdown.render(markdown);
     el.preview.innerHTML = result.html || '<div class="empty-state">\u7b49\u5f85\u9884\u89c8\u3002</div>';
     el.stats.textContent = `${markdown.length} \u5b57\u7b26`;
   }

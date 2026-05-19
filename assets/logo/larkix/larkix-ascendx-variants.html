@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Larkix Ascend X Logo Variants</title>
+    <style>
+      :root {
+        --bg: #faf9ff;
+        --surface: #ffffff;
+        --ink: #111827;
+        --muted: #6b647b;
+        --line: #ddd6fe;
+        --purple: #7c3aed;
+        --deep: #4c1d95;
+        --light: #a78bfa;
+        --mist: #ede9fe;
+        --amber: #f59e0b;
+        --shadow: 0 18px 45px rgba(76, 29, 149, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background:
+          linear-gradient(180deg, rgba(237, 233, 254, 0.9), rgba(250, 249, 255, 0) 360px),
+          var(--bg);
+        color: var(--ink);
+        font-family: Inter, "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+      }
+
+      main {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 54px 0 68px;
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 28px;
+        align-items: end;
+        margin-bottom: 26px;
+      }
+
+      h1 {
+        margin: 0 0 10px;
+        font-size: 36px;
+        line-height: 1.12;
+        letter-spacing: 0;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.75;
+      }
+
+      .note {
+        max-width: 410px;
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.84);
+        box-shadow: var(--shadow);
+      }
+
+      .note strong {
+        color: var(--purple);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 18px;
+      }
+
+      .option {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .preview {
+        min-height: 158px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 24px;
+        background:
+          linear-gradient(90deg, rgba(124, 58, 237, 0.055) 1px, transparent 1px),
+          linear-gradient(rgba(124, 58, 237, 0.055) 1px, transparent 1px),
+          #ffffff;
+        background-size: 22px 22px;
+      }
+
+      .preview img {
+        width: min(340px, 100%);
+        height: auto;
+        display: block;
+      }
+
+      .meta {
+        padding: 18px 20px 20px;
+        border-top: 1px solid var(--line);
+      }
+
+      h2 {
+        margin: 0 0 6px;
+        font-size: 18px;
+        letter-spacing: 0;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      code,
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 5px 8px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #faf9ff;
+        color: var(--purple);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .main {
+        border-color: #c4b5fd;
+        background: #f5f3ff;
+      }
+
+      @media (max-width: 860px) {
+        header {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <h1>Larkix Ascend X 5 选 1</h1>
+          <p>这组聚焦“鸟向上准备翱翔”的姿态：图形尽量少路径、少细节，紫色为主，X 作为上升翅膀里的结构切口保留。</p>
+        </div>
+        <div class="note">
+          <p><strong>本轮原则：</strong>越简洁越好；第一眼向上，第二眼看到 X；不做完整鸟身，不做复杂插画。</p>
+        </div>
+      </header>
+
+      <section class="grid" aria-label="Larkix Ascend X logo variants">
+        <article class="option">
+          <div class="preview"><img src="./larkix-ascendx-variant-1.svg" alt="Larkix Ascend X rising wing variant" /></div>
+          <div class="meta">
+            <h2>6A Rising Wing</h2>
+            <p>最稳的主标方向。单片上升翼，X 切口清楚，简洁度和品牌感比较均衡。</p>
+            <div class="chips"><code>larkix-ascendx-variant-1.svg</code><span class="chip">Ascend + X</span><span class="chip main">主标推荐</span></div>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./larkix-ascendx-variant-2.svg" alt="Larkix Ascend X lift wing variant" /></div>
+          <div class="meta">
+            <h2>6B Lift Wing</h2>
+            <p>更像准备起飞的一片翅膀，形态更轻，但仍保留紫色力量感。</p>
+            <div class="chips"><code>larkix-ascendx-variant-2.svg</code><span class="chip">Wing</span><span class="chip">轻盈</span></div>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./larkix-ascendx-variant-3.svg" alt="Larkix Ascend X upward head variant" /></div>
+          <div class="meta">
+            <h2>6C Upward Head</h2>
+            <p>鸟头朝上，准备冲出去的感觉更明确；比翅膀方案更个性化。</p>
+            <div class="chips"><code>larkix-ascendx-variant-3.svg</code><span class="chip">Head</span><span class="chip">向上感强</span></div>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./larkix-ascendx-variant-4.svg" alt="Larkix Ascend X launch mark variant" /></div>
+          <div class="meta">
+            <h2>6D Launch X</h2>
+            <p>最极简、X 最明确，像一个向上发射的标志。鸟感更抽象，适合偏工具品牌。</p>
+            <div class="chips"><code>larkix-ascendx-variant-4.svg</code><span class="chip">Minimal</span><span class="chip">X 明确</span></div>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./larkix-ascendx-variant-5.svg" alt="Larkix Ascend X app icon variant" /></div>
+          <div class="meta">
+            <h2>6E App Ascend</h2>
+            <p>图标优先版。深紫圆角底适合头像、favicon、小程序和 App icon。</p>
+            <div class="chips"><code>larkix-ascendx-variant-5.svg</code><span class="chip">Icon</span><span class="chip">小尺寸</span></div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

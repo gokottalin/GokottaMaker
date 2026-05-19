@@ -1,0 +1,11 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Wing Head Variant 2 - Feather Stack</title>
+  <desc id="desc">A wing-only mark made from three blue feather planes and a small first-light accent.</desc>
+  <path d="M17.2 65.7C29.6 45.7 48.7 31.4 74.6 22.8C68.6 38.4 54.9 52.8 33.7 66.1C28.4 67.2 22.9 67.1 17.2 65.7Z" fill="#1E3A8A"/>
+  <path d="M25.7 51.7C38.2 36.5 55 25.6 76.2 19.1C70.5 33.1 58.6 46.3 40.3 58.7C35.3 57.4 30.4 55 25.7 51.7Z" fill="#2563EB"/>
+  <path d="M32.2 76.3C47 68.9 60.9 57 73.9 40.8C72.2 57.7 59.3 72.8 37.7 86.1C35.3 83.4 33.5 80.2 32.2 76.3Z" fill="#38BDF8"/>
+  <path d="M33.2 64.5C46.6 51.1 60.4 40 74.5 31.1" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+  <path d="M69.8 23.1L82.8 16.8L75.2 28.1Z" fill="#F59E0B"/>
+  <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="780" letter-spacing="0">Larki<tspan fill="#2563EB" font-weight="860">x</tspan></text>
+  <path d="M218 66C226 64.6 233 60.4 238.5 53.4" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+</svg>

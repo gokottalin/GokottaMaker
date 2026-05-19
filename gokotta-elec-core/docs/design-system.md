@@ -1,11 +1,11 @@
-# GokottaElec Design System
+# LarkixElec Design System
 
 Agent6 视觉基准：以已选软件图标候选 5 为主视觉，保持成熟蓝色层次、清晰电路线条和简洁平面设计。
 
 ## Brand Mark
 
-- 桌面图标：`launcher/GokottaElec.ico`
-- 桌面页头预览图：`launcher/GokottaElec.png`
+- 桌面图标：`launcher/LarkixElec.ico`
+- 桌面页头预览图：`launcher/LarkixElec.png`
 - 网页小程序图标：`web-miniapp/assets/gokotta-elec-icon.png`
 
 图标特征：

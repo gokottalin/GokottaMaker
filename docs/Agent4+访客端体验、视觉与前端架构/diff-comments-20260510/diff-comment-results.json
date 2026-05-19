@@ -3,15 +3,15 @@
   "generatedAt": "2026-05-10T06:20:55.035Z",
   "browserFallbackReason": "in-app browser direct navigation returned ERR_ABORTED and kept an older cached document; Playwright opened the fresh local URL for deterministic visual checks.",
   "screenshots": {
-    "miniDesktopDark": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\diff-comments-20260510\\miniapps-1279-dark-fixed.png",
-    "miniMobileDark": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\diff-comments-20260510\\miniapps-390-dark-logo-fixed.png",
-    "adminDesktopDark": "D:\\Project\\26-WEB\\GokottaMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\diff-comments-20260510\\admin-1279-dark-fixed.png"
+    "miniDesktopDark": "D:\\Project\\26-WEB\\LarkixMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\diff-comments-20260510\\miniapps-1279-dark-fixed.png",
+    "miniMobileDark": "D:\\Project\\26-WEB\\LarkixMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\diff-comments-20260510\\miniapps-390-dark-logo-fixed.png",
+    "adminDesktopDark": "D:\\Project\\26-WEB\\LarkixMaker\\docs\\Agent4+访客端体验、视觉与前端架构\\diff-comments-20260510\\admin-1279-dark-fixed.png"
   },
   "miniLogs": [],
   "adminLogs": [],
   "miniMetrics": {
     "theme": "dark",
-    "title": "小程序 | GokottaMaker",
+    "title": "小程序 | LarkixMaker",
     "cardCount": 1,
     "cardBackgroundColor": "rgba(0, 0, 0, 0)",
     "cardBackgroundImage": "linear-gradient(135deg, rgba(17, 28, 50, 0.94), rgba(11, 18, 32, 0.88)), radial-gradient(circle at 16% 0%, rgba(56, 189, 248, 0.12), rgba(0, 0, 0, 0) 30%)",
@@ -57,7 +57,7 @@
     "panelBg": "rgba(0, 0, 0, 0)",
     "bodyBg": "rgb(11, 18, 32)",
     "horizontalOverflow": false,
-    "footerVersionText": "GokottaMaker\n      Version V2.4.1+20260510-1320"
+    "footerVersionText": "LarkixMaker\n      Version V2.4.1+20260510-1320"
   },
   "failures": []
 }

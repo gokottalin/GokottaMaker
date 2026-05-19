@@ -55,7 +55,7 @@ href: ./tools/md2doc.html
 
 当前小程序中心版本备注：
 
-- `GokottaElec`：`V1.3`
+- `LarkixElec`：`V1.3`
 - `MD2File`：`V0.3`
 
 ## 验证项
@@ -83,5 +83,5 @@ href: ./tools/md2doc.html
 - `/api/md2file/convert` 错误响应版本已同步为 `V0.3`。
 - 修复 `tools/md2doc.html` 中标题、导航、文件名、页边距、等待转换等中文文案的问号污染。
 - 修复同步滚动关闭后，手动“对齐当前位置”可能沿用旧滚动来源的问题。
-- 修复 GokottaElec 小程序接口中 LLM handoff 与构建诊断的问号污染，`GokottaElec` 版本仍为 `V1.3`。
+- 修复 LarkixElec 小程序接口中 LLM handoff 与构建诊断的问号污染，`LarkixElec` 版本仍为 `V1.3`。
 - 复测记录见：`docs/Agent6-miniapps/2026-05-13_Agent6_MD2File回归测试报告.md`。

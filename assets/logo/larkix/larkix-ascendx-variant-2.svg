@@ -1,0 +1,11 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Ascend X Variant 2 - Lift Wing</title>
+  <desc id="desc">A very simple lifted wing symbol with a small first-light point, forming a quiet X gesture.</desc>
+  <path d="M18 69C34.8 45.5 56.5 29.5 83.2 21C75.4 42 58.1 58.4 31.2 70.1C26.6 70.8 22.2 70.4 18 69Z" fill="#4C1D95"/>
+  <path d="M29 80C46.7 70.5 62.2 57 75.4 39.5C72.4 57.9 60.5 73.4 39.8 86.2C35.3 84.8 31.7 82.7 29 80Z" fill="#A78BFA"/>
+  <path d="M25.5 75.2L78.4 24.8" stroke="#FFFFFF" stroke-width="5.2" stroke-linecap="round"/>
+  <path d="M35.2 43.2L61.4 69.4" stroke="#7C3AED" stroke-width="5.8" stroke-linecap="round"/>
+  <circle cx="75.2" cy="25.8" r="3.5" fill="#F59E0B"/>
+  <text x="112" y="59" fill="#111827" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="39" font-weight="820" letter-spacing="0">Larki<tspan fill="#7C3AED" font-weight="900">x</tspan></text>
+  <path d="M218 67C226.6 65.5 233.9 61.1 239.4 53.5" stroke="#A78BFA" stroke-width="3.2" stroke-linecap="round"/>
+</svg>

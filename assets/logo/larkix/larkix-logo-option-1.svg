@@ -1,0 +1,13 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Logo Option 1 - Wing X</title>
+  <desc id="desc">An abstract blue morning bird whose crossing wings form an X beside the Larkix wordmark.</desc>
+  <rect x="8" y="8" width="80" height="80" rx="20" fill="#F8FAFC"/>
+  <path d="M48 17C37.5 25.4 26.8 38 18 57.5C35.6 56.8 49.7 49.6 60.6 37.2C57.8 29.6 53.6 22.8 48 17Z" fill="#2563EB"/>
+  <path d="M41 79C52.4 70.3 64.6 56.9 75.5 37C56.8 38.3 42.5 45.7 32.1 58.6C34.2 66.4 37.2 73.2 41 79Z" fill="#38BDF8"/>
+  <path d="M24 25.2L72 72.8" stroke="#1E3A8A" stroke-width="7.2" stroke-linecap="round"/>
+  <path d="M26.5 70C39.7 52.5 56.6 38 77 26.8" stroke="#FFFFFF" stroke-width="5.4" stroke-linecap="round"/>
+  <path d="M66.2 23.6L77.8 17.8" stroke="#F59E0B" stroke-width="4.2" stroke-linecap="round"/>
+  <circle cx="61.8" cy="25.6" r="3.8" fill="#F59E0B"/>
+  <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="780" letter-spacing="0">Larki<tspan fill="#2563EB" font-weight="860">x</tspan></text>
+  <path d="M218 66C226 64.6 233 60.4 238.5 53.4" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+</svg>

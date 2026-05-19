@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Larkix Logo Options</title>
+    <style>
+      :root {
+        --bg: #f8fafc;
+        --surface: #ffffff;
+        --ink: #0f172a;
+        --muted: #64748b;
+        --line: #d9e4f1;
+        --blue: #2563eb;
+        --sky: #38bdf8;
+        --deep: #1e3a8a;
+        --amber: #f59e0b;
+        --shadow: 0 18px 45px rgba(15, 23, 42, 0.09);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background:
+          linear-gradient(180deg, rgba(219, 234, 254, 0.72), rgba(248, 250, 252, 0) 360px),
+          var(--bg);
+        color: var(--ink);
+        font-family: Inter, "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+      }
+
+      main {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 54px 0 68px;
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 28px;
+        align-items: end;
+        margin-bottom: 26px;
+      }
+
+      h1 {
+        margin: 0 0 10px;
+        font-size: 36px;
+        line-height: 1.12;
+        letter-spacing: 0;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.75;
+      }
+
+      .palette {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .swatch {
+        min-height: 66px;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 8px;
+        padding: 10px;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 750;
+      }
+
+      .swatch span {
+        display: block;
+        margin-top: 4px;
+        font-weight: 650;
+        opacity: 0.86;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 18px;
+      }
+
+      .option {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .preview {
+        min-height: 158px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 24px;
+        background:
+          linear-gradient(90deg, rgba(37, 99, 235, 0.055) 1px, transparent 1px),
+          linear-gradient(rgba(37, 99, 235, 0.055) 1px, transparent 1px),
+          #ffffff;
+        background-size: 22px 22px;
+      }
+
+      .preview.dark {
+        background:
+          linear-gradient(90deg, rgba(96, 165, 250, 0.08) 1px, transparent 1px),
+          linear-gradient(rgba(96, 165, 250, 0.08) 1px, transparent 1px),
+          #07111f;
+      }
+
+      .preview img {
+        width: min(340px, 100%);
+        height: auto;
+        display: block;
+      }
+
+      .meta {
+        padding: 18px 20px 20px;
+        border-top: 1px solid var(--line);
+      }
+
+      h2 {
+        margin: 0 0 6px;
+        font-size: 18px;
+        letter-spacing: 0;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      code,
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 5px 8px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #f8fbff;
+        color: var(--blue);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      @media (max-width: 820px) {
+        header {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <h1>Larkix LOGO 5 选 1</h1>
+          <p>围绕“蓝色晨鸟 + X 形展开 + 第一束光”做了 5 个矢量方向。每个方案都保留 `Larkix` 字标，不拆写 `Lark`，并尽量避开办公协作、聊天气泡、文档套件等容易混淆的图标语言。</p>
+        </div>
+        <div class="palette" aria-label="Larkix brand colors">
+          <div class="swatch" style="background:#2563eb">Blue<span>#2563EB</span></div>
+          <div class="swatch" style="background:#1e3a8a">Deep<span>#1E3A8A</span></div>
+          <div class="swatch" style="background:#38bdf8;color:#0f172a">Sky<span>#38BDF8</span></div>
+          <div class="swatch" style="background:#f59e0b;color:#0f172a">First Light<span>#F59E0B</span></div>
+        </div>
+      </header>
+
+      <section class="grid" aria-label="Larkix logo options">
+        <article class="option">
+          <div class="preview"><img src="./larkix-logo-option-1.svg" alt="Larkix logo option 1" /></div>
+          <div class="meta">
+            <h2>01 Wing X</h2>
+            <p>两片抽象羽翼交叉成 X，晨光从右上角打开。识别最直接，适合做母品牌主标和导航栏。</p>
+            <div class="chips"><code>larkix-logo-option-1.svg</code><span class="chip">推荐主标方向</span></div>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./larkix-logo-option-2.svg" alt="Larkix logo option 2" /></div>
+          <div class="meta">
+            <h2>02 Dawn L</h2>
+            <p>鸟身隐含 L，右侧羽翼和光线形成 X。更有字母记忆点，适合从旧品牌平滑升级。</p>
+            <div class="chips"><code>larkix-logo-option-2.svg</code><span class="chip">字母识别强</span></div>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./larkix-logo-option-3.svg" alt="Larkix logo option 3" /></div>
+          <div class="meta">
+            <h2>03 Light Feather</h2>
+            <p>单片羽翼被第一束光切开，负形暗含 X。更清爽、轻盈，适合内容站和文章封面角标。</p>
+            <div class="chips"><code>larkix-logo-option-3.svg</code><span class="chip">内容友好</span></div>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./larkix-logo-option-4.svg" alt="Larkix logo option 4" /></div>
+          <div class="meta">
+            <h2>04 Orbit X</h2>
+            <p>两条飞行轨迹组成 X，中心点像启发坐标。动态感更强，适合仿真、工具、探索类子产品。</p>
+            <div class="chips"><code>larkix-logo-option-4.svg</code><span class="chip">动势明显</span></div>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./larkix-logo-option-5.svg" alt="Larkix logo option 5" /></div>
+          <div class="meta">
+            <h2>05 Matrix Dawn</h2>
+            <p>模块化 X 形晨鸟，强调产品矩阵、工程可信和可扩展。小程序头像和 App icon 的稳定性最好。</p>
+            <div class="chips"><code>larkix-logo-option-5.svg</code><span class="chip">图标落地强</span></div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

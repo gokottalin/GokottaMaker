@@ -1,8 +1,8 @@
-# GokottaMaker 部署说明
+# LarkixMaker 部署说明
 
 ## 重要结论
 
-GokottaMaker 不是纯静态网站。它包含管理员登录、SQLite 数据库和封面图片上传，所以不适合直接部署到 GitHub Pages。
+LarkixMaker 不是纯静态网站。它包含管理员登录、SQLite 数据库和封面图片上传，所以不适合直接部署到 GitHub Pages。
 
 推荐路线：
 
@@ -12,7 +12,7 @@ GitHub 托管代码 -> Render / VPS / Docker 主机运行 Node 服务 -> 持久�
 
 ## 方案 A：Render Blueprint
 
-1. 在 GitHub 创建 `GokottaMaker` 仓库，并把本项目推送上去。
+1. 在 GitHub 创建 `LarkixMaker` 仓库，并把本项目推送上去。
 2. 登录 Render。
 3. 选择 New -> Blueprint。
 4. 连接 GitHub 仓库。
@@ -20,7 +20,7 @@ GitHub 托管代码 -> Render / VPS / Docker 主机运行 Node 服务 -> 持久�
 6. 设置环境变量：
 
 ```text
-ADMIN_USERNAME=Gokotta
+ADMIN_USERNAME=Larkix
 ADMIN_PASSWORD=请换成新的强密码
 ```
 
@@ -45,7 +45,7 @@ docker run -d \
   --name gokottamaker \
   -p 4173:4173 \
   -v /srv/gokottamaker-data:/data \
-  -e ADMIN_USERNAME=Gokotta \
+  -e ADMIN_USERNAME=Larkix \
   -e ADMIN_PASSWORD='请换成新的强密码' \
   gokottamaker
 ```
@@ -62,7 +62,7 @@ http://127.0.0.1:4173
 
 ```bash
 DATA_DIR=/srv/gokottamaker-data \
-ADMIN_USERNAME='Gokotta' \
+ADMIN_USERNAME='Larkix' \
 ADMIN_PASSWORD='请换成新的强密码' \
 PORT=4173 \
 /opt/node22/bin/node --experimental-sqlite server.js
@@ -97,7 +97,7 @@ sudo systemctl enable --now gokottamaker
 更新线上代码推荐执行：
 
 ```bash
-cd /opt/GokottaMaker
+cd /opt/LarkixMaker
 bash scripts/deploy-update.sh
 ```
 
@@ -138,14 +138,14 @@ http://服务器地址:4173/api/admin/health
 回滚到上一次部署前记录的 commit：
 
 ```bash
-cd /opt/GokottaMaker
+cd /opt/LarkixMaker
 bash scripts/rollback.sh
 ```
 
 回滚到指定 commit：
 
 ```bash
-cd /opt/GokottaMaker
+cd /opt/LarkixMaker
 bash scripts/rollback.sh 9263f08
 ```
 
@@ -231,7 +231,7 @@ curl -fsS http://127.0.0.1:4173/healthz
 如果确认需要回滚，使用脚本输出的推荐命令，例如：
 
 ```bash
-cd /opt/GokottaMaker
+cd /opt/LarkixMaker
 bash scripts/rollback.sh <Pre-deploy commit>
 ```
 

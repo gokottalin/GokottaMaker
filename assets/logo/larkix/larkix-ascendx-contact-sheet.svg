@@ -1,0 +1,50 @@
+<svg width="1280" height="900" viewBox="0 0 1280 900" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Ascend X Variants Contact Sheet</title>
+  <desc id="desc">Five minimal purple Larkix logo variants showing a bird wing or head rising upward with a subtle X structure.</desc>
+  <rect width="1280" height="900" fill="#FAF9FF"/>
+  <path d="M0 0H1280V245H0V0Z" fill="#EDE9FE"/>
+  <text x="72" y="92" fill="#111827" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="42" font-weight="820" letter-spacing="0">Larkix Ascend X Variants</text>
+  <text x="74" y="132" fill="#6B647B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="600" letter-spacing="0">Minimal upward bird/wing feeling. Purple-led, X retained as a clean structural cut.</text>
+
+  <g transform="translate(72 190)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#DDD6FE"/>
+    <text x="28" y="42" fill="#7C3AED" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">6A Rising Wing</text>
+    <text x="28" y="70" fill="#6B647B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Recommended: simple upward wing with X cut</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-ascendx-variant-1.svg"/>
+  </g>
+
+  <g transform="translate(668 190)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#DDD6FE"/>
+    <text x="28" y="42" fill="#7C3AED" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">6B Lift Wing</text>
+    <text x="28" y="70" fill="#6B647B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Lighter, more wing-like</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-ascendx-variant-2.svg"/>
+  </g>
+
+  <g transform="translate(72 420)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#DDD6FE"/>
+    <text x="28" y="42" fill="#7C3AED" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">6C Upward Head</text>
+    <text x="28" y="70" fill="#6B647B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Head route with clear upward intent</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-ascendx-variant-3.svg"/>
+  </g>
+
+  <g transform="translate(668 420)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#DDD6FE"/>
+    <text x="28" y="42" fill="#7C3AED" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">6D Launch X</text>
+    <text x="28" y="70" fill="#6B647B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Most minimal and X-forward</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-ascendx-variant-4.svg"/>
+  </g>
+
+  <g transform="translate(72 650)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#DDD6FE"/>
+    <text x="28" y="42" fill="#7C3AED" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">6E App Ascend</text>
+    <text x="28" y="70" fill="#6B647B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Best for avatar and app icon</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-ascendx-variant-5.svg"/>
+  </g>
+
+  <g transform="translate(668 650)">
+    <rect width="540" height="190" rx="8" fill="#2E1065" stroke="#7C3AED"/>
+    <text x="28" y="44" fill="#FAF9FF" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="20" font-weight="820">Recommendation</text>
+    <text x="28" y="76" fill="#DDD6FE" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="650">Choose 6A for the main logo. Pair it with 6E for app icon and avatar.</text>
+    <text x="28" y="116" fill="#FFFFFF" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="16" font-weight="760">Simple, upward, purple, and still keeps the X.</text>
+  </g>
+</svg>

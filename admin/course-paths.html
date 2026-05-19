@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>课程路径配置 | GokottaMaker</title>
+    <title>课程路径配置 | LarkixMaker</title>
     <meta name="robots" content="noindex,nofollow" />
-    <link rel="stylesheet" href="../styles.css?v=20260517-003" />
-    <link rel="stylesheet" href="./admin.css?v=20260517-003" />
+    <link rel="stylesheet" href="../styles.css?v=20260519-003" />
+    <link rel="stylesheet" href="./admin.css?v=20260519-003" />
     <style>
       .course-admin-shell {
         width: min(100% - 40px, 1320px);
@@ -56,9 +56,11 @@
         justify-content: space-between;
         gap: 16px;
         padding: 18px 20px;
-        border: 1px solid rgba(192, 126, 0, 0.28);
+        border: 1px solid rgba(124, 58, 237, 0.28);
         border-radius: 8px;
-        background: #fff8e8;
+        background:
+          linear-gradient(90deg, rgba(124, 58, 237, 0.14), rgba(245, 158, 11, 0.06)),
+          var(--surface);
       }
 
       .course-auth-gate h2 {
@@ -68,18 +70,20 @@
 
       .course-auth-gate p {
         margin: 0;
-        color: #8a5c00;
+        color: var(--larkix-primary-deep, #5b21b6);
         font-weight: 700;
         line-height: 1.6;
       }
 
       .course-auth-gate.is-ok {
-        border-color: rgba(11, 143, 103, 0.22);
-        background: #effaf5;
+        border-color: rgba(124, 58, 237, 0.32);
+        background:
+          linear-gradient(90deg, rgba(124, 58, 237, 0.12), rgba(16, 185, 129, 0.08)),
+          var(--surface);
       }
 
       .course-auth-gate.is-ok p {
-        color: #0b7656;
+        color: var(--larkix-primary-deep, #5b21b6);
       }
 
       .course-admin-panel {
@@ -204,7 +208,7 @@
         </div>
         <div class="course-admin-actions">
           <a class="button secondary" href="./index.html">返回 CMS</a>
-          <a class="button secondary" href="../index.html">打开访客首页</a>
+          <a class="button secondary" href="../maker.html">打开访客首页</a>
         </div>
       </section>
 
@@ -253,19 +257,19 @@
           <section id="previewSummary"></section>
           <section>
             <h2>存储方式</h2>
-            <p>登录后仅写入当前浏览器本地 <code>localStorage[gokottamaker_course_meta_v1]</code>，不会写入 CMS / 数据库。未登录状态不会读取或保存本地覆盖值。</p>
+            <p>登录后仅写入当前浏览器本地 <code>localStorage[larkixmaker_course_meta_v1]</code>，不会写入 CMS / 数据库。未登录状态不会读取或保存本地覆盖值。</p>
           </section>
         </aside>
       </section>
     </main>
 
-    <script src="../data/posts.js?v=20260517-003"></script>
-    <script src="../api/content.js?v=20260517-003"></script>
-    <script src="../data/content-store.js?v=20260517-003"></script>
-    <script src="../data/course-meta.js?v=20260517-003"></script>
+    <script src="../data/posts.js?v=20260519-003"></script>
+    <script src="../api/content.js?v=20260519-003"></script>
+    <script src="../data/content-store.js?v=20260519-003"></script>
+    <script src="../data/course-meta.js?v=20260519-003"></script>
     <script>
       (() => {
-        const STORAGE_KEY = "gokottamaker_course_meta_v1";
+        const STORAGE_KEY = "larkixmaker_course_meta_v1";
         const routeOrder = ["analog", "stm32", "esp32", "all"];
         const shell = document.querySelector("#courseAdminShell");
         const authGate = document.querySelector("#courseAuthGate");
@@ -279,7 +283,7 @@
         const manualButton = document.querySelector("#manualRouteButton");
         const resetButton = document.querySelector("#resetRouteButton");
         const clearButton = document.querySelector("#clearOverrideButton");
-        const baseMeta = structuredClone(window.GokottaDefaultCourseMeta || window.GokottaCourseMeta || {});
+        const baseMeta = structuredClone(window.LarkixDefaultCourseMeta || window.LarkixCourseMeta || {});
         let overrideMeta = {};
         let activeRoute = "analog";
         let canEdit = false;
@@ -329,7 +333,7 @@
         }
 
         function sortedRoutePosts(route) {
-          const source = window.GokottaContent?.getPosts?.() || window.GOKOTTA_POSTS || [];
+          const source = window.LarkixContent?.getPosts?.() || window.LARKIX_POSTS || [];
           return source
             .filter((post) => route === "all" || post.categoryKey === route)
             .sort((a, b) => recommendationPriority(a) - recommendationPriority(b) || itemTimestamp(b) - itemTimestamp(a));

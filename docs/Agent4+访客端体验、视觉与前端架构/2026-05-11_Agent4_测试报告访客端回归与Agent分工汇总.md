@@ -48,7 +48,7 @@
 | Agent3 | CMS 编辑、预览、保存、轮播 slot 表单 | Markdown 预览链路一致；轮播校验基本完整 | 内容列表仍建议显示具体 slot 0-3；规划中项目保存前提示需加强 |
 | Agent4 | 访客端体验、视觉、响应式回归 | 已完成本轮视觉与 DOM 回归，补静态白名单和项目数据防漏 | 线上部署后按同一清单复测 |
 | Agent5 | SEO、sitemap、RSS、命名口径 | `category=all` 与 sitemap 已确认 | 分类页 canonical/OG、lastmod/updatedAt、按钮文案“查看全部教程”可排 P1 |
-| Agent6 | 小程序、GokottaElec、工具缓存与加载 | 工具页 `V1.3` 与缓存号一致 | 线上复测 `/api/elec/samples`、Sample 生成和 SVG 预览 |
+| Agent6 | 小程序、LarkixElec、工具缓存与加载 | 工具页 `V1.3` 与缓存号一致 | 线上复测 `/api/elec/samples`、Sample 生成和 SVG 预览 |
 | Agent20 | 测试复核与关闭标准 | 提供 BUG-001 到 BUG-004 复测清单 | 需要按 `V2.4.5+20260511-1910` 重跑最终验收 |
 
 ## 验证结果
@@ -75,7 +75,7 @@
 本地隔离验收已完成。剩余必须在云端执行：
 
 ```bash
-cd /opt/GokottaMaker
+cd /opt/LarkixMaker
 git status --short
 sudo bash scripts/deploy-update.sh
 curl -sS http://127.0.0.1:4391/api/health

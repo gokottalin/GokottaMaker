@@ -1,0 +1,143 @@
+<svg width="1280" height="930" viewBox="0 0 1280 930" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="930" fill="#0B0712"/>
+  <style>
+    .title { font: 850 40px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; fill: #F8FAFC; }
+    .sub { font: 600 18px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; fill: #B6A8C9; }
+    .num { font: 850 28px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; }
+    .name { font: 800 22px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; }
+    .note { font: 600 13px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; }
+    .label { font: 650 11px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; fill: #A78BFA; }
+  </style>
+  <text x="54" y="62" class="title">Larkix 黑夜模式网页配色 5 选 1</text>
+  <text x="54" y="94" class="sub">基于白天方案 02「晨光淡紫」延展，适合夜间阅读、开发者工具、项目页和后台界面。</text>
+
+  <g transform="translate(54 120)">
+    <rect width="1172" height="136" rx="14" fill="#120A1F" stroke="#2A1740"/>
+    <rect x="24" y="24" width="64" height="64" rx="18" fill="#1B102B" stroke="#3B2558"/>
+    <text x="42" y="66" class="num" fill="#C4B5FD">01</text>
+    <text x="112" y="44" class="name" fill="#F8FAFC">夜幕淡紫</text>
+    <text x="112" y="70" class="note" fill="#B6A8C9">最贴合白天 02，温和、稳定，适合主站夜间默认方案。</text>
+    <g transform="translate(112 88)">
+      <rect width="44" height="24" rx="6" fill="#0B0712" stroke="#2A1740"/><text x="0" y="42" class="label">BG</text>
+      <rect x="58" width="44" height="24" rx="6" fill="#120A1F" stroke="#3B2558"/><text x="58" y="42" class="label">SUR</text>
+      <rect x="116" width="44" height="24" rx="6" fill="#A78BFA"/><text x="116" y="42" class="label">PRI</text>
+      <rect x="174" width="44" height="24" rx="6" fill="#7C3AED"/><text x="174" y="42" class="label">DEEP</text>
+      <rect x="232" width="44" height="24" rx="6" fill="#F59E0B"/><text x="232" y="42" class="label">ACC</text>
+      <rect x="290" width="44" height="24" rx="6" fill="#F8FAFC"/><text x="290" y="42" class="label">TEXT</text>
+    </g>
+    <g transform="translate(560 24)">
+      <rect width="560" height="88" rx="10" fill="#1B102B" stroke="#3B2558"/>
+      <circle cx="34" cy="28" r="11" fill="#A78BFA"/>
+      <rect x="56" y="21" width="74" height="14" rx="7" fill="#F8FAFC"/>
+      <rect x="392" y="18" width="96" height="24" rx="8" fill="#A78BFA"/>
+      <rect x="32" y="56" width="128" height="12" rx="6" fill="#3B2558"/>
+      <rect x="184" y="54" width="86" height="16" rx="8" fill="#2A1740"/>
+      <rect x="292" y="54" width="86" height="16" rx="8" fill="#241334"/>
+      <rect x="400" y="54" width="86" height="16" rx="8" fill="#3A240F"/>
+    </g>
+  </g>
+
+  <g transform="translate(54 274)">
+    <rect width="1172" height="136" rx="14" fill="#100B18" stroke="#31223F"/>
+    <rect x="24" y="24" width="64" height="64" rx="18" fill="#181020" stroke="#49345D"/>
+    <text x="42" y="66" class="num" fill="#D8B4FE">02</text>
+    <text x="112" y="44" class="name" fill="#FAF5FF">紫金暖夜</text>
+    <text x="112" y="70" class="note" fill="#C9B8D8">延续晨光的暖意，适合个人品牌、博客、作品展示。</text>
+    <g transform="translate(112 88)">
+      <rect width="44" height="24" rx="6" fill="#0A0710" stroke="#31223F"/><text x="0" y="42" class="label">BG</text>
+      <rect x="58" width="44" height="24" rx="6" fill="#181020" stroke="#49345D"/><text x="58" y="42" class="label">SUR</text>
+      <rect x="116" width="44" height="24" rx="6" fill="#D8B4FE"/><text x="116" y="42" class="label">PRI</text>
+      <rect x="174" width="44" height="24" rx="6" fill="#9333EA"/><text x="174" y="42" class="label">DEEP</text>
+      <rect x="232" width="44" height="24" rx="6" fill="#FBBF24"/><text x="232" y="42" class="label">ACC</text>
+      <rect x="290" width="44" height="24" rx="6" fill="#FAF5FF"/><text x="290" y="42" class="label">TEXT</text>
+    </g>
+    <g transform="translate(560 24)">
+      <rect width="560" height="88" rx="10" fill="#181020" stroke="#49345D"/>
+      <circle cx="34" cy="28" r="11" fill="#D8B4FE"/>
+      <rect x="56" y="21" width="74" height="14" rx="7" fill="#FAF5FF"/>
+      <rect x="392" y="18" width="96" height="24" rx="8" fill="#9333EA"/>
+      <rect x="32" y="56" width="128" height="12" rx="6" fill="#49345D"/>
+      <rect x="184" y="54" width="86" height="16" rx="8" fill="#433014"/>
+      <rect x="292" y="54" width="86" height="16" rx="8" fill="#2D183F"/>
+      <rect x="400" y="54" width="86" height="16" rx="8" fill="#3A1528"/>
+    </g>
+  </g>
+
+  <g transform="translate(54 428)">
+    <rect width="1172" height="136" rx="14" fill="#07111F" stroke="#1E3A5F"/>
+    <rect x="24" y="24" width="64" height="64" rx="18" fill="#0F1B2D" stroke="#1E3A5F"/>
+    <text x="42" y="66" class="num" fill="#C4B5FD">03</text>
+    <text x="112" y="44" class="name" fill="#F8FAFC">星蓝紫夜</text>
+    <text x="112" y="70" class="note" fill="#A8B6C8">更科技、工程和工具感，适合 Elec、Sim、开发者页面。</text>
+    <g transform="translate(112 88)">
+      <rect width="44" height="24" rx="6" fill="#07111F" stroke="#1E3A5F"/><text x="0" y="42" class="label">BG</text>
+      <rect x="58" width="44" height="24" rx="6" fill="#0F1B2D" stroke="#1E3A5F"/><text x="58" y="42" class="label">SUR</text>
+      <rect x="116" width="44" height="24" rx="6" fill="#C4B5FD"/><text x="116" y="42" class="label">PRI</text>
+      <rect x="174" width="44" height="24" rx="6" fill="#7C3AED"/><text x="174" y="42" class="label">DEEP</text>
+      <rect x="232" width="44" height="24" rx="6" fill="#38BDF8"/><text x="232" y="42" class="label">ACC</text>
+      <rect x="290" width="44" height="24" rx="6" fill="#F8FAFC"/><text x="290" y="42" class="label">TEXT</text>
+    </g>
+    <g transform="translate(560 24)">
+      <rect width="560" height="88" rx="10" fill="#0F1B2D" stroke="#1E3A5F"/>
+      <circle cx="34" cy="28" r="11" fill="#C4B5FD"/>
+      <rect x="56" y="21" width="74" height="14" rx="7" fill="#F8FAFC"/>
+      <rect x="392" y="18" width="96" height="24" rx="8" fill="#7C3AED"/>
+      <rect x="32" y="56" width="128" height="12" rx="6" fill="#1E3A5F"/>
+      <rect x="184" y="54" width="86" height="16" rx="8" fill="#113245"/>
+      <rect x="292" y="54" width="86" height="16" rx="8" fill="#281B4E"/>
+      <rect x="400" y="54" width="86" height="16" rx="8" fill="#123845"/>
+    </g>
+  </g>
+
+  <g transform="translate(54 582)">
+    <rect width="1172" height="136" rx="14" fill="#080A12" stroke="#23263A"/>
+    <rect x="24" y="24" width="64" height="64" rx="18" fill="#11131F" stroke="#303449"/>
+    <text x="42" y="66" class="num" fill="#A78BFA">04</text>
+    <text x="112" y="44" class="name" fill="#F4F4F5">墨黑高对比</text>
+    <text x="112" y="70" class="note" fill="#A1A1AA">最克制、清晰，适合高频阅读、后台和代码工具。</text>
+    <g transform="translate(112 88)">
+      <rect width="44" height="24" rx="6" fill="#080A12" stroke="#23263A"/><text x="0" y="42" class="label">BG</text>
+      <rect x="58" width="44" height="24" rx="6" fill="#11131F" stroke="#303449"/><text x="58" y="42" class="label">SUR</text>
+      <rect x="116" width="44" height="24" rx="6" fill="#A78BFA"/><text x="116" y="42" class="label">PRI</text>
+      <rect x="174" width="44" height="24" rx="6" fill="#6D28D9"/><text x="174" y="42" class="label">DEEP</text>
+      <rect x="232" width="44" height="24" rx="6" fill="#818CF8"/><text x="232" y="42" class="label">ACC</text>
+      <rect x="290" width="44" height="24" rx="6" fill="#F4F4F5"/><text x="290" y="42" class="label">TEXT</text>
+    </g>
+    <g transform="translate(560 24)">
+      <rect width="560" height="88" rx="10" fill="#11131F" stroke="#303449"/>
+      <circle cx="34" cy="28" r="11" fill="#A78BFA"/>
+      <rect x="56" y="21" width="74" height="14" rx="7" fill="#F4F4F5"/>
+      <rect x="392" y="18" width="96" height="24" rx="8" fill="#6D28D9"/>
+      <rect x="32" y="56" width="128" height="12" rx="6" fill="#303449"/>
+      <rect x="184" y="54" width="86" height="16" rx="8" fill="#222641"/>
+      <rect x="292" y="54" width="86" height="16" rx="8" fill="#211A34"/>
+      <rect x="400" y="54" width="86" height="16" rx="8" fill="#25283B"/>
+    </g>
+  </g>
+
+  <g transform="translate(54 736)">
+    <rect width="1172" height="136" rx="14" fill="#07120F" stroke="#164235"/>
+    <rect x="24" y="24" width="64" height="64" rx="18" fill="#0E1C18" stroke="#1E5B49"/>
+    <text x="42" y="66" class="num" fill="#C4B5FD">05</text>
+    <text x="112" y="44" class="name" fill="#F1F5F9">青紫开放夜</text>
+    <text x="112" y="70" class="note" fill="#A7BDB4">更开放、有生命力，适合实验室、开源项目和工具集合。</text>
+    <g transform="translate(112 88)">
+      <rect width="44" height="24" rx="6" fill="#07120F" stroke="#164235"/><text x="0" y="42" class="label">BG</text>
+      <rect x="58" width="44" height="24" rx="6" fill="#0E1C18" stroke="#1E5B49"/><text x="58" y="42" class="label">SUR</text>
+      <rect x="116" width="44" height="24" rx="6" fill="#C4B5FD"/><text x="116" y="42" class="label">PRI</text>
+      <rect x="174" width="44" height="24" rx="6" fill="#7C3AED"/><text x="174" y="42" class="label">DEEP</text>
+      <rect x="232" width="44" height="24" rx="6" fill="#34D399"/><text x="232" y="42" class="label">ACC</text>
+      <rect x="290" width="44" height="24" rx="6" fill="#F1F5F9"/><text x="290" y="42" class="label">TEXT</text>
+    </g>
+    <g transform="translate(560 24)">
+      <rect width="560" height="88" rx="10" fill="#0E1C18" stroke="#1E5B49"/>
+      <circle cx="34" cy="28" r="11" fill="#C4B5FD"/>
+      <rect x="56" y="21" width="74" height="14" rx="7" fill="#F1F5F9"/>
+      <rect x="392" y="18" width="96" height="24" rx="8" fill="#7C3AED"/>
+      <rect x="32" y="56" width="128" height="12" rx="6" fill="#1E5B49"/>
+      <rect x="184" y="54" width="86" height="16" rx="8" fill="#163F35"/>
+      <rect x="292" y="54" width="86" height="16" rx="8" fill="#261A42"/>
+      <rect x="400" y="54" width="86" height="16" rx="8" fill="#12352D"/>
+    </g>
+  </g>
+</svg>

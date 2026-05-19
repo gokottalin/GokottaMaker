@@ -1,1 +1,1 @@
-17 3 * * * root /bin/bash /opt/GokottaMaker/scripts/backup-linux.sh /srv/gokottamaker-data /srv/gokottamaker-backups >> /var/log/gokottamaker-backup.log 2>&1
+17 3 * * * root /bin/bash /opt/LarkixMaker/scripts/backup-linux.sh /srv/gokottamaker-data /srv/gokottamaker-backups >> /var/log/gokottamaker-backup.log 2>&1

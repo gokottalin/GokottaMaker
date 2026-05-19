@@ -4,7 +4,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/gokottalin/GokottaElec.git"
+    "url": "https://github.com/gokottalin/LarkixElec.git"
   },
   "gokottaVersion": "V1.3",
   "type": "module",

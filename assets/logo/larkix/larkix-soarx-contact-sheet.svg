@@ -1,0 +1,50 @@
+<svg width="1280" height="900" viewBox="0 0 1280 900" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Soar X Variants Contact Sheet</title>
+  <desc id="desc">Five minimal purple Larkix logo variants showing a bird preparing to soar upward with an X structure in the wings.</desc>
+  <rect width="1280" height="900" fill="#FAF9FF"/>
+  <path d="M0 0H1280V245H0V0Z" fill="#EDE9FE"/>
+  <text x="72" y="92" fill="#111827" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="42" font-weight="820" letter-spacing="0">Larkix Soar X Variants</text>
+  <text x="74" y="132" fill="#6B647B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="600" letter-spacing="0">Clearer bird preparing to soar. Purple-led, minimal, with X retained inside the wing structure.</text>
+
+  <g transform="translate(72 190)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#DDD6FE"/>
+    <text x="28" y="42" fill="#7C3AED" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">7A Takeoff Bird</text>
+    <text x="28" y="70" fill="#6B647B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Recommended: bird first, X second</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-soarx-variant-1.svg"/>
+  </g>
+
+  <g transform="translate(668 190)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#DDD6FE"/>
+    <text x="28" y="42" fill="#7C3AED" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">7B Open Wings</text>
+    <text x="28" y="70" fill="#6B647B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Stronger wing opening feeling</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-soarx-variant-2.svg"/>
+  </g>
+
+  <g transform="translate(72 420)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#DDD6FE"/>
+    <text x="28" y="42" fill="#7C3AED" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">7C Updraft Bird</text>
+    <text x="28" y="70" fill="#6B647B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">More upward force, slightly more complex</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-soarx-variant-3.svg"/>
+  </g>
+
+  <g transform="translate(668 420)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#DDD6FE"/>
+    <text x="28" y="42" fill="#7C3AED" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">7D Lift Profile</text>
+    <text x="28" y="70" fill="#6B647B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Head plus raised wing silhouette</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-soarx-variant-4.svg"/>
+  </g>
+
+  <g transform="translate(72 650)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#DDD6FE"/>
+    <text x="28" y="42" fill="#7C3AED" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">7E Soar Icon</text>
+    <text x="28" y="70" fill="#6B647B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Best for avatar and app icon</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-soarx-variant-5.svg"/>
+  </g>
+
+  <g transform="translate(668 650)">
+    <rect width="540" height="190" rx="8" fill="#2E1065" stroke="#7C3AED"/>
+    <text x="28" y="44" fill="#FAF9FF" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="20" font-weight="820">Recommendation</text>
+    <text x="28" y="76" fill="#DDD6FE" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="650">Choose 7A if the logo must feel like a bird preparing to soar, not only a symbol.</text>
+    <text x="28" y="116" fill="#FFFFFF" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="16" font-weight="760">Pair 7A with 7E for app icon and avatar.</text>
+  </g>
+</svg>

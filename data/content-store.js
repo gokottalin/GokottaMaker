@@ -1,7 +1,7 @@
 (function () {
-  const postStorageKey = "gokottamaker_posts";
-  const projectStorageKey = "gokottamaker_projects";
-  const deletedStorageKey = "gokottamaker_deleted";
+  const postStorageKey = "larkixmaker_posts";
+  const projectStorageKey = "larkixmaker_projects";
+  const deletedStorageKey = "larkixmaker_deleted";
 
   function read(key, fallback) {
     try {
@@ -36,13 +36,13 @@
   }
 
   function getPosts() {
-    if (window.GOKOTTA_SERVER_CONTENT?.posts) return window.GOKOTTA_SERVER_CONTENT.posts;
-    return mergeDefaults(window.GOKOTTA_POSTS || [], read(postStorageKey, []), deleted("posts"));
+    if (window.LARKIX_SERVER_CONTENT?.posts) return window.LARKIX_SERVER_CONTENT.posts;
+    return mergeDefaults(window.LARKIX_POSTS || [], read(postStorageKey, []), deleted("posts"));
   }
 
   function getProjects() {
-    if (window.GOKOTTA_SERVER_CONTENT?.projects) return window.GOKOTTA_SERVER_CONTENT.projects;
-    return mergeDefaults(window.GOKOTTA_PROJECTS || window.GOKOTTA_SEED?.projects || [], read(projectStorageKey, []), deleted("projects"));
+    if (window.LARKIX_SERVER_CONTENT?.projects) return window.LARKIX_SERVER_CONTENT.projects;
+    return mergeDefaults(window.LARKIX_PROJECTS || window.LARKIX_SEED?.projects || [], read(projectStorageKey, []), deleted("projects"));
   }
 
   function sanitizeProjectPreview(project) {
@@ -65,8 +65,8 @@
   }
 
   function getProjectDirectory() {
-    if (window.GOKOTTA_SERVER_CONTENT?.projectDirectory) return window.GOKOTTA_SERVER_CONTENT.projectDirectory;
-    return mergeDefaults(window.GOKOTTA_PROJECTS || window.GOKOTTA_SEED?.projects || [], read(projectStorageKey, []), deleted("projects")).map(sanitizeProjectPreview);
+    if (window.LARKIX_SERVER_CONTENT?.projectDirectory) return window.LARKIX_SERVER_CONTENT.projectDirectory;
+    return mergeDefaults(window.LARKIX_PROJECTS || window.LARKIX_SEED?.projects || [], read(projectStorageKey, []), deleted("projects")).map(sanitizeProjectPreview);
   }
 
   function savePost(post) {
@@ -95,7 +95,7 @@
     setDeleted(deletedKey, ids);
   }
 
-  window.GokottaContent = {
+  window.LarkixContent = {
     getPosts,
     getProjects,
     getProjectDirectory,

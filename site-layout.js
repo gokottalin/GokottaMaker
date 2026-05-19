@@ -1,7 +1,7 @@
 (function () {
   const pageKey = document.body.dataset.layoutPage;
   const container = document.querySelector("[data-layout-container]") || document.querySelector("#mainContent");
-  let siteLayout = window.GOKOTTA_SERVER_CONTENT?.siteLayout || {};
+  let siteLayout = window.LARKIX_SERVER_CONTENT?.siteLayout || {};
   let layoutSignature = JSON.stringify(siteLayout);
 
   function rowsForPage() {
@@ -28,7 +28,7 @@
   }
 
   function startPolling() {
-    if (!window.GOKOTTA_SERVER_CONTENT || !window.fetch) return;
+    if (!window.LARKIX_SERVER_CONTENT || !window.fetch) return;
     window.setInterval(async () => {
       try {
         const response = await fetch("./api/content", { cache: "no-store" });
@@ -46,7 +46,7 @@
     }, 3000);
   }
 
-  window.GokottaSiteLayout = { apply: applyLayout };
+  window.LarkixSiteLayout = { apply: applyLayout };
   applyLayout();
   startPolling();
 })();

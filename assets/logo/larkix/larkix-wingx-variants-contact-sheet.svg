@@ -1,0 +1,53 @@
+<svg width="1280" height="980" viewBox="0 0 1280 980" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Wing X Variants Contact Sheet</title>
+  <desc id="desc">Five refined variants in the Larkix Wing X logo direction.</desc>
+  <rect width="1280" height="980" fill="#F8FAFC"/>
+  <path d="M0 0H1280V250H0V0Z" fill="#DBEAFE" opacity="0.62"/>
+  <text x="72" y="92" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="42" font-weight="820" letter-spacing="0">Larkix 01 Wing X Variants</text>
+  <text x="74" y="132" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="600" letter-spacing="0">Five refinements based on the selected Wing X direction: bird wings, X expansion, first light.</text>
+
+  <g transform="translate(72 190)">
+    <rect width="540" height="210" rx="8" fill="#FFFFFF" stroke="#D9E4F1"/>
+    <text x="28" y="42" fill="#2563EB" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">1A Clear Dawn</text>
+    <text x="28" y="70" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Balanced mother-brand mark</text>
+    <image x="28" y="88" width="340" height="96" href="./larkix-wingx-variant-1.svg"/>
+  </g>
+
+  <g transform="translate(668 190)">
+    <rect width="540" height="210" rx="8" fill="#FFFFFF" stroke="#D9E4F1"/>
+    <text x="28" y="42" fill="#2563EB" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">1B App Tile</text>
+    <text x="28" y="70" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Best for avatar, favicon and app icon</text>
+    <image x="28" y="88" width="340" height="96" href="./larkix-wingx-variant-2.svg"/>
+  </g>
+
+  <g transform="translate(72 438)">
+    <rect width="540" height="210" rx="8" fill="#FFFFFF" stroke="#D9E4F1"/>
+    <text x="28" y="42" fill="#2563EB" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">1C Light Gate</text>
+    <text x="28" y="70" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Clearer first-light opening</text>
+    <image x="28" y="88" width="340" height="96" href="./larkix-wingx-variant-3.svg"/>
+  </g>
+
+  <g transform="translate(668 438)">
+    <rect width="540" height="210" rx="8" fill="#FFFFFF" stroke="#D9E4F1"/>
+    <text x="28" y="42" fill="#2563EB" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">1D Precision Wing</text>
+    <text x="28" y="70" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">More geometric and engineering-focused</text>
+    <image x="28" y="88" width="340" height="96" href="./larkix-wingx-variant-4.svg"/>
+  </g>
+
+  <g transform="translate(72 686)">
+    <rect width="540" height="210" rx="8" fill="#FFFFFF" stroke="#D9E4F1"/>
+    <text x="28" y="42" fill="#2563EB" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">1E Flight Cut</text>
+    <text x="28" y="70" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Lighter and more dynamic</text>
+    <image x="28" y="88" width="340" height="96" href="./larkix-wingx-variant-5.svg"/>
+  </g>
+
+  <g transform="translate(668 686)">
+    <rect width="540" height="210" rx="8" fill="#07111F" stroke="#1E3A8A"/>
+    <text x="28" y="44" fill="#F8FAFC" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="20" font-weight="820">Dark Mode Check</text>
+    <text x="28" y="74" fill="#A8B6C8" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="650">Blue wings and first-light accent remain visible on blue-black.</text>
+    <g transform="translate(28 88)">
+      <rect width="340" height="96" fill="#07111F"/>
+      <image width="340" height="96" href="./larkix-wingx-variant-1-dark.svg"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,12 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Wing Head Variant 1 - Single Dawn Wing</title>
+  <desc id="desc">A single abstract blue wing mark with a clean dawn cut, paired with the Larkix wordmark.</desc>
+  <rect x="8" y="8" width="80" height="80" rx="18" fill="#F8FAFC"/>
+  <path d="M20 63.6C34.6 38.2 55.6 23 82 18.6C75.6 42.5 59.1 62.8 34.4 79.4C31.1 73.8 26.3 68.5 20 63.6Z" fill="#2563EB"/>
+  <path d="M30.4 65.2C43.4 49.2 58.4 36.5 75.4 27.1" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"/>
+  <path d="M32.6 48.1C42.5 50.5 51.8 54.8 60.6 61" stroke="#38BDF8" stroke-width="5" stroke-linecap="round"/>
+  <path d="M44.9 34.1C51.8 37.2 58.3 41.2 64.4 46.2" stroke="#1E3A8A" stroke-width="4.6" stroke-linecap="round"/>
+  <path d="M70.8 24.4L82.5 18.8L75.6 29.4Z" fill="#F59E0B"/>
+  <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="780" letter-spacing="0">Larki<tspan fill="#2563EB" font-weight="860">x</tspan></text>
+  <path d="M218 66C226 64.6 233 60.4 238.5 53.4" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+</svg>

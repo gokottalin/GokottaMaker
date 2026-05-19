@@ -1,0 +1,13 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Bird Wing Variant 4 - Monoline Bird</title>
+  <desc id="desc">A lighter outline bird and wing mark for a clean technical navigation logo.</desc>
+  <path d="M16.5 56.8C31.8 34.8 51.5 25.2 75.5 28.1C60 37.5 46.7 48.7 35.4 61.9C28.7 61.3 22.4 59.6 16.5 56.8Z" fill="#DBEAFE"/>
+  <path d="M23.8 58.2C38.4 39.5 56.2 29.1 77.2 27" stroke="#2563EB" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M29.6 73.2C47 66.4 62.8 53.7 77.2 35.1" stroke="#38BDF8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M25.7 38.7C39.4 43.2 51.7 50.3 62.7 60" stroke="#1E3A8A" stroke-width="5.2" stroke-linecap="round"/>
+  <circle cx="67" cy="28.5" r="5" fill="#2563EB"/>
+  <path d="M71.5 26.4L83.6 20.7" stroke="#F59E0B" stroke-width="4" stroke-linecap="round"/>
+  <path d="M18 61.6L9.5 68L22.5 67.4" stroke="#1E3A8A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="780" letter-spacing="0">Larki<tspan fill="#2563EB" font-weight="860">x</tspan></text>
+  <path d="M218 66C226 64.6 233 60.4 238.5 53.4" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+</svg>

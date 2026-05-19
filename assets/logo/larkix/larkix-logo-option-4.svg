@@ -1,0 +1,13 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Logo Option 4 - Orbit X</title>
+  <desc id="desc">Two sweeping blue bird-wing strokes create an X, with a light orbit suggesting flight and exploration.</desc>
+  <path d="M22.5 64C36.2 37.7 56.1 24.1 82 23.3" stroke="#2563EB" stroke-width="11" stroke-linecap="round"/>
+  <path d="M20.2 31.8C37.9 41.4 57.8 56.3 79.8 76.5" stroke="#38BDF8" stroke-width="11" stroke-linecap="round"/>
+  <path d="M30.2 73.1C45.8 76.7 64.1 69.2 80.1 51.8" stroke="#1E3A8A" stroke-width="5.2" stroke-linecap="round"/>
+  <path d="M27.8 23C49.1 14.5 71.8 17 84.5 29.1" stroke="#DBEAFE" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M75 21.2L85.7 14.8" stroke="#F59E0B" stroke-width="4.2" stroke-linecap="round"/>
+  <circle cx="48" cy="48" r="5.5" fill="#FFFFFF"/>
+  <circle cx="48" cy="48" r="3.2" fill="#2563EB"/>
+  <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="770" letter-spacing="0">Larki<tspan fill="#2563EB" font-weight="860">x</tspan></text>
+  <path d="M218 65C228.5 63.5 236 58.4 240.8 49.8" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+</svg>

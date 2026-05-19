@@ -1,6 +1,6 @@
 .md2doc-page {
   background:
-    linear-gradient(90deg, rgba(13, 111, 211, 0.06) 1px, transparent 1px) 0 0 / 36px 36px,
+    linear-gradient(90deg, rgba(124, 58, 237, 0.06) 1px, transparent 1px) 0 0 / 36px 36px,
     var(--body-bg);
 }
 
@@ -31,11 +31,11 @@
 
 .md2doc-icon {
   display: block;
-  width: clamp(142px, 16vw, 182px);
-  height: auto;
-  max-height: 58px;
+  width: 64px;
+  height: 64px;
+  max-height: none;
   object-fit: contain;
-  object-position: left center;
+  object-position: center;
 }
 
 .md2doc-header h1 {
@@ -168,7 +168,7 @@
   outline: 0;
   resize: none;
   background:
-    linear-gradient(90deg, rgba(13, 111, 211, 0.05) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(90deg, rgba(124, 58, 237, 0.05) 1px, transparent 1px) 0 0 / 28px 28px,
     var(--surface);
   color: var(--ink);
   font-family: Consolas, "Microsoft YaHei UI", monospace;
@@ -190,6 +190,13 @@
 }
 
 .md2doc-preview {
+  color-scheme: light;
+  --surface: #ffffff;
+  --surface-2: #f8fbff;
+  --ink: #111827;
+  --muted: #4b5563;
+  --line: #d7e4f3;
+  --blue: #7c3aed;
   --paper-width: 210;
   --paper-height: 297;
   --page-margin: 22;
@@ -217,6 +224,69 @@
   line-height: var(--doc-line-height);
   overflow-wrap: anywhere;
   overflow: visible;
+}
+
+body.md2doc-page .md2doc-preview.markdown-article {
+  border-color: #cfd9e8 !important;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      #ffffff 0,
+      #ffffff calc(var(--page-height-px) - 2px),
+      #e5edf7 calc(var(--page-height-px) - 2px),
+      #e5edf7 var(--page-height-px)
+    ) !important;
+  color: #111827 !important;
+}
+
+body.md2doc-page .md2doc-preview.markdown-article :where(h1, h2, h3, h4, h5, h6, p, li, strong, em, span, a) {
+  color: inherit;
+}
+
+body.md2doc-page .md2doc-preview.markdown-article a {
+  color: #5b21b6 !important;
+}
+
+body.md2doc-page .md2doc-preview.markdown-article .markdown-table-wrap {
+  border-color: #d7e4f3 !important;
+  background: transparent !important;
+}
+
+body.md2doc-page .md2doc-preview.markdown-article table {
+  background: #ffffff !important;
+  color: #111827 !important;
+}
+
+body.md2doc-page .md2doc-preview.markdown-article th {
+  background: #f1f5fb !important;
+  color: #111827 !important;
+}
+
+body.md2doc-page .md2doc-preview.markdown-article td {
+  background: #ffffff !important;
+  color: #111827 !important;
+}
+
+body.md2doc-page .md2doc-preview.markdown-article blockquote {
+  border-left-color: #7c3aed !important;
+  background: #f6f3ff !important;
+  color: #374151 !important;
+}
+
+body.md2doc-page .md2doc-preview.markdown-article pre {
+  border-color: #d7e4f3 !important;
+  background: #0f172a !important;
+  color: #e5e7eb !important;
+}
+
+body.md2doc-page .md2doc-preview.markdown-article code {
+  background: #eef2ff;
+  color: #111827;
+}
+
+body.md2doc-page .md2doc-preview.markdown-article pre code {
+  background: transparent !important;
+  color: inherit !important;
 }
 
 .md2doc-preview.markdown-article h2 {
@@ -291,8 +361,8 @@ body.md2doc-page .md2doc-preview .markdown-math-display {
   }
 
   .md2doc-icon {
-    width: clamp(128px, 44vw, 168px);
-    max-height: 52px;
+    width: 58px;
+    height: 58px;
   }
 
   #markdownInput,

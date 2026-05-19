@@ -1,12 +1,12 @@
 [Unit]
-Description=GokottaMaker Website
+Description=LarkixMaker Website
 After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/opt/GokottaMaker
+WorkingDirectory=/opt/LarkixMaker
 EnvironmentFile=/etc/gokottamaker.env
-ExecStart=/opt/node22/bin/node --experimental-sqlite /opt/GokottaMaker/server.js
+ExecStart=/opt/node22/bin/node --experimental-sqlite /opt/LarkixMaker/server.js
 Restart=always
 RestartSec=5
 

@@ -2,8 +2,8 @@
 
 日期：2026-05-09
 对接对象：Agent0
-范围：访客端小程序中心、GokottaElec 第一个小程序、`/api/elec/*` 最小后端接口
-当前同步版本：GokottaElec `V1.3`
+范围：访客端小程序中心、LarkixElec 第一个小程序、`/api/elec/*` 最小后端接口
+当前同步版本：LarkixElec `V1.3`
 
 ## 2026-05-09 V1.3 批注同步
 
@@ -14,9 +14,9 @@
 ## 2026-05-11 主页 Elec 更新呈现
 
 - 依据 `docs/2026-05-11_Agent20测试修复与Agent分工.md`，Agent6 只处理 miniapps 版本一致性与工具页加载结果。
-- 首页新增“网页小程序 / Mini App Updates”区块，直接读取 `data/miniapps.js`，展示 GokottaElec 当前版本 `V1.3`、状态、能力标签和工具入口。
+- 首页新增“网页小程序 / Mini App Updates”区块，直接读取 `data/miniapps.js`，展示 LarkixElec 当前版本 `V1.3`、状态、能力标签和工具入口。
 - 主页、小程序中心、工具页、后端接口、`gokotta-elec-core/package.json` 当前版本核对均为 `V1.3`。
-- Playwright DOM 验证：首页区块显示 `电路生成 / V1.3 / GokottaElec`，入口指向 `./tools/gokotta-elec.html`；小程序中心和工具页同步显示 `V1.3`。
+- Playwright DOM 验证：首页区块显示 `电路生成 / V1.3 / LarkixElec`，入口指向 `./tools/gokotta-elec.html`；小程序中心和工具页同步显示 `V1.3`。
 - 新增截图证据：
   - `docs/Agent6-miniapps/visual-20260511/home-elec-update-1366.png`
   - `docs/Agent6-miniapps/visual-20260511/home-elec-update-390.png`
@@ -24,7 +24,7 @@
 ## 2026-05-09 V1.2 同步记录
 
 - 源头仓库：`D:\Project\2605-Elec`
-- 源头提交：`c9cc7ee Release GokottaElec V1.2`
+- 源头提交：`c9cc7ee Release LarkixElec V1.2`
 - 源头 tag：`v1.2`
 - 拉取状态：`git fetch origin` 成功，确认 `HEAD`、`origin/main`、`v1.2` 一致；`git pull --ff-only` 重试时 GitHub 连接重置，但无落后提交需要合并。
 - 网页侧已同步：`gokotta-elec-core/package.json`、`gokotta-elec-core/scripts/render-svg.mjs`、`gokotta-elec-core/scripts/generate-20-circuit-gallery.mjs`
@@ -34,7 +34,7 @@
 
 - 新增访客端小程序中心：`miniapps.html`
 - 新增小程序注册清单：`data/miniapps.js`
-- 新增 GokottaElec 工具页：
+- 新增 LarkixElec 工具页：
   - `tools/gokotta-elec.html`
   - `tools/gokotta-elec.js`
   - `styles/gokotta-elec.css`
@@ -60,7 +60,7 @@ tools/assets/<miniapp-id>*       小程序图标或专属资产
 
 每个小程序在 `data/miniapps.js` 中登记 `id`、`title`、`summary`、`href`、`icon`、`version`、`capabilities`。列表页只读取这个清单，不直接写死新增项目。
 
-## GokottaElec 接口说明
+## LarkixElec 接口说明
 
 `GET /api/elec/samples` 从 `gokotta-elec-core/samples` 读取官方 Sample，返回：
 
@@ -95,7 +95,7 @@ node gokotta-elec-core/scripts/build-paste.mjs <input> <output-dir>
 - Agent2：本次没有修改 CMS 数据模型；如后续小程序需要数据库保存工程，再由 Agent2 设计表结构。
 - Agent3：本次没有修改管理端；如后续要在 CMS 管理小程序清单，再由 Agent3 接入管理界面。
 - Agent4：本次新增访客页和工具页；后续若全站视觉规范调整，小程序中心和工具页需要跟随复核。
-- Agent5：如 GokottaElec 的 CNL、IR、ERC、Sample 或 LLM 对接文档变化，需要通知 Agent6 评估界面与文案同步。
+- Agent5：如 LarkixElec 的 CNL、IR、ERC、Sample 或 LLM 对接文档变化，需要通知 Agent6 评估界面与文案同步。
 
 ## 验证记录
 

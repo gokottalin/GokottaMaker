@@ -1,8 +1,8 @@
 {
-  "name": "gokottamaker",
+  "name": "larkixmaker",
   "version": "2.4.9",
   "private": true,
-  "description": "GokottaMaker embedded electronics blog and project site.",
+  "description": "LarkixMaker embedded electronics blog and project site.",
   "main": "server.js",
   "scripts": {
     "start": "node --experimental-sqlite server.js",

@@ -1,0 +1,11 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Ascend X Variant 4 - Launch X</title>
+  <desc id="desc">A compact upward launch mark where two simple wing strokes create a visible X.</desc>
+  <path d="M21 74L78 21" stroke="#4C1D95" stroke-width="12" stroke-linecap="round"/>
+  <path d="M34 75C48.8 66.7 62.8 54.1 76 37.2C73.6 55.1 62.7 70.7 43.2 84C38.8 82.4 34.8 79.1 31.2 74.2" fill="#A78BFA"/>
+  <path d="M31.8 33.7L70.5 72.5" stroke="#7C3AED" stroke-width="8" stroke-linecap="round"/>
+  <path d="M30 73.5L77.5 26" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+  <path d="M72.5 23.5L84.2 17.8L76.8 29.3Z" fill="#F59E0B"/>
+  <text x="112" y="59" fill="#111827" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="39" font-weight="820" letter-spacing="0">Larki<tspan fill="#7C3AED" font-weight="900">x</tspan></text>
+  <path d="M218 67C226.6 65.5 233.9 61.1 239.4 53.5" stroke="#A78BFA" stroke-width="3.2" stroke-linecap="round"/>
+</svg>

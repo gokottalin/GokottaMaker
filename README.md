@@ -1,6 +1,6 @@
-# GokottaMaker
+# LarkixMaker
 
-GokottaMaker 是一个面向模拟电子、STM32、ESP32 和独立开源硬件项目的技术网站。当前版本包含访客端、Markdown 文章详情页、项目展示页、管理员登录、SQLite 内容保存和封面图片上传。
+LarkixMaker 是一个面向模拟电子、STM32、ESP32 和独立开源硬件项目的技术网站。当前版本包含访客端、Markdown 文章详情页、项目展示页、管理员登录、SQLite 内容保存和封面图片上传。
 
 ## 本地运行
 
@@ -20,7 +20,7 @@ http://localhost:4173/admin/
 默认管理员账号由环境变量控制：
 
 ```text
-ADMIN_USERNAME=Gokotta
+ADMIN_USERNAME=Larkix
 ADMIN_PASSWORD=change-this-before-public-deploy
 ```
 
@@ -71,7 +71,7 @@ http://服务器地址:4173/healthz
 服务器更新推荐使用：
 
 ```bash
-cd /opt/GokottaMaker
+cd /opt/LarkixMaker
 bash scripts/deploy-update.sh
 ```
 

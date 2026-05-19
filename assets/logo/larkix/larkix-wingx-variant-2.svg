@@ -1,0 +1,13 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Wing X Variant 2 - App Tile</title>
+  <desc id="desc">A compact rounded app tile Wing X logo with high contrast and a stable small-size silhouette.</desc>
+  <rect x="10" y="10" width="76" height="76" rx="22" fill="#2563EB"/>
+  <path d="M46.7 20.2C38.8 27.1 30.7 37.5 24.1 53.5C38.9 52.9 50.7 46.9 59.4 36.6C56.6 29.8 52.3 24.1 46.7 20.2Z" fill="#DBEAFE"/>
+  <path d="M43.1 75.6C53 68.3 63.2 57.2 72.5 40.2C58.7 41.7 47.7 47.8 39.4 58.7C40.2 65 41.4 70.6 43.1 75.6Z" fill="#38BDF8"/>
+  <path d="M25.5 28.5L70.6 70.2" stroke="#1E3A8A" stroke-width="7.4" stroke-linecap="round"/>
+  <path d="M29.1 69.8C40.9 54 55.9 41.1 74.3 31.2" stroke="#FFFFFF" stroke-width="5.6" stroke-linecap="round"/>
+  <path d="M63.5 27.2L76.8 21.3" stroke="#F59E0B" stroke-width="4.3" stroke-linecap="round"/>
+  <circle cx="59.4" cy="29.1" r="3.7" fill="#F59E0B"/>
+  <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="780" letter-spacing="0">Larki<tspan fill="#2563EB" font-weight="860">x</tspan></text>
+  <path d="M218 66C225.7 64.7 232.7 60.5 238.6 53.2" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+</svg>

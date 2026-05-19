@@ -1,4 +1,4 @@
-window.GOKOTTA_POSTS = [
+window.LARKIX_POSTS = [
   {
     id: "analog-active-filter",
     slug: "analog-active-filter",

@@ -1,4 +1,4 @@
-# GokottaMaker 架构说明
+# LarkixMaker 架构说明
 
 ## 当前阶段
 
@@ -155,7 +155,7 @@ CREATE TABLE projects (
 
 ## 管理员初始信息
 
-- 账号：`Gokotta`
+- 账号：`Larkix`
 - 密码：已在原型中配置。正式版本必须改为哈希存储。
 
 ## 托管建议

@@ -1,6 +1,6 @@
 # LLM Interface
 
-这个目录是给其他 LLM 对接 GokottaElec 使用的精简入口。
+这个目录是给其他 LLM 对接 LarkixElec 使用的精简入口。
 
 推荐给 LLM 的文件：
 
@@ -15,9 +15,9 @@
 1. 把 `system-prompt-zh.txt` 放入 LLM 系统提示词。
 2. 把用户电路需求作为用户消息输入。
 3. 要求 LLM 只输出纯文本 CNL，不输出解释。
-4. 保存为 `.txt`，或直接粘贴到 GokottaElec 窗口。
+4. 保存为 `.txt`，或直接粘贴到 LarkixElec 窗口。
 5. 运行：
 
 ```powershell
-dist\GokottaElec.exe "C:\Users\10731\Downloads\deepseek_cnl_20260507_72c637.txt" output\deepseek-test
+dist\LarkixElec.exe "C:\Users\10731\Downloads\deepseek_cnl_20260507_72c637.txt" output\deepseek-test
 ```

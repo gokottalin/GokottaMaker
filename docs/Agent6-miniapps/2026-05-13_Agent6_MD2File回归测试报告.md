@@ -1,4 +1,4 @@
-﻿# Agent6 MD2File 回归测试报告
+# Agent6 MD2File 回归测试报告
 
 日期：2026-05-13
 候选版本：`V2.4.9+20260513-1148`
@@ -8,7 +8,7 @@
 
 MD2File 已完成本轮 Agent6 复测和小范围修复。当前结果：
 
-- 小程序中心入口显示 `MD2File V0.3`，`GokottaElec V1.3` 保持正确。
+- 小程序中心入口显示 `MD2File V0.3`，`LarkixElec V1.3` 保持正确。
 - `tools/md2doc.html` 可见中文文案已修复，无三连问号污染。
 - 同步滚动开启时，Markdown 输入区与预览区比例同步通过。
 - 同步滚动关闭时不会自动同步；点击“对齐当前位置”后可按最近滚动来源手动对齐。
@@ -19,7 +19,7 @@ MD2File 已完成本轮 Agent6 复测和小范围修复。当前结果：
 
 - `tools/md2doc.html`：修复页面标题、meta 描述、导航、返回入口、文件名、页边距、等待转换等文案。
 - `tools/md2doc.js`：修复同步关闭时最近滚动来源未记录的问题，手动对齐可正确使用当前滚动源。
-- `server.js`：同步 MD2File API 响应版本到 `V0.3`，修复 MD2File 与 GokottaElec 小程序接口中的可见错误提示。
+- `server.js`：同步 MD2File API 响应版本到 `V0.3`，修复 MD2File 与 LarkixElec 小程序接口中的可见错误提示。
 - `data/miniapps.js`：`MD2File` 版本更新为 `V0.3`。
 
 ## 验证命令
@@ -55,7 +55,7 @@ Browser 插件路径：
 
 捆绑 Playwright 结果：
 
-- 小程序中心：`MD2File`、`V0.3`、`GokottaElec V1.3` 可见。
+- 小程序中心：`MD2File`、`V0.3`、`LarkixElec V1.3` 可见。
 - 工具页：`MD2File Markdown 转换器`、`同步滚动 开`、`对齐当前位置`、`下载 DOCX` 可见。
 - 同步滚动开启：输入区比例 `0.6200`，预览区比例 `0.6201`。
 - 同步滚动关闭：输入区比例 `0.8200`，预览区保持 `0`。

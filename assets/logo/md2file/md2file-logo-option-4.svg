@@ -3,15 +3,15 @@
   <desc id="desc">A modular hex logo where markdown blocks assemble into an output file.</desc>
   <path d="M46 10L75.4 27V61L46 78L16.6 61V27L46 10Z" fill="#0B1220"/>
   <path d="M46 10L75.4 27L46 44L16.6 27L46 10Z" fill="#38BDF8"/>
-  <path d="M46 44L75.4 27V61L46 78V44Z" fill="#0D6FD3"/>
+  <path d="M46 44L75.4 27V61L46 78V44Z" fill="#7C3AED"/>
   <path d="M46 44V78L16.6 61V27L46 44Z" fill="#0F4EA8"/>
   <rect x="28" y="30" width="12" height="12" rx="3" fill="#FFFFFF"/>
-  <rect x="28" y="47" width="12" height="12" rx="3" fill="#CFFAFE"/>
+  <rect x="28" y="47" width="12" height="12" rx="3" fill="#F5F3FF"/>
   <path d="M45 34H55" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
   <path d="M53 29L58 34L53 39" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
   <path d="M46 45H61V59H46V45Z" fill="#FFFFFF"/>
-  <path d="M56 45V50H61" stroke="#0D6FD3" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M56 45V50H61" stroke="#7C3AED" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
   <text x="94" y="45" fill="#0B1220" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="30" font-weight="850" letter-spacing="0">MD2</text>
-  <text x="157" y="45" fill="#0D6FD3" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="30" font-weight="850" letter-spacing="0">File</text>
+  <text x="157" y="45" fill="#7C3AED" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="30" font-weight="850" letter-spacing="0">File</text>
   <text x="96" y="64" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="1.8">MODULAR DOC FLOW</text>
 </svg>

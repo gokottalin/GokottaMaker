@@ -1,0 +1,11 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Ascend X Variant 1 - Rising Wing</title>
+  <desc id="desc">A minimal purple upward wing mark with a subtle X cut and the Larkix wordmark.</desc>
+  <rect x="8" y="8" width="80" height="80" rx="18" fill="#FAF9FF"/>
+  <path d="M20 70C35 47.5 55 31.7 82 20C76.2 45.7 59.6 66.2 32.4 81C29.4 76.8 25.3 73.1 20 70Z" fill="#7C3AED"/>
+  <path d="M28 74L77 25" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"/>
+  <path d="M29 39L63 73" stroke="#4C1D95" stroke-width="5.5" stroke-linecap="round"/>
+  <path d="M71.4 24.3L82.8 19L75.2 29.6Z" fill="#F59E0B"/>
+  <text x="112" y="59" fill="#111827" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="39" font-weight="820" letter-spacing="0">Larki<tspan fill="#7C3AED" font-weight="900">x</tspan></text>
+  <path d="M218 67C226.6 65.5 233.9 61.1 239.4 53.5" stroke="#A78BFA" stroke-width="3.2" stroke-linecap="round"/>
+</svg>

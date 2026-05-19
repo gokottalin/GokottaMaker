@@ -324,8 +324,9 @@
     }
     const upper = scripts.upper ? mathGroupHtml(scripts.upper.value) : "";
     const lower = scripts.lower ? mathGroupHtml(scripts.lower.value) : "";
+    const operatorClass = `math-limit-${commandName}`;
     return {
-      html: `<span class="math-limit-op"><span class="math-limit-upper">${upper}</span><span class="math-limit-symbol">${escapeHtml(symbol)}</span><span class="math-limit-lower">${lower}</span></span>`,
+      html: `<span class="math-limit-op ${operatorClass}"><span class="math-limit-upper">${upper}</span><span class="math-limit-symbol">${escapeHtml(symbol)}</span><span class="math-limit-lower">${lower}</span></span>`,
       end: scripts.end
     };
   }
@@ -688,7 +689,7 @@
     const codeSpans = [];
     const mathSpans = [];
     let text = escapeHtml(value).replace(/`([^`]+)`/g, (_, code) => {
-      const token = `@@GOKOTTACODE${codeSpans.length}@@`;
+      const token = `@@LARKIXCODE${codeSpans.length}@@`;
       const decoded = decodeMathEntities(code);
       codeSpans.push(looksLikeFormulaText(decoded) ? renderInlineMath(decoded) : `<code>${code}</code>`);
       return token;
@@ -696,12 +697,12 @@
 
     text = text
       .replace(/\\\(([\s\S]+?)\\\)/g, (_, latex) => {
-        const token = `@@GOKOTTAMATH${mathSpans.length}@@`;
+        const token = `@@LARKIXMATH${mathSpans.length}@@`;
         mathSpans.push(renderInlineMath(latex));
         return token;
       })
       .replace(/(^|[^\\$])\$((?:\\.|[^\n$\\])+?)\$(?!\$)/g, (_, prefix, latex) => {
-        const token = `@@GOKOTTAMATH${mathSpans.length}@@`;
+        const token = `@@LARKIXMATH${mathSpans.length}@@`;
         mathSpans.push(renderInlineMath(latex));
         return `${prefix}${token}`;
       });
@@ -724,10 +725,10 @@
       .replace(/(^|[^_])_([^_\n]+)_/g, "$1<em>$2</em>");
 
     codeSpans.forEach((html, index) => {
-      text = text.replaceAll(`@@GOKOTTACODE${index}@@`, html);
+      text = text.replaceAll(`@@LARKIXCODE${index}@@`, html);
     });
     mathSpans.forEach((html, index) => {
-      text = text.replaceAll(`@@GOKOTTAMATH${index}@@`, html);
+      text = text.replaceAll(`@@LARKIXMATH${index}@@`, html);
     });
     return text;
   }
@@ -997,5 +998,5 @@
     return { html: blocks.join("\n"), headings };
   }
 
-  window.GokottaMarkdown = { render, escapeHtml, inline, mathToText, renderDisplayMath };
+  window.LarkixMarkdown = { render, escapeHtml, inline, mathToText, renderDisplayMath };
 })();

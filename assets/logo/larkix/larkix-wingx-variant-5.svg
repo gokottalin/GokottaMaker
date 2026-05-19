@@ -1,0 +1,13 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Wing X Variant 5 - Flight Cut</title>
+  <desc id="desc">A lighter, faster Wing X mark with swept wings and a longer first-light flight gesture.</desc>
+  <path d="M47.5 16.5C36.3 24.7 24.8 38.1 16.7 57.5C34.9 56.6 50.5 49.2 63.1 35.4C60.4 28 55.4 21.7 47.5 16.5Z" fill="#2563EB"/>
+  <path d="M39.8 80.3C53.2 70.7 66.2 56.8 79.3 36.4C59.4 38 43.6 46.2 31.6 60.3C33.4 68 36.1 74.7 39.8 80.3Z" fill="#38BDF8"/>
+  <path d="M21.6 25.8L73.8 73.5" stroke="#1E3A8A" stroke-width="6.5" stroke-linecap="round"/>
+  <path d="M24.7 69.7C39.5 51.5 57.6 37 80.1 25.8" stroke="#FFFFFF" stroke-width="5.2" stroke-linecap="round"/>
+  <path d="M64.5 23.8L83.5 15.8" stroke="#F59E0B" stroke-width="4.2" stroke-linecap="round"/>
+  <path d="M15.3 62.3C27.5 63 39.6 60.9 51.7 55.8" stroke="#DBEAFE" stroke-width="3.4" stroke-linecap="round"/>
+  <circle cx="60.4" cy="25.8" r="3.7" fill="#F59E0B"/>
+  <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="780" letter-spacing="0">Larki<tspan fill="#2563EB" font-weight="860">x</tspan></text>
+  <path d="M218 66C226 64.6 233 60.4 238.5 53.4" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+</svg>

@@ -1,5 +1,5 @@
 <svg width="320" height="88" viewBox="0 0 320 88" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">GokottaMaker Logo Option 11</title>
+  <title id="title">LarkixMaker Logo Option 11</title>
   <desc id="desc">A flat blue hex core with white forward circuit path and cyan open-source nodes.</desc>
   <path d="M46 10L75.4 27V61L46 78L16.6 61V27L46 10Z" fill="#0D6FD3"/>
   <path d="M32 50V37C32 31.5 36.5 27 42 27H56" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
@@ -8,7 +8,7 @@
   <circle cx="32" cy="50" r="4.3" fill="#9DEBFF"/>
   <circle cx="46" cy="58" r="4.3" fill="#FFFFFF"/>
   <circle cx="60" cy="50" r="4.3" fill="#9DEBFF"/>
-  <text x="94" y="43" fill="#0B1220" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="28" font-weight="850" letter-spacing="0">Gokotta</text>
+  <text x="94" y="43" fill="#0B1220" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="28" font-weight="850" letter-spacing="0">Larkix</text>
   <text x="203" y="43" fill="#0D6FD3" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="28" font-weight="850" letter-spacing="0">Maker</text>
   <text x="96" y="63" fill="#64748B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="1.8">OPEN SOURCE HARDWARE</text>
 </svg>

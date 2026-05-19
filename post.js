@@ -1,6 +1,6 @@
 (function () {
   function escapeHtml(value) {
-    return window.GokottaMarkdown.escapeHtml(value);
+    return window.LarkixMarkdown.escapeHtml(value);
   }
 
   function absoluteUrl(value) {
@@ -18,23 +18,23 @@
   }
 
   function syncSeo(item) {
-    const description = item.excerpt || item.summary || "GokottaMaker 技术内容。";
+    const description = item.excerpt || item.summary || "LarkixMaker 技术内容。";
     const canonical = absoluteUrl(`${location.pathname}?id=${encodeURIComponent(item.slug || item.id)}`);
-    const image = absoluteUrl(item.cover || "./assets/logo/gokottamaker-icon.png");
+    const image = absoluteUrl(item.cover || "./assets/logo/larkix/final-white-bg/larkix-final-white-bg-icon.svg");
     const structuredType = item.type === "project" ? "CreativeWork" : "TechArticle";
 
-    document.title = `${item.title} | GokottaMaker`;
+    document.title = `${item.title} | LarkixMaker`;
     setHeadElement('meta[name="description"]', "meta", { name: "description", content: description });
     setHeadElement('link[rel="canonical"]', "link", { rel: "canonical", href: canonical });
-    setHeadElement('meta[property="og:title"]', "meta", { property: "og:title", content: `${item.title} | GokottaMaker` });
+    setHeadElement('meta[property="og:title"]', "meta", { property: "og:title", content: `${item.title} | LarkixMaker` });
     setHeadElement('meta[property="og:description"]', "meta", { property: "og:description", content: description });
     setHeadElement('meta[property="og:type"]', "meta", { property: "og:type", content: "article" });
     setHeadElement('meta[property="og:url"]', "meta", { property: "og:url", content: canonical });
     setHeadElement('meta[property="og:image"]', "meta", { property: "og:image", content: image });
 
-    const jsonLd = setHeadElement('script[type="application/ld+json"][data-gokotta-seo]', "script", {
+    const jsonLd = setHeadElement('script[type="application/ld+json"][data-larkix-seo]', "script", {
       type: "application/ld+json",
-      "data-gokotta-seo": "true"
+      "data-larkix-seo": "true"
     });
     jsonLd.textContent = JSON.stringify({
       "@context": "https://schema.org",
@@ -49,11 +49,11 @@
       license: item.license || undefined,
       author: {
         "@type": "Person",
-        name: "GokottaMaker"
+        name: "LarkixMaker"
       },
       publisher: {
         "@type": "Organization",
-        name: "GokottaMaker"
+        name: "LarkixMaker"
       }
     });
   }
@@ -103,7 +103,7 @@
 
   function relatedItems(current) {
     const currentTags = tagSet(current);
-    const candidates = [...window.GokottaContent.getPosts(), ...window.GokottaContent.getProjects()].filter((item) => {
+    const candidates = [...window.LarkixContent.getPosts(), ...window.LarkixContent.getProjects()].filter((item) => {
       if (!item || item.id === current.id) return false;
       if (item.type === "project" && item.statusKey !== "online") return false;
       return true;
@@ -251,7 +251,7 @@
 
     syncSeo(item);
     hero.innerHTML = `
-      ${window.GokottaMedia.image(item.cover, `${item.title}封面`, { loading: "eager", sizes: "100vw", fetchPriority: "high" })}
+      ${window.LarkixMedia.image(item.cover, `${item.title}封面`, { loading: "eager", sizes: "100vw", fetchPriority: "high" })}
       <div class="post-hero-content">
         <span class="category-pill">${escapeHtml(item.category || item.status)}</span>
         <div class="section-title-block split-title post-title-block">
@@ -285,7 +285,7 @@
       return;
     }
 
-    const parsed = window.GokottaMarkdown.render(item.markdown);
+    const parsed = window.LarkixMarkdown.render(item.markdown);
     content.innerHTML = `${parsed.html}${renderRelated(item)}`;
     toc.innerHTML = parsed.headings
       .filter((heading) => heading.level > 1)
@@ -299,7 +299,7 @@
 
   if (document.querySelector("#postContent")) {
     window.renderMarkdownPage({
-      collection: window.GokottaContent.getPosts(),
+      collection: window.LarkixContent.getPosts(),
       heroId: "postHero",
       contentId: "postContent",
       tocId: "tocList"

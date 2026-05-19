@@ -1,4 +1,4 @@
-window.GOKOTTA_PROJECTS = [
+window.LARKIX_PROJECTS = [
   {
     id: "power-amp",
     slug: "power-amp",
@@ -64,7 +64,7 @@ window.GOKOTTA_PROJECTS = [
     id: "logic-analyzer",
     slug: "logic-analyzer",
     type: "project",
-    title: "GokottaLogic 逻辑分析仪",
+    title: "LarkixLogic 逻辑分析仪",
     status: "已上线",
     statusKey: "online",
     license: "CC BY 4.0",
@@ -75,9 +75,9 @@ window.GOKOTTA_PROJECTS = [
     tags: "开源硬件,逻辑分析仪,STM32,协议解码,固件,测量工具,复现指南",
     cover: "./assets/covers/stm32-cover.png",
     summary: "基于 STM32 的多通道逻辑分析仪，支持 100MHz 采样率和多种协议解码。",
-    markdown: `# GokottaLogic 逻辑分析仪
+    markdown: `# LarkixLogic 逻辑分析仪
 
-GokottaLogic 是一个面向嵌入式调试的开源逻辑分析仪项目。
+LarkixLogic 是一个面向嵌入式调试的开源逻辑分析仪项目。
 
 ## 项目状态
 
@@ -233,6 +233,6 @@ PCB 需要处理大电流走线、采样 Kelvin 连接、散热铜皮和输入�
   }
 ];
 
-window.GOKOTTA_SEED = {
-  projects: window.GOKOTTA_PROJECTS
+window.LARKIX_SEED = {
+  projects: window.LARKIX_PROJECTS
 };

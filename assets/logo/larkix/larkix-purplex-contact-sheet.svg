@@ -1,0 +1,50 @@
+<svg width="1280" height="900" viewBox="0 0 1280 900" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Purple X Variants Contact Sheet</title>
+  <desc id="desc">Five purple Larkix Power X logo variants, using only wing or bird head forms and avoiding Feishu-like blue collaboration language.</desc>
+  <rect width="1280" height="900" fill="#FAF9FF"/>
+  <path d="M0 0H1280V245H0V0Z" fill="#EDE9FE"/>
+  <text x="72" y="92" fill="#111827" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="42" font-weight="820" letter-spacing="0">Larkix Purple X Variants</text>
+  <text x="74" y="132" fill="#6B647B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="600" letter-spacing="0">Purple-led brand color, explicit X, wing/head only. A clearer step away from Feishu-like blue collaboration visuals.</text>
+
+  <g transform="translate(72 190)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#DDD6FE"/>
+    <text x="28" y="42" fill="#7C3AED" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">5A Purple Wing Blade X</text>
+    <text x="28" y="70" fill="#6B647B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Recommended main logo: wing, X and power</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-purplex-variant-1.svg"/>
+  </g>
+
+  <g transform="translate(668 190)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#DDD6FE"/>
+    <text x="28" y="42" fill="#7C3AED" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">5B Purple Crest X Head</text>
+    <text x="28" y="70" fill="#6B647B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Head route, stronger differentiation</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-purplex-variant-2.svg"/>
+  </g>
+
+  <g transform="translate(72 420)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#DDD6FE"/>
+    <text x="28" y="42" fill="#7C3AED" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">5C Purple Shield Wing X</text>
+    <text x="28" y="70" fill="#6B647B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Best for avatar, favicon and app icon</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-purplex-variant-3.svg"/>
+  </g>
+
+  <g transform="translate(668 420)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#DDD6FE"/>
+    <text x="28" y="42" fill="#7C3AED" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">5D Purple Dual Feather X</text>
+    <text x="28" y="70" fill="#6B647B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Strongest X visibility</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-purplex-variant-4.svg"/>
+  </g>
+
+  <g transform="translate(72 650)">
+    <rect width="540" height="190" rx="8" fill="#FFFFFF" stroke="#DDD6FE"/>
+    <text x="28" y="42" fill="#7C3AED" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="18" font-weight="820">5E Purple Angular Head X</text>
+    <text x="28" y="70" fill="#6B647B" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="13" font-weight="650">Harder, sharper head route</text>
+    <image x="28" y="84" width="340" height="96" href="./larkix-purplex-variant-5.svg"/>
+  </g>
+
+  <g transform="translate(668 650)">
+    <rect width="540" height="190" rx="8" fill="#2E1065" stroke="#7C3AED"/>
+    <text x="28" y="44" fill="#FAF9FF" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="20" font-weight="820">Purple Palette</text>
+    <text x="28" y="76" fill="#DDD6FE" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="14" font-weight="650">Deep #4C1D95, Purple #7C3AED, Light #A78BFA, First Light #F59E0B.</text>
+    <text x="28" y="116" fill="#FFFFFF" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="16" font-weight="760">Recommended: 5A for main logo, 5C for app icon.</text>
+  </g>
+</svg>

@@ -86,7 +86,7 @@ node scripts\check-version.js
 
 任务：
 
-- 发布前确认云端 `/opt/GokottaMaker` 工作树干净。
+- 发布前确认云端 `/opt/LarkixMaker` 工作树干净。
 - 执行部署到 `V2.4.4+20260511-1900`。
 - 验证 `/healthz` 或 `/api/health` 返回目标版本。
 - 验证 `uploads` 和 SQLite 数据未丢失。
@@ -195,13 +195,13 @@ node scripts\check-version.js
 任务：
 
 - 复核 `tools/gokotta-elec.html` 资源缓存号是否已更新到 `20260511-1900`。
-- 核对 `miniapps.html` 卡片版本、GokottaElec 工具页版本、工具核心版本是否一致。
+- 核对 `miniapps.html` 卡片版本、LarkixElec 工具页版本、工具核心版本是否一致。
 - 如果测试部继续反馈 miniapps 版本错误，按真实工具版本修正展示。
 
 交付物：
 
 - miniapps 与工具页版本核对表。
-- GokottaElec 页面加载验证结果。
+- LarkixElec 页面加载验证结果。
 
 边界：
 

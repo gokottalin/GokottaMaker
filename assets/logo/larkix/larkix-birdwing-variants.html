@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Larkix Bird Wing Logo Variants</title>
+    <style>
+      :root {
+        --bg: #f8fafc;
+        --surface: #ffffff;
+        --ink: #0f172a;
+        --muted: #64748b;
+        --line: #d9e4f1;
+        --blue: #2563eb;
+        --deep: #1e3a8a;
+        --sky: #38bdf8;
+        --amber: #f59e0b;
+        --shadow: 0 18px 45px rgba(15, 23, 42, 0.09);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background:
+          linear-gradient(180deg, rgba(219, 234, 254, 0.78), rgba(248, 250, 252, 0) 360px),
+          var(--bg);
+        color: var(--ink);
+        font-family: Inter, "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+      }
+
+      main {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 54px 0 68px;
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 28px;
+        align-items: end;
+        margin-bottom: 26px;
+      }
+
+      h1 {
+        margin: 0 0 10px;
+        font-size: 36px;
+        line-height: 1.12;
+        letter-spacing: 0;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.75;
+      }
+
+      .note {
+        max-width: 360px;
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: var(--shadow);
+      }
+
+      .note strong {
+        color: var(--blue);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+        gap: 18px;
+      }
+
+      .option {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .preview {
+        min-height: 158px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 24px;
+        background:
+          linear-gradient(90deg, rgba(37, 99, 235, 0.055) 1px, transparent 1px),
+          linear-gradient(rgba(37, 99, 235, 0.055) 1px, transparent 1px),
+          #ffffff;
+        background-size: 22px 22px;
+      }
+
+      .preview img {
+        width: min(340px, 100%);
+        height: auto;
+        display: block;
+      }
+
+      .meta {
+        padding: 18px 20px 20px;
+        border-top: 1px solid var(--line);
+      }
+
+      h2 {
+        margin: 0 0 6px;
+        font-size: 18px;
+        letter-spacing: 0;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      code,
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 5px 8px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #f8fbff;
+        color: var(--blue);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      @media (max-width: 860px) {
+        header {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <h1>Larkix Bird/Wing 重新深化 5 选 1</h1>
+          <p>这组把“鸟”和“羽翼”放到第一识别层：能看到鸟头、喙、尾羽和展开的双翼；X 只作为双翼之间的隐含结构，避免图形继续变乱。</p>
+        </div>
+        <div class="note">
+          <p><strong>建议：</strong>优先看 2A 与 2B。2A 更像品牌主标，2B 更像清晰展开的 Wing。</p>
+        </div>
+      </header>
+
+      <section class="grid" aria-label="Larkix bird wing logo variants">
+        <article class="option">
+          <div class="preview"><img src="./larkix-birdwing-variant-1.svg" alt="Larkix Bird Wing variant 2A" /></div>
+          <div class="meta">
+            <h2>2A Dawn Bird</h2>
+            <p>鸟形最完整：头、喙、尾羽、双翼都可读，同时保持技术品牌的抽象感。推荐作为主标继续精修。</p>
+            <div class="chips"><code>larkix-birdwing-variant-1.svg</code><span class="chip">主标推荐</span></div>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./larkix-birdwing-variant-2.svg" alt="Larkix Bird Wing variant 2B" /></div>
+          <div class="meta">
+            <h2>2B Wide Wing</h2>
+            <p>羽翼展开更宽，Wing 感更强，适合强调“清晨出发”和开放扩展。</p>
+            <div class="chips"><code>larkix-birdwing-variant-2.svg</code><span class="chip">Wing 感最强</span></div>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./larkix-birdwing-variant-3.svg" alt="Larkix Bird Wing variant 2C" /></div>
+          <div class="meta">
+            <h2>2C Feather Bird</h2>
+            <p>增加羽片切分，更像羽翼和飞鸟，但仍保持克制，适合内容站与教程体系。</p>
+            <div class="chips"><code>larkix-birdwing-variant-3.svg</code><span class="chip">羽翼细节</span></div>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./larkix-birdwing-variant-4.svg" alt="Larkix Bird Wing variant 2D" /></div>
+          <div class="meta">
+            <h2>2D Monoline Bird</h2>
+            <p>更轻、更导航栏友好，线条像飞行路径，适合网页顶部和文章角标。</p>
+            <div class="chips"><code>larkix-birdwing-variant-4.svg</code><span class="chip">轻量导航</span></div>
+          </div>
+        </article>
+        <article class="option">
+          <div class="preview"><img src="./larkix-birdwing-variant-5.svg" alt="Larkix Bird Wing variant 2E" /></div>
+          <div class="meta">
+            <h2>2E Icon Bird</h2>
+            <p>圆角蓝底增强头像和 favicon 稳定性，鸟形更简化，适合 App icon、小程序和社交头像。</p>
+            <div class="chips"><code>larkix-birdwing-variant-5.svg</code><span class="chip">图标优先</span></div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

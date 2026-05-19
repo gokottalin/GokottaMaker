@@ -1,5 +1,5 @@
 ﻿:root {
-  --brand-logo: url("../assets/logo/options/gokottamaker-logo-option-15.svg");
+  --brand-logo: url("../assets/logo/larkix/final-white-bg/larkix-final-white-bg-lockup.svg");
   --brand-ink: #0b1220;
   --brand-blue: #0f4ea8;
   --brand-blue-2: #0d6fd3;
@@ -219,7 +219,7 @@ img {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 9px;
   min-width: fit-content;
   color: var(--ink);
   text-decoration: none;
@@ -229,8 +229,9 @@ img {
 }
 
 .brand-symbol {
-  width: 64px;
-  height: 64px;
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
   object-fit: contain;
   border: 0;
   border-radius: 0;
@@ -239,8 +240,35 @@ img {
   box-shadow: none;
 }
 
-.brand span:last-child {
-  display: inline;
+.brand-wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  color: var(--ink);
+  font-size: 23px;
+  font-weight: 880;
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+.brand-wordmark span {
+  color: var(--larkix-primary, var(--blue));
+  font-weight: 930;
+}
+
+.brand-product {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  margin-left: 4px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--blue-2);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0;
+  transform: translateY(1px);
 }
 
 .site-header .brand span:last-child {

@@ -1,7 +1,7 @@
 (function () {
-  const posts = window.GokottaContent.getPosts();
-  const publicProjects = window.GokottaContent.getProjects();
-  const projects = window.GokottaContent.getProjectDirectory();
+  const posts = window.LarkixContent.getPosts();
+  const publicProjects = window.LarkixContent.getProjects();
+  const projects = window.LarkixContent.getProjectDirectory();
   const list = document.querySelector("#articleList");
   const hero = document.querySelector(".hero");
   const heroCards = document.querySelector("#heroCards");
@@ -10,9 +10,9 @@
   const coursePathList = document.querySelector("#coursePathList");
   const recentLessonFeature = document.querySelector("#recentLessonFeature");
   const search = document.querySelector("#siteSearch");
-  const miniapps = window.GOKOTTA_MINIAPPS || [];
-  const courseMeta = window.GokottaCourseMeta || {};
-  let siteLayout = window.GOKOTTA_SERVER_CONTENT?.siteLayout || {};
+  const miniapps = window.LARKIX_MINIAPPS || [];
+  const courseMeta = window.LarkixCourseMeta || {};
+  let siteLayout = window.LARKIX_SERVER_CONTENT?.siteLayout || {};
   let siteLayoutSignature = JSON.stringify(siteLayout);
   let featuredItems = [];
   let activeHeroIndex = 0;
@@ -35,7 +35,7 @@
     return `
       <article class="article-card">
         <a href="./post.html?id=${post.id}" aria-label="${safe(post.title)}">
-          ${window.GokottaMedia.image(post.cover, `${safe(post.title)}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 180px" })}
+          ${window.LarkixMedia.image(post.cover, `${safe(post.title)}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 180px" })}
         </a>
         <div>
           <span class="category-pill">${safe(post.category)}</span>
@@ -66,7 +66,7 @@
         </div>
       </div>
       <a class="lesson-feature-media" href="./post.html?id=${post.id}">
-        ${window.GokottaMedia.image(post.cover, `${safe(post.title)}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 360px" })}
+        ${window.LarkixMedia.image(post.cover, `${safe(post.title)}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 360px" })}
       </a>
     `;
   }
@@ -75,7 +75,7 @@
     return `
       <article class="lesson-row">
         <a href="./post.html?id=${post.id}" aria-label="${safe(post.title)}">
-          ${window.GokottaMedia.image(post.cover, `${safe(post.title)}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 180px" })}
+          ${window.LarkixMedia.image(post.cover, `${safe(post.title)}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 180px" })}
         </a>
         <div>
           <div class="lesson-row-meta">
@@ -99,7 +99,7 @@
     const action = online ? `<a class="card-link" href="./project.html?id=${project.id}">查看详情</a>` : "";
     return `
       <article class="project-card ${online ? "" : "is-planned"}">
-        ${window.GokottaMedia.image(project.cover, `${safe(project.title)}项目图片`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 160px" })}
+        ${window.LarkixMedia.image(project.cover, `${safe(project.title)}项目图片`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 160px" })}
         <div>
           <span class="status">${safe(project.status)}</span>
           <h3>${title}</h3>
@@ -220,7 +220,7 @@
     }, 240);
 
     if (nextBg && currentBg) {
-      window.GokottaMedia.applyToImage(nextBg, featured.cover || "./assets/hero/electronics-lab-hero.png", { sizes: "100vw", fetchPriority: "high" });
+      window.LarkixMedia.applyToImage(nextBg, featured.cover || "./assets/hero/electronics-lab-hero.png", { sizes: "100vw", fetchPriority: "high" });
       nextBg.classList.add("is-active");
       currentBg.classList.remove("is-active");
       activeBg = activeBg === "A" ? "B" : "A";
@@ -366,7 +366,7 @@
   }
 
   function startSiteLayoutPolling() {
-    if (!window.GOKOTTA_SERVER_CONTENT || !window.fetch) return;
+    if (!window.LARKIX_SERVER_CONTENT || !window.fetch) return;
     window.setInterval(async () => {
       try {
         const response = await fetch("./api/content", { cache: "no-store" });
@@ -402,7 +402,7 @@
         return `
           <article class="course-path-card">
             <a class="course-path-media" href="${safe(meta.href)}" aria-hidden="true" tabindex="-1">
-              ${window.GokottaMedia.image(meta.cover, safe(meta.coverAlt || `${meta.title}课程路线配图`), { loading: "lazy", sizes: "(max-width: 1100px) 100vw, 320px" })}
+              ${window.LarkixMedia.image(meta.cover, safe(meta.coverAlt || `${meta.title}课程路线配图`), { loading: "lazy", sizes: "(max-width: 1100px) 100vw, 320px" })}
             </a>
             <div class="course-path-copy">
               <div class="section-title-line course-path-title-line">

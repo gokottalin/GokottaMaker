@@ -1,0 +1,58 @@
+{
+  "brand": {
+    "name": "Larkix",
+    "logo": {
+      "iconSvg": "assets/logo/larkix/final-white-bg/larkix-final-white-bg-icon.svg",
+      "iconPng": "assets/logo/larkix/final-white-bg/larkix-final-white-bg-icon.png",
+      "lockupSvg": "assets/logo/larkix/final-white-bg/larkix-final-white-bg-lockup.svg",
+      "lockupPng": "assets/logo/larkix/final-white-bg/larkix-final-white-bg-lockup.png",
+      "postScript": "assets/logo/larkix/final-white-bg/larkix-final-white-bg-icon.ps"
+    },
+    "logoColors": {
+      "deep": "#4C1D95",
+      "main": "#7C3AED",
+      "light": "#A78BFA",
+      "beak": "#3B0764",
+      "background": "#FFFFFF"
+    }
+  },
+  "themes": {
+    "day": {
+      "selectedOption": "02",
+      "name": "Morning Soft Purple",
+      "tokens": {
+        "background": "#FCFAFF",
+        "surface": "#FFFFFF",
+        "panel": "#F8F3FF",
+        "primary": "#7C3AED",
+        "primaryDeep": "#3B0764",
+        "primarySoft": "#F3E8FF",
+        "accent": "#F59E0B",
+        "accentSoft": "#FEF3C7",
+        "text": "#18181B",
+        "muted": "#71717A",
+        "border": "#E9D5FF",
+        "borderStrong": "#D8B4FE"
+      }
+    },
+    "night": {
+      "selectedOption": "01",
+      "name": "Night Soft Purple",
+      "tokens": {
+        "background": "#0B0712",
+        "surface": "#120A1F",
+        "panel": "#1B102B",
+        "primary": "#A78BFA",
+        "primaryDeep": "#7C3AED",
+        "primarySoft": "#2A1740",
+        "accent": "#F59E0B",
+        "accentSoft": "#3A240F",
+        "text": "#F8FAFC",
+        "muted": "#B6A8C9",
+        "border": "#2A1740",
+        "borderStrong": "#3B2558"
+      }
+    }
+  },
+  "cssFile": "styles/larkix-brand-theme.css"
+}

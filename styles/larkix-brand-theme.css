@@ -1,0 +1,307 @@
+/*
+  Larkix selected brand theme
+  Day: 02 Morning Soft Purple
+  Night: 01 Night Soft Purple
+
+  Import this file after styles/00-base.css to override the current site tokens,
+  or merge the token blocks into styles/00-base.css when the brand switch is finalized.
+*/
+
+:root {
+  color-scheme: light;
+
+  /* Brand assets */
+  --larkix-logo-icon: url("../assets/logo/larkix/final-white-bg/larkix-final-white-bg-icon.svg");
+  --larkix-logo-lockup: url("../assets/logo/larkix/final-white-bg/larkix-final-white-bg-lockup.svg");
+  --brand-logo: var(--larkix-logo-lockup);
+
+  /* Confirmed logo colors */
+  --larkix-logo-deep: #4C1D95;
+  --larkix-logo-main: #7C3AED;
+  --larkix-logo-light: #A78BFA;
+  --larkix-logo-beak: #3B0764;
+  --larkix-logo-bg: #FFFFFF;
+
+  /* Selected day palette: 02 Morning Soft Purple */
+  --larkix-bg: #FCFAFF;
+  --larkix-surface: #FFFFFF;
+  --larkix-panel: #F8F3FF;
+  --larkix-primary: #7C3AED;
+  --larkix-primary-deep: #3B0764;
+  --larkix-primary-soft: #F3E8FF;
+  --larkix-accent: #F59E0B;
+  --larkix-accent-soft: #FEF3C7;
+  --larkix-text: #18181B;
+  --larkix-muted: #71717A;
+  --larkix-border: #E9D5FF;
+  --larkix-border-strong: #D8B4FE;
+  --larkix-focus: rgba(124, 58, 237, 0.34);
+  --larkix-shadow: 0 18px 45px rgba(59, 7, 100, 0.09);
+
+  /* Compatibility aliases for the current front end. */
+  --brand-ink: var(--larkix-text);
+  --brand-blue: var(--larkix-primary);
+  --brand-blue-2: var(--larkix-primary-deep);
+  --brand-cyan: var(--larkix-logo-light);
+  --brand-amber: var(--larkix-accent);
+  --bg: var(--larkix-bg);
+  --surface: var(--larkix-surface);
+  --surface-2: var(--larkix-panel);
+  --ink: var(--larkix-text);
+  --muted: var(--larkix-muted);
+  --line: var(--larkix-border);
+  --blue: var(--larkix-primary);
+  --blue-2: var(--larkix-primary-deep);
+  --cyan: var(--larkix-logo-light);
+  --green: #10B981;
+  --warning: var(--larkix-accent);
+  --theme-accent: var(--larkix-primary);
+  --body-bg: linear-gradient(180deg, rgba(252, 250, 255, 0.98), rgba(255, 255, 255, 0) 360px), var(--larkix-bg);
+  --header-bg: rgba(255, 255, 255, 0.9);
+  --header-line: rgba(233, 213, 255, 0.9);
+  --shadow: var(--larkix-shadow);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Selected night palette: 01 Night Soft Purple */
+  --larkix-bg: #0B0712;
+  --larkix-surface: #120A1F;
+  --larkix-panel: #1B102B;
+  --larkix-primary: #A78BFA;
+  --larkix-primary-deep: #7C3AED;
+  --larkix-primary-soft: #2A1740;
+  --larkix-accent: #F59E0B;
+  --larkix-accent-soft: #3A240F;
+  --larkix-text: #F8FAFC;
+  --larkix-muted: #B6A8C9;
+  --larkix-border: #2A1740;
+  --larkix-border-strong: #3B2558;
+  --larkix-focus: rgba(167, 139, 250, 0.44);
+  --larkix-shadow: 0 22px 58px rgba(0, 0, 0, 0.42);
+
+  --brand-ink: var(--larkix-text);
+  --brand-blue: var(--larkix-primary);
+  --brand-blue-2: var(--larkix-primary-deep);
+  --brand-cyan: var(--larkix-logo-light);
+  --brand-amber: var(--larkix-accent);
+  --bg: var(--larkix-bg);
+  --surface: var(--larkix-surface);
+  --surface-2: var(--larkix-panel);
+  --ink: var(--larkix-text);
+  --muted: var(--larkix-muted);
+  --line: rgba(182, 168, 201, 0.22);
+  --blue: var(--larkix-primary);
+  --blue-2: var(--larkix-primary-deep);
+  --cyan: var(--larkix-logo-light);
+  --green: #34D399;
+  --warning: var(--larkix-accent);
+  --theme-accent: var(--larkix-primary);
+  --body-bg: radial-gradient(circle at 18% -10%, rgba(124, 58, 237, 0.16), transparent 34rem), var(--larkix-bg);
+  --header-bg: rgba(18, 10, 31, 0.9);
+  --header-line: rgba(182, 168, 201, 0.18);
+  --shadow: var(--larkix-shadow);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --larkix-bg: #0B0712;
+    --larkix-surface: #120A1F;
+    --larkix-panel: #1B102B;
+    --larkix-primary: #A78BFA;
+    --larkix-primary-deep: #7C3AED;
+    --larkix-primary-soft: #2A1740;
+    --larkix-accent: #F59E0B;
+    --larkix-accent-soft: #3A240F;
+    --larkix-text: #F8FAFC;
+    --larkix-muted: #B6A8C9;
+    --larkix-border: #2A1740;
+    --larkix-border-strong: #3B2558;
+    --larkix-focus: rgba(167, 139, 250, 0.44);
+    --larkix-shadow: 0 22px 58px rgba(0, 0, 0, 0.42);
+
+    --brand-ink: var(--larkix-text);
+    --brand-blue: var(--larkix-primary);
+    --brand-blue-2: var(--larkix-primary-deep);
+    --brand-cyan: var(--larkix-logo-light);
+    --brand-amber: var(--larkix-accent);
+    --bg: var(--larkix-bg);
+    --surface: var(--larkix-surface);
+    --surface-2: var(--larkix-panel);
+    --ink: var(--larkix-text);
+    --muted: var(--larkix-muted);
+    --line: rgba(182, 168, 201, 0.22);
+    --blue: var(--larkix-primary);
+    --blue-2: var(--larkix-primary-deep);
+    --cyan: var(--larkix-logo-light);
+    --green: #34D399;
+    --warning: var(--larkix-accent);
+    --theme-accent: var(--larkix-primary);
+    --body-bg: radial-gradient(circle at 18% -10%, rgba(124, 58, 237, 0.16), transparent 34rem), var(--larkix-bg);
+    --header-bg: rgba(18, 10, 31, 0.9);
+    --header-line: rgba(182, 168, 201, 0.18);
+    --shadow: var(--larkix-shadow);
+  }
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline-color: var(--larkix-focus);
+}
+
+.brand-symbol {
+  width: 46px;
+  height: 46px;
+}
+
+.brand-wordmark {
+  color: var(--larkix-text);
+}
+
+.brand-wordmark span {
+  color: var(--larkix-primary);
+}
+
+.brand-product {
+  border-color: color-mix(in srgb, var(--larkix-primary) 20%, var(--larkix-border));
+  background: var(--larkix-primary-soft);
+  color: var(--larkix-primary-deep);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34);
+}
+
+[data-theme="dark"] .brand-product {
+  border-color: var(--larkix-border-strong);
+  background: var(--larkix-primary-soft);
+  color: var(--larkix-primary);
+}
+
+[data-theme="dark"] .brand-wordmark {
+  color: #f8fafc;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .brand-wordmark {
+    color: #f8fafc;
+  }
+
+  :root:not([data-theme="light"]) .brand-product {
+    border-color: var(--larkix-border-strong);
+    background: var(--larkix-primary-soft);
+    color: var(--larkix-primary);
+  }
+}
+
+.button.primary,
+.hero-actions .button.primary,
+.admin button.primary,
+.featured-slot-actions .button.primary,
+.form-actions .button.primary,
+#renderButton {
+  background: linear-gradient(135deg, var(--larkix-primary), var(--larkix-primary-deep));
+  color: #ffffff;
+  box-shadow: 0 16px 34px rgba(124, 58, 237, 0.24);
+}
+
+.theme-toggle:hover,
+.admin-link:hover,
+.card-link:hover {
+  border-color: color-mix(in srgb, var(--larkix-primary) 34%, transparent);
+}
+
+.site-footer {
+  border-top-color: var(--line);
+  background: var(--surface);
+}
+
+[data-theme="dark"] .admin-shell:has(.dashboard:not([hidden])),
+[data-theme="dark"] .ge-page {
+  background: var(--body-bg);
+}
+
+[data-theme="dark"] .login-panel,
+[data-theme="dark"] .admin-sidebar,
+[data-theme="dark"] .content-meta-panel,
+[data-theme="dark"] .editor-form,
+[data-theme="dark"] .preview-panel,
+[data-theme="dark"] .library-panel,
+[data-theme="dark"] .image-library-panel,
+[data-theme="dark"] .crop-dialog,
+[data-theme="dark"] .admin-recommendation-card,
+[data-theme="dark"] .admin-row,
+[data-theme="dark"] .health-card,
+[data-theme="dark"] .bulk-actions,
+[data-theme="dark"] .ge-panel,
+[data-theme="dark"] .miniapp-card {
+  border-color: var(--line);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+
+[data-theme="dark"] .nav-group,
+[data-theme="dark"] .meta-featured,
+[data-theme="dark"] .meta-featured-manager,
+[data-theme="dark"] .layout-page-group,
+[data-theme="dark"] .layout-page-frame,
+[data-theme="dark"] .layout-browser-bar,
+[data-theme="dark"] .layout-page-board,
+[data-theme="dark"] .layout-row,
+[data-theme="dark"] .layout-snapshot-tile,
+[data-theme="dark"] .file-picker-control,
+[data-theme="dark"] .featured-slot,
+[data-theme="dark"] .editor-dock-handle,
+[data-theme="dark"] .preview-toolbar,
+[data-theme="dark"] .segmented,
+[data-theme="dark"] .library-tools,
+[data-theme="dark"] .ge-toolbar,
+[data-theme="dark"] .ge-handoff-bar,
+[data-theme="dark"] .ge-panel-head {
+  border-color: var(--line);
+  background: color-mix(in srgb, var(--surface-2) 86%, transparent);
+  color: var(--ink);
+}
+
+[data-theme="dark"] .admin-sidebar nav a {
+  color: var(--ink);
+}
+
+[data-theme="dark"] .admin-sidebar nav a:hover,
+[data-theme="dark"] .admin-sidebar nav a.is-active,
+[data-theme="dark"] .segmented label:has(input:checked),
+[data-theme="dark"] .miniapp-capabilities span {
+  background: color-mix(in srgb, var(--larkix-primary) 13%, transparent);
+  color: var(--larkix-primary);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .admin-shell:has(.dashboard:not([hidden])),
+  :root:not([data-theme="light"]) .ge-page {
+    background: var(--body-bg);
+  }
+
+  :root:not([data-theme="light"]) .login-panel,
+  :root:not([data-theme="light"]) .admin-sidebar,
+  :root:not([data-theme="light"]) .content-meta-panel,
+  :root:not([data-theme="light"]) .editor-form,
+  :root:not([data-theme="light"]) .preview-panel,
+  :root:not([data-theme="light"]) .library-panel,
+  :root:not([data-theme="light"]) .image-library-panel,
+  :root:not([data-theme="light"]) .crop-dialog,
+  :root:not([data-theme="light"]) .admin-recommendation-card,
+  :root:not([data-theme="light"]) .admin-row,
+  :root:not([data-theme="light"]) .health-card,
+  :root:not([data-theme="light"]) .bulk-actions,
+  :root:not([data-theme="light"]) .ge-panel,
+  :root:not([data-theme="light"]) .miniapp-card {
+    border-color: var(--line);
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    color: var(--ink);
+    box-shadow: var(--shadow);
+  }
+}

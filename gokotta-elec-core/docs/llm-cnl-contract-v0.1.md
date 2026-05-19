@@ -43,7 +43,7 @@ LLM 必须输出一个 UTF-8 文本文件，扩展名可以是 `.cnl` 或 `.txt`
 - Windows 路径支持带引号输入，例如：
 
 ```powershell
-dist\GokottaElec.exe "C:\Users\10731\Downloads\deepseek_cnl_20260507_72c637.txt" output\deepseek-test
+dist\LarkixElec.exe "C:\Users\10731\Downloads\deepseek_cnl_20260507_72c637.txt" output\deepseek-test
 ```
 
 ## 标准语句

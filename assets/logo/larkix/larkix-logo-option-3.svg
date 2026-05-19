@@ -1,0 +1,12 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Logo Option 3 - Light Feather</title>
+  <desc id="desc">A clean blue feather mark cut by a morning light opening, with the Larkix wordmark.</desc>
+  <path d="M20 58.5C32.2 28.4 58.4 18.1 80.8 16.6C78.9 39.4 68.4 66.1 38.2 79.4C34.3 71.2 28.8 64.4 20 58.5Z" fill="#2563EB"/>
+  <path d="M32.4 54.6C43.1 38.8 57.1 29.2 74.2 24.8C70.9 42.2 61.4 57.1 45.4 69" stroke="#DBEAFE" stroke-width="8" stroke-linecap="round"/>
+  <path d="M26.5 72L76 22.5" stroke="#FFFFFF" stroke-width="5.5" stroke-linecap="round"/>
+  <path d="M34.8 26.8C41.6 28.8 48.8 33.4 56.4 40.6" stroke="#38BDF8" stroke-width="5" stroke-linecap="round"/>
+  <path d="M50.2 76.2C50.2 66.1 53.8 56.6 61.2 47.9" stroke="#38BDF8" stroke-width="5" stroke-linecap="round"/>
+  <path d="M65 22.5L78.5 15.8" stroke="#F59E0B" stroke-width="4.3" stroke-linecap="round"/>
+  <text x="112" y="58" fill="#0F172A" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="38" font-weight="770" letter-spacing="0">Larki<tspan fill="#2563EB" font-weight="860">x</tspan></text>
+  <path d="M218 66C226.5 64.5 233.5 60.1 238.8 52.8" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+</svg>

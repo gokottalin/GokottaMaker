@@ -1,0 +1,12 @@
+<svg width="340" height="96" viewBox="0 0 340 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Larkix Soar X Variant 2 - Open Wings</title>
+  <desc id="desc">A simple upward bird with open wings, using purple brand colors and a clean X-shaped wing gap.</desc>
+  <path d="M15.8 58.5C31.9 35.8 54.7 23.9 83.8 22.8C68 33.1 54.2 46.6 42.5 63.2C33.1 63.7 24.2 62.2 15.8 58.5Z" fill="#4C1D95"/>
+  <path d="M26.8 76.2C46.8 67.5 63.8 54.3 77.9 36.7C74.9 57.9 60.6 74.5 35.1 86.2C31.7 83.7 28.9 80.4 26.8 76.2Z" fill="#A78BFA"/>
+  <path d="M51.4 38.8C59.5 31 70.2 26.4 83.7 25.2L71.7 37.3C63.6 42.5 57.9 50 54.6 59.8C50.4 53.2 49.4 46.2 51.4 38.8Z" fill="#7C3AED"/>
+  <path d="M70 33.3L85.9 25.9L75.7 41.6Z" fill="#F59E0B"/>
+  <path d="M27.8 75.1L79.2 25.2" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+  <path d="M30.4 40.6L63.7 69.4" stroke="#7C3AED" stroke-width="5.2" stroke-linecap="round"/>
+  <text x="112" y="59" fill="#111827" font-family="Inter, Segoe UI, Microsoft YaHei, Arial, sans-serif" font-size="39" font-weight="820" letter-spacing="0">Larki<tspan fill="#7C3AED" font-weight="900">x</tspan></text>
+  <path d="M218 67C226.6 65.5 233.9 61.1 239.4 53.5" stroke="#A78BFA" stroke-width="3.2" stroke-linecap="round"/>
+</svg>
