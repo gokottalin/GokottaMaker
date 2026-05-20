@@ -20,6 +20,7 @@ const dbPath = path.resolve(process.env.DB_PATH || path.join(dbDir, "gokottamake
 const uploadDir = path.resolve(process.env.UPLOAD_DIR || path.join(dataDir, "uploads"));
 const backupRoot = path.resolve(process.env.BACKUP_ROOT || "/srv/gokottamaker-backups");
 const port = Number(process.env.PORT || 4173);
+const host = process.env.HOST || "";
 const adminUsername = process.env.ADMIN_USERNAME || "Larkix";
 const adminPassword = process.env.ADMIN_PASSWORD || "change-this-before-public-deploy";
 const resetAdminPassword = process.env.ADMIN_RESET_PASSWORD_ON_START === "true";
@@ -1355,8 +1356,9 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(port, () => {
-  console.log(`LarkixMaker running at http://localhost:${port}`);
+server.listen(port, host || undefined, () => {
+  const displayHost = host || "0.0.0.0";
+  console.log(`LarkixMaker running at http://${displayHost}:${port}`);
   console.log(`SQLite database: ${dbPath}`);
   console.log(`Uploads directory: ${uploadDir}`);
 });
