@@ -1,6 +1,6 @@
 {
   "name": "larkixmaker",
-  "version": "2.4.9",
+  "version": "2.4.10",
   "private": true,
   "description": "LarkixMaker embedded electronics blog and project site.",
   "main": "server.js",
