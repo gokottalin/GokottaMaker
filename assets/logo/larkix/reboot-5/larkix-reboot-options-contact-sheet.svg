@@ -1,0 +1,58 @@
+<svg width="1280" height="760" viewBox="0 0 1280 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="760" fill="#F8FAFC"/>
+  <style>
+    .title { font: 850 40px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; fill: #111827; }
+    .sub { font: 600 18px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; fill: #64748B; }
+    .num { font: 850 28px Inter, "Segoe UI", Arial, sans-serif; fill: #7C3AED; }
+    .name { font: 800 20px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; fill: #111827; }
+    .note { font: 600 13px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; fill: #64748B; }
+    .word { font: 850 38px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; fill: #111827; }
+  </style>
+  <text x="54" y="62" class="title">Larkix LOGO 重新探索 5 选 1</text>
+  <text x="54" y="94" class="sub">5 个新方向，保留紫色系和飞鸟意象；请直接选择编号继续深化。</text>
+
+  <g transform="translate(54 136)">
+    <rect width="360" height="250" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+    <text x="28" y="46" class="num">01</text>
+    <text x="76" y="45" class="name">流线飞鸟</text>
+    <text x="28" y="70" class="note">更接近现代科技品牌，轮廓饱满。</text>
+    <image href="larkix-reboot-option-01.svg" x="30" y="92" width="118" height="118"/>
+    <text x="168" y="162" class="word">Larki<tspan fill="#7C3AED">x</tspan></text>
+  </g>
+
+  <g transform="translate(460 136)">
+    <rect width="360" height="250" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+    <text x="28" y="46" class="num">02</text>
+    <text x="76" y="45" class="name">圆标负形</text>
+    <text x="28" y="70" class="note">更适合头像、App icon、社媒标识。</text>
+    <image href="larkix-reboot-option-02.svg" x="30" y="92" width="118" height="118"/>
+    <text x="168" y="162" class="word">Larki<tspan fill="#7C3AED">x</tspan></text>
+  </g>
+
+  <g transform="translate(866 136)">
+    <rect width="360" height="250" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+    <text x="28" y="46" class="num">03</text>
+    <text x="76" y="45" class="name">线性羽翼</text>
+    <text x="28" y="70" class="note">更简洁轻盈，适合工具栏和极简风。</text>
+    <image href="larkix-reboot-option-03.svg" x="30" y="92" width="118" height="118"/>
+    <text x="168" y="162" class="word">Larki<tspan fill="#7C3AED">x</tspan></text>
+  </g>
+
+  <g transform="translate(257 440)">
+    <rect width="360" height="250" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+    <text x="28" y="46" class="num">04</text>
+    <text x="76" y="45" class="name">展开双翼</text>
+    <text x="28" y="70" class="note">更像准备起飞，徽章感更强。</text>
+    <image href="larkix-reboot-option-04.svg" x="30" y="92" width="118" height="118"/>
+    <text x="168" y="162" class="word">Larki<tspan fill="#7C3AED">x</tspan></text>
+  </g>
+
+  <g transform="translate(663 440)">
+    <rect width="360" height="250" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+    <text x="28" y="46" class="num">05</text>
+    <text x="76" y="45" class="name">锐翼光切</text>
+    <text x="28" y="70" class="note">更锐利、有速度感，适合工程工具品牌。</text>
+    <image href="larkix-reboot-option-05.svg" x="30" y="92" width="118" height="118"/>
+    <text x="168" y="162" class="word">Larki<tspan fill="#7C3AED">x</tspan></text>
+  </g>
+</svg>

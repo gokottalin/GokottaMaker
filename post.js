@@ -20,7 +20,7 @@
   function syncSeo(item) {
     const description = item.excerpt || item.summary || "LarkixMaker 技术内容。";
     const canonical = absoluteUrl(`${location.pathname}?id=${encodeURIComponent(item.slug || item.id)}`);
-    const image = absoluteUrl(item.cover || "./assets/logo/larkix/final-white-bg/larkix-final-white-bg-icon.svg");
+    const image = absoluteUrl(item.cover || "./assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524");
     const structuredType = item.type === "project" ? "CreativeWork" : "TechArticle";
 
     document.title = `${item.title} | LarkixMaker`;

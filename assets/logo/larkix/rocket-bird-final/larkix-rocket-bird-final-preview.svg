@@ -1,0 +1,26 @@
+<svg width="960" height="620" viewBox="0 0 960 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="960" height="620" fill="#F8FAFC"/>
+  <style>
+    .title { font: 850 34px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; fill: #111827; }
+    .sub { font: 600 16px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; fill: #64748B; }
+    .label { font: 700 13px Inter, "Segoe UI", Arial, sans-serif; fill: #64748B; }
+  </style>
+  <text x="58" y="62" class="title">Larkix Rocket Bird Final Direction</text>
+  <text x="58" y="92" class="sub">基于方案 01 细化：4 个必要色面，平滑曲线，保留飞鸟与轻微火箭感。</text>
+  <rect x="58" y="128" width="384" height="384" rx="16" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <image href="larkix-rocket-bird-final-icon.svg" x="122" y="192" width="256" height="256"/>
+  <rect x="486" y="128" width="416" height="174" rx="16" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <image href="larkix-rocket-bird-final-lockup.svg" x="508" y="151" width="370" height="113"/>
+  <g transform="translate(486 342)">
+    <rect width="416" height="170" rx="16" fill="#FFFFFF" stroke="#E5E7EB"/>
+    <text x="24" y="38" class="label">Color fields</text>
+    <rect x="24" y="60" width="70" height="32" rx="8" fill="#4C1D95"/>
+    <rect x="112" y="60" width="70" height="32" rx="8" fill="#7C3AED"/>
+    <rect x="200" y="60" width="70" height="32" rx="8" fill="#A78BFA"/>
+    <rect x="288" y="60" width="70" height="32" rx="8" fill="#3B0764"/>
+    <text x="24" y="122" class="label">#4C1D95</text>
+    <text x="112" y="122" class="label">#7C3AED</text>
+    <text x="200" y="122" class="label">#A78BFA</text>
+    <text x="288" y="122" class="label">#3B0764</text>
+  </g>
+</svg>

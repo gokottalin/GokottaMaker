@@ -8,7 +8,7 @@ window.LARKIX_MINIAPPS = [
     status: "一期接入",
     version: "V1.3",
     href: "./tools/larkix-elec.html",
-    icon: "./tools/assets/larkix-elec-icon.svg?v=20260519-003",
+    icon: "./tools/assets/larkix-elec-icon.png?v=refined-20260524",
     capabilities: ["CNL 输入", "Sample 加载", "SVG 预览", "IR / ERC 诊断"]
   },
   {

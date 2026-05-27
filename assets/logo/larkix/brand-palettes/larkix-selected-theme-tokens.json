@@ -2,18 +2,20 @@
   "brand": {
     "name": "Larkix",
     "logo": {
-      "iconSvg": "assets/logo/larkix/final-white-bg/larkix-final-white-bg-icon.svg",
-      "iconPng": "assets/logo/larkix/final-white-bg/larkix-final-white-bg-icon.png",
-      "lockupSvg": "assets/logo/larkix/final-white-bg/larkix-final-white-bg-lockup.svg",
-      "lockupPng": "assets/logo/larkix/final-white-bg/larkix-final-white-bg-lockup.png",
-      "postScript": "assets/logo/larkix/final-white-bg/larkix-final-white-bg-icon.ps"
+      "iconSvg": "assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg",
+      "iconPng": "assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.png",
+      "lockupSvg": "assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-lockup.svg",
+      "lockupOnDarkSvg": "assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-lockup-on-dark.svg",
+      "lockupPng": "assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-lockup.png",
+      "lockupOnDarkPng": "assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-lockup-on-dark.png",
+      "postScript": ""
     },
     "logoColors": {
       "deep": "#4C1D95",
       "main": "#7C3AED",
       "light": "#A78BFA",
       "beak": "#3B0764",
-      "background": "#FFFFFF"
+      "background": "transparent"
     }
   },
   "themes": {

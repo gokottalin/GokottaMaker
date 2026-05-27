@@ -1,0 +1,58 @@
+<svg width="1280" height="760" viewBox="0 0 1280 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="760" fill="#F8FAFC"/>
+  <style>
+    .title { font: 850 40px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; fill: #111827; }
+    .sub { font: 600 18px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; fill: #64748B; }
+    .num { font: 850 28px Inter, "Segoe UI", Arial, sans-serif; fill: #7C3AED; }
+    .name { font: 800 20px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; fill: #111827; }
+    .note { font: 600 13px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; fill: #64748B; }
+    .word { font: 850 38px Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif; fill: #111827; }
+  </style>
+  <text x="54" y="62" class="title">Larkix 火箭飞鸟方向 5 选 1</text>
+  <text x="54" y="94" class="sub">基于上一轮 05 的锐翼速度感，加入火箭头、发射尾迹和上升动势。</text>
+
+  <g transform="translate(54 136)">
+    <rect width="360" height="250" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+    <text x="28" y="46" class="num">01</text>
+    <text x="76" y="45" class="name">火箭锐翼</text>
+    <text x="28" y="70" class="note">最接近 05，火箭感适中。</text>
+    <image href="larkix-rocket-bird-01.svg" x="30" y="92" width="118" height="118"/>
+    <text x="168" y="162" class="word">Larki<tspan fill="#7C3AED">x</tspan></text>
+  </g>
+
+  <g transform="translate(460 136)">
+    <rect width="360" height="250" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+    <text x="28" y="46" class="num">02</text>
+    <text x="76" y="45" class="name">发射尾迹</text>
+    <text x="28" y="70" class="note">加入火箭尾焰，更有发射感。</text>
+    <image href="larkix-rocket-bird-02.svg" x="30" y="92" width="118" height="118"/>
+    <text x="168" y="162" class="word">Larki<tspan fill="#7C3AED">x</tspan></text>
+  </g>
+
+  <g transform="translate(866 136)">
+    <rect width="360" height="250" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+    <text x="28" y="46" class="num">03</text>
+    <text x="76" y="45" class="name">圆标升空</text>
+    <text x="28" y="70" class="note">更适合头像和 App icon。</text>
+    <image href="larkix-rocket-bird-03.svg" x="30" y="92" width="118" height="118"/>
+    <text x="168" y="162" class="word">Larki<tspan fill="#7C3AED">x</tspan></text>
+  </g>
+
+  <g transform="translate(257 440)">
+    <rect width="360" height="250" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+    <text x="28" y="46" class="num">04</text>
+    <text x="76" y="45" class="name">轨迹起飞</text>
+    <text x="28" y="70" class="note">有发射轨迹，动势最明显。</text>
+    <image href="larkix-rocket-bird-04.svg" x="30" y="92" width="118" height="118"/>
+    <text x="168" y="162" class="word">Larki<tspan fill="#7C3AED">x</tspan></text>
+  </g>
+
+  <g transform="translate(663 440)">
+    <rect width="360" height="250" rx="14" fill="#FFFFFF" stroke="#E5E7EB"/>
+    <text x="28" y="46" class="num">05</text>
+    <text x="76" y="45" class="name">高速光切</text>
+    <text x="28" y="70" class="note">更锐利、更工程工具感。</text>
+    <image href="larkix-rocket-bird-05.svg" x="30" y="92" width="118" height="118"/>
+    <text x="168" y="162" class="word">Larki<tspan fill="#7C3AED">x</tspan></text>
+  </g>
+</svg>

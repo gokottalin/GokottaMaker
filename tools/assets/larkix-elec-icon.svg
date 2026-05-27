@@ -1,14 +1,36 @@
-<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">LarkixElec Miniapp Icon</title>
-  <desc id="desc">A purple circuit board icon for the LarkixElec miniapp.</desc>
-  <rect x="8" y="8" width="80" height="80" rx="18" fill="#4C1D95"/>
-  <rect x="15" y="15" width="66" height="66" rx="14" fill="#6D28D9"/>
-  <path d="M25 33H38C43.5 33 46.5 36 46.5 41.2V55.2C46.5 60.4 49.6 63.5 55 63.5H70" stroke="#F5F3FF" stroke-width="5" stroke-linecap="round"/>
-  <path d="M26 62H40.5C46.5 62 50.5 58.2 50.5 52.8V42.8C50.5 37.2 54 33 60 33H69.5" stroke="#C4B5FD" stroke-width="4" stroke-linecap="round"/>
-  <circle cx="25" cy="33" r="6" fill="#A78BFA" stroke="#F5F3FF" stroke-width="2.5"/>
-  <circle cx="70" cy="63.5" r="6" fill="#A78BFA" stroke="#F5F3FF" stroke-width="2.5"/>
-  <circle cx="26" cy="62" r="4.5" fill="#EDE9FE"/>
-  <circle cx="69.5" cy="33" r="4.5" fill="#EDE9FE"/>
-  <path d="M43.5 31L54 48H46L52.5 66L39 45H47L43.5 31Z" fill="#F59E0B"/>
-  <rect x="12.5" y="12.5" width="71" height="71" rx="15.5" stroke="#EDE9FE" stroke-width="1.5" opacity="0.62"/>
+  <desc id="desc">A refined purple circuit icon for the LarkixElec miniapp.</desc>
+  <defs>
+    <linearGradient id="bg" x1="68" y1="44" x2="448" y2="472" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7C3AED"/>
+      <stop offset="0.48" stop-color="#4C1D95"/>
+      <stop offset="1" stop-color="#2E1065"/>
+    </linearGradient>
+    <linearGradient id="track" x1="42" y1="180" x2="382" y2="374" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#C4B5FD"/>
+      <stop offset="0.52" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#DDD6FE"/>
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-8%" width="120%" height="124%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#2E1065" flood-opacity="0.26"/>
+    </filter>
+  </defs>
+  <rect x="28" y="28" width="456" height="456" rx="92" fill="url(#bg)" filter="url(#softShadow)"/>
+  <rect x="39" y="39" width="434" height="434" rx="82" stroke="#C4B5FD" stroke-opacity="0.28" stroke-width="2"/>
+  <path d="M44 224H106C123 146 195 94 281 94C321 94 351 102 375 118" stroke="#F8FAFC" stroke-width="35" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M44 277H126C144 277 158 291 158 309V322H236C258 322 276 304 276 282V241" stroke="url(#track)" stroke-width="25" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M44 330H128" stroke="#8B5CF6" stroke-width="23" stroke-linecap="round"/>
+  <path d="M232 240H410C432 240 450 258 450 280V294C450 369 376 425 284 424C224 423 171 396 136 346" stroke="#F8FAFC" stroke-width="35" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M250 378C304 387 338 357 338 318" stroke="#F8FAFC" stroke-width="29" stroke-linecap="round"/>
+  <circle cx="385" cy="118" r="40" fill="#F8FAFC"/>
+  <circle cx="385" cy="118" r="23" fill="#7C3AED"/>
+  <circle cx="232" cy="240" r="38" fill="#F8FAFC"/>
+  <circle cx="232" cy="240" r="17" fill="#4C1D95"/>
+  <circle cx="132" cy="342" r="38" fill="#F8FAFC"/>
+  <circle cx="132" cy="342" r="17" fill="#8B5CF6"/>
+  <circle cx="338" cy="318" r="36" fill="#F8FAFC"/>
+  <circle cx="338" cy="318" r="16" fill="#4C1D95"/>
+  <path d="M246 102C292 91 333 95 368 112" stroke="#C4B5FD" stroke-opacity="0.38" stroke-width="8" stroke-linecap="round"/>
+  <path d="M96 454C204 487 353 473 438 384" stroke="#DDD6FE" stroke-opacity="0.12" stroke-width="18" stroke-linecap="round"/>
 </svg>

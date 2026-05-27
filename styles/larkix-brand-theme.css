@@ -11,8 +11,9 @@
   color-scheme: light;
 
   /* Brand assets */
-  --larkix-logo-icon: url("../assets/logo/larkix/final-white-bg/larkix-final-white-bg-icon.svg");
-  --larkix-logo-lockup: url("../assets/logo/larkix/final-white-bg/larkix-final-white-bg-lockup.svg");
+  --larkix-logo-icon: url("../assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524");
+  --larkix-logo-lockup: url("../assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-lockup.svg?v=transparent-20260524");
+  --larkix-logo-lockup-on-dark: url("../assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-lockup-on-dark.svg?v=transparent-20260524");
   --brand-logo: var(--larkix-logo-lockup);
 
   /* Confirmed logo colors */
