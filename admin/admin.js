@@ -22,6 +22,18 @@
   const preview = document.querySelector("#markdownPreview");
   const markdownFile = document.querySelector("#markdownFile");
   const markdownHint = document.querySelector("#markdownHint");
+  const formulaHelperPanel = document.querySelector("#formulaHelperPanel");
+  const formulaSnippetSelect = document.querySelector("#formulaSnippetSelect");
+  const insertInlineFormulaButton = document.querySelector("#insertInlineFormulaButton");
+  const insertDisplayFormulaButton = document.querySelector("#insertDisplayFormulaButton");
+  const insertFormulaSnippetButton = document.querySelector("#insertFormulaSnippetButton");
+  const deriveLinkSlugInput = document.querySelector("#deriveLinkSlugInput");
+  const deriveLinkLabelInput = document.querySelector("#deriveLinkLabelInput");
+  const deriveLinkColorSelect = document.querySelector("#deriveLinkColorSelect");
+  const insertDeriveLinkButton = document.querySelector("#insertDeriveLinkButton");
+  const boostTemplateSelect = document.querySelector("#boostTemplateSelect");
+  const applyBoostTemplateButton = document.querySelector("#applyBoostTemplateButton");
+  const insertBoostChainButton = document.querySelector("#insertBoostChainButton");
   const coverFile = document.querySelector("#coverFile");
   const coverPreview = document.querySelector("#coverPreview");
   const coverHint = document.querySelector("#coverHint");
@@ -37,8 +49,17 @@
   const categoryField = document.querySelector("#categoryField");
   const recommendationPriorityField = document.querySelector("#recommendationPriorityField");
   const statusField = document.querySelector("#statusField");
+  const knowledgeSlugField = document.querySelector("#knowledgeSlugField");
+  const knowledgeSymbolField = document.querySelector("#knowledgeSymbolField");
+  const knowledgeAccentField = document.querySelector("#knowledgeAccentField");
+  const knowledgeVisibilityField = document.querySelector("#knowledgeVisibilityField");
+  const knowledgeWarnings = document.querySelector("#knowledgeWarnings");
+  const knowledgeRevisionsPanel = document.querySelector("#knowledgeRevisionsPanel");
+  const knowledgeRevisionList = document.querySelector("#knowledgeRevisionList");
+  const refreshKnowledgeRevisionsButton = document.querySelector("#refreshKnowledgeRevisionsButton");
   const projectExtra = document.querySelector("#projectExtra");
   const visibilityHint = document.querySelector("#visibilityHint");
+  const featuredField = document.querySelector(".meta-featured");
   const imageLibrary = document.querySelector("#imageLibrary");
   const refreshImagesButton = document.querySelector("#refreshImagesButton");
   const draftStatus = document.querySelector("#draftStatus");
@@ -62,12 +83,14 @@
   const refreshHealthButton = document.querySelector("#refreshHealthButton");
   const healthPanel = document.querySelector("#healthPanel");
   const layoutPanel = document.querySelector("#layoutPanel");
+  const knowledgeNodeList = document.querySelector("#knowledgeNodeList");
+  const newKnowledgeNodeButton = document.querySelector("#newKnowledgeNodeButton");
 
   let editingType = null;
   let editingId = null;
   let currentCover = "";
   let csrfToken = "";
-  let serverContent = { posts: [], projects: [], siteLayout: { home: [] } };
+  let serverContent = { posts: [], projects: [], knowledgeNodes: [], siteLayout: { home: [] } };
   let isDirty = false;
   let isRestoringForm = false;
   let autosaveTimer = 0;
@@ -77,6 +100,374 @@
   const selectedContent = new Set();
   const filters = { search: "", type: "all", status: "all" };
   const featuredLimit = 4;
+  const knowledgeColorTokens = ["purple", "blue", "green", "amber", "red", "neutral"];
+  const formulaSnippets = [
+    { key: "boost-duty-cycle", label: "BOOST 占空比 D", latex: "D = 1 - \\frac{V_{in}\\eta}{V_{out}}" },
+    { key: "boost-inductor-ripple", label: "电感纹波 Delta I_L", latex: "\\Delta I_L = \\frac{V_{in}D}{L f_s}" },
+    { key: "boost-inductor-value", label: "电感量下限 L", latex: "L \\ge \\frac{V_{in}D}{\\Delta I_L f_s}" },
+    { key: "boost-average-current", label: "平均电感电流", latex: "I_{L,avg} = \\frac{I_{out}}{1-D}" },
+    { key: "boost-peak-current", label: "峰值电感电流", latex: "I_{L,peak} = I_{L,avg} + \\frac{\\Delta I_L}{2}" },
+    { key: "math-double-angle", label: "纯数学二倍角", latex: "\\sin(2\\theta)=2\\sin\\theta\\cos\\theta" }
+  ];
+  const boostTemplates = [
+    {
+      slug: "boost-inductor-selection-sheet",
+      symbol: "BOOST-L",
+      title: "BOOST 电感选型计算书",
+      summary: "以 12V 升 24V/2A 为例，从拓扑占空比、纹波目标、电感量、电流等级、损耗和料号裕量完成中文 BOOST 电感选型。",
+      accentColor: "green",
+      tags: "BOOST, 电感设计, 计算书, 选型",
+      markdown: `# BOOST 电感选型计算书
+
+本计算书用于先给出工程结论，再把必要公式的来龙去脉收进公式右上角跳转标记。只有公式推导使用跳转标记；料号取舍属于工程判断，直接写在计算书内。
+
+| 参数 | 符号 | 示例值 |
+| --- | --- | --- |
+| 输入电压 | $V_{in}$ | 12 V |
+| 输出电压 | $V_{out}$ | 24 V |
+| 输出电流 | $I_{out}$ | 2 A |
+| 估算效率 | $\\eta$ | 0.90 |
+| 开关频率 | $f_s$ | 200 kHz |
+| 目标纹波比例 | $r$ | 约 30% |
+| 环境假设 | - | 常温原型验证，后续按热测试修正 |
+
+## 1. BOOST 拓扑占空比
+
+$$
+D = 1 - \\frac{V_{in}\\eta}{V_{out}}
+$$
+{{derive:boost-duty-cycle-ccm|BOOST拓扑占空比推导（CCM）|purple}}
+
+代入 $V_{in}=12V$、$V_{out}=24V$、$\\eta=0.90$，得到 $D \\approx 0.55$。理想 CCM 关系对应 $D=0.50$；这里提高到 0.55 是把效率损失折进设计估算，便于后续电流与电感量留裕量。
+
+## 2. 输出功率与平均电感电流
+
+输出功率：
+
+$$
+P_{out}=V_{out}I_{out}=24V\\times2A=48W
+$$
+
+输入功率估算：
+
+$$
+P_{in}\\approx \\frac{P_{out}}{\\eta}=53.3W
+$$
+
+连续电流模式下，电感平均电流就是输入侧平均电流。也可以用 BOOST 关断占比关系估算：
+
+$$
+I_{L,avg} = \\frac{I_{out}}{1-D}
+$$
+{{derive:boost-inductor-current-rating|BOOST电感电流等级推导（CCM）|amber}}
+
+代入 $I_{out}=2A$、$D=0.55$，得到 $I_{L,avg} \\approx 4.44A$。它也等于 $P_{in}/V_{in}\\approx53.3W/12V$，两种估算在这个效率折算方式下相互印证。
+
+## 3. 纹波目标
+
+先按平均电感电流的约 30% 设定纹波目标：
+
+$$
+\\Delta I_{L,target}=r I_{L,avg}\\approx0.3\\times4.44A=1.33A
+$$
+
+这个比例不是拓扑公式，而是效率、瞬态、体积和成本之间的初选折中。
+
+## 4. 电感量下限
+
+$$
+L \\ge \\frac{V_{in}D}{\\Delta I_L f_s}
+$$
+{{derive:boost-inductor-value|BOOST电感量下限推导|green}}
+
+代入后 $L \\ge 24.8\\mu H$，工程上先选标准值 33 uH。
+
+## 5. 用标准值反算实际纹波
+
+选定 33 uH 后，必须反算真实纹波，避免只停留在理论下限：
+
+$$
+\\Delta I_L = \\frac{V_{in}D}{L f_s}
+$$
+{{derive:boost-inductor-ripple|BOOST电感纹波电流推导（CCM）|blue}}
+
+33 uH、200 kHz 下的纹波约 $1.0A$，约为平均电流的 23%，可以进入料号筛选。
+
+## 6. 峰值、RMS 与饱和裕量
+
+$$
+I_{L,peak} = I_{L,avg} + \\frac{\\Delta I_L}{2}
+$$
+{{derive:boost-inductor-current-rating|BOOST电感电流等级推导（CCM）|amber}}
+
+代入 $I_{L,avg}=4.44A$、$\\Delta I_L=1.0A$，得到 $I_{L,peak} \\approx 4.94A$。RMS 电流可按三角纹波近似估算：
+
+$$
+I_{L,rms}\\approx\\sqrt{I_{L,avg}^2+\\frac{\\Delta I_L^2}{12}}
+$$
+{{derive:boost-inductor-current-rating|BOOST电感电流等级推导（CCM）|amber}}
+
+本例 $I_{L,rms}\\approx4.45A$。建议饱和电流不低于 6.5A，额定 RMS 电流不低于 5A，并复核高温下电感量下降曲线。
+
+## 7. 损耗、温升与料号取舍
+
+料号取舍不需要跳转到推导页，直接在计算书内形成工程约束：
+
+| 项目 | 计算结论 | 选型动作 |
+| --- | --- | --- |
+| 电感量 | $L_{min} \\approx 24.8\\mu H$ | 标准值先选 33 uH |
+| 峰值电流 | $I_{L,peak} \\approx 4.94A$ | $I_{sat}$ 建议不低于 6.5A |
+| RMS 电流 | $I_{L,rms}\\approx4.45A$ | 额定温升电流建议不低于 5A |
+| 直流电阻 | $P_{DCR}\\approx I_{L,rms}^2DCR$ | 优先低 DCR，但不要牺牲饱和裕量 |
+| 频率特性 | 200 kHz 开关 | SRF 显著高于工作频率，确认磁芯损耗 |
+| 温升 | 由铜损、磁芯损耗和散热决定 | 样机满载热测后修正料号 |
+
+## 8. 推荐起点
+
+本例的第一轮料号筛选建议：
+
+| 选型项 | 推荐起点 |
+| --- | --- |
+| 标称电感量 | 33 uH |
+| 饱和电流 | 不低于 6.5 A，优先查看高温降额曲线 |
+| 温升电流 | 不低于 5 A |
+| DCR | 在尺寸允许下尽量低，先按 20 mΩ 到 40 mΩ 区间筛选 |
+| 结构 | 屏蔽功率电感优先，兼顾 EMI 和热路径 |
+
+结论：33 uH、$I_{sat}\\ge6.5A$、$I_{rms}\\ge5A$ 的屏蔽功率电感可以作为本设计第一轮样机起点。后续以实测纹波、温升、效率和瞬态响应确认是否调整到 22 uH 或 47 uH。`
+    },
+    {
+      slug: "boost-duty-cycle-ccm",
+      symbol: "D.boost",
+      title: "BOOST拓扑占空比推导（CCM）",
+      summary: "从 BOOST 拓扑在 CCM 下的电感伏秒平衡推出理想占空比关系，并说明效率修正只是工程估算。",
+      accentColor: "purple",
+      tags: "BOOST, 电感设计, CCM, 占空比, 伏秒平衡",
+      markdown: `# BOOST拓扑占空比推导（CCM）
+
+公式唯一标识（CMS slug）：\`boost-duty-cycle-ccm\`
+
+这个节点用于推导计算书中的 BOOST 拓扑占空比。推导边界是连续电流模式 CCM、稳态工作、理想开关和理想二极管；效率修正只作为后续工程估算。
+
+## 1. 开关导通阶段
+
+开关导通时间为 $D T_s$。二极管截止，电感一端接输入电压，另一端近似接地，因此电感电压近似为：
+
+$$
+V_{L,on}=V_{in}
+$$
+
+## 2. 开关关断阶段
+
+关断时间为 $(1-D)T_s$。电感经二极管向输出端释放能量，电感电压近似为：
+
+$$
+V_{L,off}=V_{in}-V_{out}
+$$
+
+## 3. CCM 稳态伏秒平衡
+
+稳态下电感一个周期内平均电压为 0：
+
+$$
+V_{in}D T_s + (V_{in}-V_{out})(1-D)T_s = 0
+$$
+
+约去 $T_s$ 并展开：
+
+$$
+V_{in}D + V_{in}(1-D)-V_{out}(1-D)=0
+$$
+
+得到：
+
+$$
+V_{in}=V_{out}(1-D)
+$$
+
+因此理想 BOOST 电压关系为：
+
+$$
+V_{out}=\\frac{V_{in}}{1-D}
+$$
+
+整理得到理想占空比：
+
+$$
+D = 1 - \\frac{V_{in}}{V_{out}}
+$$
+
+计算书中使用的工程估算把效率折进输入到输出的电压关系：
+
+$$
+D \\approx 1 - \\frac{V_{in}\\eta}{V_{out}}
+$$
+
+例如 $V_{in}=12V$、$V_{out}=24V$、$\\eta=0.90$ 时，$D \\approx 0.55$。这个值不是理想推导本身，而是带效率预估的设计入口。
+
+返回上一级计算书：[BOOST 电感选型计算书](./derive.html?slug=boost-inductor-selection-sheet)`
+    },
+    {
+      slug: "boost-inductor-ripple",
+      symbol: "Delta I_L",
+      title: "BOOST电感纹波电流推导（CCM）",
+      summary: "从电感电压电流关系推导 BOOST CCM 导通阶段的电感纹波电流公式。",
+      accentColor: "blue",
+      tags: "BOOST, 电感设计, 纹波电流",
+      markdown: `# BOOST电感纹波电流推导（CCM）
+
+公式唯一标识（CMS slug）：\`boost-inductor-ripple\`
+
+电感的基本关系为：
+
+$$
+V_L=L\\frac{di_L}{dt}
+$$
+
+在 BOOST 开关导通阶段，电感两端电压近似为 $V_{in}$，导通时间为 $D T_s$，因此电感电流增量为：
+
+$$
+\\Delta I_L=\\frac{V_{in}}{L}D T_s
+$$
+
+又因为 $T_s=1/f_s$，得到：
+
+$$
+\\Delta I_L = \\frac{V_{in}D}{L f_s}
+$$
+
+纹波目标通常按平均电感电流的 20% 到 40% 初选。纹波越小，所需电感量越大，瞬态响应也会变慢。
+
+返回上一级计算书：[BOOST 电感选型计算书](./derive.html?slug=boost-inductor-selection-sheet)`
+    },
+    {
+      slug: "boost-inductor-value",
+      symbol: "L.boost",
+      title: "BOOST电感量下限推导",
+      summary: "由目标电感纹波反推满足纹波要求的 BOOST 电感量下限。",
+      accentColor: "green",
+      tags: "BOOST, 电感设计, Lmin",
+      markdown: `# BOOST电感量下限推导
+
+公式唯一标识（CMS slug）：\`boost-inductor-value\`
+
+从电感纹波公式开始：
+
+$$
+\\Delta I_L = \\frac{V_{in}D}{L f_s}
+$$
+
+当设计给定最大允许纹波 $\\Delta I_{L,target}$ 时，为了不超过该纹波，需要满足：
+
+$$
+L \\ge \\frac{V_{in}D}{\\Delta I_L f_s}
+$$
+
+如果计算值落在标准料号之间，通常向上选择，并重新检查纹波、体积和直流电阻。
+
+返回上一级计算书：[BOOST 电感选型计算书](./derive.html?slug=boost-inductor-selection-sheet)`
+    },
+    {
+      slug: "boost-inductor-current-rating",
+      symbol: "I_L.peak",
+      title: "BOOST电感电流等级推导（CCM）",
+      summary: "推导 BOOST CCM 电感平均电流、峰值电流和三角纹波 RMS 估算，用于饱和电流与温升电流选型。",
+      accentColor: "amber",
+      tags: "BOOST, 电感设计, 饱和电流",
+      markdown: `# BOOST电感电流等级推导（CCM）
+
+公式唯一标识（CMS slug）：\`boost-inductor-current-rating\`
+
+## 1. 平均电感电流
+
+BOOST 在 CCM 下，电感电流的平均值就是输入侧平均电流。理想情况下，二极管只在关断阶段向输出传能，因此输出平均电流约为：
+
+$$
+I_{out}=I_{L,avg}(1-D)
+$$
+
+整理得到：
+
+$$
+I_{L,avg} = \\frac{I_{out}}{1-D}
+$$
+
+实际设计中还应结合效率、输入电压范围和负载瞬态，把这个平均值作为电流等级的最低估算。
+
+## 2. 峰值电感电流
+
+电感纹波近似为围绕平均值上下摆动的三角波，所以峰值电流需要叠加半个纹波电流：
+
+$$
+I_{L,peak} = I_{L,avg} + \\frac{\\Delta I_L}{2}
+$$
+
+饱和电流必须高于该峰值，并额外考虑高温降额和短时过载。
+
+## 3. RMS 电流估算
+
+若把电感电流看成平均值叠加零均值三角纹波，三角纹波的 RMS 为 $\\Delta I_L/\\sqrt{12}$，因此：
+
+$$
+I_{L,rms}\\approx\\sqrt{I_{L,avg}^2+\\frac{\\Delta I_L^2}{12}}
+$$
+
+这个 RMS 值主要用于估算 DCR 铜损和温升电流，而不是饱和电流。
+
+返回上一级计算书：[BOOST 电感选型计算书](./derive.html?slug=boost-inductor-selection-sheet)`
+    },
+    {
+      slug: "boost-inductor-options",
+      symbol: "L.part",
+      title: "BOOST电感料号取舍清单",
+      summary: "把电感量、饱和电流、直流电阻、频率特性、体积和温升放在一起做工程取舍；该页不是公式推导页。",
+      accentColor: "neutral",
+      tags: "BOOST, 电感设计, 选型",
+      markdown: `# BOOST电感料号取舍清单
+
+这个节点是工程选型清单，不是公式推导页，因此不应该作为计算书里的公式上角标跳转目标。完成公式估算后，实际料号还需要按损耗、温升和供应链做取舍。
+
+| 关注项 | 选型判断 |
+| --- | --- |
+| 电感量 | 不低于计算下限，必要时按标准值向上取整 |
+| 饱和电流 | 高于 $I_{L,peak}$，并保留温度和瞬态裕量 |
+| 直流电阻 | 越低越有利于效率，但体积和成本会上升 |
+| 频率特性 | 确认目标 $f_s$ 下的磁芯损耗和电感衰减 |
+
+返回上一级计算书：[BOOST 电感选型计算书](./derive.html?slug=boost-inductor-selection-sheet)`
+    },
+    {
+      slug: "math-double-angle-formula",
+      symbol: "纯数学推导",
+      title: "纯数学推导 - 二倍角公式",
+      summary: "从和角公式推出二倍角关系，用作后续交流量、相位或 RMS 推导时的数学支撑节点。",
+      accentColor: "blue",
+      tags: "纯数学, 三角函数, 二倍角公式",
+      markdown: `# 纯数学推导 - 二倍角公式
+
+这是一个纯数学支持节点，和 BOOST 工程结论分开显示。它用于说明公式库也可以承载基础数学推导。
+
+从正弦和角公式开始：
+
+$$
+\\sin(\\alpha + \\beta) = \\sin\\alpha\\cos\\beta + \\cos\\alpha\\sin\\beta
+$$
+
+令 $\\alpha=\\beta=\\theta$，得到：
+
+$$
+\\sin(2\\theta)=2\\sin\\theta\\cos\\theta
+$$
+
+同理，余弦二倍角可以写成：
+
+$$
+\\cos(2\\theta)=\\cos^2\\theta-\\sin^2\\theta
+$$
+
+后续若某个工程计算书真的使用三角恒等式，可以在对应公式旁用小图标跳转到这个纯数学推导页。`
+    }
+  ];
   const defaultLayoutPages = [
     {
       key: "home",
@@ -180,7 +571,13 @@
   }
 
   async function loadServerContent() {
-    serverContent = await request("/api/admin/content");
+    const payload = await request("/api/admin/content");
+    serverContent = {
+      posts: payload.posts || [],
+      projects: payload.projects || [],
+      knowledgeNodes: payload.knowledgeNodes || [],
+      siteLayout: payload.siteLayout || { home: [] }
+    };
   }
 
   function setLoggedIn(value) {
@@ -245,6 +642,145 @@
     return `<p>${escapeHtml(markdown || "Markdown 预览会显示在这里。")}</p>`;
   }
 
+  function populateFormulaAuthoringControls() {
+    if (formulaSnippetSelect) {
+      formulaSnippetSelect.innerHTML = formulaSnippets
+        .map((snippet) => `<option value="${escapeHtml(snippet.key)}">${escapeHtml(snippet.label)}</option>`)
+        .join("");
+    }
+    if (boostTemplateSelect) {
+      boostTemplateSelect.innerHTML = boostTemplates
+        .map((template) => `<option value="${escapeHtml(template.slug)}">${escapeHtml(template.title)}</option>`)
+        .join("");
+    }
+  }
+
+  function selectedFormulaSnippet() {
+    const key = formulaSnippetSelect?.value || formulaSnippets[0]?.key;
+    return formulaSnippets.find((snippet) => snippet.key === key) || formulaSnippets[0];
+  }
+
+  function selectedMarkdownText() {
+    const field = contentForm.markdown;
+    return field.value.slice(field.selectionStart || 0, field.selectionEnd || 0).trim();
+  }
+
+  function insertMarkdownText(text, options = {}) {
+    const field = contentForm.markdown;
+    const start = field.selectionStart || 0;
+    const end = field.selectionEnd || 0;
+    const before = field.value.slice(0, start);
+    const after = field.value.slice(end);
+    const prefix = options.block && before && !before.endsWith("\n") ? "\n\n" : "";
+    const suffix = options.block && after && !after.startsWith("\n") ? "\n\n" : "";
+    const inserted = `${prefix}${text}${suffix}`;
+    field.value = `${before}${inserted}${after}`;
+    const cursor = start + inserted.length;
+    field.focus();
+    field.setSelectionRange(cursor, cursor);
+    updatePreview();
+    markDirty();
+  }
+
+  function insertFormula(mode) {
+    const snippet = selectedFormulaSnippet();
+    const latex = selectedMarkdownText() || snippet?.latex || "V_{in}";
+    if (mode === "display") {
+      insertMarkdownText(`$$\n${latex}\n$$`, { block: true });
+      setNotice("已插入块级公式。", "success");
+      return;
+    }
+    insertMarkdownText(`$${latex}$`);
+    setNotice("已插入行内公式。", "success");
+  }
+
+  function insertFormulaSnippet() {
+    const snippet = selectedFormulaSnippet();
+    if (!snippet) return;
+    insertMarkdownText(`公式：$${snippet.latex}$\n\n$$\n${snippet.latex}\n$$`, { block: true });
+    setNotice(`已插入公式片段：${snippet.label}。`, "success");
+  }
+
+  function cleanShortcodeLabel(value) {
+    return String(value || "")
+      .replace(/[|{}]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 80);
+  }
+
+  function insertDeriveShortcode() {
+    const slug = normalizedKnowledgeSlug(deriveLinkSlugInput?.value || "");
+    if (!/^[a-z0-9][a-z0-9-]{1,79}$/.test(slug)) {
+      setNotice("请输入合法的推导目标 slug，只能包含小写字母、数字和连字符。", "error");
+      deriveLinkSlugInput?.focus();
+      return;
+    }
+    const selected = selectedMarkdownText();
+    const label = cleanShortcodeLabel(deriveLinkLabelInput?.value || selected || slug);
+    if (!label) {
+      setNotice("公式跳转标记 label 不能为空。", "error");
+      deriveLinkLabelInput?.focus();
+      return;
+    }
+    const color = knowledgeAccent(deriveLinkColorSelect?.value || contentForm.accentColor?.value || "purple");
+    insertMarkdownText(`{{derive:${slug}|${label}|${color}}}`);
+    setNotice(`已插入公式跳转标记：${slug}。`, "success");
+  }
+
+  function boostTemplateBySlug(slug) {
+    return boostTemplates.find((template) => template.slug === slug) || boostTemplates[0];
+  }
+
+  function boostChainMarkdown() {
+    return [
+      "## BOOST 电感选型计算书公式推导入口",
+      "",
+      "{{derive:boost-duty-cycle-ccm|BOOST拓扑占空比推导（CCM）|purple}}",
+      "{{derive:boost-inductor-current-rating|BOOST电感电流等级推导（CCM）|amber}}",
+      "{{derive:boost-inductor-value|BOOST电感量下限推导|green}}",
+      "{{derive:boost-inductor-ripple|BOOST电感纹波电流推导（CCM）|blue}}"
+    ].join("\n");
+  }
+
+  function applyBoostTemplate() {
+    const template = boostTemplateBySlug(boostTemplateSelect?.value);
+    if (!template) return;
+    if (snapshotHasContent(currentSnapshot()) && !confirmDiscard("套用 BOOST 示例节点会覆盖当前表单，确认继续吗？")) return;
+    applySnapshotToForm(
+      {
+        editingType: null,
+        editingId: null,
+        type: "knowledge_node",
+        slug: template.slug,
+        nodeType: "derivation",
+        symbol: template.symbol,
+        title: template.title,
+        excerpt: template.summary,
+        tags: template.tags,
+        markdown: template.markdown,
+        publishStatus: "draft",
+        visibilityStatus: "public",
+        accentColor: template.accentColor,
+        featured: false,
+        featuredOrder: 0,
+        recommendationPriority: 100,
+        category: "模拟电子",
+        statusKey: "planned",
+        version: "",
+        progress: 0,
+        repoUrl: "",
+        bomUrl: "",
+        docsUrl: "",
+        cover: ""
+      },
+      { dirty: true }
+    );
+    window.location.hash = "editor";
+    contentForm.markdown.focus();
+    setNotice(`已套用 BOOST 示例节点：${template.title}。`, "success");
+  }
+
   function getType() {
     return new FormData(contentForm).get("type");
   }
@@ -257,6 +793,51 @@
     return { planned: "规划中", development: "开发中", online: "已上线" }[statusKey] || "规划中";
   }
 
+  function isKnowledgeType(type) {
+    return type === "knowledge_node";
+  }
+
+  function kindLabel(type) {
+    if (type === "project") return "项目";
+    if (isKnowledgeType(type)) return "推导节点";
+    return "文章";
+  }
+
+  function publishLabel(status) {
+    return { draft: "草稿", published: "已发布", archived: "已归档" }[status] || "草稿";
+  }
+
+  function visibilityLabel(status) {
+    return { public: "公开列表", unlisted: "仅直链", private: "私有" }[status] || "公开列表";
+  }
+
+  function normalizedKnowledgeSlug(value) {
+    return String(value || "").trim().toLowerCase();
+  }
+
+  function assertKnowledgeSlug(value) {
+    const slug = normalizedKnowledgeSlug(value);
+    if (!/^[a-z0-9][a-z0-9-]{1,79}$/.test(slug)) {
+      throw new Error("推导节点 slug 只能包含小写字母、数字和连字符，长度 2-80");
+    }
+    return slug;
+  }
+
+  function knowledgeAccent(value) {
+    return knowledgeColorTokens.includes(value) ? value : "purple";
+  }
+
+  function collectionKeyForType(type) {
+    if (type === "project") return "projects";
+    if (isKnowledgeType(type)) return "knowledgeNodes";
+    return "posts";
+  }
+
+  function resultCollection(result, collectionKey) {
+    if (collectionKey === "knowledgeNodes") return result.nodes || result.knowledgeNodes || [];
+    return result[collectionKey] || [];
+  }
+
   function adminSrc(src) {
     if (!src) return "";
     if (src.startsWith("data:") || src.startsWith("http")) return src;
@@ -266,6 +847,7 @@
 
   function fallbackCover(item) {
     if (item.cover) return item.cover;
+    if (item.contentType === "knowledge_node") return "./assets/covers/analog-cover.png";
     if (item.contentType === "project") return "./assets/covers/project-cover.png";
     const key = categoryKey(item.category || "");
     if (key === "stm32") return "./assets/covers/stm32-cover.png";
@@ -286,7 +868,8 @@
   }
 
   function publishValue(item) {
-    return item.contentType === "project" ? item.visibilityStatus : item.publishStatus;
+    if (item.contentType === "project") return item.visibilityStatus;
+    return item.publishStatus;
   }
 
   function featuredOrderValue(value) {
@@ -333,7 +916,7 @@
 
   function featuredItems() {
     return combinedItems()
-      .filter((item) => item.featured && !item.deletedAt)
+      .filter((item) => item.contentType !== "knowledge_node" && item.featured && !item.deletedAt)
       .sort((a, b) => featuredOrderValue(a.featuredOrder) - featuredOrderValue(b.featuredOrder) || itemTimestamp(b) - itemTimestamp(a));
   }
 
@@ -344,6 +927,10 @@
       item.summary,
       item.category,
       item.status,
+      item.symbol,
+      item.nodeType,
+      item.accentColor,
+      item.visibilityStatus,
       item.license,
       item.tags,
       item.date,
@@ -355,12 +942,53 @@
       .toLowerCase();
   }
 
+  function setFieldVisible(field, visible) {
+    if (!field) return;
+    field.hidden = !visible;
+    field.querySelectorAll("input, select, textarea, button").forEach((control) => {
+      control.disabled = !visible;
+    });
+  }
+
+  function updatePublishStatusOptions(type = getType()) {
+    const archivedOption = contentForm.publishStatus.querySelector("[data-knowledge-only]");
+    if (!archivedOption) return;
+    archivedOption.hidden = !isKnowledgeType(type);
+    archivedOption.disabled = !isKnowledgeType(type);
+    if (!isKnowledgeType(type) && contentForm.publishStatus.value === "archived") {
+      contentForm.publishStatus.value = "draft";
+    }
+  }
+
   function updateTypeFields() {
     const type = getType();
-    categoryField.hidden = type === "project";
-    recommendationPriorityField.hidden = type === "project";
-    statusField.hidden = type !== "project";
-    projectExtra.hidden = type !== "project";
+    const isProject = type === "project";
+    const isKnowledge = isKnowledgeType(type);
+    setFieldVisible(categoryField, !isProject && !isKnowledge);
+    setFieldVisible(recommendationPriorityField, !isProject && !isKnowledge);
+    setFieldVisible(statusField, isProject);
+    setFieldVisible(projectExtra, isProject);
+    setFieldVisible(knowledgeSlugField, isKnowledge);
+    setFieldVisible(knowledgeSymbolField, isKnowledge);
+    setFieldVisible(knowledgeAccentField, isKnowledge);
+    setFieldVisible(knowledgeVisibilityField, isKnowledge);
+    setFieldVisible(featuredField, !isKnowledge);
+    setFieldVisible(formulaHelperPanel, isKnowledge);
+    if (isKnowledge) {
+      if (!knowledgeColorTokens.includes(contentForm.accentColor?.value)) contentForm.accentColor.value = "purple";
+      if (!["public", "unlisted", "private"].includes(contentForm.visibilityStatus?.value)) contentForm.visibilityStatus.value = "public";
+    }
+    if (contentForm.title) {
+      contentForm.title.placeholder = isKnowledge ? "例如：Boost 占空比推导" : "例如：STM32 ADC + DMA 连续采样";
+    }
+    if (contentForm.excerpt) {
+      contentForm.excerpt.placeholder = isKnowledge ? "推导页摘要。发布前摘要不能为空。" : "这段内容会显示在首页卡片和详情页顶部。";
+    }
+    updatePublishStatusOptions(type);
+    if (!isKnowledge) {
+      setKnowledgeWarnings([]);
+      renderKnowledgeRevisions([], null);
+    }
     updateVisibilityHint();
   }
 
@@ -370,7 +998,23 @@
 
   function visibilityMessage(snapshot = currentSnapshot()) {
     const isProject = snapshot.type === "project";
+    const isKnowledge = isKnowledgeType(snapshot.type);
     const isPublished = snapshot.publishStatus === "published";
+    if (isKnowledge) {
+      if (snapshot.publishStatus === "archived") {
+        return { tone: "warning", text: "已归档的推导节点不会进入公开列表，公开直链也会隐藏。" };
+      }
+      if (!isPublished) {
+        return { tone: "warning", text: "草稿推导节点只在 CMS 可见；可以先保存再补全摘要、正文和短码。" };
+      }
+      if (snapshot.visibilityStatus === "private") {
+        return { tone: "warning", text: "私有推导节点即使已发布也不会进入公开列表或公开直链。" };
+      }
+      if (snapshot.visibilityStatus === "unlisted") {
+        return { tone: "success", text: "已发布且仅直链可访问；不会出现在公开推导节点列表。" };
+      }
+      return { tone: "success", text: "已发布且公开；会进入公开推导节点列表，并可通过公式推导页访问。" };
+    }
     if (!isPublished) {
       return { tone: "warning", text: "草稿不会进入访客端、RSS 或 sitemap；当前预览仅用于编辑校对。" };
     }
@@ -391,6 +1035,67 @@
     visibilityHint.classList.toggle("is-success", message.tone === "success");
   }
 
+  function setKnowledgeWarnings(warnings = []) {
+    if (!knowledgeWarnings) return;
+    const visibleWarnings = [...new Set((warnings || []).filter(Boolean))];
+    knowledgeWarnings.hidden = visibleWarnings.length === 0;
+    knowledgeWarnings.innerHTML = visibleWarnings.length
+      ? `
+        <strong>保存警告</strong>
+        <ul>${visibleWarnings.map((warning) => `<li>${escapeHtml(warning)}</li>`).join("")}</ul>
+      `
+      : "";
+  }
+
+  function revisionReasonLabel(reason) {
+    return {
+      save: "保存前快照",
+      publish: "发布前快照",
+      unpublish: "取消发布前快照",
+      archive: "归档前快照",
+      soft_delete: "回收前快照",
+      restore: "恢复前快照",
+      before_revision_restore: "版本恢复前快照"
+    }[reason] || reason || "快照";
+  }
+
+  function renderKnowledgeRevisions(revisions = [], node = null) {
+    if (!knowledgeRevisionsPanel || !knowledgeRevisionList) return;
+    const showPanel = isKnowledgeType(getType()) || Boolean(node);
+    knowledgeRevisionsPanel.hidden = !showPanel;
+    if (!showPanel) return;
+    if (!node?.id) {
+      knowledgeRevisionList.innerHTML = `<div class="empty-state">保存推导节点后会显示版本记录。</div>`;
+      return;
+    }
+    knowledgeRevisionList.innerHTML =
+      revisions
+        .map((revision) => {
+          const snapshot = revision.snapshot?.node || revision.snapshot || {};
+          const title = snapshot.title || revision.nodeTitle || "未命名推导节点";
+          return `
+            <article class="knowledge-revision-row">
+              <div>
+                <strong>${escapeHtml(revisionReasonLabel(revision.revisionReason))}</strong>
+                <p>${escapeHtml(title)} / ${escapeHtml(revision.sourceUpdatedAt || revision.createdAt || "")}</p>
+              </div>
+              <button class="button secondary" data-action="restore-knowledge-revision" data-node-id="${escapeHtml(node.id)}" data-revision-id="${escapeHtml(revision.id)}" type="button">恢复此版本</button>
+            </article>
+          `;
+        })
+        .join("") || `<div class="empty-state">暂无版本记录。保存或改变发布状态后会生成快照。</div>`;
+  }
+
+  async function refreshKnowledgeRevisions() {
+    if (!editingId || !isKnowledgeType(editingType)) {
+      renderKnowledgeRevisions([], null);
+      setNotice("请先打开一个已保存的推导节点。", "warning");
+      return;
+    }
+    const result = await request(`/api/admin/knowledge-nodes/${encodeURIComponent(editingId)}/revisions`);
+    renderKnowledgeRevisions(result.revisions || [], result.node);
+  }
+
   function currentSnapshot() {
     const data = new FormData(contentForm);
     return {
@@ -398,12 +1103,17 @@
       editingId,
       cover: currentCover,
       type: data.get("type") || "post",
+      slug: data.get("slug") || "",
+      nodeType: data.get("nodeType") || "derivation",
+      symbol: data.get("symbol") || "",
       title: data.get("title") || "",
       category: data.get("category") || "模拟电子",
       statusKey: data.get("statusKey") || "planned",
       excerpt: data.get("excerpt") || "",
       tags: data.get("tags") || "",
       publishStatus: data.get("publishStatus") || "draft",
+      visibilityStatus: data.get("visibilityStatus") || "public",
+      accentColor: data.get("accentColor") || "purple",
       featured: data.get("featured") === "on",
       featuredOrder: String(featuredOrderValue(data.get("featuredOrder") || "0")),
       recommendationPriority: String(recommendationPriorityValue(data.get("recommendationPriority") || "100")),
@@ -419,6 +1129,8 @@
   function snapshotHasContent(snapshot) {
     return Boolean(
       snapshot.title.trim() ||
+        snapshot.slug.trim() ||
+        snapshot.symbol.trim() ||
         snapshot.excerpt.trim() ||
         snapshot.tags.trim() ||
         snapshot.markdown.trim() ||
@@ -580,10 +1292,17 @@
     editingId = null;
     contentForm.reset();
     contentForm.type.value = "post";
+    if (contentForm.nodeType) contentForm.nodeType.value = "derivation";
+    if (contentForm.slug) contentForm.slug.value = "";
+    if (contentForm.symbol) contentForm.symbol.value = "";
+    if (contentForm.accentColor) contentForm.accentColor.value = "purple";
+    if (contentForm.visibilityStatus) contentForm.visibilityStatus.value = "public";
     contentForm.publishStatus.value = "draft";
     contentForm.featuredOrder.value = "0";
     contentForm.recommendationPriority.value = "100";
     setCover("", "", { dirty: false });
+    setKnowledgeWarnings([]);
+    renderKnowledgeRevisions([], null);
     updateTypeFields();
     updatePreview();
     updateVisibilityHint();
@@ -592,10 +1311,35 @@
     dirty ? markDirty() : markClean();
   }
 
+  function startNewKnowledgeNode() {
+    if (!confirmDiscard("当前编辑器里有未保存修改，新建推导节点会覆盖表单，确认继续吗？")) return;
+    isRestoringForm = true;
+    editingType = null;
+    editingId = null;
+    contentForm.reset();
+    contentForm.type.value = "knowledge_node";
+    if (contentForm.nodeType) contentForm.nodeType.value = "derivation";
+    if (contentForm.publishStatus) contentForm.publishStatus.value = "draft";
+    if (contentForm.visibilityStatus) contentForm.visibilityStatus.value = "public";
+    if (contentForm.accentColor) contentForm.accentColor.value = "purple";
+    setCover("", "", { dirty: false });
+    setKnowledgeWarnings([]);
+    renderKnowledgeRevisions([], { id: "" });
+    updateTypeFields();
+    updatePreview();
+    updateVisibilityHint();
+    isRestoringForm = false;
+    markClean();
+    window.location.hash = "editor";
+    contentForm.slug?.focus();
+    setNotice("已切换到新建推导节点。请填写 slug、变量符号、标题和正文。", "info");
+  }
+
   function combinedItems() {
     return [
       ...serverContent.posts.map((item) => ({ ...item, contentType: "post" })),
-      ...serverContent.projects.map((item) => ({ ...item, contentType: "project" }))
+      ...serverContent.projects.map((item) => ({ ...item, contentType: "project" })),
+      ...(serverContent.knowledgeNodes || []).map((item) => ({ ...item, contentType: "knowledge_node" }))
     ];
   }
 
@@ -605,6 +1349,7 @@
       if (filters.type !== "all" && item.contentType !== filters.type) return false;
       if (filters.status === "published" && (item.deletedAt || publishValue(item) !== "published")) return false;
       if (filters.status === "draft" && (item.deletedAt || publishValue(item) === "published")) return false;
+      if (filters.status === "archived" && (item.deletedAt || publishValue(item) !== "archived")) return false;
       if (filters.status === "deleted" && !item.deletedAt) return false;
       if (filters.status === "featured" && !item.featured) return false;
       if (query && !searchableText(item).includes(query)) return false;
@@ -649,9 +1394,9 @@
     recentContentList.innerHTML =
       recentItems()
         .map((item) => {
-          const kind = item.contentType === "project" ? "项目" : "文章";
-          const publish = publishValue(item) === "published" ? "已发布" : "草稿";
-          const meta = item.contentType === "project" ? item.status || "项目" : item.category || "文章";
+          const kind = kindLabel(item.contentType);
+          const publish = publishLabel(publishValue(item));
+          const meta = item.contentType === "project" ? item.status || "项目" : item.contentType === "knowledge_node" ? item.symbol || item.nodeType || "推导节点" : item.category || "文章";
           const cover = fallbackCover(item);
           return `
             <article class="admin-recommendation-card">
@@ -676,7 +1421,7 @@
       if (!byOrder.has(order)) byOrder.set(order, item);
     });
     const current = currentSnapshot();
-    const canAssignCurrent = snapshotHasContent(current);
+    const canAssignCurrent = snapshotHasContent(current) && !isKnowledgeType(current.type);
     featuredSlots.innerHTML = Array.from({ length: featuredLimit }, (_, order) => {
       const item = byOrder.get(order);
       if (!item) {
@@ -691,8 +1436,8 @@
           </article>
         `;
       }
-      const kind = item.contentType === "project" ? "项目" : "文章";
-      const publish = publishValue(item) === "published" ? "已发布" : "草稿";
+      const kind = kindLabel(item.contentType);
+      const publish = publishLabel(publishValue(item));
       const meta = item.contentType === "project" ? item.status || "项目" : item.category || "文章";
       const cover = fallbackCover(item);
       return `
@@ -895,23 +1640,35 @@
     list.innerHTML =
       items
         .map((item) => {
-          const kind = item.contentType === "project" ? "项目" : "文章";
+          const kind = kindLabel(item.contentType);
           const publish = publishValue(item);
-          const meta = item.contentType === "project" ? `${item.status || ""} / ${item.license || ""}` : `${item.category || ""} / ${item.readTime || ""}`;
+          const meta =
+            item.contentType === "project"
+              ? `${item.status || ""} / ${item.license || ""}`
+              : item.contentType === "knowledge_node"
+                ? `${item.symbol || "未填变量"} / ${visibilityLabel(item.visibilityStatus)} / ${item.accentColor || "purple"}`
+                : `${item.category || ""} / ${item.readTime || ""}`;
           const tags = item.tags ? ` / ${item.tags}` : "";
           const deleted = Boolean(item.deletedAt);
-          const slot = item.featured ? ` / 轮播${featuredSlotLabel(item.featuredOrder)}` : "";
+          const slot = item.featured && item.contentType !== "knowledge_node" ? ` / 轮播${featuredSlotLabel(item.featuredOrder)}` : "";
           const key = itemKey(item);
+          const canHardDelete = item.contentType !== "knowledge_node";
+          const quickStatusAction =
+            item.contentType === "knowledge_node" && !deleted
+              ? publish === "published"
+                ? `<button class="button secondary" data-action="draft" data-type="${item.contentType}" data-id="${item.id}" type="button">转草稿</button>`
+                : `<button class="button secondary" data-action="publish" data-type="${item.contentType}" data-id="${item.id}" type="button">发布</button>`
+              : "";
           return `
             <article class="admin-row ${deleted ? "is-deleted" : ""}">
               <label class="admin-row-select" aria-label="选择 ${escapeHtml(item.title)}">
                 <input data-action="select" data-key="${escapeHtml(key)}" type="checkbox" ${selectedContent.has(key) ? "checked" : ""} />
               </label>
-              <img src="${adminSrc(item.cover)}" alt="${escapeHtml(item.title)}封面" />
+              <img src="${adminSrc(fallbackCover(item))}" alt="${escapeHtml(item.title)}封面" />
               <div>
                 <strong>
                   <span class="content-kind">${kind}</span>${escapeHtml(item.title)}
-                  <span class="content-status">${deleted ? "回收站" : publish === "published" ? "已发布" : "草稿"}</span>
+                  <span class="content-status">${deleted ? "回收站" : publishLabel(publish)}</span>
                 </strong>
                 <p>${escapeHtml(meta)}${escapeHtml(tags)} / ${escapeHtml(item.date || "暂无日期")}${escapeHtml(slot)}</p>
                 <p>${escapeHtml(item.excerpt || item.summary)}</p>
@@ -919,9 +1676,10 @@
               <div class="row-actions">
                 ${deleted ? `
                   <button class="button secondary" data-action="restore" data-type="${item.contentType}" data-id="${item.id}" type="button">恢复</button>
-                  <button class="button secondary" data-action="hard-delete" data-type="${item.contentType}" data-id="${item.id}" type="button">永久删除</button>
+                  ${canHardDelete ? `<button class="button secondary" data-action="hard-delete" data-type="${item.contentType}" data-id="${item.id}" type="button">永久删除</button>` : ""}
                 ` : `
                   <button class="button secondary" data-action="edit" data-type="${item.contentType}" data-id="${item.id}" type="button">编辑</button>
+                  ${quickStatusAction}
                   <button class="button secondary" data-action="delete" data-type="${item.contentType}" data-id="${item.id}" type="button">移入回收站</button>
                 `}
               </div>
@@ -931,7 +1689,52 @@
         .join("") || `<div class="empty-state">没有匹配的内容。</div>`;
     renderRecentContent();
     renderFeaturedSlots();
+    renderKnowledgeNodeList();
   }
+
+  function knowledgeItems() {
+    return (serverContent.knowledgeNodes || []).map((item) => ({ ...item, contentType: "knowledge_node" }));
+  }
+
+  function renderKnowledgeNodeList() {
+    if (!knowledgeNodeList) return;
+    const nodes = knowledgeItems();
+    knowledgeNodeList.innerHTML =
+      nodes
+        .map((node) => {
+          const deleted = Boolean(node.deletedAt);
+          const publish = publishValue(node);
+          const links = Array.isArray(node.links) ? node.links : [];
+          const dangling = links.filter((link) => link.resolved === false).length;
+          return `
+            <article class="admin-row knowledge-row ${deleted ? "is-deleted" : ""}">
+              <span class="knowledge-color-dot knowledge-color-dot--${escapeHtml(node.accentColor || "purple")}" aria-hidden="true"></span>
+              <img src="${adminSrc(fallbackCover(node))}" alt="${escapeHtml(node.title || "未命名推导节点")}封面" />
+              <div>
+                <strong>
+                  <span class="content-kind">推导节点</span>${escapeHtml(node.title || "未命名推导节点")}
+                  <span class="content-status">${deleted ? "回收站" : publishLabel(publish)}</span>
+                </strong>
+                <p>${escapeHtml(node.symbol || "未填变量")} / ${escapeHtml(node.slug || node.id)} / ${visibilityLabel(node.visibilityStatus)}</p>
+                <p>${escapeHtml(node.summary || "暂无摘要")}${dangling ? ` / ${dangling} 个悬空推导目标` : ""}</p>
+              </div>
+              <div class="row-actions">
+                ${deleted ? `
+                  <button class="button secondary" data-action="restore" data-type="knowledge_node" data-id="${escapeHtml(node.id)}" type="button">恢复</button>
+                ` : `
+                  <button class="button secondary" data-action="edit" data-type="knowledge_node" data-id="${escapeHtml(node.id)}" type="button">编辑</button>
+                  ${publish === "published"
+                    ? `<button class="button secondary" data-action="draft" data-type="knowledge_node" data-id="${escapeHtml(node.id)}" type="button">转草稿</button>`
+                    : `<button class="button secondary" data-action="publish" data-type="knowledge_node" data-id="${escapeHtml(node.id)}" type="button">发布</button>`}
+                  <button class="button secondary" data-action="delete" data-type="knowledge_node" data-id="${escapeHtml(node.id)}" type="button">移入回收站</button>
+                `}
+              </div>
+            </article>
+          `;
+        })
+        .join("") || `<div class="empty-state">还没有推导节点。点击“新建推导节点”开始。</div>`;
+  }
+
   function renderImageLibrary(images = []) {
     imageLibrary.innerHTML =
       images
@@ -1007,6 +1810,11 @@
     editingType = snapshot.editingType || null;
     editingId = snapshot.editingId || null;
     contentForm.type.value = snapshot.type || "post";
+    if (contentForm.nodeType) contentForm.nodeType.value = snapshot.nodeType || "derivation";
+    if (contentForm.slug) contentForm.slug.value = snapshot.slug || "";
+    if (contentForm.symbol) contentForm.symbol.value = snapshot.symbol || "";
+    if (contentForm.accentColor) contentForm.accentColor.value = knowledgeAccent(snapshot.accentColor || "purple");
+    if (contentForm.visibilityStatus) contentForm.visibilityStatus.value = snapshot.visibilityStatus || "public";
     contentForm.title.value = snapshot.title || "";
     contentForm.excerpt.value = snapshot.excerpt || "";
     contentForm.tags.value = snapshot.tags || "";
@@ -1026,22 +1834,31 @@
     updateTypeFields();
     updatePreview();
     updateVisibilityHint();
+    if (isKnowledgeType(snapshot.type)) renderKnowledgeRevisions([], { id: snapshot.editingId || snapshot.id });
     isRestoringForm = false;
     dirty ? markDirty() : markClean();
   }
 
-  function applyItemToForm(type, item) {
-    if (!confirmDiscard("当前编辑器里有未保存修改，切换内容会覆盖表单，确认继续吗？")) return;
+  function applyItemToForm(type, item, options = {}) {
+    const { confirm = true } = options;
+    if (confirm && !confirmDiscard("当前编辑器里有未保存修改，切换内容会覆盖表单，确认继续吗？")) return false;
+    const isKnowledge = isKnowledgeType(type);
     applySnapshotToForm(
       {
         editingType: type,
         editingId: item.id,
         type,
+        id: item.id,
+        slug: item.slug || item.id || "",
+        nodeType: item.nodeType || "derivation",
+        symbol: item.symbol || "",
         title: item.title || "",
         excerpt: item.excerpt || item.summary || "",
         tags: item.tags || "",
         markdown: item.markdown || "",
-        publishStatus: type === "post" ? item.publishStatus || "draft" : item.visibilityStatus || "draft",
+        publishStatus: type === "post" || isKnowledge ? item.publishStatus || "draft" : item.visibilityStatus || "draft",
+        visibilityStatus: item.visibilityStatus || "public",
+        accentColor: item.accentColor || "purple",
         featured: Boolean(item.featured),
         featuredOrder: featuredOrderValue(item.featuredOrder || 0),
         recommendationPriority: recommendationPriorityValue(item.recommendationPriority || 100),
@@ -1058,6 +1875,20 @@
     );
     setNotice(`正在编辑：${item.title || "未命名内容"}`, "info");
     window.location.hash = "editor";
+    return true;
+  }
+
+  async function editItem(type, item, options = {}) {
+    if (!item) return;
+    if (!isKnowledgeType(type)) {
+      applyItemToForm(type, item, options);
+      return;
+    }
+    const result = await request(`/api/admin/knowledge-nodes/${encodeURIComponent(item.id || item.slug)}`);
+    if (applyItemToForm(type, result.node, options)) {
+      renderKnowledgeRevisions(result.revisions || [], result.node);
+      setKnowledgeWarnings([]);
+    }
   }
 
   function restoreDraftIfNeeded() {
@@ -1077,6 +1908,28 @@
     const type = data.get("type");
     const now = new Date().toISOString().slice(0, 10);
     const contentId = editingId || `${type}-${Date.now()}`;
+    if (isKnowledgeType(type)) {
+      const slug = assertKnowledgeSlug(data.get("slug"));
+      return {
+        endpoint: "/api/admin/knowledge-nodes",
+        collectionKey: "knowledgeNodes",
+        payload: {
+          id: editingId || slug,
+          slug,
+          nodeType: data.get("nodeType") || "derivation",
+          symbol: data.get("symbol"),
+          title: data.get("title"),
+          summary: data.get("excerpt"),
+          markdown: data.get("markdown"),
+          cover: currentCover || "",
+          accentColor: knowledgeAccent(data.get("accentColor")),
+          tags: data.get("tags"),
+          publishStatus: data.get("publishStatus") || "draft",
+          visibilityStatus: data.get("visibilityStatus") || "public"
+        }
+      };
+    }
+
     const base = {
       id: contentId,
       slug: contentId,
@@ -1129,6 +1982,7 @@
   }
 
   function validateFeaturedPayload(payload) {
+    if (isKnowledgeType(payload.type)) return;
     if (!payload.featured) return;
     const order = featuredOrderValue(payload.featuredOrder);
     const sameItem = (item) => item.contentType === payload.type && item.id === payload.id;
@@ -1156,6 +2010,10 @@
   }
 
   function assignCurrentToFeaturedSlot(order) {
+    if (isKnowledgeType(getType())) {
+      setNotice("推导节点不进入首页轮播。", "warning");
+      return;
+    }
     contentForm.featured.checked = true;
     contentForm.featuredOrder.value = String(featuredOrderValue(order));
     updateVisibilityHint();
@@ -1187,6 +2045,27 @@
   }
 
   async function saveItemStatus(item, status) {
+    if (item.contentType === "knowledge_node") {
+      const payload = {
+        ...item,
+        id: item.id,
+        slug: item.slug || item.id,
+        nodeType: item.nodeType || "derivation",
+        symbol: item.symbol || "",
+        title: item.title || "",
+        summary: item.summary || "",
+        markdown: item.markdown || "",
+        cover: item.cover || "",
+        accentColor: knowledgeAccent(item.accentColor),
+        tags: item.tags || "",
+        publishStatus: status,
+        visibilityStatus: item.visibilityStatus || "public"
+      };
+      const result = await request("/api/admin/knowledge-nodes", { method: "POST", body: JSON.stringify(payload) });
+      serverContent = { ...serverContent, knowledgeNodes: result.nodes || [] };
+      setKnowledgeWarnings(result.warnings || []);
+      return;
+    }
     if (item.contentType === "post") {
       const payload = { ...item, type: "post", publishStatus: status };
       const result = await request("/api/posts", { method: "POST", body: JSON.stringify(payload) });
@@ -1200,8 +2079,8 @@
   }
 
   async function mutateItem(item, action) {
-    const collectionKey = item.contentType === "project" ? "projects" : "posts";
-    const basePath = item.contentType === "project" ? "projects" : "posts";
+    const collectionKey = collectionKeyForType(item.contentType);
+    const basePath = item.contentType === "knowledge_node" ? "admin/knowledge-nodes" : item.contentType === "project" ? "projects" : "posts";
     let result;
 
     if (action === "publish") {
@@ -1218,7 +2097,7 @@
     if (action === "restore") {
       result = await request(`/api/${basePath}/${encodeURIComponent(item.id)}/restore`, { method: "POST", body: "{}" });
     }
-    if (result) serverContent = { ...serverContent, [collectionKey]: result[collectionKey] };
+    if (result) serverContent = { ...serverContent, [collectionKey]: resultCollection(result, collectionKey) };
   }
 
   async function runBulkAction(action, button, label, confirmMessage) {
@@ -1241,7 +2120,7 @@
   }
   function currentAdminView() {
     const view = (window.location.hash || "#editor").replace("#", "");
-    return ["editor", "library", "carousel", "layout", "health"].includes(view) ? view : "editor";
+    return ["editor", "library", "knowledge", "carousel", "layout", "health"].includes(view) ? view : "editor";
   }
 
   function setAdminView(view = currentAdminView()) {
@@ -1253,6 +2132,7 @@
     });
     if (view === "health") loadHealth().catch(() => renderHealth(null));
     if (view === "editor") renderRecentContent();
+    if (view === "knowledge") renderKnowledgeNodeList();
     if (view === "carousel") renderFeaturedSlots();
     if (view === "layout") renderLayoutPanel();
   }
@@ -1423,7 +2303,62 @@
     const button = event.target.closest("[data-action='edit']");
     if (!button) return;
     const item = combinedItems().find((entry) => entry.contentType === button.dataset.type && entry.id === button.dataset.id);
-    if (item) applyItemToForm(button.dataset.type, item);
+    if (item) editItem(button.dataset.type, item).catch((error) => setNotice(error.message, "error"));
+  });
+
+  newKnowledgeNodeButton?.addEventListener("click", startNewKnowledgeNode);
+
+  knowledgeNodeList?.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-action]");
+    if (!button) return;
+    const item = knowledgeItems().find((entry) => entry.id === button.dataset.id);
+    if (!item) return;
+    withBusy(button, "处理中...", async () => {
+      if (button.dataset.action === "edit") {
+        await editItem("knowledge_node", item);
+        return;
+      }
+      if (button.dataset.action === "publish") {
+        await mutateItem(item, "publish");
+        setNotice("推导节点已发布。", "success");
+      }
+      if (button.dataset.action === "draft") {
+        await mutateItem(item, "draft");
+        setNotice("推导节点已转为草稿。", "success");
+      }
+      if (button.dataset.action === "delete") {
+        if (!window.confirm("确认将推导节点移入回收站吗？公开访问会立即隐藏。")) return;
+        await mutateItem(item, "delete");
+        setNotice("推导节点已移入回收站。", "success");
+      }
+      if (button.dataset.action === "restore") {
+        await mutateItem(item, "restore");
+        setNotice("推导节点已恢复。", "success");
+      }
+      renderList();
+    }).catch((error) => setNotice(error.message, "error"));
+  });
+
+  refreshKnowledgeRevisionsButton?.addEventListener("click", () => {
+    withBusy(refreshKnowledgeRevisionsButton, "刷新中...", refreshKnowledgeRevisions).catch((error) => setNotice(error.message, "error"));
+  });
+
+  knowledgeRevisionList?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-action='restore-knowledge-revision']");
+    if (!button) return;
+    if (!window.confirm("确认恢复到此版本吗？当前节点会先生成恢复前快照。")) return;
+    withBusy(button, "恢复中...", async () => {
+      const result = await request(
+        `/api/admin/knowledge-nodes/${encodeURIComponent(button.dataset.nodeId)}/revisions/${encodeURIComponent(button.dataset.revisionId)}/restore`,
+        { method: "POST", body: "{}" }
+      );
+      serverContent = { ...serverContent, knowledgeNodes: result.nodes || [] };
+      applyItemToForm("knowledge_node", result.node, { confirm: false });
+      renderKnowledgeRevisions(result.revisions || [], result.node);
+      setKnowledgeWarnings(result.warnings || []);
+      renderList();
+      setNotice("推导节点已恢复到选定版本。", "success");
+    }).catch((error) => setNotice(error.message, "error"));
   });
 
   featuredSlots?.addEventListener("click", (event) => {
@@ -1565,6 +2500,21 @@
     setNotice("已选择图片，并复制图片路径。", "success");
   });
 
+  insertInlineFormulaButton?.addEventListener("click", () => insertFormula("inline"));
+
+  insertDisplayFormulaButton?.addEventListener("click", () => insertFormula("display"));
+
+  insertFormulaSnippetButton?.addEventListener("click", insertFormulaSnippet);
+
+  insertDeriveLinkButton?.addEventListener("click", insertDeriveShortcode);
+
+  applyBoostTemplateButton?.addEventListener("click", applyBoostTemplate);
+
+  insertBoostChainButton?.addEventListener("click", () => {
+    insertMarkdownText(boostChainMarkdown(), { block: true });
+    setNotice("已插入 BOOST 电感选型计算书公式推导入口。", "success");
+  });
+
   markdownFile.addEventListener("change", async () => {
     const file = markdownFile.files[0];
     if (!file) return;
@@ -1614,9 +2564,16 @@
         const { endpoint, collectionKey, payload } = buildPayload();
         validateFeaturedPayload(payload);
         const result = await request(endpoint, { method: "POST", body: JSON.stringify(payload) });
-        serverContent = { ...serverContent, [collectionKey]: result[collectionKey] };
+        serverContent = { ...serverContent, [collectionKey]: resultCollection(result, collectionKey) };
         clearDraft();
-        resetForm();
+        if (collectionKey === "knowledgeNodes") {
+          applyItemToForm("knowledge_node", result.node, { confirm: false });
+          const revisionResult = await request(`/api/admin/knowledge-nodes/${encodeURIComponent(result.node.id)}/revisions`).catch(() => ({ revisions: [] }));
+          renderKnowledgeRevisions(revisionResult.revisions || [], result.node);
+          setKnowledgeWarnings(result.warnings || []);
+        } else {
+          resetForm();
+        }
         renderList(); renderRecentContent(); renderFeaturedSlots();
         setNotice(`保存成功：${payload.title || "未命名内容"}。`, "success");
       } catch (error) {
@@ -1639,31 +2596,37 @@
     if (!button) return;
     const type = button.dataset.type;
     const id = button.dataset.id;
-    const collectionKey = type === "project" ? "projects" : "posts";
-    const basePath = type === "project" ? "projects" : "posts";
+    const collectionKey = collectionKeyForType(type);
+    const basePath = type === "knowledge_node" ? "admin/knowledge-nodes" : type === "project" ? "projects" : "posts";
 
     withBusy(button, "处理中...", async () => {
       try {
         if (button.dataset.action === "edit") {
           const item = serverContent[collectionKey].find((entry) => entry.id === id);
-          if (item) applyItemToForm(type, item);
+          if (item) await editItem(type, { ...item, contentType: type });
           return;
+        }
+        if (button.dataset.action === "publish" || button.dataset.action === "draft") {
+          const item = serverContent[collectionKey].find((entry) => entry.id === id);
+          if (item) await mutateItem({ ...item, contentType: type }, button.dataset.action);
+          setNotice(button.dataset.action === "publish" ? "内容已发布。" : "内容已转为草稿。", "success");
         }
         if (button.dataset.action === "delete") {
           if (!window.confirm("确认移入回收站吗？访客端将不再显示。")) return;
           const result = await request(`/api/${basePath}/${encodeURIComponent(id)}`, { method: "DELETE" });
-          serverContent = { ...serverContent, [collectionKey]: result[collectionKey] };
+          serverContent = { ...serverContent, [collectionKey]: resultCollection(result, collectionKey) };
           setNotice("内容已移入回收站。", "success");
         }
         if (button.dataset.action === "restore") {
           const result = await request(`/api/${basePath}/${encodeURIComponent(id)}/restore`, { method: "POST", body: "{}" });
-          serverContent = { ...serverContent, [collectionKey]: result[collectionKey] };
+          serverContent = { ...serverContent, [collectionKey]: resultCollection(result, collectionKey) };
           setNotice("内容已恢复。", "success");
         }
         if (button.dataset.action === "hard-delete") {
+          if (type === "knowledge_node") return;
           if (!window.confirm("永久删除无法从回收站恢复，确认继续吗？")) return;
           const result = await request(`/api/${basePath}/${encodeURIComponent(id)}/hard`, { method: "DELETE" });
-          serverContent = { ...serverContent, [collectionKey]: result[collectionKey] };
+          serverContent = { ...serverContent, [collectionKey]: resultCollection(result, collectionKey) };
           setNotice("内容已永久删除。", "success");
         }
         renderList(); renderRecentContent();
@@ -1680,6 +2643,7 @@
   });
 
   (async () => {
+    populateFormulaAuthoringControls();
     setSidebarCollapsed(storedBool(sidebarStateKey));
     setEditorDockCollapsed(storedBool(editorDockStateKey));
     setPasswordVisible(false);

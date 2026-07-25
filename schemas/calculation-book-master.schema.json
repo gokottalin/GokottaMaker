@@ -1,0 +1,517 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://www.larkix.com/schemas/calculation-book-master.schema.json",
+  "title": "Larkix topology calculation-book master",
+  "description": "Topology-neutral, source-traceable master for synchronized Mathcad 15 and Larkix calculation books.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "bookKind",
+    "bookId",
+    "slug",
+    "title",
+    "revision",
+    "design",
+    "publication",
+    "outputs",
+    "sources",
+    "assumptions",
+    "inputs",
+    "constants",
+    "equations",
+    "results",
+    "derivations",
+    "coverage",
+    "corners",
+    "componentRequirements",
+    "decisions",
+    "margins",
+    "risks",
+    "unresolvedItems",
+    "validations"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "bookKind": { "enum": ["template", "instance"] },
+    "bookId": { "$ref": "#/$defs/asciiId" },
+    "slug": { "$ref": "#/$defs/asciiSlug" },
+    "title": { "$ref": "#/$defs/nonEmptyString" },
+    "revision": { "$ref": "#/$defs/nonEmptyString" },
+    "design": { "$ref": "#/$defs/design" },
+    "presentation": { "$ref": "#/$defs/presentation" },
+    "publication": { "$ref": "#/$defs/publication" },
+    "outputs": { "$ref": "#/$defs/outputs" },
+    "sources": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/source" }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/assumption" }
+    },
+    "inputs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/input" }
+    },
+    "constants": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/input" }
+    },
+    "equations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/equation" }
+    },
+    "results": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/result" }
+    },
+    "derivations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/derivation" }
+    },
+    "coverage": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/coverage" }
+    },
+    "corners": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/corner" }
+    },
+    "componentRequirements": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/componentRequirement" }
+    },
+    "decisions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/decision" }
+    },
+    "margins": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/margin" }
+    },
+    "risks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/risk" }
+    },
+    "unresolvedItems": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/unresolved" }
+    },
+    "validations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/validation" }
+    }
+  },
+  "$defs": {
+    "asciiId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{1,95}$"
+    },
+    "asciiSlug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,79}$"
+    },
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stringArray": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "trace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "refs", "note"],
+      "properties": {
+        "kind": { "enum": ["source", "assumption", "derivation", "identity", "unresolved"] },
+        "refs": { "$ref": "#/$defs/stringArray" },
+        "note": { "type": "string" }
+      }
+    },
+    "design": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["topology", "operatingMode", "status", "confidentiality", "authors", "reviewers", "signoff"],
+      "properties": {
+        "topology": { "$ref": "#/$defs/nonEmptyString" },
+        "operatingMode": { "$ref": "#/$defs/nonEmptyString" },
+        "status": { "enum": ["draft", "review", "blocked", "approved"] },
+        "confidentiality": { "enum": ["public", "internal", "confidential"] },
+        "authors": { "$ref": "#/$defs/stringArray" },
+        "reviewers": { "$ref": "#/$defs/stringArray" },
+        "signoff": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "blockedBy"],
+          "properties": {
+            "status": { "enum": ["ready", "blocked", "not_applicable"] },
+            "blockedBy": { "$ref": "#/$defs/stringArray" }
+          }
+        }
+      }
+    },
+    "presentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["voice", "style", "formulaNarration", "formulaGapPt", "sectionOrder", "sectionIntroductions", "highlightEquationIds", "symbolGlossary", "symbolPlacement", "unresolvedNarration", "unresolvedSummary"],
+      "properties": {
+        "voice": { "enum": ["neutral", "first_person_singular"] },
+        "style": { "enum": ["engineering", "ieee_concise"] },
+        "formulaNarration": { "enum": ["per_formula", "section_level"] },
+        "formulaGapPt": { "type": "number", "minimum": 24, "maximum": 39 },
+        "sectionOrder": { "$ref": "#/$defs/stringArray" },
+        "sectionIntroductions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["section", "text"],
+            "properties": {
+              "section": { "$ref": "#/$defs/nonEmptyString" },
+              "text": { "$ref": "#/$defs/nonEmptyString" }
+            }
+          }
+        },
+        "highlightEquationIds": { "$ref": "#/$defs/stringArray" },
+        "symbolGlossary": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["symbol", "meaning"],
+            "properties": {
+              "symbol": { "$ref": "#/$defs/nonEmptyString" },
+              "meaning": { "$ref": "#/$defs/nonEmptyString" }
+            }
+          }
+        },
+        "symbolPlacement": { "enum": ["front_glossary", "formula_local"] },
+        "unresolvedNarration": { "enum": ["per_item", "summary_only", "hidden"] },
+        "unresolvedSummary": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "publication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonical", "previewOverride"],
+      "properties": {
+        "canonical": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["publishStatus", "visibilityStatus"],
+          "properties": {
+            "publishStatus": { "const": "draft" },
+            "visibilityStatus": { "const": "private" }
+          }
+        },
+        "previewOverride": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["publishStatus", "visibilityStatus", "isolatedDataDirOnly"],
+          "properties": {
+            "publishStatus": { "const": "published" },
+            "visibilityStatus": { "const": "unlisted" },
+            "isolatedDataDirOnly": { "const": true }
+          }
+        }
+      }
+    },
+    "outputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mathcad", "larkix"],
+      "properties": {
+        "mathcad": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["filename", "template", "worksheetTitle"],
+          "properties": {
+            "filename": { "$ref": "#/$defs/nonEmptyString" },
+            "template": { "$ref": "#/$defs/nonEmptyString" },
+            "worksheetTitle": { "$ref": "#/$defs/nonEmptyString" }
+          }
+        },
+        "larkix": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["packageFilename", "l1Slug", "routeBase"],
+          "properties": {
+            "packageFilename": { "$ref": "#/$defs/nonEmptyString" },
+            "l1Slug": { "$ref": "#/$defs/asciiSlug" },
+            "routeBase": { "const": "derive.html?slug=" }
+          }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "title", "publicLabel", "locator", "accessedAt", "confidence"],
+      "properties": {
+        "id": { "$ref": "#/$defs/asciiId" },
+        "type": { "enum": ["user_input", "datasheet", "standard", "application_note", "textbook", "measurement", "project_fact", "handoff", "calculation_reference"] },
+        "title": { "$ref": "#/$defs/nonEmptyString" },
+        "publicLabel": { "$ref": "#/$defs/nonEmptyString" },
+        "locator": { "$ref": "#/$defs/nonEmptyString" },
+        "url": { "type": "string" },
+        "accessedAt": { "$ref": "#/$defs/nonEmptyString" },
+        "confidence": { "enum": ["confirmed", "user_confirmed", "provisional", "unverified"] }
+      }
+    },
+    "assumption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "reason", "effect", "replacement", "status"],
+      "properties": {
+        "id": { "$ref": "#/$defs/asciiId" },
+        "title": { "$ref": "#/$defs/nonEmptyString" },
+        "reason": { "$ref": "#/$defs/nonEmptyString" },
+        "effect": { "$ref": "#/$defs/nonEmptyString" },
+        "replacement": { "$ref": "#/$defs/nonEmptyString" },
+        "status": { "enum": ["active", "retired"] }
+      }
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "symbol", "title", "status", "unit", "requiredForSignoff", "applicability", "trace"],
+      "properties": {
+        "id": { "$ref": "#/$defs/asciiId" },
+        "symbol": { "$ref": "#/$defs/nonEmptyString" },
+        "title": { "$ref": "#/$defs/nonEmptyString" },
+        "status": { "enum": ["confirmed", "user_confirmed", "assumption", "scenario", "unresolved"] },
+        "value": { "type": "number" },
+        "unit": { "$ref": "#/$defs/nonEmptyString" },
+        "requiredForSignoff": { "type": "boolean" },
+        "applicability": { "$ref": "#/$defs/nonEmptyString" },
+        "tolerance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "minus", "plus"],
+          "properties": {
+            "kind": { "enum": ["relative", "absolute"] },
+            "minus": { "type": "number" },
+            "plus": { "type": "number" }
+          }
+        },
+        "trace": { "$ref": "#/$defs/trace" }
+      }
+    },
+    "ast": {
+      "type": "object",
+      "required": ["op"],
+      "properties": {
+        "op": { "enum": ["literal", "ref", "add", "subtract", "multiply", "divide", "power", "sqrt", "negate", "min", "max"] },
+        "value": { "type": "number" },
+        "unit": { "type": "string" },
+        "symbol": { "type": "string" },
+        "args": { "type": "array", "items": { "$ref": "#/$defs/ast" } }
+      }
+    },
+    "rounding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["digits", "mode", "displayUnit"],
+      "properties": {
+        "digits": { "type": "number" },
+        "mode": { "enum": ["decimal_places", "significant_figures"] },
+        "displayUnit": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "equation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "symbol", "title", "depth", "section", "expression", "displayExpression", "unit", "dependencies", "applicability", "validity", "trace", "rounding", "outputMappings"],
+      "properties": {
+        "id": { "$ref": "#/$defs/asciiId" },
+        "symbol": { "$ref": "#/$defs/nonEmptyString" },
+        "title": { "$ref": "#/$defs/nonEmptyString" },
+        "depth": { "const": "L1_design" },
+        "section": { "$ref": "#/$defs/nonEmptyString" },
+        "expression": { "$ref": "#/$defs/ast" },
+        "displayExpression": { "$ref": "#/$defs/nonEmptyString" },
+        "unit": { "$ref": "#/$defs/nonEmptyString" },
+        "dependencies": { "$ref": "#/$defs/stringArray" },
+        "applicability": { "$ref": "#/$defs/nonEmptyString" },
+        "validity": { "$ref": "#/$defs/nonEmptyString" },
+        "trace": { "$ref": "#/$defs/trace" },
+        "rounding": { "$ref": "#/$defs/rounding" },
+        "outputMappings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mathcad", "larkix"],
+          "properties": {
+            "mathcad": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["regionKey", "include"],
+              "properties": {
+                "regionKey": { "$ref": "#/$defs/asciiId" },
+                "include": { "type": "boolean" }
+              }
+            },
+            "larkix": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["include", "derivationSlug", "jumpLabel", "color"],
+              "properties": {
+                "include": { "type": "boolean" },
+                "derivationSlug": { "type": "string" },
+                "jumpLabel": { "type": "string" },
+                "color": { "enum": ["purple", "blue", "green", "amber", "red", "neutral"] }
+              }
+            }
+          }
+        }
+      }
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "symbol", "equationId", "expectedValue", "unit", "dependencies", "status", "sentinel"],
+      "properties": {
+        "id": { "$ref": "#/$defs/asciiId" },
+        "symbol": { "$ref": "#/$defs/nonEmptyString" },
+        "equationId": { "$ref": "#/$defs/asciiId" },
+        "expectedValue": { "type": "number" },
+        "unit": { "$ref": "#/$defs/nonEmptyString" },
+        "dependencies": { "$ref": "#/$defs/stringArray" },
+        "status": { "const": "derived" },
+        "sentinel": { "type": "boolean" }
+      }
+    },
+    "derivationStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "expression", "justification", "trace"],
+      "properties": {
+        "id": { "$ref": "#/$defs/asciiId" },
+        "statement": { "$ref": "#/$defs/nonEmptyString" },
+        "expression": { "$ref": "#/$defs/nonEmptyString" },
+        "justification": { "$ref": "#/$defs/nonEmptyString" },
+        "trace": { "$ref": "#/$defs/trace" }
+      }
+    },
+    "derivation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "level", "slug", "title", "symbol", "parentFormulaId", "prerequisites", "assumptions", "validity", "steps", "dimensionalCheck", "returnTarget", "summary", "color"],
+      "properties": {
+        "id": { "$ref": "#/$defs/asciiId" },
+        "level": { "enum": ["L2_engineering_derivation", "L3_foundation_derivation"] },
+        "slug": { "$ref": "#/$defs/asciiSlug" },
+        "title": { "$ref": "#/$defs/nonEmptyString" },
+        "symbol": { "$ref": "#/$defs/nonEmptyString" },
+        "parentFormulaId": { "$ref": "#/$defs/asciiId" },
+        "prerequisites": { "$ref": "#/$defs/stringArray" },
+        "assumptions": { "$ref": "#/$defs/stringArray" },
+        "validity": { "$ref": "#/$defs/nonEmptyString" },
+        "steps": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/derivationStep" } },
+        "dimensionalCheck": { "$ref": "#/$defs/nonEmptyString" },
+        "returnTarget": { "$ref": "#/$defs/asciiSlug" },
+        "summary": { "$ref": "#/$defs/nonEmptyString" },
+        "color": { "enum": ["purple", "blue", "green", "amber", "red", "neutral"] }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["category", "status", "reason", "formulaRefs", "unresolvedRefs", "validationRefs"],
+      "properties": {
+        "category": { "enum": ["operating_states", "power_closure", "magnetics", "capacitors", "power_devices", "sensing", "gate_drive", "control", "tolerances", "thermal", "derating", "validation"] },
+        "status": { "enum": ["applicable", "not_applicable", "unresolved"] },
+        "reason": { "$ref": "#/$defs/nonEmptyString" },
+        "formulaRefs": { "$ref": "#/$defs/stringArray" },
+        "unresolvedRefs": { "$ref": "#/$defs/stringArray" },
+        "validationRefs": { "$ref": "#/$defs/stringArray" }
+      }
+    },
+    "corner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "overrides", "purpose"],
+      "properties": {
+        "id": { "$ref": "#/$defs/asciiId" },
+        "title": { "$ref": "#/$defs/nonEmptyString" },
+        "overrides": { "type": "object" },
+        "purpose": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "componentRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "category", "requirement", "status", "sourceRefs", "resultRefs"],
+      "properties": {
+        "id": { "$ref": "#/$defs/asciiId" },
+        "category": { "$ref": "#/$defs/nonEmptyString" },
+        "requirement": { "$ref": "#/$defs/nonEmptyString" },
+        "status": { "enum": ["confirmed", "provisional", "unresolved", "not_applicable"] },
+        "sourceRefs": { "$ref": "#/$defs/stringArray" },
+        "resultRefs": { "$ref": "#/$defs/stringArray" }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "basisRefs", "status"],
+      "properties": {
+        "id": { "$ref": "#/$defs/asciiId" },
+        "statement": { "$ref": "#/$defs/nonEmptyString" },
+        "basisRefs": { "$ref": "#/$defs/stringArray" },
+        "status": { "enum": ["accepted", "provisional", "blocked"] }
+      }
+    },
+    "margin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "actualResultRef", "requirement", "status"],
+      "properties": {
+        "id": { "$ref": "#/$defs/asciiId" },
+        "title": { "$ref": "#/$defs/nonEmptyString" },
+        "actualResultRef": { "$ref": "#/$defs/asciiId" },
+        "requirement": { "$ref": "#/$defs/nonEmptyString" },
+        "status": { "enum": ["pass", "fail", "unresolved"] }
+      }
+    },
+    "risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "severity", "statement", "mitigation", "relatedRefs"],
+      "properties": {
+        "id": { "$ref": "#/$defs/asciiId" },
+        "severity": { "enum": ["low", "medium", "high", "critical"] },
+        "statement": { "$ref": "#/$defs/nonEmptyString" },
+        "mitigation": { "$ref": "#/$defs/nonEmptyString" },
+        "relatedRefs": { "$ref": "#/$defs/stringArray" }
+      }
+    },
+    "unresolved": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "mandatory", "blocks", "resolution", "status"],
+      "properties": {
+        "id": { "$ref": "#/$defs/asciiId" },
+        "title": { "$ref": "#/$defs/nonEmptyString" },
+        "mandatory": { "type": "boolean" },
+        "blocks": { "$ref": "#/$defs/stringArray" },
+        "resolution": { "$ref": "#/$defs/nonEmptyString" },
+        "status": { "enum": ["open", "resolved"] }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "method", "acceptance", "status", "evidence"],
+      "properties": {
+        "id": { "$ref": "#/$defs/asciiId" },
+        "title": { "$ref": "#/$defs/nonEmptyString" },
+        "method": { "$ref": "#/$defs/nonEmptyString" },
+        "acceptance": { "$ref": "#/$defs/nonEmptyString" },
+        "status": { "enum": ["planned", "passed", "failed", "not_applicable"] },
+        "evidence": { "type": "string" }
+      }
+    }
+  }
+}

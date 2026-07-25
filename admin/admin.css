@@ -768,11 +768,14 @@ button:disabled {
   grid-template-columns: minmax(220px, 0.68fr) minmax(280px, 1fr) minmax(280px, 1fr) minmax(320px, 0.98fr);
   grid-template-areas:
     "type title category priority"
+    "slug symbol accent nodevisibility"
     "visibility visibility visibility visibility"
+    "warnings warnings warnings warnings"
     "excerpt excerpt tags publish"
     "excerpt excerpt cover cover"
     "featured featured featured featured"
     "project project project project"
+    "revisions revisions revisions revisions"
     "library library library library";
   gap: 18px 22px;
   align-items: stretch;
@@ -790,6 +793,22 @@ button:disabled {
 
 .meta-title {
   grid-area: title;
+}
+
+.meta-slug {
+  grid-area: slug;
+}
+
+.meta-symbol {
+  grid-area: symbol;
+}
+
+.meta-accent {
+  grid-area: accent;
+}
+
+.meta-node-visibility {
+  grid-area: nodevisibility;
 }
 
 #categoryField,
@@ -831,6 +850,28 @@ button:disabled {
   border-color: rgba(11, 143, 103, 0.22);
   background: #effaf5;
   color: #0b7656;
+}
+
+.meta-warnings {
+  grid-area: warnings;
+  padding: 14px;
+  border: 1px solid rgba(192, 126, 0, 0.28);
+  border-radius: 8px;
+  background: #fff8e8;
+  color: #8a5c00;
+  font-size: 13px;
+  font-weight: 780;
+}
+
+.meta-warnings strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #7a4f00;
+}
+
+.meta-warnings ul {
+  margin: 0;
+  padding-left: 18px;
 }
 
 .meta-excerpt {
@@ -891,6 +932,58 @@ button:disabled {
   color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
+}
+
+.meta-revisions {
+  grid-area: revisions;
+}
+
+.knowledge-revisions-panel {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(196, 181, 253, 0.42);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(239, 246, 255, 0.62));
+}
+
+.knowledge-revisions-panel .section-heading {
+  margin: 0;
+}
+
+.knowledge-revisions-panel .section-heading p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 760;
+}
+
+.knowledge-revision-list {
+  display: grid;
+  gap: 10px;
+}
+
+.knowledge-revision-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.knowledge-revision-row strong {
+  display: block;
+  color: var(--ink);
+}
+
+.knowledge-revision-row p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13px;
 }
 
 .file-picker-control {
@@ -1489,6 +1582,64 @@ button:disabled {
   gap: 18px;
 }
 
+.formula-helper-panel {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid rgba(196, 181, 253, 0.46);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(239, 246, 255, 0.72)),
+    linear-gradient(180deg, rgba(245, 158, 11, 0.08), rgba(255, 255, 255, 0));
+}
+
+.formula-helper-panel .section-heading {
+  margin-bottom: 0;
+}
+
+.formula-helper-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.formula-helper-group {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.formula-helper-group strong {
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.formula-helper-actions,
+.derive-link-helper-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.formula-helper-actions .button,
+.derive-link-helper-row > * {
+  flex: 1 1 112px;
+}
+
+.formula-helper-group input,
+.formula-helper-group select {
+  min-width: 0;
+  height: 40px;
+}
+
+.formula-helper-group > .button {
+  min-height: 40px;
+}
+
 .markdown-body-field textarea {
   min-height: 460px;
 }
@@ -1522,7 +1673,7 @@ button:disabled {
 
 .segmented {
   display: inline-grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
   padding: 4px;
   border: 1px solid color-mix(in srgb, var(--larkix-primary, var(--blue)) 32%, var(--line));
   border-radius: 8px;
@@ -1657,18 +1808,26 @@ button:disabled {
     grid-template-areas:
       "type title"
       "category priority"
+      "slug symbol"
+      "accent nodevisibility"
       "publish publish"
       "visibility visibility"
+      "warnings warnings"
       "featured featured"
       "excerpt excerpt"
       "tags tags"
       "cover cover"
       "project project"
+      "revisions revisions"
       "library library";
   }
 
   .meta-featured {
     grid-template-columns: minmax(180px, 0.8fr) minmax(220px, 1fr);
+  }
+
+  .formula-helper-grid {
+    grid-template-columns: 1fr;
   }
 
   .meta-featured .checkbox-field,
@@ -1982,6 +2141,38 @@ button:disabled {
   height: 18px;
 }
 
+.knowledge-color-dot {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px rgba(76, 29, 149, 0.24);
+}
+
+.knowledge-color-dot--purple {
+  background: #7c3aed;
+}
+
+.knowledge-color-dot--blue {
+  background: #2563eb;
+}
+
+.knowledge-color-dot--green {
+  background: #059669;
+}
+
+.knowledge-color-dot--amber {
+  background: #d97706;
+}
+
+.knowledge-color-dot--red {
+  background: #dc2626;
+}
+
+.knowledge-color-dot--neutral {
+  background: #64748b;
+}
+
 .admin-row.is-deleted {
   opacity: 0.62;
   background: #fff7f7;
@@ -2041,6 +2232,10 @@ button:disabled {
 [data-theme="dark"] .crop-dialog,
 [data-theme="dark"] .admin-recommendation-card,
 [data-theme="dark"] .admin-row,
+[data-theme="dark"] .formula-helper-panel,
+[data-theme="dark"] .formula-helper-group,
+[data-theme="dark"] .knowledge-revisions-panel,
+[data-theme="dark"] .knowledge-revision-row,
 [data-theme="dark"] .health-card,
 [data-theme="dark"] .bulk-actions {
   border-color: var(--line);
@@ -2057,6 +2252,7 @@ button:disabled {
 [data-theme="dark"] .nav-group,
 [data-theme="dark"] .meta-featured,
 [data-theme="dark"] .meta-featured-manager,
+[data-theme="dark"] .meta-warnings,
 [data-theme="dark"] .layout-page-group,
 [data-theme="dark"] .layout-page-frame,
 [data-theme="dark"] .layout-browser-bar,
@@ -2117,7 +2313,8 @@ button:disabled {
 [data-theme="dark"] .admin-row p,
 [data-theme="dark"] .health-card p,
 [data-theme="dark"] .admin-recommendation-card span,
-[data-theme="dark"] .admin-recommendation-card p {
+[data-theme="dark"] .admin-recommendation-card p,
+[data-theme="dark"] .knowledge-revision-row p {
   color: var(--muted);
 }
 
@@ -2221,13 +2418,17 @@ button:disabled {
     grid-template-areas:
       "type type"
       "title category"
+      "slug symbol"
+      "accent nodevisibility"
       "priority publish"
       "visibility visibility"
+      "warnings warnings"
       "featured featured"
       "excerpt excerpt"
       "tags tags"
       "cover cover"
       "project project"
+      "revisions revisions"
       "library library";
   }
 
@@ -2357,14 +2558,20 @@ button:disabled {
       "type"
       "title"
       "category"
+      "slug"
+      "symbol"
+      "accent"
+      "nodevisibility"
       "priority"
       "publish"
       "visibility"
+      "warnings"
       "featured"
       "excerpt"
       "tags"
       "cover"
       "project"
+      "revisions"
       "library";
   }
 
@@ -2415,6 +2622,7 @@ button:disabled {
 
   .inline-fields,
   .project-extra,
+  .knowledge-revision-row,
   .crop-controls {
     grid-template-columns: 1fr;
   }

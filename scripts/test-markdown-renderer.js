@@ -134,6 +134,91 @@ VBAT ---- R1 ----+---- ADC_INx
 }
 
 {
+  const rendered = markdown.render(
+    `Boost uses {{derive:d-boost|D.boost|blue}}, {{derive:l-nom|Lnom}}, and {{derive:f-sw|fsw|teal}}.`
+  );
+  assert.equal(countMatches(rendered.html, /class="derivation-link/g), 3, "derive shortcode link count");
+  assertIncludes(
+    rendered.html,
+    'class="derivation-link derivation-link--blue formula-jump-sup" href="./derive.html?slug=d-boost"',
+    "derive shortcode renders requested token"
+  );
+  assertIncludes(rendered.html, 'data-derive-slug="d-boost"', "derive shortcode slug data attribute");
+  assertIncludes(rendered.html, 'data-derive-label="D.boost"', "derive shortcode label data attribute");
+  assertIncludes(rendered.html, 'data-derive-color="blue"', "derive shortcode color data attribute");
+  assertIncludes(rendered.html, 'title="D.boost详细推导"', "derive shortcode title text");
+  assertIncludes(rendered.html, 'aria-label="查看 D.boost详细推导"', "derive shortcode aria label");
+  assertIncludes(rendered.html, "formula-jump-sup", "derive shortcode renders as formula jump marker");
+  assertIncludes(rendered.html, '<span class="derive-jump-icon" aria-hidden="true">↵</span>', "derive shortcode marker icon");
+  assertIncludes(rendered.html, '<span class="derive-jump-label">D.boost</span>', "derive shortcode preserves hidden label");
+  assertIncludes(
+    rendered.html,
+    'class="derivation-link derivation-link--purple formula-jump-sup" href="./derive.html?slug=l-nom"',
+    "derive shortcode default color token"
+  );
+  assertIncludes(
+    rendered.html,
+    'class="derivation-link derivation-link--purple formula-jump-sup" href="./derive.html?slug=f-sw"',
+    "derive shortcode invalid color falls back"
+  );
+  assert.ok(!rendered.html.includes("derivation-link--teal"), "invalid derive color token must not become a class");
+}
+
+{
+  const escaped = markdown.render(`Escaped {{derive:d-boost|<b>D.boost</b>|purple}} label.`);
+  assertIncludes(escaped.html, "&lt;b&gt;D.boost&lt;/b&gt;", "derive shortcode escapes HTML label");
+  assert.ok(!escaped.html.includes("<b>D.boost</b>"), "derive shortcode label must not render raw HTML");
+
+  const longLabel = "L".repeat(81);
+  const invalid = markdown.render(`Bad {{derive:../bad|Bad|blue}} and {{derive:d-boost|${longLabel}|blue}}.`);
+  assert.equal(countMatches(invalid.html, /class="derivation-link/g), 0, "invalid derive shortcode does not render link");
+  assertIncludes(invalid.html, "{{derive:../bad|Bad|blue}}", "invalid derive slug remains visible as escaped text");
+  assertIncludes(invalid.html, `{{derive:d-boost|${longLabel}|blue}}`, "invalid derive label remains visible as escaped text");
+}
+
+{
+  const rendered = markdown.render(`$$
+D = 1 - \\frac{V_{in}\\eta}{V_{out}}
+$$
+{{derive:d-boost|占空比公式|purple}}`);
+  assert.equal(countMatches(rendered.html, /class="derivation-link/g), 1, "display formula jump count");
+  assertIncludes(rendered.html, "markdown-math markdown-math-display", "display formula is rendered");
+  assert.ok(
+    /<div class="markdown-math markdown-math-display"[\s\S]*class="derivation-link derivation-link--purple formula-jump-sup"[\s\S]*<\/div>/.test(
+      rendered.html
+    ),
+    "display formula jump is attached inside the formula block"
+  );
+  assert.ok(!rendered.html.includes("<p><a class=\"derivation-link"), "display formula jump is not a standalone paragraph link");
+}
+
+{
+  const rendered = markdown.render(`\`{{derive:d-boost|D.boost|purple}}\`
+
+\`\`\`md
+{{derive:d-boost|D.boost|purple}}
+\`\`\`
+
+$ {{derive:d-boost|D.boost|purple}} $
+
+\\({{derive:d-boost|D.boost|purple}}\\)
+
+$$
+{{derive:d-boost|D.boost|purple}}
+$$
+
+\\[
+{{derive:d-boost|D.boost|purple}}
+\\]
+`);
+  assert.equal(
+    countMatches(rendered.html, /class="derivation-link/g),
+    0,
+    "derive shortcodes inside code and math regions are ignored"
+  );
+}
+
+{
   const longMarkdown = Array.from({ length: 120 }, (_, index) => {
     const level = 2 + (index % 3);
     return `${"#".repeat(level)} Long Section ${index % 9}`;
@@ -183,6 +268,16 @@ $$
   assertIncludes(docxText, "<m:sSup>", "DOCX math superscript");
   assertIncludes(docxText, "<m:f>", "DOCX math fraction");
   assertIncludes(docxText, "<w:pBdr>", "DOCX horizontal rule paragraph border");
+}
+
+{
+  const docxText = markdownToDocx({
+    markdown: `Derivation: {{derive:d-boost|D.boost|green}}.`,
+    title: "",
+    options: {}
+  }).toString("utf8");
+  assertIncludes(docxText, "D.boost [derive:d-boost]", "DOCX derive shortcode readable fallback");
+  assert.ok(!docxText.includes("derivation-link--green"), "DOCX derive shortcode must not preserve HTML class text");
 }
 
 console.log("Markdown renderer and MD2File DOCX regression tests passed.");

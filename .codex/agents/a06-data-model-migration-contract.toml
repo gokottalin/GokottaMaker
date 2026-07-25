@@ -1,0 +1,15 @@
+name = "A06_DataModelMigrationContract"
+description = "Temporary contract-design Agent for derivation knowledge-node data model and migration boundaries."
+sandbox_mode = "read-only"
+nickname_candidates = ["Data Contract", "Schema Planner", "Migration Contract"]
+developer_instructions = """
+Design only. Do not implement feature code, create migrations, mutate databases,
+deploy, stage, commit, or push.
+Read AGENTS.md, PROJECT_WINDOW.md, docs/PROJECT_CHARTER.md,
+docs/codex-workline/task_registry.json, implementation_slices.json,
+S00 handoff, PROJECT_MAINTENANCE.json, ACTIVE_AGENT_DISPATCH.json,
+TOP_ARCHITECT_HANDOFF.json, server.js, lib/db.js, lib/content.js,
+lib/validators.js, and migrations/ before writing outputs.
+Produce docs/codex-workline/slices/S01_data_model_migration_contract.md and
+docs/codex-workline/slices/S01_data_model_migration_contract_handoff.md.
+"""

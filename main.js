@@ -24,11 +24,115 @@
     return String(value || "");
   }
 
+  function html(value) {
+    if (window.LarkixMedia?.escapeHtml) return window.LarkixMedia.escapeHtml(value);
+    return safe(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function formulaSymbolHtml(value) {
+    const source = safe(value);
+    return source
+      .split(/\s*\/\s*/)
+      .map((part) => {
+        const math = window.LarkixMarkdown?.dottedSubscriptMath?.(part) || part;
+        return math === part ? html(part) : window.LarkixMarkdown.inline(`$${math}$`);
+      })
+      .join(" / ");
+  }
+
   function safeToken(value) {
     return String(value || "")
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
+  }
+
+  function normalizePublicFocusMode(value) {
+    const fallback = {
+      enabled: true,
+      hideMiniappsFromPrimaryNav: true,
+      hideAdminFromPublicNav: true
+    };
+    if (!value || typeof value !== "object") return fallback;
+    return { ...fallback, ...value };
+  }
+
+  const focusMode = normalizePublicFocusMode(window.LARKIX_SERVER_CONTENT?.publicFocusMode);
+
+  function focusModeEnabled() {
+    return focusMode.enabled !== false;
+  }
+
+  function isCurrentHref(href) {
+    const target = new URL(href, location.href);
+    return target.pathname === location.pathname && target.search === location.search;
+  }
+
+  function applyFocusedNavigation() {
+    if (!focusModeEnabled()) return;
+    document.body.classList.add("public-focus-mode");
+    document.querySelectorAll(".site-header .main-nav").forEach((nav) => {
+      nav.classList.add("focus-mode-nav");
+      const links = [
+        { href: "./maker.html", label: "首页" },
+        { href: "./category.html?category=power-electronics", label: "电力电子" },
+        { href: "./derive.html", label: "公式推导" }
+      ];
+      nav.innerHTML = links
+        .map((link) => `<a href="${link.href}"${isCurrentHref(link.href) ? ' aria-current="page"' : ""}>${link.label}</a>`)
+        .join("");
+    });
+    if (focusMode.hideAdminFromPublicNav) {
+      document.querySelectorAll('.site-header .admin-link[href="./admin/index.html"], .site-header .admin-link[href$="/admin/index.html"]').forEach((link) => {
+        link.hidden = true;
+      });
+    }
+  }
+
+  function focusCorpus(item) {
+    return [item.categoryKey, item.category, item.title, item.excerpt, item.summary, item.tags, item.markdown, item.id, item.slug]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+  }
+
+  function isPowerElectronicsItem(item) {
+    const corpus = focusCorpus(item);
+    return [
+      "power-electronics",
+      "电力电子",
+      "开关电源",
+      "boost",
+      "buck",
+      "flyback",
+      "占空比",
+      "纹波",
+      "电感",
+      "mosfet",
+      "power supply"
+    ].some((token) => corpus.includes(String(token).toLowerCase()));
+  }
+
+  function focusRouteItem(id, title, summary, href, label) {
+    return {
+      id,
+      type: "focus",
+      title,
+      excerpt: summary,
+      category: label,
+      readTime: "公开入口",
+      date: "LarkixMaker",
+      cover: "./assets/covers/analog-cover.png",
+      href,
+      featured: true,
+      featuredOrder: id === "power-electronics" ? 1 : 2,
+      recommendationPriority: id === "power-electronics" ? 1 : 2
+    };
   }
 
   function articleCard(post) {
@@ -150,6 +254,7 @@
   }
 
   function itemUrl(item) {
+    if (item.href) return item.href;
     return item.type === "project" ? `./project.html?id=${item.id}` : `./post.html?id=${item.id}`;
   }
 
@@ -186,6 +291,7 @@
   }
 
   function canOpen(item) {
+    if (item.href) return true;
     return item.type !== "project" || item.statusKey === "online";
   }
 
@@ -365,6 +471,85 @@
       });
   }
 
+  function focusNodeCard(node) {
+    const slug = node.slug || node.id || "";
+    const symbol = node.symbol || "Derivation";
+    const color = ["purple", "blue", "green", "amber", "red", "neutral"].includes(node.accentColor) ? node.accentColor : "purple";
+    return `
+      <article class="derive-node-card derive-accent-${html(color)}">
+        <span class="derive-node-symbol">${formulaSymbolHtml(symbol)}</span>
+        <h3><a href="./derive.html?slug=${encodeURIComponent(slug)}">${html(node.title || slug)}</a></h3>
+        <p>${html(node.summary || "")}</p>
+      </article>
+    `;
+  }
+
+  async function renderFocusDerivations(section) {
+    const target = section.querySelector("#focusDerivationList");
+    if (!target || target.dataset.loaded === "true") return;
+    target.dataset.loaded = "true";
+    target.innerHTML = `<div class="empty-state">正在读取公开推导节点。</div>`;
+    try {
+      const response = await fetch("./api/knowledge-nodes", { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload = await response.json();
+      const nodes = Array.isArray(payload.nodes) ? payload.nodes.slice(0, 4) : [];
+      target.innerHTML = nodes.length
+        ? nodes.map(focusNodeCard).join("")
+        : `<div class="empty-state">公开推导节点发布后会显示在这里。</div>`;
+    } catch {
+      target.innerHTML = `<div class="empty-state">暂时无法读取公开推导节点。</div>`;
+    }
+  }
+
+  function ensureFocusSection() {
+    const main = document.querySelector("#mainContent");
+    if (!main || document.querySelector("#homeFocus")) return document.querySelector("#homeFocus");
+    const section = document.createElement("section");
+    section.className = "site-shell section-row focus-entry-section";
+    section.id = "homeFocus";
+    section.dataset.layoutSection = "focus";
+    section.innerHTML = `
+      <div class="section-heading">
+        <div class="section-title-block split-title">
+          <h2>电力电子</h2>
+          <span>Power Electronics</span>
+        </div>
+        <a href="./category.html?category=power-electronics">进入聚焦路径</a>
+      </div>
+      <div class="focus-entry-grid">
+        <article class="focus-entry-card focus-entry-primary">
+          <span class="category-pill">Focused Track</span>
+          <h3><a href="./category.html?category=power-electronics">电力电子学习路径</a></h3>
+          <p>从 Boost、Buck、占空比、电感纹波和开关频率等变量开始整理公开内容。</p>
+          <a class="card-link" href="./category.html?category=power-electronics">打开路径</a>
+        </article>
+        <article class="focus-entry-card">
+          <span class="category-pill">Derivations</span>
+          <h3><a href="./derive.html">公式推导节点</a></h3>
+          <p>文章中的公式变量会打开对应推导页，节点内容可继续串联到更多变量。</p>
+          <a class="card-link" href="./derive.html">查看节点</a>
+        </article>
+      </div>
+      <div class="derive-node-list focus-derive-list" id="focusDerivationList" aria-label="公开推导节点"></div>
+    `;
+    const anchor = document.querySelector("#homeRecommended") || document.querySelector("#homeProjects");
+    main.insertBefore(section, anchor || null);
+    return section;
+  }
+
+  function applyFocusedHome() {
+    if (!focusModeEnabled()) return;
+    const focusSection = ensureFocusSection();
+    if (focusSection) renderFocusDerivations(focusSection);
+    if (projectList?.closest("[data-layout-section]")) projectList.closest("[data-layout-section]").hidden = true;
+    if (miniappUpdateList?.closest("[data-layout-section]")) miniappUpdateList.closest("[data-layout-section]").hidden = true;
+    const recommendedTitle = document.querySelector("#homeRecommended h2");
+    const recommendedTitleEn = document.querySelector("#homeRecommended .section-title-block span");
+    if (recommendedTitle) recommendedTitle.textContent = "聚焦内容";
+    if (recommendedTitleEn) recommendedTitleEn.textContent = "Focused Picks";
+  }
+
   function startSiteLayoutPolling() {
     if (!window.LARKIX_SERVER_CONTENT || !window.fetch) return;
     window.setInterval(async () => {
@@ -378,6 +563,7 @@
         siteLayout = nextLayout;
         siteLayoutSignature = nextSignature;
         applySiteLayout();
+        applyFocusedHome();
       } catch {
         return;
       }
@@ -468,10 +654,32 @@
       .map((entry) => entry.item);
   }
 
-  featuredItems = [...posts, ...publicProjects]
+  const focusPosts = focusModeEnabled() ? sortByRecommendation(posts.filter(isPowerElectronicsItem)) : posts;
+  const focusProjects = focusModeEnabled() ? sortByRecommendation(publicProjects.filter(isPowerElectronicsItem)) : publicProjects;
+  const focusHeroFallback = [
+    focusRouteItem(
+      "power-electronics",
+      "电力电子学习路径",
+      "从 Boost、Buck、占空比、电感纹波和开关频率等变量开始整理公开内容。",
+      "./category.html?category=power-electronics",
+      "电力电子"
+    ),
+    focusRouteItem(
+      "derivations",
+      "公式推导节点",
+      "文章中的公式变量会打开对应推导页，节点内容可继续串联到更多变量。",
+      "./derive.html",
+      "公式推导"
+    )
+  ];
+
+  featuredItems = [...(focusModeEnabled() ? focusPosts : posts), ...(focusModeEnabled() ? focusProjects : publicProjects)]
     .filter((item) => item.featured)
     .sort((a, b) => Number(a.featuredOrder || 0) - Number(b.featuredOrder || 0))
     .slice(0, 4);
+  if (!featuredItems.length && focusModeEnabled()) {
+    featuredItems = focusHeroFallback;
+  }
   if (!featuredItems.length) {
     featuredItems = [
       posts.find((post) => post.id === "stm32-adc-dma-precision") || posts[0],
@@ -481,24 +689,29 @@
     ].filter(Boolean);
   }
 
-  renderArticles(sortByRecommendation(posts));
+  renderArticles(sortByRecommendation(focusModeEnabled() ? focusPosts : posts));
   renderCoursePaths();
   renderHeroCards();
   renderFeatured(0);
   bindHeroSwipe();
   restartHeroTimer();
-  renderProjects(projects);
-  renderMiniappUpdates(miniapps);
+  renderProjects(focusModeEnabled() ? [] : projects);
+  renderMiniappUpdates(focusModeEnabled() ? [] : miniapps);
+  applyFocusedNavigation();
   applySiteLayout();
+  applyFocusedHome();
   startSiteLayoutPolling();
 
   if (search) {
     search.addEventListener("input", () => {
       const keyword = search.value.trim().toLowerCase();
-      const filteredPosts = searchItems(posts, keyword);
-      const filteredProjects = searchItems(projects, keyword);
+      const sourcePosts = focusModeEnabled() ? focusPosts : posts;
+      const sourceProjects = focusModeEnabled() ? focusProjects : projects;
+      const filteredPosts = searchItems(sourcePosts, keyword);
+      const filteredProjects = searchItems(sourceProjects, keyword);
       renderArticles(keyword ? filteredPosts : sortByRecommendation(filteredPosts));
-      renderProjects(filteredProjects);
+      renderProjects(focusModeEnabled() ? [] : filteredProjects);
+      applyFocusedHome();
     });
   }
 })();

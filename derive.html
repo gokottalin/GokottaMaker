@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>公式推导 | LarkixMaker</title>
+    <meta name="description" content="查看 LarkixMaker 的公开公式变量推导节点。" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="./assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524" />
+    <link rel="stylesheet" href="./styles.css?v=20260519-003" />
+  </head>
+  <body data-layout-page="derivePage">
+    <a class="skip-link" href="#deriveContent">跳到正文</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="./index.html" aria-label="返回 Larkix 主页">
+          <img class="brand-symbol" src="./assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524" alt="" aria-hidden="true" /><span class="brand-wordmark">Larki<span>x</span></span>
+          <span class="brand-product">Maker</span>
+        </a>
+        <nav class="main-nav focus-mode-nav" aria-label="主导航">
+          <a href="./maker.html">首页</a>
+          <a href="./category.html?category=power-electronics">电力电子</a>
+          <a href="./derive.html" aria-current="page">公式推导</a>
+        </nav>
+        <div class="header-actions">
+          <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换夜间模式" title="切换夜间模式"><span class="theme-toggle-icon" aria-hidden="true"></span></button>
+          <a class="return-link" href="./maker.html">返回首页</a>
+        </div>
+      </div>
+    </header>
+
+    <main data-layout-container>
+      <section class="site-shell post-hero derive-hero" id="deriveHero" data-layout-section="deriveHero"></section>
+      <section class="post-layout derive-layout" data-layout-section="deriveBody">
+        <aside class="toc-card">
+          <strong>推导目录</strong>
+          <nav id="tocList" aria-label="推导目录"></nav>
+        </aside>
+        <article class="markdown-article derive-content" id="deriveContent"></article>
+      </section>
+    </main>
+
+    <script src="./data/media.js?v=20260519-003"></script>
+    <script src="./data/markdown-renderer.js?v=20260519-003"></script>
+    <script src="./post.js?v=20260519-003"></script>
+    <script>
+      window.renderKnowledgeNodePage({
+        heroId: "deriveHero",
+        contentId: "deriveContent",
+        tocId: "tocList"
+      });
+    </script>
+    <script src="./site-layout.js?v=20260519-003"></script>
+    <script src="./data/site-meta.js?v=20260519-003"></script>
+    <script src="./data/footer.js?v=20260519-003"></script>
+  </body>
+</html>

@@ -3,6 +3,17 @@
     return window.LarkixMarkdown.escapeHtml(value);
   }
 
+  function formulaSymbolHtml(value) {
+    const source = String(value || "");
+    return source
+      .split(/\s*\/\s*/)
+      .map((part) => {
+        const math = window.LarkixMarkdown.dottedSubscriptMath(part);
+        return math === part ? escapeHtml(part) : window.LarkixMarkdown.inline(`$${math}$`);
+      })
+      .join(" / ");
+  }
+
   function absoluteUrl(value) {
     return new URL(value || location.pathname, location.href).href;
   }
@@ -19,9 +30,11 @@
 
   function syncSeo(item) {
     const description = item.excerpt || item.summary || "LarkixMaker 技术内容。";
-    const canonical = absoluteUrl(`${location.pathname}?id=${encodeURIComponent(item.slug || item.id)}`);
+    const canonical =
+      item.canonicalPath ||
+      absoluteUrl(`${location.pathname}?${item.type === "knowledge_node" ? "slug" : "id"}=${encodeURIComponent(item.slug || item.id)}`);
     const image = absoluteUrl(item.cover || "./assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524");
-    const structuredType = item.type === "project" ? "CreativeWork" : "TechArticle";
+    const structuredType = item.type === "project" ? "CreativeWork" : item.type === "knowledge_node" ? "LearningResource" : "TechArticle";
 
     document.title = `${item.title} | LarkixMaker`;
     setHeadElement('meta[name="description"]', "meta", { name: "description", content: description });
@@ -44,7 +57,8 @@
       description,
       image,
       url: canonical,
-      datePublished: item.date || undefined,
+      datePublished: item.date || item.publishedAt || undefined,
+      dateModified: item.updatedAt || undefined,
       keywords: item.tags || undefined,
       license: item.license || undefined,
       author: {
@@ -59,6 +73,8 @@
   }
 
   function titleEnglish(item) {
+    if (item.type === "knowledge_node") return "Derivation Note";
+    if (item.type === "knowledge_index") return "Derivation Index";
     if (item.type === "project") return "Open Hardware Project";
     const map = {
       "模拟电子": "Analog Electronics",
@@ -93,6 +109,8 @@
   }
 
   function itemUrl(item) {
+    if (item.href) return item.href;
+    if (item.type === "knowledge_node") return `./derive.html?slug=${encodeURIComponent(item.slug || item.id)}`;
     const page = item.type === "project" ? "project.html" : "post.html";
     return `./${page}?id=${encodeURIComponent(item.slug || item.id)}`;
   }
@@ -172,7 +190,7 @@
     window.addEventListener("scroll", updateProgress, { passive: true });
     window.addEventListener("resize", updateProgress);
 
-    const tocLinks = [...toc.querySelectorAll("a")];
+    const tocLinks = toc ? [...toc.querySelectorAll("a")] : [];
     const headings = tocLinks
       .map((link) => document.getElementById(decodeURIComponent(link.hash.slice(1))))
       .filter(Boolean);
@@ -234,8 +252,294 @@
     });
   }
 
+  const knowledgeSlugPattern = /^[a-z0-9][a-z0-9-]{1,79}$/;
+  const fallbackDeriveCover = "./assets/hero/electronics-lab-hero.png";
+
+  function statePanelHtml(title, message, actions = []) {
+    return `
+      <section class="empty-state empty-state-rich">
+        <div class="empty-state-copy">
+          <strong>${escapeHtml(title)}</strong>
+          <p>${escapeHtml(message)}</p>
+          ${
+            actions.length
+              ? `<div class="empty-state-actions">${actions
+                  .map((action) => `<a class="button ${action.primary ? "primary" : "secondary"}" href="${escapeHtml(action.href)}">${escapeHtml(action.label)}</a>`)
+                  .join("")}</div>`
+              : ""
+          }
+        </div>
+      </section>
+    `;
+  }
+
+  function statusToTitle(status) {
+    if (status === "loading") return "正在加载推导节点";
+    if (status === "empty") return "还没有公开推导节点";
+    if (status === "missing-slug") return "缺少推导节点标识";
+    if (status === "invalid-slug") return "推导节点标识格式不正确";
+    if (status === "not-found") return "推导节点未发布或不存在";
+    return "暂时无法打开推导节点";
+  }
+
+  function renderDeriveState(hero, content, toc, status, message) {
+    const title = statusToTitle(status);
+    document.title = `${title} | LarkixMaker`;
+    if (hero) {
+      hero.innerHTML = `
+        ${window.LarkixMedia.image(fallbackDeriveCover, "电子实验台背景", { loading: "eager", sizes: "100vw", fetchPriority: "high" })}
+        <div class="post-hero-content derive-hero-content">
+          <span class="category-pill">公式推导</span>
+          <div class="section-title-block split-title post-title-block">
+            <h1>${escapeHtml(title)}</h1>
+            <span>Derivation Note</span>
+          </div>
+          <p>${escapeHtml(message)}</p>
+        </div>
+      `;
+    }
+    if (content) {
+      content.innerHTML = statePanelHtml(title, message, [
+        { href: "./maker.html", label: "返回首页", primary: true },
+        { href: "./category.html?category=power-electronics", label: "电力电子入口" }
+      ]);
+    }
+    if (toc) toc.innerHTML = "";
+  }
+
+  function normalizeTags(value) {
+    if (Array.isArray(value)) return value.map((tag) => String(tag || "").trim()).filter(Boolean);
+    return String(value || "")
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+  }
+
+  function formatNodeDate(node) {
+    const source = node.publishedAt || node.updatedAt || node.createdAt || "";
+    if (!source) return "";
+    const date = new Date(source);
+    if (Number.isNaN(date.getTime())) return String(source).slice(0, 10);
+    return date.toISOString().slice(0, 10);
+  }
+
+  function normalizeKnowledgeNode(node) {
+    return {
+      ...node,
+      id: node.id || node.slug,
+      slug: node.slug || node.id,
+      type: "knowledge_node",
+      category: node.symbol || "公式推导",
+      excerpt: node.summary || "",
+      readTime: node.symbol || "Derivation",
+      date: formatNodeDate(node),
+      cover: node.cover || fallbackDeriveCover
+    };
+  }
+
+  function renderKnowledgeNodeHero(hero, node) {
+    if (!hero) return;
+    hero.innerHTML = `
+      ${window.LarkixMedia.image(node.cover || fallbackDeriveCover, `${node.title}封面`, { loading: "eager", sizes: "100vw", fetchPriority: "high" })}
+      <div class="post-hero-content derive-hero-content derive-accent-${escapeHtml(node.accentColor || "purple")}">
+        <span class="category-pill derive-symbol">${formulaSymbolHtml(node.symbol || "公式推导")}</span>
+        <div class="section-title-block split-title post-title-block">
+          <h1>${escapeHtml(node.title)}</h1>
+          <span>${escapeHtml(titleEnglish(node))}</span>
+        </div>
+        <p>${escapeHtml(node.summary || "这个推导节点暂时没有摘要。")}</p>
+        <div class="meta-row derive-meta-row">
+          <span>${escapeHtml(node.visibilityStatus === "unlisted" ? "直接链接可见" : "公开发布")}</span>
+          ${node.date ? `<span>${escapeHtml(node.date)}</span>` : ""}
+          ${node.nodeType ? `<span>${escapeHtml(node.nodeType === "derivation" ? "公式推导" : node.nodeType)}</span>` : ""}
+        </div>
+        ${renderTagChips(node)}
+      </div>
+    `;
+  }
+
+  function renderDeriveLinkCard(link, kind) {
+    const linkedNode = kind === "backlink" ? link.source : link.target;
+    const slug = linkedNode?.slug || link.targetSlug || link.sourceSlug || "";
+    const title = linkedNode?.title || link.label || slug;
+    const symbol = linkedNode?.symbol || link.label || (kind === "backlink" ? "引用来源" : "推导目标");
+    const resolved = Boolean(linkedNode) && link.resolved !== false;
+    const color = link.colorToken || linkedNode?.accentColor || "purple";
+    return `
+      <article class="derive-link-card ${resolved ? "" : "is-unavailable"}">
+        <span class="knowledge-color-dot knowledge-color-dot--${escapeHtml(color)}" aria-hidden="true"></span>
+        <div>
+          <span class="derive-link-kicker">${formulaSymbolHtml(symbol)}</span>
+          <h3>
+            ${
+              resolved && slug
+                ? `<a href="./derive.html?slug=${encodeURIComponent(slug)}">${escapeHtml(title)}</a>`
+                : `<span>${escapeHtml(title || "待补齐推导节点")}</span>`
+            }
+          </h3>
+          <p>${escapeHtml(resolved ? slug : `缺失或未公开：${slug || "unknown"}`)}</p>
+        </div>
+      </article>
+    `;
+  }
+
+  function renderDeriveLinkPanels(node) {
+    const links = Array.isArray(node.links) ? node.links : [];
+    const backlinks = Array.isArray(node.backlinks) ? node.backlinks : [];
+    if (!links.length && !backlinks.length) {
+      return `
+        <section class="derive-link-panel" aria-labelledby="deriveGraphTitle">
+          <div class="related-heading">
+            <h2 id="deriveGraphTitle">推导关联</h2>
+          </div>
+          ${statePanelHtml("暂无关联节点", "这个推导节点还没有公开出链或反向引用。")}
+        </section>
+      `;
+    }
+    return `
+      <section class="derive-link-panel" aria-labelledby="deriveGraphTitle">
+        <div class="related-heading">
+          <h2 id="deriveGraphTitle">推导关联</h2>
+        </div>
+        ${
+          links.length
+            ? `<div class="derive-link-group"><strong>继续推导</strong><div class="derive-link-list">${links.map((link) => renderDeriveLinkCard(link, "link")).join("")}</div></div>`
+            : ""
+        }
+        ${
+          backlinks.length
+            ? `<div class="derive-link-group"><strong>反向引用</strong><div class="derive-link-list">${backlinks.map((link) => renderDeriveLinkCard(link, "backlink")).join("")}</div></div>`
+            : ""
+        }
+      </section>
+    `;
+  }
+
+  function renderKnowledgeNodeCards(nodes) {
+    return nodes
+      .map((node) => {
+        const item = normalizeKnowledgeNode(node);
+        const tags = normalizeTags(item.tags)
+          .slice(0, 4)
+          .map((tag) => `<span class="tag-chip">${escapeHtml(tag)}</span>`)
+          .join("");
+        return `
+          <article class="derive-node-card derive-accent-${escapeHtml(item.accentColor || "purple")}">
+            <span class="derive-node-symbol">${formulaSymbolHtml(item.symbol || "Derivation")}</span>
+            <h3><a href="./derive.html?slug=${encodeURIComponent(item.slug)}">${escapeHtml(item.title)}</a></h3>
+            <p>${escapeHtml(item.summary || "")}</p>
+            ${tags ? `<div class="tag-list">${tags}</div>` : ""}
+          </article>
+        `;
+      })
+      .join("");
+  }
+
+  async function renderKnowledgeNodeIndex(options) {
+    const hero = document.querySelector(`#${options.heroId}`);
+    const content = document.querySelector(`#${options.contentId}`);
+    const toc = document.querySelector(`#${options.tocId}`);
+    const indexItem = {
+      id: "derivations",
+      slug: "derivations",
+      type: "knowledge_index",
+      title: "公式推导节点",
+      summary: "围绕电力电子变量、公式和工程边界整理的公开推导节点。",
+      cover: fallbackDeriveCover,
+      canonicalPath: absoluteUrl(location.pathname)
+    };
+    syncSeo(indexItem);
+    if (hero) {
+      hero.innerHTML = `
+        ${window.LarkixMedia.image(fallbackDeriveCover, "电子实验台背景", { loading: "eager", sizes: "100vw", fetchPriority: "high" })}
+        <div class="post-hero-content derive-hero-content">
+          <span class="category-pill">Derivations</span>
+          <div class="section-title-block split-title post-title-block">
+            <h1>公式推导节点</h1>
+            <span>Derivation Index</span>
+          </div>
+          <p>围绕电力电子变量、公式和工程边界整理的公开推导节点。</p>
+        </div>
+      `;
+    }
+    if (toc) toc.innerHTML = "";
+    if (!content) return;
+    content.innerHTML = statePanelHtml("正在加载推导节点", "正在读取公开推导节点列表。");
+    try {
+      const response = await fetch("./api/knowledge-nodes", { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload = await response.json();
+      const nodes = Array.isArray(payload.nodes) ? payload.nodes : [];
+      content.innerHTML = nodes.length
+        ? `<section class="derive-node-list" aria-label="公开推导节点">${renderKnowledgeNodeCards(nodes)}</section>`
+        : statePanelHtml("还没有公开推导节点", "公开推导节点发布后会显示在这里。", [{ href: "./category.html?category=power-electronics", label: "电力电子入口", primary: true }]);
+    } catch {
+      content.innerHTML = statePanelHtml("暂时无法读取推导节点", "请稍后重试，或返回电力电子入口继续浏览。", [
+        { href: "./derive.html", label: "重新加载", primary: true },
+        { href: "./category.html?category=power-electronics", label: "电力电子入口" }
+      ]);
+    }
+  }
+
+  window.renderKnowledgeNodePage = async function renderKnowledgeNodePage(options) {
+    const slug = new URLSearchParams(location.search).get("slug");
+    const hero = document.querySelector(`#${options.heroId}`);
+    const content = document.querySelector(`#${options.contentId}`);
+    const toc = document.querySelector(`#${options.tocId}`);
+
+    if (!slug) {
+      await renderKnowledgeNodeIndex(options);
+      return;
+    }
+
+    if (!knowledgeSlugPattern.test(slug)) {
+      renderDeriveState(hero, content, toc, "invalid-slug", "推导节点链接格式不正确。");
+      return;
+    }
+
+    renderDeriveState(hero, content, toc, "loading", "正在读取公开推导节点。");
+    try {
+      const response = await fetch(`./api/knowledge-nodes/${encodeURIComponent(slug)}`, { cache: "no-store" });
+      if (response.status === 404) {
+        renderDeriveState(hero, content, toc, "not-found", "这个推导节点未发布、不可公开访问，或已经不存在。");
+        return;
+      }
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload = await response.json();
+      if (!payload.node) {
+        renderDeriveState(hero, content, toc, "not-found", "这个推导节点未发布、不可公开访问，或已经不存在。");
+        return;
+      }
+
+      const node = normalizeKnowledgeNode(payload.node);
+      syncSeo(node);
+      renderKnowledgeNodeHero(hero, node);
+      if (!content) return;
+      if (!String(node.markdown || "").trim()) {
+        content.innerHTML = `${statePanelHtml("推导正文待补齐", "这个推导节点已经公开，但正文还没有可展示内容。")}${renderDeriveLinkPanels(node)}`;
+        if (toc) toc.innerHTML = "";
+        return;
+      }
+
+      const parsed = window.LarkixMarkdown.render(node.markdown);
+      content.innerHTML = `${parsed.html}${renderDeriveLinkPanels(node)}`;
+      if (toc) {
+        toc.innerHTML = parsed.headings
+          .filter((heading) => heading.level > 1)
+          .map((heading) => {
+            const level = Math.min(4, Math.max(2, Number(heading.level) || 2));
+            return `<a class="toc-level-${level}" data-level="${level}" href="#${heading.id}">${escapeHtml(heading.text)}</a>`;
+          })
+          .join("");
+      }
+      enhanceReading(content, toc);
+    } catch {
+      renderDeriveState(hero, content, toc, "error", "网络或服务暂时不可用，无法读取这个推导节点。");
+    }
+  };
+
   window.renderMarkdownPage = function renderMarkdownPage(options) {
-    const id = new URLSearchParams(location.search).get("id");
+    const id = new URLSearchParams(location.search).get(options.paramName || "id");
     const collection = options.collection || [];
     const item = id ? collection.find((entry) => entry.id === id || entry.slug === id) : collection[0];
     const hero = document.querySelector(`#${options.heroId}`);

@@ -35,6 +35,36 @@
     box-shadow: none;
     border: 0;
   }
+
+  .derivation-link {
+    display: inline;
+    width: auto;
+    height: auto;
+    margin-inline-start: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #000000;
+    text-decoration: underline;
+    box-shadow: none;
+  }
+
+  .derive-jump-icon {
+    display: none;
+  }
+
+  .derive-jump-label {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  .derivation-link::after {
+    content: " [derive:" attr(data-derive-slug) "]";
+  }
 }
 
 .markdown-article a,

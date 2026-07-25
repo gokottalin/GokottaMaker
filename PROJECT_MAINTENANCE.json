@@ -1,0 +1,1516 @@
+﻿{
+  "schemaVersion": 1,
+  "fileRole": "Permanent project maintenance and Agent coordination contract",
+  "project": {
+    "name": "LarkixMaker",
+    "root": "E:/Project/2607-LarkixWeb",
+    "currentMaintainer": "Owner + Agent00 + Agent0",
+    "lastReviewedAt": "2026-07-09 12:42 +08:00",
+    "summary": "LarkixMaker is a Node.js and SQLite powered technical content and tool site for analog electronics, STM32, ESP32, open hardware projects, mini apps, Markdown/DOCX tooling, CMS operations, brand assets, and production deployment.",
+    "currentPhase": "Task0A-D governance returns are complete. Owner paused Batch1. A complete Agent0 project handoff record was added for onboarding and cross-Agent alignment; implementation remains closed."
+  },
+  "permanentProjectOverview": {
+    "productPosition": "LarkixMaker is the technical content and tool layer under the Larkix brand. It explains hardware problems through circuit simulation, validates engineering results through STM32 and embedded practice, and keeps reusable open hardware project knowledge online.",
+    "runtimeShape": "Node.js native HTTP service with experimental SQLite, browser pages, CMS admin, runtime SQLite database, uploads, mini app tools, Markdown/DOCX conversion, brand assets, deployment scripts, and production health checks.",
+    "productionTopology": "Nginx/HTTPS -> 127.0.0.1:4173 -> Node server -> SQLite + uploads under DATA_DIR.",
+    "currentPhase": "Agent00 has resolved the nine implementation-detail architecture decisions for the derivation knowledge network and focused power-electronics mode. Agent0 is now authorized to design an implementation batch; child-Agent code implementation is still closed until Agent0 writes the batch design and Agent101, Agent20, and Agent1 gates are satisfied.",
+    "permanentTruths": [
+      "SQLite/CMS is the production content source; static JS and Markdown files are seeds, fallback, or source drafts unless explicitly imported.",
+      "Agent1 is the only production deployment and rollback entry.",
+      "Agent101 owns Git batch audit and must prevent runtime data, secrets, temporary evidence, or unrelated files from entering commits.",
+      "Agent20 evidence is required for any release or cross-module refactor.",
+      "Every Agent must keep a fresh handoff document in its own docs/AgentX folder so a replacement Agent can take over."
+    ],
+    "canonicalGovernanceFiles": [
+      "PROJECT_MAINTENANCE.json",
+      "ACTIVE_AGENT_DISPATCH.json",
+      "TOP_ARCHITECT_HANDOFF.json",
+      "docs/Agent0+总控与集成/2026-06-19_19-01_Agent00_项目永久概述与Agent接口契约.md",
+      "docs/Agent0+总控与集成/2026-06-19_20-47_Agent0_公式变量推导网络子Agent任务下达.md",
+      "docs/Agent0+总控与集成/2026-06-19_21-09_Agent0_子Agent启动任务包与契约确认.md",
+      "docs/Agent0+总控与集成/2026-06-19_21-09_Agent0_child_agent_bootstrap_contract.json"
+    ]
+  },
+  "activeDispatch": {
+    "status": "task0_complete_batch1_paused_by_owner_code_still_closed",
+    "dispatchId": "Agent0-2026-06-19-2047-derivation-network-child-agent-dispatch",
+    "rootDispatchPath": "ACTIVE_AGENT_DISPATCH.json",
+    "agent0DispatchReport": "docs/Agent0+总控与集成/2026-06-19_20-47_Agent0_公式变量推导网络子Agent任务下达.md",
+    "agent0DispatchStatusPath": "docs/Agent0+总控与集成/2026-06-19_20-47_Agent0_status.json",
+    "agent0LaunchContractReport": "docs/Agent0+总控与集成/2026-06-19_21-09_Agent0_子Agent启动任务包与契约确认.md",
+    "agent0LaunchContractJson": "docs/Agent0+总控与集成/2026-06-19_21-09_Agent0_child_agent_bootstrap_contract.json",
+    "agent0StatusPath": "docs/Agent0+总控与集成/2026-06-21_18-38_Agent0_status.json",
+    "agent0ConvergenceReport": "docs/Agent0+总控与集成/2026-06-21_18-38_Agent0_全部回传信息收敛.md",
+    "agent00CountersignReport": "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_九项实现前架构裁决与Agent0实现批次授权.md",
+    "agent00CountersignStatusPath": "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_status.json",
+    "agent00ImplementationDecisionJson": "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_implementation_decisions.json",
+    "sourceArchitectDispatch": "docs/Agent0+总控与集成/2026-06-19_20-35_Agent00_derivation_network_dispatch.json",
+    "sourceArchitectReport": "docs/Agent0+总控与集成/2026-06-19_20-35_Agent00_公式变量推导网络与电力电子聚焦架构设计.md",
+    "summary": "Latest active state: Task0A-D complete; Batch1 ready condition exists but is paused by Owner and remains closed.",
+    "executionOrder": [
+      "Gate 0 Agent0 dispatch",
+      "P0 Agent2/Agent3/Agent9/Agent20 interface design",
+      "P1 Agent4/Agent5/Agent7/Agent101/Agent1 integration design",
+      "P2 Agent8 market expression after technical scope is bounded",
+      "Agent0 bottom-up convergence",
+      "Agent00 implementation decision"
+    ]
+  },
+  "architectureHistory": [
+    {
+      "id": "ARCH-2026-06-19-2035-derivation-network-and-focused-site",
+      "recordedAt": "2026-06-19 20:35 +08:00",
+      "recordedBy": "Agent00",
+      "title": "Formula variable derivation network and focused power-electronics site mode",
+      "status": "design_requested_not_implemented",
+      "ownerRequest": [
+        "Support optional highlighted formula variables inside articles.",
+        "A highlighted variable such as D.boost can click through to a detailed derivation page.",
+        "Derivation pages should behave like normal editable article pages: Markdown, images, common formatting, and nested links to other derivation variables.",
+        "The derivation system should form a maintainable knowledge graph instead of isolated pages.",
+        "Data and backups must stay safe.",
+        "Short-term public site should feel small and focused: update homepage and power-electronics page only, while hiding digital, analog, circuit-analysis, and project subpages until enough content exists."
+      ],
+      "architectureDecision": [
+        "Use a dedicated knowledge/derivation node model instead of overloading ordinary posts or projects.",
+        "Reuse existing Markdown renderer, uploads, auth, audit, backup, and CMS patterns wherever possible.",
+        "Introduce explicit derivation-link syntax in Markdown, then parse it into clickable highlighted links and optional graph edges.",
+        "Keep hidden sections as stored content, not deleted content. Hide navigation and index exposure through site settings.",
+        "Do not implement code immediately. Agent00 designs, Agent0 dispatches, child Agents produce API/CMS/frontend/test plans before implementation."
+      ],
+      "minimalArchitectureChanges": [
+        "Add knowledge/derivation node data contract.",
+        "Add derivation-link Markdown shortcode contract.",
+        "Add public derivation detail page contract.",
+        "Add CMS management contract for derivation nodes.",
+        "Add site focus mode setting for homepage + power-electronics public scope.",
+        "Add backup and regression requirements before release."
+      ],
+      "affectedAgents": [
+        "Agent0",
+        "Agent2",
+        "Agent3",
+        "Agent4",
+        "Agent5",
+        "Agent7",
+        "Agent9",
+        "Agent20",
+        "Agent101",
+        "Agent1"
+      ],
+      "handoffDocuments": [
+        "docs/Agent0+总控与集成/2026-06-19_20-35_Agent00_公式变量推导网络与电力电子聚焦架构设计.md",
+        "docs/Agent0+总控与集成/2026-06-19_20-35_Agent00_derivation_network_dispatch.json"
+      ]
+    },
+    {
+      "id": "ARCH-2026-06-21-1853-implementation-gate-countersign",
+      "recordedAt": "2026-06-21 18:53 +08:00",
+      "recordedBy": "Agent00",
+      "title": "Agent00 countersign that the project has not entered code implementation",
+      "status": "implementation_gate_closed",
+      "decision": [
+        "The derivation knowledge network and focused power-electronics launch mode are still in architecture governance, interface design, and bottom-up convergence.",
+        "The project has not entered code implementation for this request.",
+        "No child Agent is authorized to create migrations, change APIs, modify CMS/frontend/Markdown implementation, run production release, or stage files as implementation work.",
+        "Allowed work is limited to architecture decisions, Agent3 parent refresh, explicit Agent101 governance staging proposal, and implementation-plan preparation."
+      ],
+      "evidence": [
+        "Agent0 status at 2026-06-21 18:38 says all feedback is converged but implementation remains blocked by Agent00/Agent100 decisions.",
+        "ACTIVE_AGENT_DISPATCH.json still sets codeChangeAllowed=false, databaseMutationAllowed=false, productionReleaseAllowed=false, and mustStopBeforeImplementation=true.",
+        "Git verification at 2026-06-21 18:53 found trackedChangedCount=0, stagedChangedCount=0, trackedImplementationLike=[], stagedImplementationLike=[], and untrackedImplementationLike=[].",
+        "The working tree contains untracked governance and Agent report files, which are documentation/interface artifacts rather than implemented source changes."
+      ],
+      "handoffDocuments": [
+        "docs/Agent0+总控与集成/2026-06-21_18-53_Agent00_项目状态补签_未进入代码实现.md",
+        "docs/Agent0+总控与集成/2026-06-21_18-53_Agent00_status.json"
+      ]
+    },
+    {
+      "id": "ARCH-2026-06-21-1901-agent00-readjudication-not-implemented",
+      "recordedAt": "2026-06-21 19:01 +08:00",
+      "recordedBy": "Agent00",
+      "title": "Agent00 re-adjudication that implementation has not started",
+      "status": "implementation_gate_reconfirmed_closed",
+      "decision": [
+        "After re-reading the active dispatch, Agent update index, and git state, Agent00 re-adjudicates that the project has still not entered code implementation.",
+        "The active request remains an architecture and interface-convergence request.",
+        "The implementation gate remains closed.",
+        "No Agent may start migration, backend API, CMS, visitor frontend, Markdown renderer, DOCX, release, or staging implementation work from this state."
+      ],
+      "evidence": [
+        "ACTIVE_AGENT_DISPATCH.json still has codeChangeAllowed=false, productionReleaseAllowed=false, databaseMutationAllowed=false, and mustStopBeforeImplementation=true.",
+        "AGENT_UPDATE_INDEX.json records Agent00 status as countersigned_not_in_code_implementation and Agent0 as all_feedback_converged_waiting_architecture_decision.",
+        "Git verification at 2026-06-21 19:01 found trackedChangedCount=0, stagedChangedCount=0, trackedImplementationLike=[], stagedImplementationLike=[], and untrackedImplementationLike=[].",
+        "Untracked files are governance, Agent report, and status JSON artifacts, not implementation files."
+      ],
+      "handoffDocuments": [
+        "docs/Agent0+总控与集成/2026-06-21_19-01_Agent00_重新裁决_仍未进入代码实现.md",
+        "docs/Agent0+总控与集成/2026-06-21_19-01_Agent00_status.json"
+      ]
+    },
+    {
+      "id": "ARCH-2026-06-21-1912-implementation-detail-decisions",
+      "recordedAt": "2026-06-21 19:12 +08:00",
+      "recordedBy": "Agent00",
+      "title": "Nine implementation-detail architecture decisions and Agent0 implementation-batch design authorization",
+      "status": "decisions_resolved_batch_design_authorized_code_closed",
+      "decision": [
+        "knowledge_links enters V0 persistence.",
+        "Dangling derivation links are allowed at authoring time, warn in CMS, and render safely in public without leaking draft or deleted targets.",
+        "DOCX V0 degrades to label plus derive slug text, not hyperlink relationships.",
+        "The public derivation route is fixed as derive.html?slug=<slug> for V0.",
+        "public_focus_mode enters V0 as disabled-by-default site setting.",
+        "publishStatus and visibilityStatus are canonical API fields for knowledge nodes.",
+        "Hidden landing pages are removed from sitemap and noindexed, but old detail pages are not bulk-noindexed.",
+        "rollback.sh should default to gokottamaker before release; until then rollback commands must pass SERVICE_NAME=gokottamaker.",
+        "Admin knowledge-node save response is { node, nodes, warnings }."
+      ],
+      "agent0Authorization": "Agent0 may now design the implementation batch, file boundaries, owner order, and gates. This authorization does not allow child Agents to edit code before Agent0 publishes the batch design and required Git/regression/release gates are satisfied.",
+      "handoffDocuments": [
+        "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_九项实现前架构裁决与Agent0实现批次授权.md",
+        "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_implementation_decisions.json",
+        "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_status.json"
+      ]
+    }
+  ],
+  "activeArchitectureRequests": {
+    "derivationKnowledgeNetwork": {
+      "status": "agent00_decided_agent0_batch_design_authorized",
+      "activeDispatchPath": "ACTIVE_AGENT_DISPATCH.json",
+      "publicGoal": "Articles may contain highlighted clickable variables that open detailed derivation pages. Derivation pages can recursively link to other variables and support Markdown/images.",
+      "example": {
+        "sourceFormula": "detaI = Vin * D.boost / (4 * Lnom * fsw)",
+        "clickableVariable": "D.boost",
+        "targetNode": "d-boost",
+        "preferredHighlight": "purple"
+      },
+      "minimumViableArchitecture": {
+        "dataModel": "Dedicated derivation/knowledge node table plus optional graph links. Do not overload ordinary posts/projects.",
+        "authorSyntax": "{{derive:d-boost|D.boost|purple}}",
+        "publicPage": "derive.html?slug=d-boost or equivalent stable route",
+        "cms": "Derivation nodes editable with Markdown, cover image, publish status, tags, and graph preview.",
+        "backup": "Use SQLite migrations, audit/revision history, uploads backup, and Agent1 release gate."
+      }
+    },
+    "focusedPowerElectronicsLaunchMode": {
+      "status": "agent00_decided_agent0_batch_design_authorized",
+      "activeDispatchPath": "ACTIVE_AGENT_DISPATCH.json",
+      "publicGoal": "Temporarily make the site feel small and focused. Update homepage and power-electronics section first; hide digital, analog, circuit-analysis, and projects from public navigation until content is ready.",
+      "minimumViableArchitecture": {
+        "setting": "site_settings.public_focus_mode",
+        "visiblePublicScopes": [
+          "home",
+          "power-electronics",
+          "derivations"
+        ],
+        "hiddenButNotDeleted": [
+          "digital",
+          "analog",
+          "circuit-analysis",
+          "projects"
+        ],
+        "rule": "Hidden sections remain in database and source files; do not delete routes or content. Hide navigation, homepage promotion, and optional sitemap exposure."
+      }
+    }
+  },
+  "implementationGate": {
+    "status": "batch1_paused_by_owner_code_closed",
+    "lastCountersignedAt": "2026-06-21 19:12 +08:00",
+    "lastCountersignedBy": "Agent00",
+    "decisionReport": "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_九项实现前架构裁决与Agent0实现批次授权.md",
+    "decisionJson": "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_implementation_decisions.json",
+    "statusJson": "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_status.json",
+    "codeImplementationState": "batch1_paused_by_owner_not_open",
+    "gitEvidence": {
+      "trackedChangedCount": 0,
+      "stagedChangedCount": 0,
+      "trackedImplementationLike": [],
+      "stagedImplementationLike": [],
+      "untrackedImplementationLike": [],
+      "untrackedCount": 86
+    },
+    "allowedNow": [
+      "Agent0 governance record maintenance",
+      "read-only Git/release/test planning reviews without staging, deployment, migration, or implementation"
+    ],
+    "notAllowedBeforeApproval": [
+      "Batch1 implementation dispatch",
+      "Database migrations",
+      "Backend API implementation",
+      "CMS implementation",
+      "Visitor frontend route or navigation implementation",
+      "Markdown renderer implementation",
+      "Production release",
+      "Git staging, commit, push, or git add ."
+    ],
+    "openOnlyAfter": [
+      "Agent0 publishes implementation batch design and file boundaries",
+      "Agent101 produces an explicit staging list",
+      "Agent1 release gate is accepted for any migration path",
+      "Agent20 regression plan is ready for the implementation slice"
+    ]
+  },
+  "maintenancePolicy": {
+    "owner": "Agent0",
+    "updateRule": "Update this JSON whenever Agent ownership, output folders, naming rules, release workflow, or project module boundaries change.",
+    "beforeWork": [
+      "Read PROJECT_MAINTENANCE.json first.",
+      "Read ACTIVE_AGENT_DISPATCH.json second when it exists; it is the active task entry for all child Agents.",
+      "Read TOP_ARCHITECT_HANDOFF.json third for current architecture risks and active roadmap.",
+      "If acting as Agent00 or Agent0, run the agentMonitoringProtocol startup scan before making decisions.",
+      "Read the target Agent folder's latest handoff or report before editing.",
+      "Check git status before staging, deleting, publishing, or moving files.",
+      "Run the round update self-check before final response when the task changes modules, contracts, risks, release workflow, or Agent ownership.",
+      "Do not overwrite another Agent's active work without explicit owner approval."
+    ],
+    "rootDirectoryRule": "The repository root must stay clean. New reports, test evidence, handoff notes, and temporary explanations must go into the responsible Agent folder, not the root.",
+    "rootAllowedHumanDocs": [
+      "README.md",
+      "PROJECT_MAINTENANCE.json",
+      "TOP_ARCHITECT_HANDOFF.json",
+      "说明改动情况.md when it is the active release note for the current batch only"
+    ]
+  },
+  "roundUpdateSelfCheck": {
+    "purpose": "Every project update must self-check whether permanent docs, Agent interfaces, risks, volume status, release gates, or handoff outputs need updates. The acting Agent must tell the Owner in the conversation when an update is needed, completed, or deferred.",
+    "mustRunWhen": [
+      "Any module boundary changes.",
+      "Any Agent ownership or interface changes.",
+      "Any API, data model, content field, release workflow, or runtime data policy changes.",
+      "Any Agent exceeds or approaches its manageable volume threshold.",
+      "Any production release, rollback, or Git batch is prepared.",
+      "Any permanent project overview or roadmap changes."
+    ],
+    "checklist": [
+      "Did PROJECT_MAINTENANCE.json need an update?",
+      "Did TOP_ARCHITECT_HANDOFF.json need an update?",
+      "Did the responsible Agent write a handoff/report to its own docs folder?",
+      "Did cross-Agent interfaces change and require an AgentX对接AgentY document?",
+      "Did risks, blockers, or required Agent00/Agent100 decisions change?",
+      "Did Agent volume status change from ok to watch/split-required?",
+      "Did release gates or Agent20 regression templates need updates?",
+      "Did Agent101 need to audit a new commit batch?"
+    ],
+    "conversationNotificationFormat": [
+      "自检结果：已更新 / 待更新 / 无需更新",
+      "受影响文档：list paths",
+      "待 Owner/Agent00 裁决：list decisions",
+      "下一轮必须检查：list items"
+    ],
+    "handoffFreshnessRule": "Each active Agent must keep its latest handoff/report current. If an Agent stops responding or is replaced, the replacement Agent starts by reading PROJECT_MAINTENANCE.json, TOP_ARCHITECT_HANDOFF.json, the latest Agent0 convergence report, and the latest document in the target Agent folder."
+  },
+  "agentReportingProtocol": {
+    "purpose": "Make every child-Agent update discoverable by Agent00 and Agent0 without relying on chat history. Reports are append-only in each Agent folder; Agent0/Agent00 monitor by scanning these files plus git status.",
+    "appliesTo": [
+      "all child Agents",
+      "Agent00",
+      "Agent0",
+      "replacement Agents"
+    ],
+    "reportingRule": [
+      "Every Agent must write a Markdown report or handoff to its own docs/AgentX folder after meaningful work.",
+      "Every Agent must also write a small status JSON beside the report when the work changes files, interfaces, risks, volume status, or release readiness.",
+      "Child Agents must not edit the central Agent0 update index directly; Agent0 owns that index to avoid concurrent-write conflicts.",
+      "If no code changed but a decision, risk, blocker, or interface changed, the Agent still writes a status JSON.",
+      "If an Agent cannot finish, it writes a blocked status JSON before stopping."
+    ],
+    "statusJsonPattern": "docs/AgentX+职责目录/YYYY-MM-DD_HH-mm_AgentX_status.json",
+    "reportPattern": "docs/AgentX+职责目录/YYYY-MM-DD_HH-mm_AgentX_主题.md",
+    "handoffPattern": "docs/AgentX+职责目录/YYYY-MM-DD_HH-mm_AgentX对接AgentY_主题.md",
+    "statusJsonSchema": {
+      "agent": "AgentX",
+      "timestamp": "YYYY-MM-DD HH:mm +08:00",
+      "status": "completed|ready_for_convergence|blocked|needs_decision|ready_for_implementation|handoff_current",
+      "summary": "one-line current result",
+      "latestReportPath": "docs/AgentX+职责目录/YYYY-MM-DD_HH-mm_AgentX_主题.md",
+      "changedFiles": [],
+      "newFiles": [],
+      "deletedFiles": [],
+      "interfacesChanged": [],
+      "risksChanged": [],
+      "volumeStatus": "ok|watch|split_recommended|split_required",
+      "codeChangeRequested": false,
+      "requiresArchitectureDecision": false,
+      "requiresGitAudit": false,
+      "requiresRegression": false,
+      "requiresReleaseGate": false,
+      "requiresOtherAgents": [],
+      "blockedBy": [],
+      "nextActions": [],
+      "replacementStartHere": [
+        "PROJECT_MAINTENANCE.json",
+        "TOP_ARCHITECT_HANDOFF.json",
+        "latestReportPath"
+      ]
+    },
+    "minimumMarkdownSections": [
+      "本轮结论",
+      "已读取输入",
+      "当前模块现状",
+      "发现的问题与风险",
+      "建议的优化方案",
+      "涉及文件范围",
+      "验证或检查结果",
+      "接口影响",
+      "体量评估",
+      "需要其他 Agent 配合",
+      "阻塞与待 Agent00/Agent100 裁决事项",
+      "下一轮可执行任务"
+    ],
+    "failureRule": "If an Agent did work but did not produce a status JSON, Agent0 must mark that Agent as reporting-incomplete in the next convergence report and may not treat the work as fully handoff-safe."
+  },
+  "agentMonitoringProtocol": {
+    "purpose": "Agent00 and Agent0 must be able to identify recent changes accurately whenever they are executed, regardless of whether they saw the child-Agent chats.",
+    "startupScanRequiredFor": [
+      "Agent00",
+      "Agent0",
+      "Agent100 when reviewing architecture",
+      "replacement Agents entering a domain"
+    ],
+    "startupScanSteps": [
+      "Run git status --short --branch.",
+      "List newest files under docs/Agent*/ and docs/Agent*+*/ sorted by timestamp/name.",
+      "Read all status JSON files newer than the last Agent0 update index entry.",
+      "Read the newest Markdown handoff/report for any Agent whose status JSON is missing, blocked, high risk, split recommended, or reports interface changes.",
+      "Compare changedFiles/newFiles/deletedFiles from status JSON with git status.",
+      "Check PROJECT_MAINTENANCE.json and TOP_ARCHITECT_HANDOFF.json timestamps and update markers.",
+      "If any Agent reports interfacesChanged, risksChanged, split_recommended, split_required, requiresArchitectureDecision, requiresGitAudit, requiresRegression, or requiresReleaseGate, include it in Agent0 convergence.",
+      "If status JSON and git status disagree, mark the Agent as needs_audit and request Agent101 or target Agent clarification.",
+      "Before final response, tell Owner the monitoring result in conversation."
+    ],
+    "agent0UpdateIndex": {
+      "owner": "Agent0",
+      "path": "docs/Agent0+总控与集成/AGENT_UPDATE_INDEX.json",
+      "purpose": "Agent0-maintained snapshot of the latest known status for every Agent. Child Agents do not edit this file.",
+      "updateWhen": [
+        "after every bottom-up convergence",
+        "after any Agent split/merge",
+        "before any release approval",
+        "when Agent00/Agent0 detects unseen child-Agent status files"
+      ],
+      "schema": {
+        "schemaVersion": 1,
+        "lastUpdatedAt": "YYYY-MM-DD HH:mm +08:00",
+        "updatedBy": "Agent0",
+        "gitHead": "short sha",
+        "gitStatusSummary": "short text",
+        "agents": {
+          "AgentX": {
+            "latestStatusPath": "docs/AgentX.../status.json",
+            "latestReportPath": "docs/AgentX.../report.md",
+            "lastSeenAt": "YYYY-MM-DD HH:mm +08:00",
+            "status": "completed|blocked|needs_decision|handoff_current",
+            "riskLevel": "low|medium|high",
+            "volumeStatus": "ok|watch|split_recommended|split_required",
+            "unresolvedDecisions": [],
+            "changedFilesSinceLastIndex": [],
+            "requires": []
+          }
+        }
+      }
+    },
+    "conversationNotificationFormat": [
+      "监控结果：已发现最新变化 / 未发现新变化 / 发现未上报变化",
+      "最新变化来源：Agent list + status/report paths",
+      "需要 Agent00/Agent100 裁决：list",
+      "需要 Agent101 审计：yes/no + paths",
+      "需要 Agent20 回归：yes/no + scope",
+      "契约是否已更新：yes/no/deferred"
+    ],
+    "unreportedChangeRule": "If git status shows new or modified files in an Agent domain but no matching report/status JSON exists, Agent0 must not silently accept the change. It must mark the domain as unreported-change and ask the responsible Agent or Agent101 to produce/verify a handoff."
+  },
+  "documentContract": {
+    "ordinaryReportPattern": "docs/AgentX+职责目录/YYYY-MM-DD_HH-mm_AgentX_主题.md",
+    "handoffPattern": "docs/AgentX+职责目录/YYYY-MM-DD_HH-mm_AgentX对接AgentY_主题.md",
+    "statusJsonPattern": "docs/AgentX+职责目录/YYYY-MM-DD_HH-mm_AgentX_status.json",
+    "releaseRecordPattern": "docs/Agent1+运维与发布稳定性/YYYY-MM-DD_HH-mm_Agent1_版本号发布记录.md",
+    "testEvidenceFolderPattern": "docs/AgentX+职责目录/YYYY-MM-DD_HH-mm_主题/",
+    "evidenceFilePatternExamples": [
+      "page-viewport-theme-result.png",
+      "api-scenario-result.json",
+      "console-page-result.txt"
+    ],
+    "requiredReportSections": [
+      "目标",
+      "改动范围",
+      "验证结果",
+      "风险",
+      "后续建议",
+      "接口影响",
+      "体量评估",
+      "交接状态"
+    ],
+    "requiredHandoffSections": [
+      "对接背景",
+      "输入材料",
+      "需要对方处理",
+      "验收标准",
+      "边界与风险",
+      "固定接口",
+      "替换 Agent 继续工作所需信息"
+    ],
+    "requiredMachineReadableBlock": {
+      "agent": "AgentX",
+      "status": "ready_for_convergence|blocked|needs_decision|ready_for_implementation|handoff_current",
+      "riskLevel": "low|medium|high",
+      "volumeStatus": "ok|watch|split_recommended|split_required",
+      "codeChangeRequested": false,
+      "requiresArchitectureDecision": false,
+      "requiresOtherAgents": [],
+      "interfacesChanged": [],
+      "documentsToUpdate": [],
+      "suggestedNextActions": []
+    },
+    "latestHandoffRule": [
+      "Every active Agent writes a fresh handoff/report at the end of meaningful work.",
+      "The latest document in each Agent folder is the replacement Agent's starting point.",
+      "If no fresh handoff exists after a major change, Agent0 must flag the Agent as replace-risk in the next convergence report.",
+      "Any Agent crossing a split threshold must propose child-Agent names, owned interfaces, files, and handoff directories before code work continues."
+    ],
+    "prohibitedRootOutputs": [
+      "临时报告 .md",
+      "测试截图 .png",
+      "浏览器证据 JSON",
+      "一次性脚本输出",
+      "未归属的对接说明"
+    ]
+  },
+  "projectModules": {
+    "visitorFrontend": {
+      "description": "Public site pages, navigation, homepage, Maker homepage, category pages, project pages, post pages, responsive layout, and visitor interactions.",
+      "primaryFiles": [
+        "index.html",
+        "maker.html",
+        "category.html",
+        "projects.html",
+        "miniapps.html",
+        "post.html",
+        "project.html",
+        "main.js",
+        "category-page.js",
+        "post.js",
+        "styles/"
+      ],
+      "primaryAgent": "Agent4"
+    },
+    "adminCms": {
+      "description": "CMS login, content editor, content list, carousel manager, layout editor, course path preview, image library, and CMS status views.",
+      "primaryFiles": [
+        "admin/index.html",
+        "admin/course-paths.html",
+        "admin/admin.js",
+        "admin/admin.css"
+      ],
+      "primaryAgent": "Agent3"
+    },
+    "backendData": {
+      "description": "Node service, API contracts, SQLite, auth, uploads, migrations, health checks, sitemap, RSS, and validators.",
+      "primaryFiles": [
+        "server.js",
+        "lib/",
+        "migrations/",
+        "data/",
+        "database/",
+        "uploads/"
+      ],
+      "primaryAgent": "Agent2"
+    },
+    "deploymentOps": {
+      "description": "Nginx, HTTPS, systemd, server deploy, backup, restore, rollback, health verification, and production incident response.",
+      "primaryFiles": [
+        "scripts/",
+        "deploy/",
+        "Dockerfile",
+        "render.yaml",
+        ".env.example",
+        "docs/deployment.md"
+      ],
+      "primaryAgent": "Agent1"
+    },
+    "miniapps": {
+      "description": "LarkixElec, MD2File, mini app registry, mini app assets, circuit generation core, and mini app API handoff.",
+      "primaryFiles": [
+        "tools/",
+        "tools/assets/",
+        "gokotta-elec-core/",
+        "data/miniapps.js"
+      ],
+      "primaryAgent": "Agent6"
+    },
+    "brandVisual": {
+      "description": "Larkix logo, brand palette, day/night theme, visual identity, icon system, and design assets.",
+      "primaryFiles": [
+        "assets/logo/",
+        "assets/hero/",
+        "assets/covers/",
+        "styles/larkix-brand-theme.css"
+      ],
+      "primaryAgent": "Agent7"
+    },
+    "contentSeo": {
+      "description": "Articles, course paths, tags, SEO copy, RSS content quality, sitemap coverage, content calendar, and knowledge taxonomy.",
+      "primaryFiles": [
+        "content/",
+        "data/posts.js",
+        "data/course-meta.js",
+        "README.md"
+      ],
+      "primaryAgent": "Agent5"
+    },
+    "markdownContentGeneration": {
+      "description": "Markdown renderer behavior, formula rendering, DOCX conversion, content generation contracts, and LLM-facing article structure.",
+      "primaryFiles": [
+        "data/markdown-renderer.js",
+        "tools/md2doc.html",
+        "tools/md2doc.js",
+        "lib/md2doc.js",
+        "docs/Agent9+内容生成对接规范/"
+      ],
+      "primaryAgent": "Agent9"
+    },
+    "marketExpression": {
+      "description": "Positioning, product matrix, homepage copy, external storytelling, conversion paths, and market-facing design direction.",
+      "primaryFiles": [
+        "index.html",
+        "docs/Agent8+市场部设计/"
+      ],
+      "primaryAgent": "Agent8"
+    },
+    "testingQa": {
+      "description": "Manual and automated regression, browser screenshots, responsive checks, admin smoke tests, mini app verification, and issue reports.",
+      "primaryFiles": [
+        "docs/Agent20+体验测试与问题上报/",
+        "scripts/verify-api.ps1",
+        "scripts/test-markdown-renderer.js"
+      ],
+      "primaryAgent": "Agent20"
+    },
+    "gitReleaseControl": {
+      "description": "Git status audits, staging discipline, commit grouping, release branch notes, rollback references, and publish readiness checks.",
+      "primaryFiles": [
+        ".git/",
+        "说明改动情况.md",
+        "docs/Agent101-Git/"
+      ],
+      "primaryAgent": "Agent101"
+    }
+  },
+  "agents": [
+    {
+      "id": "Agent00",
+      "name": "顶部架构师",
+      "folder": "docs/Agent0+总控与集成",
+      "primaryResponsibilities": [
+        "Permanent architecture contracts",
+        "Cross-module interface decisions",
+        "Agent volume split decisions",
+        "Risk register ownership",
+        "Second-round implementation gate approval"
+      ],
+      "fixedInterfaces": {
+        "inputs": [
+          "Agent0 convergence reports",
+          "Agent100 technical reviews",
+          "all child Agent handoff reports",
+          "PROJECT_MAINTENANCE.json",
+          "TOP_ARCHITECT_HANDOFF.json"
+        ],
+        "outputs": [
+          "architecture decisions",
+          "split or merge decisions",
+          "interface contract updates",
+          "phase roadmap updates"
+        ],
+        "mustCoordinateWith": [
+          "Owner",
+          "Agent100",
+          "Agent0",
+          "Agent101",
+          "Agent20"
+        ]
+      },
+      "volumeStatus": "watch",
+      "splitRule": "If architecture decisions, roadmap, risk register, and Agent split governance become too frequent for Agent0 folder tracking, create docs/Agent00+顶部架构师 and keep Agent0 as PMO only.",
+      "mustOutputHere": true
+    },
+    {
+      "id": "Agent100",
+      "name": "技术指导",
+      "folder": "docs/Agent0+总控与集成",
+      "primaryResponsibilities": [
+        "Technical review",
+        "Implementation feasibility",
+        "Risky refactor review",
+        "Module split design review",
+        "Architecture tradeoff notes"
+      ],
+      "fixedInterfaces": {
+        "inputs": [
+          "Agent00 architecture questions",
+          "Agent2 backend designs",
+          "Agent3 CMS designs",
+          "Agent1 release risk notes"
+        ],
+        "outputs": [
+          "technical review notes",
+          "implementation constraints",
+          "risk acceptance or rejection"
+        ],
+        "mustCoordinateWith": [
+          "Agent00",
+          "Agent0",
+          "affected module Agents"
+        ]
+      },
+      "volumeStatus": "ok",
+      "splitRule": "Split only if it starts doing implementation work; implementation must stay with module Agents.",
+      "mustOutputHere": true
+    },
+    {
+      "id": "Agent0",
+      "name": "总控与集成",
+      "folder": "docs/Agent0+总控与集成",
+      "primaryResponsibilities": [
+        "Project coordination",
+        "Agent task splitting",
+        "Cross-agent handoff control",
+        "Acceptance criteria consolidation",
+        "Maintenance contract updates"
+      ],
+      "mustOutputHere": true
+    },
+    {
+      "id": "Agent1",
+      "name": "运维与发布稳定性",
+      "folder": "docs/Agent1+运维与发布稳定性",
+      "primaryResponsibilities": [
+        "Production deployment",
+        "Nginx and HTTPS",
+        "systemd service management",
+        "Backup and rollback",
+        "Health checks"
+      ],
+      "mustOutputHere": true
+    },
+    {
+      "id": "Agent101",
+      "name": "Git",
+      "folder": "docs/Agent101-Git",
+      "primaryResponsibilities": [
+        "Git staging and commit discipline",
+        "Release note grouping",
+        "Branch and tag handoff",
+        "Rollback reference tracking"
+      ],
+      "mustOutputHere": true
+    },
+    {
+      "id": "Agent2",
+      "name": "后端与数据模型",
+      "folder": "docs/Agent2+后端与数据模型",
+      "primaryResponsibilities": [
+        "Node API",
+        "SQLite schema",
+        "Auth and sessions",
+        "Uploads and validators",
+        "Health payloads"
+      ],
+      "mustOutputHere": true
+    },
+    {
+      "id": "Agent3",
+      "name": "管理端CMS与内容工作流",
+      "folder": "docs/Agent3+管理端CMS与内容工作流",
+      "primaryResponsibilities": [
+        "Admin CMS",
+        "Content editor",
+        "Carousel management",
+        "Layout editor",
+        "CMS login UX"
+      ],
+      "mustOutputHere": true
+    },
+    {
+      "id": "Agent4",
+      "name": "访客端体验、视觉与前端架构",
+      "folder": "docs/Agent4+访客端体验、视觉与前端架构",
+      "primaryResponsibilities": [
+        "Visitor pages",
+        "Responsive layout",
+        "Frontend architecture",
+        "Theme application",
+        "Navigation and page UX"
+      ],
+      "mustOutputHere": true
+    },
+    {
+      "id": "Agent5",
+      "name": "内容、SEO与知识体系",
+      "folder": "docs/Agent5+内容、SEO与知识体系",
+      "primaryResponsibilities": [
+        "Content taxonomy",
+        "SEO fields",
+        "Course paths",
+        "Article and project planning",
+        "Sitemap and RSS content quality"
+      ],
+      "mustOutputHere": true
+    },
+    {
+      "id": "Agent6",
+      "name": "miniapps",
+      "folder": "docs/Agent6-miniapps",
+      "primaryResponsibilities": [
+        "LarkixElec",
+        "MD2File",
+        "Mini app registry",
+        "Mini app UI and API contracts",
+        "Tool-specific assets"
+      ],
+      "mustOutputHere": true
+    },
+    {
+      "id": "Agent7",
+      "name": "视觉品牌与样式设计",
+      "folder": "docs/Agent7+视觉品牌与样式设计",
+      "primaryResponsibilities": [
+        "Logo system",
+        "Brand colors",
+        "Day and night themes",
+        "Visual design direction",
+        "Design asset archive"
+      ],
+      "mustOutputHere": true
+    },
+    {
+      "id": "Agent8",
+      "name": "市场部设计",
+      "folder": "docs/Agent8+市场部设计",
+      "primaryResponsibilities": [
+        "Market positioning",
+        "Homepage copy",
+        "Product matrix expression",
+        "Commercialization planning",
+        "External storytelling"
+      ],
+      "mustOutputHere": true
+    },
+    {
+      "id": "Agent9",
+      "name": "内容生成对接规范",
+      "folder": "docs/Agent9+内容生成对接规范",
+      "primaryResponsibilities": [
+        "Markdown rendering contract",
+        "Formula rendering",
+        "DOCX conversion expectations",
+        "LLM content generation format",
+        "Technical article structure"
+      ],
+      "mustOutputHere": true
+    },
+    {
+      "id": "Agent20",
+      "name": "体验测试与问题上报",
+      "folder": "docs/Agent20+体验测试与问题上报",
+      "primaryResponsibilities": [
+        "Regression reports",
+        "Browser screenshots",
+        "Responsive QA",
+        "Admin smoke tests",
+        "Issue reproduction notes"
+      ],
+      "mustOutputHere": true
+    }
+  ],
+  "agentInterfaceContract": {
+    "purpose": "Fixed interfaces for replaceable Agents. Each Agent can be replaced if its latest handoff is current and its inputs, outputs, owned files, and review dependencies are explicit.",
+    "globalRules": [
+      "An Agent owns a domain, not every file it touches.",
+      "Cross-domain changes require an AgentX对接AgentY document or Agent0 convergence note.",
+      "No Agent may directly change production data, secrets, or release state outside its interface.",
+      "If an Agent becomes too large, split the domain before more implementation work.",
+      "Every Agent must expose its current state through a latest handoff document and a machine-readable status block."
+    ],
+    "interfaces": {
+      "Agent0": {
+        "owns": [
+          "project coordination",
+          "convergence reports",
+          "handoff discipline",
+          "task status table"
+        ],
+        "ownedPaths": [
+          "docs/Agent0+总控与集成/",
+          "PROJECT_MAINTENANCE.json",
+          "TOP_ARCHITECT_HANDOFF.json"
+        ],
+        "provides": [
+          "top-down task dispatch",
+          "bottom-up convergence",
+          "decision escalation list",
+          "updated project overview when contracts change"
+        ],
+        "consumes": [
+          "all Agent handoff reports",
+          "Agent00/Agent100 decisions",
+          "Agent101 Git audit",
+          "Agent20 regression status"
+        ],
+        "mustConsult": [
+          "Agent00",
+          "Agent100",
+          "Agent101",
+          "Agent20"
+        ]
+      },
+      "Agent1": {
+        "owns": [
+          "production deployment",
+          "Nginx/HTTPS/systemd",
+          "backup/restore/rollback",
+          "production health checks"
+        ],
+        "ownedPaths": [
+          "scripts/",
+          "deploy/",
+          "Dockerfile",
+          "render.yaml",
+          ".env.example",
+          "docs/deployment.md",
+          "docs/Agent1+运维与发布稳定性/"
+        ],
+        "provides": [
+          "release gate template",
+          "production health result",
+          "backup directory",
+          "rollback command"
+        ],
+        "consumes": [
+          "Agent101 target commit",
+          "Agent20 release regression evidence",
+          "Agent2 migration notes if backend changes",
+          "Agent0 release approval"
+        ],
+        "mustConsult": [
+          "Agent101",
+          "Agent20",
+          "Agent2",
+          "Agent00"
+        ]
+      },
+      "Agent101": {
+        "owns": [
+          "Git audit",
+          "staging scope",
+          "commit grouping",
+          "rollback SHA references"
+        ],
+        "ownedPaths": [
+          ".git/",
+          "docs/Agent101-Git/",
+          "说明改动情况.md"
+        ],
+        "provides": [
+          "explicit staging list",
+          "exclude list",
+          "commit message proposal",
+          "Git release risk notes"
+        ],
+        "consumes": [
+          "Agent0 convergence",
+          "all modified file paths",
+          "Agent1 release requirement",
+          "Agent20 evidence inclusion decision"
+        ],
+        "mustConsult": [
+          "Agent0",
+          "Agent1",
+          "Agent20"
+        ]
+      },
+      "Agent2": {
+        "owns": [
+          "Node backend",
+          "API contracts",
+          "SQLite schema and migrations",
+          "auth/session/CSRF",
+          "uploads backend",
+          "health, RSS, sitemap"
+        ],
+        "ownedPaths": [
+          "server.js",
+          "lib/",
+          "migrations/",
+          "data/content-store.js",
+          "database/",
+          "runtime-data/",
+          "uploads/"
+        ],
+        "provides": [
+          "stable API contracts",
+          "migration strategy",
+          "runtime data boundary",
+          "backend regression requirements"
+        ],
+        "consumes": [
+          "Agent3 CMS API needs",
+          "Agent5 content field semantics",
+          "Agent6 miniapp API needs",
+          "Agent9 Markdown/DOCX route needs",
+          "Agent1 deployment constraints",
+          "Agent20 API regression results"
+        ],
+        "mustConsult": [
+          "Agent00",
+          "Agent100",
+          "Agent3",
+          "Agent5",
+          "Agent6",
+          "Agent9",
+          "Agent1",
+          "Agent20"
+        ]
+      },
+      "Agent3": {
+        "owns": [
+          "CMS admin UX",
+          "content editing workflow",
+          "carousel management",
+          "site layout editor",
+          "CMS image library and health view"
+        ],
+        "ownedPaths": [
+          "admin/index.html",
+          "admin/admin.js",
+          "admin/admin.css",
+          "admin/course-paths.html",
+          "docs/Agent3+管理端CMS与内容工作流/"
+        ],
+        "provides": [
+          "CMS workflow contract",
+          "CMS API needs",
+          "admin smoke test list",
+          "editor and media workflow state"
+        ],
+        "consumes": [
+          "Agent2 API contracts",
+          "Agent4 site layout rendering contract",
+          "Agent7 admin visual rules",
+          "Agent9 Markdown preview contract",
+          "Agent20 CMS regression"
+        ],
+        "mustConsult": [
+          "Agent2",
+          "Agent4",
+          "Agent7",
+          "Agent9",
+          "Agent20"
+        ]
+      },
+      "Agent4": {
+        "owns": [
+          "visitor pages",
+          "frontend script boundaries",
+          "responsive layout",
+          "page rendering safety",
+          "site layout consumption"
+        ],
+        "ownedPaths": [
+          "index.html",
+          "maker.html",
+          "category.html",
+          "projects.html",
+          "project.html",
+          "post.html",
+          "miniapps.html",
+          "main.js",
+          "category-page.js",
+          "post.js",
+          "site-layout.js",
+          "styles.css",
+          "styles/"
+        ],
+        "provides": [
+          "visitor page implementation",
+          "responsive regression list",
+          "layout rendering contract",
+          "frontend escaping and display rules"
+        ],
+        "consumes": [
+          "Agent7 visual tokens",
+          "Agent5 content semantics",
+          "Agent6 miniapp registry",
+          "Agent9 Markdown renderer contract",
+          "Agent2 public content API",
+          "Agent20 visual regression"
+        ],
+        "mustConsult": [
+          "Agent7",
+          "Agent5",
+          "Agent6",
+          "Agent9",
+          "Agent2",
+          "Agent20"
+        ]
+      },
+      "Agent5": {
+        "owns": [
+          "content source policy",
+          "Post/Project field semantics",
+          "SEO/RSS/sitemap content quality",
+          "categories, tags, course paths"
+        ],
+        "ownedPaths": [
+          "content/",
+          "data/posts.js",
+          "data/seed.js",
+          "data/course-meta.js",
+          "README.md",
+          "docs/Agent5+内容、SEO与知识体系/"
+        ],
+        "provides": [
+          "content field dictionary",
+          "taxonomy and tag rules",
+          "course path semantics",
+          "SEO wording constraints"
+        ],
+        "consumes": [
+          "Agent2 API/schema constraints",
+          "Agent3 CMS field support",
+          "Agent4 page display needs",
+          "Agent8 market copy",
+          "Agent9 Markdown meta contract",
+          "Agent20 content regression"
+        ],
+        "mustConsult": [
+          "Agent2",
+          "Agent3",
+          "Agent4",
+          "Agent8",
+          "Agent9",
+          "Agent20"
+        ]
+      },
+      "Agent6": {
+        "owns": [
+          "miniapp registry",
+          "LarkixElec web integration",
+          "MD2File tool experience",
+          "gokotta-elec-core integration",
+          "miniapp version sync"
+        ],
+        "ownedPaths": [
+          "tools/",
+          "tools/assets/",
+          "gokotta-elec-core/",
+          "data/miniapps.js",
+          "docs/Agent6-miniapps/"
+        ],
+        "provides": [
+          "miniapp version sync table",
+          "tool API expectations",
+          "miniapp regression list",
+          "legacy path strategy"
+        ],
+        "consumes": [
+          "Agent2 tool HTTP adapter",
+          "Agent9 Markdown/DOCX contract",
+          "Agent4 miniapp page layout",
+          "Agent7 tool visual assets",
+          "Agent20 miniapp regression"
+        ],
+        "mustConsult": [
+          "Agent2",
+          "Agent9",
+          "Agent4",
+          "Agent7",
+          "Agent20",
+          "Agent101"
+        ]
+      },
+      "Agent7": {
+        "owns": [
+          "brand visual system",
+          "logo and theme tokens",
+          "final/archive/draft asset policy",
+          "visual change process"
+        ],
+        "ownedPaths": [
+          "assets/logo/",
+          "assets/hero/",
+          "assets/covers/",
+          "assets/design/",
+          "styles/larkix-brand-theme.css",
+          "styles/larkix-home.css",
+          "docs/Agent7+视觉品牌与样式设计/"
+        ],
+        "provides": [
+          "brand token decisions",
+          "asset classification",
+          "visual implementation requirements",
+          "visual regression requirements"
+        ],
+        "consumes": [
+          "Agent4 page implementation constraints",
+          "Agent6 tool asset needs",
+          "Agent8 market visual needs",
+          "Agent20 visual evidence",
+          "Agent101 asset commit audit"
+        ],
+        "mustConsult": [
+          "Agent4",
+          "Agent6",
+          "Agent8",
+          "Agent20",
+          "Agent101"
+        ]
+      },
+      "Agent8": {
+        "owns": [
+          "market positioning",
+          "homepage copy direction",
+          "conversion path",
+          "product/package expression"
+        ],
+        "ownedPaths": [
+          "docs/Agent8+市场部设计/"
+        ],
+        "provides": [
+          "market copy drafts",
+          "conversion path proposals",
+          "product positioning notes"
+        ],
+        "consumes": [
+          "Agent5 content facts",
+          "Agent7 visual direction",
+          "Agent4 page implementation scope",
+          "Agent2/Agent3 product field feasibility",
+          "Agent20 UX evidence"
+        ],
+        "mustConsult": [
+          "Agent5",
+          "Agent7",
+          "Agent4",
+          "Agent2",
+          "Agent3",
+          "Agent20"
+        ]
+      },
+      "Agent9": {
+        "owns": [
+          "Markdown renderer contract",
+          "formula behavior",
+          "DOCX conversion contract",
+          "LLM content generation format",
+          "Markdown regression fixtures"
+        ],
+        "ownedPaths": [
+          "data/markdown-renderer.js",
+          "tools/md2doc.js",
+          "tools/md2doc.html",
+          "lib/md2doc.js",
+          "scripts/test-markdown-renderer.js",
+          "docs/Agent9+内容生成对接规范/"
+        ],
+        "provides": [
+          "Markdown syntax contract",
+          "DOCX behavior matrix",
+          "fixture and regression requirements",
+          "content-generation format rules"
+        ],
+        "consumes": [
+          "Agent5 article field semantics",
+          "Agent6 MD2File UX needs",
+          "Agent3 CMS preview needs",
+          "Agent20 Markdown/DOCX evidence",
+          "Agent101 fixture audit"
+        ],
+        "mustConsult": [
+          "Agent5",
+          "Agent6",
+          "Agent3",
+          "Agent20",
+          "Agent101"
+        ]
+      },
+      "Agent20": {
+        "owns": [
+          "regression templates",
+          "screenshots",
+          "console logs",
+          "API JSON evidence",
+          "issue reports and release evidence"
+        ],
+        "ownedPaths": [
+          "docs/Agent20+体验测试与问题上报/",
+          "scripts/verify-api.ps1",
+          "scripts/test-markdown-renderer.js"
+        ],
+        "provides": [
+          "minimum regression result",
+          "release evidence",
+          "issue reproduction notes",
+          "pass/fail risk report"
+        ],
+        "consumes": [
+          "target commit from Agent101",
+          "test URL from Agent0/Agent1",
+          "module-specific acceptance criteria from affected Agents",
+          "data directory policy from Agent2/Agent1"
+        ],
+        "mustConsult": [
+          "Agent0",
+          "Agent1",
+          "Agent101",
+          "affected module Agents"
+        ]
+      }
+    }
+  },
+  "agentVolumeGovernance": {
+    "purpose": "Prevent any Agent from becoming too large to replace, review, or control. If volume crosses thresholds, split the Agent before continuing implementation.",
+    "evaluationCadence": [
+      "Every Agent0 convergence round.",
+      "Before a second-round implementation batch starts.",
+      "Before any production release.",
+      "Whenever an Agent reports riskLevel=high or volumeStatus=split_recommended/split_required."
+    ],
+    "metrics": {
+      "ownedFiles": "Number of directly owned source/doc/runtime policy files.",
+      "ownedLoc": "Approximate lines of directly owned high-change files.",
+      "activeInterfaces": "Number of other Agents that must be consulted for normal changes.",
+      "riskLevel": "Current risk from latest handoff.",
+      "handoffFreshness": "Whether the latest Agent report is current after major changes.",
+      "releaseImpact": "Whether changes can affect production release or runtime data.",
+      "replaceability": "Whether a new Agent can continue from docs without oral context."
+    },
+    "splitThresholds": [
+      "A single high-change source file owned by the Agent exceeds about 1200 lines and has more than three unrelated workflows.",
+      "The Agent must routinely coordinate with more than six other Agents for normal work.",
+      "The Agent owns both product semantics and implementation details across unrelated domains.",
+      "The Agent repeatedly reports high risk or unresolved architecture decisions.",
+      "The latest handoff cannot let a replacement Agent continue safely.",
+      "The Agent owns both production release authority and feature implementation authority."
+    ],
+    "currentAgentVolumeStatus": {
+      "Agent0": {
+        "status": "watch",
+        "reason": "Owns convergence, contracts, dispatch, and project governance; can become too broad without Agent00 separation.",
+        "splitIfNeeded": [
+          "Agent00-顶部架构师 for architecture contracts",
+          "Agent0-总控与集成 for PMO/convergence"
+        ]
+      },
+      "Agent1": {
+        "status": "watch",
+        "reason": "Production deployment, backup, rollback, Nginx, systemd, and release gates are high-stakes but cohesive.",
+        "splitIfNeeded": [
+          "Agent1A-发布执行",
+          "Agent1B-备份恢复与生产健康"
+        ]
+      },
+      "Agent101": {
+        "status": "ok",
+        "reason": "Git audit is cohesive; keep separate from production release and feature implementation.",
+        "splitIfNeeded": [
+          "Agent101A-Git批次审计",
+          "Agent101B-发布说明与回滚引用"
+        ]
+      },
+      "Agent2": {
+        "status": "split_recommended",
+        "reason": "server.js is over 1200 lines and Agent2 owns API, auth, SQLite, uploads, health, SEO, miniapp adapters, and migrations.",
+        "splitIfNeeded": [
+          "Agent2A-API与路由适配",
+          "Agent2B-数据模型迁移与运行数据",
+          "Agent2C-认证上传与安全边界"
+        ]
+      },
+      "Agent3": {
+        "status": "split_recommended",
+        "reason": "admin/admin.js and admin/admin.css are both large and CMS owns many unrelated workflows.",
+        "splitIfNeeded": [
+          "Agent3A-CMS编辑器与内容状态",
+          "Agent3B-CMS媒体库轮播与布局",
+          "Agent3C-CMS健康面板与权限体验"
+        ]
+      },
+      "Agent4": {
+        "status": "watch",
+        "reason": "Visitor pages are cohesive but span many pages, scripts, responsive behavior, and theme consumption.",
+        "splitIfNeeded": [
+          "Agent4A-页面渲染与脚本",
+          "Agent4B-响应式与视觉落地"
+        ]
+      },
+      "Agent5": {
+        "status": "watch",
+        "reason": "Content source, SEO, taxonomy, course paths, and field semantics are related but can grow into separate tracks.",
+        "splitIfNeeded": [
+          "Agent5A-内容事实来源与字段契约",
+          "Agent5B-SEO标签课程路径"
+        ]
+      },
+      "Agent6": {
+        "status": "watch",
+        "reason": "Miniapps contains MD2File and LarkixElec/GokottaElec, which are different product domains.",
+        "splitIfNeeded": [
+          "Agent6A-LarkixElec电路工具",
+          "Agent6B-MD2File与小程序注册表"
+        ]
+      },
+      "Agent7": {
+        "status": "watch",
+        "reason": "Visual assets are large and include final assets, archive assets, drafts, theme tokens, and product icons.",
+        "splitIfNeeded": [
+          "Agent7A-品牌token与线上视觉",
+          "Agent7B-资产归档与设计候选治理"
+        ]
+      },
+      "Agent8": {
+        "status": "ok",
+        "reason": "Market expression is still mostly planning and copy direction; keep it away from schema or page implementation.",
+        "splitIfNeeded": [
+          "Agent8A-市场定位",
+          "Agent8B-转化文案与产品包装"
+        ]
+      },
+      "Agent9": {
+        "status": "watch",
+        "reason": "Markdown renderer, DOCX conversion, formula handling, fixtures, and LLM generation contracts are tightly coupled but growing.",
+        "splitIfNeeded": [
+          "Agent9A-Markdown网页渲染",
+          "Agent9B-DOCX导出与生成契约"
+        ]
+      },
+      "Agent20": {
+        "status": "watch",
+        "reason": "Regression covers pages, CMS, API, miniapps, Markdown, visual evidence, and release evidence.",
+        "splitIfNeeded": [
+          "Agent20A-浏览器视觉与体验回归",
+          "Agent20B-API/CMS/下载产物回归"
+        ]
+      }
+    }
+  },
+  "cleanupPolicy": {
+    "safeToDeleteWhenIgnoredAndNotInUse": [
+      ".codex-logs/",
+      ".codex-run/",
+      ".tmp/",
+      "*.log",
+      "gokotta-elec-core/output/"
+    ],
+    "doNotDeleteByDefault": [
+      ".env",
+      "database/",
+      "runtime-data/",
+      "uploads/.gitkeep",
+      "docs/",
+      "assets/logo/",
+      "说明改动情况.md",
+      "PROJECT_MAINTENANCE.json"
+    ],
+    "deleteTrackedFileRule": "Tracked files may only be deleted after Agent0 records the reason, impacted modules, and rollback path."
+  },
+  "releaseReadiness": {
+    "requiredLocalChecks": [
+      "git status --short --branch",
+      "git diff --check",
+      "npm.cmd run check:version",
+      "npm.cmd run test:markdown"
+    ],
+    "requiredWhenCmsOrApiChanges": [
+      "powershell -ExecutionPolicy Bypass -File scripts/verify-api.ps1"
+    ],
+    "requiredProductionChecks": [
+      "curl -fsS http://127.0.0.1:4173/healthz",
+      "curl -fsS https://www.larkix.com/healthz",
+      "sudo systemctl status gokottamaker --no-pager",
+      "sudo nginx -t"
+    ]
+  },
+  "currentActiveDispatch": {
+    "status": "task0_complete_batch1_paused_by_owner_code_still_closed",
+    "agent0ImplementationBatchDesignReport": "docs/Agent0+总控与集成/2026-06-21_19-44_Agent0_??????_???????????.md",
+    "agent0ImplementationBatchDispatchJson": "docs/Agent0+总控与集成/2026-06-21_19-44_Agent0_implementation_batch_dispatch.json",
+    "agent0ImplementationBatchStatusPath": "docs/Agent0+总控与集成/2026-06-21_19-44_Agent0_status.json",
+    "agent0LatestTask0ConvergenceReport": "docs/Agent0+总控与集成/2026-07-08_23-15_Agent0_Task0全部回传收敛_Batch1待开启裁决.md",
+    "agent0LatestTask0ConvergenceStatusPath": "docs/Agent0+总控与集成/2026-07-08_23-15_Agent0_status.json",
+    "agent0LatestBatch1PauseReport": "docs/Agent0+总控与集成/2026-07-09_00-00_Agent0_Task0收敛完成记录_Batch1暂停.md",
+    "agent0LatestBatch1PauseStatusPath": "docs/Agent0+总控与集成/2026-07-09_00-00_Agent0_status.json",
+    "agent0LatestProjectHandoffReport": "docs/Agent0+总控与集成/2026-07-09_12-42_Agent0_完整项目情况对接记录.md",
+    "agent0LatestProjectHandoffSnapshot": "docs/Agent0+总控与集成/2026-07-09_12-42_Agent0_project_handoff_snapshot.json",
+    "agent0LatestProjectHandoffStatus": "docs/Agent0+总控与集成/2026-07-09_12-42_Agent0_status.json"
+  },
+  "agent0LatestImplementationBatch": {
+    "publishedAt": "2026-06-21 19:44 +08:00",
+    "report": "docs/Agent0+总控与集成/2026-06-21_19-44_Agent0_??????_???????????.md",
+    "dispatchJson": "docs/Agent0+总控与集成/2026-06-21_19-44_Agent0_implementation_batch_dispatch.json",
+    "statusJson": "docs/Agent0+总控与集成/2026-06-21_19-44_Agent0_status.json",
+    "immediateOpenTasks": [
+      "Agent101 staging plan only",
+      "Agent3 parent refresh only",
+      "Agent20 regression matrix only",
+      "Agent1 release gate plan only"
+    ],
+    "codeImplementationAllowedNow": false
+  },
+  "agent0LatestTask0Convergence": {
+    "updatedAt": "2026-07-08 23:15 +08:00",
+    "report": "docs/Agent0+总控与集成/2026-07-08_23-15_Agent0_Task0全部回传收敛_Batch1待开启裁决.md",
+    "statusJson": "docs/Agent0+总控与集成/2026-07-08_23-15_Agent0_status.json",
+    "status": "task0_complete_batch1_paused_by_owner_code_still_closed",
+    "task0Complete": [
+      "Task0A Agent101",
+      "Task0B Agent3",
+      "Task0C Agent20",
+      "Task0D Agent1"
+    ],
+    "task0Missing": [],
+    "batch1ReadyForOpenDecision": true,
+    "batch1Open": false,
+    "codeImplementationAllowedNow": false,
+    "databaseMutationAllowedNow": false,
+    "productionReleaseAllowedNow": false,
+    "nextDecision": "Batch1 paused by Owner until explicit resume instruction.",
+    "batch1PausedByOwner": true
+  },
+  "agent0LatestBatch1Pause": {
+    "updatedAt": "2026-07-09 00:00 +08:00",
+    "report": "docs/Agent0+总控与集成/2026-07-09_00-00_Agent0_Task0收敛完成记录_Batch1暂停.md",
+    "statusJson": "docs/Agent0+总控与集成/2026-07-09_00-00_Agent0_status.json",
+    "status": "task0_complete_batch1_paused_by_owner_code_still_closed",
+    "ownerDecision": "pause_next_batch1",
+    "task0Complete": true,
+    "batch1ReadyForOpenDecision": true,
+    "batch1PausedByOwner": true,
+    "batch1Open": false,
+    "codeImplementationAllowedNow": false,
+    "databaseMutationAllowedNow": false,
+    "productionReleaseAllowedNow": false,
+    "gitStagingAllowedNow": false,
+    "resumeRequires": [
+      "Owner explicitly asks Agent0 to resume Batch1",
+      "Agent0 publishes a separate Batch1 open dispatch",
+      "Allowed Agent/file/data/test/Git scope is written explicitly"
+    ],
+    "nextDecision": "Batch1 is paused by Owner. Do not open or implement until a new explicit resume instruction exists."
+  },
+  "agent0LatestProjectHandoff": {
+    "updatedAt": "2026-07-09 12:42 +08:00",
+    "status": "project_handoff_recorded_batch1_paused_code_still_closed",
+    "currentProjectState": "task0_complete_batch1_paused_by_owner_code_still_closed",
+    "report": "docs/Agent0+总控与集成/2026-07-09_12-42_Agent0_完整项目情况对接记录.md",
+    "snapshotJson": "docs/Agent0+总控与集成/2026-07-09_12-42_Agent0_project_handoff_snapshot.json",
+    "statusJson": "docs/Agent0+总控与集成/2026-07-09_12-42_Agent0_status.json",
+    "purpose": "Complete project situation handoff for Owner, top architect, or child Agents.",
+    "batch1PausedByOwner": true,
+    "batch1Open": false,
+    "codeImplementationAllowedNow": false,
+    "databaseMutationAllowedNow": false,
+    "productionReleaseAllowedNow": false,
+    "gitStagingAllowedNow": false
+  }
+}

@@ -1,0 +1,558 @@
+{
+  "schemaVersion": 1,
+  "project": "LarkixMaker",
+  "operatingModel": "project_director_plus_short_task_agents",
+  "legacyAgentDocsMode": "historical_reference_only",
+  "currentGate": {
+    "batch1": "s09_formula_catalog_management_open",
+    "businessImplementationAllowed": false,
+    "databaseMutationAllowed": false,
+    "migrationFileImplementationAllowed": false,
+    "isolatedDataDirVerificationAllowed": true,
+    "apiRuntimeBoundaryAllowed": false,
+    "productionReleaseAllowed": false,
+    "gitStagingAllowed": false,
+    "markdownDocxDerivationLinksAllowed": false,
+    "cmsKnowledgeNodeWorkflowAllowed": false,
+    "publicDerivationAndFocusModeAllowed": false,
+    "cmsFormulaAuthoringExamplesAllowed": false,
+    "calculationBookEngineeringAllowed": false,
+    "formulaCatalogManagementAllowed": true,
+    "contentCloudSyncAllowed": false
+  },
+  "longLivedRoles": [
+    {
+      "id": "A00_ProjectDirector",
+      "purpose": "Own sequence, file contracts, gates, and acceptance criteria.",
+      "brief": "agents/A00_ProjectDirector/brief.md",
+      "doesNotDo": [
+        "feature implementation",
+        "database migration",
+        "production deployment",
+        "Git staging or commit"
+      ],
+      "activeHandoff": "docs/codex-workline/A00_ProjectDirector_handoff.md",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "agents/A04_RuntimeBaseline/handoff.md",
+        "PROJECT_MAINTENANCE.json",
+        "ACTIVE_AGENT_DISPATCH.json"
+      ],
+      "mayEdit": [
+        "PROJECT_WINDOW.md",
+        "docs/prompts/next_agents.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "agents/*/brief.md",
+        ".codex/agents/*.toml",
+        ".codex/larkix-governance.json"
+      ],
+      "doneWhen": [
+        "S08_calculation_book_engineering is accepted as the latest handoff",
+        "the next user-facing handoff is short and starts with Agent number, English role, and Chinese note",
+        "A14_FormulaCatalogManagement is the only next task and remains strict-identity, complete-jump, CMS-management, and isolated-backup scoped"
+      ]
+    }
+  ],
+  "taskAgents": [
+    {
+      "id": "A01_ProjectStateRetriever",
+      "status": "completed",
+      "scope": "read-only scan plus small index outputs",
+      "reads": [
+        "PROJECT_MAINTENANCE.json",
+        "ACTIVE_AGENT_DISPATCH.json",
+        "TOP_ARCHITECT_HANDOFF.json",
+        "docs/Agent0+总控与集成/AGENT_UPDATE_INDEX.json",
+        "AGENTS.md"
+      ],
+      "mayEdit": [
+        "docs/codex-workline/source_registry.json",
+        "docs/codex-workline/resource_index.md",
+        "docs/codex-workline/A01_ProjectStateRetriever_handoff.md"
+      ],
+      "doneWhen": [
+        "source_registry.json lists authoritative local and external sources",
+        "resource_index.md summarizes protected, large, and high-signal project resources",
+        "handoff names the next narrow task and verification command"
+      ],
+      "handoff": "docs/codex-workline/A01_ProjectStateRetriever_handoff.md"
+    },
+    {
+      "id": "A02_ContractValidator",
+      "status": "completed",
+      "scope": "maintain executable governance checks",
+      "reads": [
+        ".codex/larkix-governance.json",
+        "scripts/codex-governance.js",
+        "package.json"
+      ],
+      "mayEdit": [
+        ".codex/larkix-governance.json",
+        "scripts/codex-governance.js",
+        "package.json"
+      ],
+      "doneWhen": [
+        "npm.cmd run codex:contract passes with zero failures"
+      ],
+      "handoff": "docs/codex-workline/A02_ContractValidator_handoff.md"
+    },
+    {
+      "id": "A03_ResourceManager",
+      "status": "completed",
+      "scope": "inventory resources and protect runtime data",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "agents/A03_ResourceManager/brief.md",
+        ".codex/larkix-governance.json",
+        ".gitignore",
+        "assets",
+        "docs",
+        "database",
+        "runtime-data",
+        "uploads"
+      ],
+      "mayEdit": [
+        ".codex/larkix-governance.json",
+        ".gitignore",
+        "docs/codex-workline/resource_index.md",
+        "agents/A03_ResourceManager/handoff.md"
+      ],
+      "doneWhen": [
+        "npm.cmd run codex:resources passes with zero failures",
+        "large-file warnings are classified as keep, archive, externalize, or delete-candidate"
+      ],
+      "brief": "agents/A03_ResourceManager/brief.md",
+      "handoff": "agents/A03_ResourceManager/handoff.md"
+    },
+    {
+      "id": "A04_RuntimeBaseline",
+      "status": "completed",
+      "scope": "capture current no-mutation runtime baseline",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "agents/A03_ResourceManager/handoff.md",
+        "package.json",
+        "scripts/check-version.js",
+        "scripts/test-markdown-renderer.js"
+      ],
+      "mayEdit": [
+        "agents/A04_RuntimeBaseline/handoff.md"
+      ],
+      "doneWhen": [
+        "npm.cmd run check:version passes",
+        "npm.cmd run test:markdown passes",
+        "no database migration, production release, or Git operation is performed"
+      ],
+      "brief": "agents/A04_RuntimeBaseline/brief.md",
+      "handoff": "agents/A04_RuntimeBaseline/handoff.md"
+    },
+    {
+      "id": "A05_ImplementationSlicePlanner",
+      "status": "completed",
+      "scope": "split real product work into tiny verifiable implementation slices",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/source_registry.json",
+        "docs/codex-workline/resource_index.md",
+        "PROJECT_MAINTENANCE.json",
+        "ACTIVE_AGENT_DISPATCH.json",
+        "TOP_ARCHITECT_HANDOFF.json",
+        "agents/A04_RuntimeBaseline/handoff.md"
+      ],
+      "mayEdit": [
+        "agents/A05_ImplementationSlicePlanner/brief.md",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/A05_ImplementationSlicePlanner_handoff.md"
+      ],
+      "doneWhen": [
+        "each proposed slice declares read files, edit files, output, and verification",
+        "no slice is executed until Owner and current gates explicitly allow it"
+      ],
+      "brief": "agents/A05_ImplementationSlicePlanner/brief.md",
+      "handoff": "docs/codex-workline/A05_ImplementationSlicePlanner_handoff.md"
+    },
+    {
+      "id": "A06_DataModelMigrationContract",
+      "status": "completed",
+      "scope": "define data model and migration contract without implementation",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/S00_batch1_open_dispatch_handoff.md",
+        "PROJECT_MAINTENANCE.json",
+        "ACTIVE_AGENT_DISPATCH.json",
+        "TOP_ARCHITECT_HANDOFF.json",
+        "server.js",
+        "lib/db.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "migrations"
+      ],
+      "mayEdit": [
+        "docs/codex-workline/slices/S01_data_model_migration_contract.md",
+        "docs/codex-workline/slices/S01_data_model_migration_contract_handoff.md"
+      ],
+      "doneWhen": [
+        "S01 contract names the V0 tables, fields, indexes, statuses, migration boundaries, rollback assumptions, and isolated DATA_DIR test requirements",
+        "handoff records status, scope, files changed, decisions, risks, checks, and next handoff",
+        "no source code, database file, migration file, runtime data, release file, or Git state is changed"
+      ],
+      "brief": "agents/A06_DataModelMigrationContract/brief.md",
+      "handoff": "docs/codex-workline/slices/S01_data_model_migration_contract_handoff.md"
+    },
+    {
+      "id": "A07_DataModelMigrationImplementation",
+      "status": "completed",
+      "scope": "implement accepted additive migration files with isolated DATA_DIR verification only",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/slices/S01_data_model_migration_contract.md",
+        "docs/codex-workline/slices/S01_data_model_migration_contract_handoff.md",
+        "PROJECT_MAINTENANCE.json",
+        "ACTIVE_AGENT_DISPATCH.json",
+        "TOP_ARCHITECT_HANDOFF.json",
+        "lib/db.js",
+        "migrations"
+      ],
+      "mayEdit": [
+        "migrations/011_knowledge_nodes.js",
+        "migrations/012_knowledge_links.js",
+        "migrations/013_public_focus_mode_default.js",
+        "docs/codex-workline/slices/S02_data_model_migration_implementation_handoff.md"
+      ],
+      "doneWhen": [
+        "the three migration files are present, additive, and match the S01 contract",
+        "isolated DATA_DIR verification runs without touching protected runtime data",
+        "handoff records status, scope, files changed, decisions, risks, checks, and next handoff",
+        "no current database file, runtime data, release file, deployment state, or Git state is changed"
+      ],
+      "brief": "agents/A07_DataModelMigrationImplementation/brief.md",
+      "handoff": "docs/codex-workline/slices/S02_data_model_migration_implementation_handoff.md"
+    },
+    {
+      "id": "A08_ApiRuntimeBoundary",
+      "status": "completed",
+      "scope": "implement derivation knowledge-node public and admin API/runtime boundary with isolated DATA_DIR verification",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/slices/S01_data_model_migration_contract.md",
+        "docs/codex-workline/slices/S02_data_model_migration_implementation_handoff.md",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "lib/uploads.js",
+        "scripts/verify-api.ps1"
+      ],
+      "mayEdit": [
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "lib/uploads.js",
+        "scripts/verify-api.ps1",
+        "docs/codex-workline/slices/S03_api_runtime_boundary_handoff.md"
+      ],
+      "doneWhen": [
+        "public API hides draft, archived, private, and soft-deleted knowledge-node content",
+        "admin API can save, publish, soft-delete, restore, and inspect revisions",
+        "API validation and audit metadata follow the S01 contract without leaking secrets",
+        "isolated DATA_DIR API verification and required regressions pass",
+        "no CMS UI, visitor frontend, Markdown/DOCX renderer, current data, release, deployment, or Git state is changed"
+      ],
+      "brief": "agents/A08_ApiRuntimeBoundary/brief.md",
+      "handoff": "docs/codex-workline/slices/S03_api_runtime_boundary_handoff.md"
+    },
+    {
+      "id": "A09_MarkdownDocxDerivationLinks",
+      "status": "completed",
+      "scope": "implement derivation shortcode Markdown rendering and DOCX fallback without API, CMS, frontend, or data changes",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/slices/S01_data_model_migration_contract.md",
+        "docs/codex-workline/slices/S03_api_runtime_boundary_handoff.md",
+        "data/markdown-renderer.js",
+        "tools/md2doc.js",
+        "lib/md2doc.js",
+        "scripts/test-markdown-renderer.js"
+      ],
+      "mayEdit": [
+        "data/markdown-renderer.js",
+        "tools/md2doc.js",
+        "lib/md2doc.js",
+        "scripts/test-markdown-renderer.js",
+        "docs/codex-workline/slices/S04_markdown_docx_derivation_links_handoff.md"
+      ],
+      "doneWhen": [
+        "derive shortcodes render safely in Markdown HTML output with escaped labels and token whitelist",
+        "derive shortcodes inside fenced code, inline code, and math regions are ignored",
+        "DOCX export uses a readable V0 fallback such as label [derive:slug]",
+        "Markdown/DOCX regression tests pass",
+        "no database, migration, API route, CMS UI, visitor frontend, release, deployment, or Git state is changed"
+      ],
+      "brief": "agents/A09_MarkdownDocxDerivationLinks/brief.md",
+      "handoff": "docs/codex-workline/slices/S04_markdown_docx_derivation_links_handoff.md"
+    },
+    {
+      "id": "A10_CmsKnowledgeNodeWorkflow",
+      "status": "completed",
+      "scope": "implement CMS-side derivation knowledge-node workflow using existing A08 APIs and A09 renderer behavior",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/slices/S03_api_runtime_boundary_handoff.md",
+        "docs/codex-workline/slices/S04_markdown_docx_derivation_links_handoff.md",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "admin/course-paths.html"
+      ],
+      "mayEdit": [
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "admin/course-paths.html",
+        "docs/codex-workline/slices/S05_cms_knowledge_node_workflow_handoff.md"
+      ],
+      "doneWhen": [
+        "CMS can list, create/update, publish/unpublish, soft-delete/restore, and load revisions for knowledge nodes using existing API endpoints",
+        "form validation and visible warnings match A08 behavior",
+        "Markdown preview handles A09 derive shortcode output or records the limitation if the admin renderer cannot reuse it in this slice",
+        "existing post/project CMS flows continue to work",
+        "no server, database, migration, visitor frontend, release, deployment, or Git state is changed"
+      ],
+      "brief": "agents/A10_CmsKnowledgeNodeWorkflow/brief.md",
+      "handoff": "docs/codex-workline/slices/S05_cms_knowledge_node_workflow_handoff.md"
+    },
+    {
+      "id": "A11_PublicDerivationAndFocusMode",
+      "status": "completed",
+      "scope": "implement visitor-facing derivation page and focused public navigation using existing APIs",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/slices/S03_api_runtime_boundary_handoff.md",
+        "docs/codex-workline/slices/S04_markdown_docx_derivation_links_handoff.md",
+        "docs/codex-workline/slices/S05_cms_knowledge_node_workflow_handoff.md",
+        "index.html",
+        "maker.html",
+        "category.html",
+        "post.html",
+        "project.html",
+        "main.js",
+        "post.js",
+        "site-layout.js",
+        "styles.css",
+        "styles"
+      ],
+      "mayEdit": [
+        "derive.html",
+        "main.js",
+        "post.js",
+        "site-layout.js",
+        "styles.css",
+        "styles",
+        "docs/codex-workline/slices/S06_public_derivation_and_focus_mode_handoff.md"
+      ],
+      "doneWhen": [
+        "published public knowledge nodes can be viewed on the visitor side by slug",
+        "derivation shortcodes in articles route to the public derivation destination",
+        "public pages handle loading, empty, not-found/private, and missing-link states",
+        "focused public navigation is applied without deleting hidden pages, seed content, assets, or backend data",
+        "no server, database, migration, CMS admin, release, deployment, or Git state is changed"
+      ],
+      "brief": "agents/A11_PublicDerivationAndFocusMode/brief.md",
+      "handoff": "docs/codex-workline/slices/S06_public_derivation_and_focus_mode_handoff.md"
+    },
+    {
+      "id": "A12_CmsFormulaAuthoringExamples",
+      "status": "completed",
+      "scope": "improve CMS formula-node authoring, render derivation jump markers, and verify a Chinese BOOST inductor selection calculation sheet with isolated DATA_DIR only",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/slices/S03_api_runtime_boundary_handoff.md",
+        "docs/codex-workline/slices/S04_markdown_docx_derivation_links_handoff.md",
+        "docs/codex-workline/slices/S05_cms_knowledge_node_workflow_handoff.md",
+        "docs/codex-workline/slices/S06_public_derivation_and_focus_mode_handoff.md",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "derive.html",
+        "post.js",
+        "data/markdown-renderer.js",
+        "scripts/test-markdown-renderer.js",
+        "styles/20-content.css"
+      ],
+      "mayEdit": [
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "data/markdown-renderer.js",
+        "scripts/test-markdown-renderer.js",
+        "post.js",
+        "styles/20-content.css",
+        "styles/30-accessibility-print.css",
+        "docs/codex-workline/slices/S07_cms_formula_authoring_examples_handoff.md"
+      ],
+      "doneWhen": [
+        "CMS can create, edit, publish/draft, soft-delete, restore, and load revisions for formula/derivation nodes",
+        "admin editor has formula and derivation-jump insertion helpers",
+        "admin preview renders Chinese text, formulas, and derive links without mojibake",
+        "a Chinese BOOST inductor selection calculation sheet is seeded only in isolated temporary DATA_DIR and visible through derive.html",
+        "formula jump markers render as formula-level superscript markers, not ordinary pill links or card-corner buttons",
+        "formula jump markers show hover/focus text such as 纹波公式详细推导 and route to engineering or pure math derivation pages",
+        "the BOOST duty-cycle target page derives the formula from CCM inductor volt-second balance instead of only introducing the formula",
+        "node --check admin/admin.js, npm.cmd run test:markdown, and npm.cmd run codex:contract pass",
+        "handoff records local preview URL, seeded example slugs, decisions, risks, and next handoff back to A00"
+      ],
+      "brief": "agents/A12_CmsFormulaAuthoringExamples/brief.md",
+      "handoff": "docs/codex-workline/slices/S07_cms_formula_authoring_examples_handoff.md"
+    },
+    {
+      "id": "A13_CalculationBookEngineering",
+      "status": "completed",
+      "scope": "define a source-traceable topology calculation-book JSON master and generate synchronized Mathcad 15 and Larkix L1/L2/L3 outputs with isolated DATA_DIR verification only",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/slices/S03_api_runtime_boundary_handoff.md",
+        "docs/codex-workline/slices/S04_markdown_docx_derivation_links_handoff.md",
+        "docs/codex-workline/slices/S05_cms_knowledge_node_workflow_handoff.md",
+        "docs/codex-workline/slices/S06_public_derivation_and_focus_mode_handoff.md",
+        "docs/codex-workline/slices/S07_cms_formula_authoring_examples_handoff.md",
+        "lib/db.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "data/markdown-renderer.js",
+        "C:/Users/OBC项目/MathCAD生成规则.json",
+        "C:/Users/OBC项目/Agent0/build_aux_mathcad_calculation_book.py",
+        "C:/Users/OBC项目/Agent0/build_interview_hard_switch_pfc_xmcd.py",
+        "C:/Users/OBC项目/Agent0/build_pfc_interview_xmcd.py",
+        "C:/Users/OBC项目/Agent0/build_pfc_mathcad_xmcd.py",
+        "E:/User/AUX20260708.xmcd",
+        "E:/User/Agent10_CCM反激变压器计算书_数据可追溯版_20260714.md"
+      ],
+      "mayEdit": [
+        "schemas/calculation-book-master.schema.json",
+        "content/calculation-books/**",
+        "tools/calculation-book/**",
+        "scripts/test-calculation-book.js",
+        "package.json",
+        "docs/calculation-book-authoring-guide.md",
+        "docs/codex-workline/slices/S08_calculation_book_engineering_handoff.md",
+        "E:/User/<new-task-specific-output>.xmcd",
+        "E:/User/<new-task-specific-validation>.json"
+      ],
+      "doneWhen": [
+        "a UTF-8 JSON Schema and reusable calculation-book master cover topology inputs, equations, sources, assumptions, dependencies, units, applicability, results, margins, risks, and outputs",
+        "every confirmed numeric value and formula has a source, derivation path, or declared assumption and unresolved mandatory inputs block affected sign-off",
+        "the generic design contract conditionally covers magnetics, capacitors, power-device stress/loss, sensing, drive, control, tolerance, thermal, derating, and validation",
+        "the CCM flyback reference book proves one L1 design chain, one genuine L2 engineering derivation, and one L3 foundational derivation",
+        "a real Mathcad 15 xmcd and deterministic Larkix package are generated from the same JSON master",
+        "MathCAD rules, source coverage, dependency graph, XML, Larkix routes, and Chinese encoding checks pass",
+        "at least three sentinel results agree across JSON, MathCAD, and Larkix within documented display rounding",
+        "canonical Larkix content defaults to draft/private and isolated preview uses only temporary DATA_DIR",
+        "docs/calculation-book-authoring-guide.md explains expert and administrator operation in Chinese",
+        "handoff records master JSON, generated MathCAD, Larkix slugs/preview, source coverage, derivation levels, consistency evidence, risks, and next handoff back to A00"
+      ],
+      "brief": "agents/A13_CalculationBookEngineering/brief.md",
+      "handoff": "docs/codex-workline/slices/S08_calculation_book_engineering_handoff.md"
+    },
+    {
+      "id": "A14_FormulaCatalogManagement",
+      "status": "next",
+      "scope": "implement stable formula identity, strict hierarchical tags, complete L1/L2/L3 child-formula jumps, focused CMS management, and isolated local backup/export",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/slices/S05_cms_knowledge_node_workflow_handoff.md",
+        "docs/codex-workline/slices/S07_cms_formula_authoring_examples_handoff.md",
+        "docs/codex-workline/slices/S08_calculation_book_engineering_handoff.md",
+        "docs/calculation-book-authoring-guide.md",
+        "schemas/calculation-book-master.schema.json",
+        "content/calculation-books/**/calculation-book.json",
+        "tools/calculation-book/**",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "lib/content.js",
+        "lib/validators.js",
+        "data/markdown-renderer.js",
+        "post.js",
+        "main.js",
+        "scripts/test-calculation-book.js"
+      ],
+      "mayEdit": [
+        "schemas/calculation-book-master.schema.json",
+        "content/calculation-books/**",
+        "tools/calculation-book/**",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "lib/content.js",
+        "lib/validators.js",
+        "data/markdown-renderer.js",
+        "post.js",
+        "main.js",
+        "scripts/test-calculation-book.js",
+        "scripts/test-formula-catalog.js",
+        "package.json",
+        "docs/calculation-book-authoring-guide.md",
+        "docs/codex-workline/slices/S09_formula_catalog_management_handoff.md"
+      ],
+      "doneWhen": [
+        "every formula has a stable globally namespaced canonical identity and duplicate identities or route slugs fail validation",
+        "every generated node has exactly one domain, topology, book, depth, and formula tag plus a validated optional hierarchy path and parent identity",
+        "every visible L1 formula and every dependent L2/L3 subformula has a superscript jump to a real target with no dangling link or unsupported filler",
+        "CMS can search and filter by formula identity, book, topology, depth, hierarchy, and publication state while preserving create/edit/revision/soft-delete/restore behavior",
+        "formula catalog export is deterministic and bulk import validates the whole package and creates a non-overwriting pre-change snapshot",
+        "both accepted calculation books pass identity, tag, complete-jump, route, backup, restore, Chinese rendering, and isolated DATA_DIR tests",
+        "npm.cmd run test:formula-catalog, test:calculation-book, test:markdown, and codex:contract pass",
+        "handoff records coverage counts, backup/restore evidence, local test URLs, risks, and next handoff back to A00"
+      ],
+      "brief": "agents/A14_FormulaCatalogManagement/brief.md",
+      "handoff": "docs/codex-workline/slices/S09_formula_catalog_management_handoff.md"
+    }
+  ]
+}

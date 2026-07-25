@@ -1,0 +1,585 @@
+{
+  "schemaVersion": 1,
+  "project": "LarkixMaker",
+  "workspaceRoot": "E:/Project/2607-LarkixWeb",
+  "contractChecker": {
+    "expectedProjectState": "task0_complete_batch1_paused_by_owner_code_still_closed",
+    "expectedImplementationGateStatus": "batch1_paused_by_owner_code_closed",
+    "expectedTopArchitectStatus": "active_architecture_control_file_agent0_batch_design_authorized_code_closed",
+    "requiredFiles": [
+      "AGENTS.md",
+      "PROJECT_WINDOW.md",
+      "docs/PROJECT_CHARTER.md",
+      "docs/prompts/agent_prompt_template.md",
+      "docs/prompts/next_agents.md",
+      "agents/A00_ProjectDirector/brief.md",
+      "agents/A03_ResourceManager/brief.md",
+      "agents/A03_ResourceManager/handoff.md",
+      "agents/A04_RuntimeBaseline/brief.md",
+      "agents/A04_RuntimeBaseline/handoff.md",
+      "agents/A05_ImplementationSlicePlanner/brief.md",
+      "agents/A06_DataModelMigrationContract/brief.md",
+      "agents/A07_DataModelMigrationImplementation/brief.md",
+      "agents/A08_ApiRuntimeBoundary/brief.md",
+      "agents/A10_CmsKnowledgeNodeWorkflow/brief.md",
+      "agents/A11_PublicDerivationAndFocusMode/brief.md",
+      ".codex/config.toml",
+      ".codex/larkix-governance.json",
+      ".codex/agents/a05-implementation-slice-planner.toml",
+      ".codex/agents/a06-data-model-migration-contract.toml",
+      ".codex/agents/a07-data-model-migration-implementation.toml",
+      ".codex/agents/a08-api-runtime-boundary.toml",
+      ".codex/agents/a10-cms-knowledge-node-workflow.toml",
+      ".codex/agents/a11-public-derivation-and-focus-mode.toml",
+      "scripts/codex-handoff.js",
+      "scripts/codex-governance.js",
+      "docs/codex-workline/README.md",
+      "docs/codex-workline/task_registry.json",
+      "docs/codex-workline/A00_ProjectDirector_handoff.md",
+      "docs/codex-workline/A01_ProjectStateRetriever_work_order.md",
+      "docs/codex-workline/source_registry.json",
+      "docs/codex-workline/resource_index.md",
+      "docs/codex-workline/A01_ProjectStateRetriever_handoff.md",
+      "docs/codex-workline/implementation_slices.json",
+      "docs/codex-workline/A05_ImplementationSlicePlanner_handoff.md",
+      "docs/codex-workline/S00_batch1_open_dispatch_handoff.md",
+      "docs/codex-workline/slices/S01_data_model_migration_contract.md",
+      "docs/codex-workline/slices/S01_data_model_migration_contract_handoff.md",
+      "migrations/011_knowledge_nodes.js",
+      "migrations/012_knowledge_links.js",
+      "migrations/013_public_focus_mode_default.js",
+      "docs/codex-workline/slices/S02_data_model_migration_implementation_handoff.md",
+      "PROJECT_MAINTENANCE.json",
+      "ACTIVE_AGENT_DISPATCH.json",
+      "TOP_ARCHITECT_HANDOFF.json",
+      "docs/Agent0+总控与集成/AGENT_UPDATE_INDEX.json",
+      "docs/Agent0+总控与集成/2026-07-09_12-42_Agent0_完整项目情况对接记录.md",
+      "docs/Agent0+总控与集成/2026-07-09_00-00_Agent0_Task0收敛完成记录_Batch1暂停.md",
+      "agents/A09_MarkdownDocxDerivationLinks/brief.md",
+      ".codex/agents/a09-markdown-docx-derivation-links.toml",
+      "docs/codex-workline/slices/S03_api_runtime_boundary_handoff.md",
+      "docs/codex-workline/slices/S04_markdown_docx_derivation_links_handoff.md",
+      "docs/codex-workline/slices/S05_cms_knowledge_node_workflow_handoff.md",
+      "docs/codex-workline/slices/S06_public_derivation_and_focus_mode_handoff.md",
+      "agents/A12_CmsFormulaAuthoringExamples/brief.md",
+      ".codex/agents/a12-cms-formula-authoring-examples.toml",
+      "docs/codex-workline/slices/S07_cms_formula_authoring_examples_handoff.md",
+      "agents/A13_CalculationBookEngineering/brief.md",
+      ".codex/agents/a13-calculation-book-engineering.toml",
+      "docs/codex-workline/slices/S08_calculation_book_engineering_handoff.md",
+      "agents/A14_FormulaCatalogManagement/brief.md",
+      ".codex/agents/a14-formula-catalog-management.toml"
+    ],
+    "pausedBooleanFields": {
+      "batch1ReadyForOpenDecision": true,
+      "batch1PausedByOwner": true,
+      "batch1Open": false,
+      "codeImplementationAllowedNow": false,
+      "databaseMutationAllowedNow": false,
+      "productionReleaseAllowedNow": false,
+      "gitStagingAllowedNow": false
+    },
+    "packageScripts": {
+      "codex:handoff": "node scripts/codex-handoff.js",
+      "codex:contract": "node scripts/codex-governance.js contract",
+      "codex:resources": "node scripts/codex-governance.js resources",
+      "codex:check": "node scripts/codex-governance.js all"
+    },
+    "projectWindowRequiredText": [
+      "# Project Window",
+      "Current phase: `A14_FormulaCatalogManagement`",
+      "Current controller: `agents/A00_ProjectDirector/brief.md`",
+      "Next agent: `agents/A14_FormulaCatalogManagement/brief.md`",
+      "S09 formula catalog identity, hierarchical tags, complete derivation jumps, CMS management, and isolated backup verification are open",
+      "Last accepted handoff: `docs/codex-workline/slices/S08_calculation_book_engineering_handoff.md`"
+    ],
+    "agentsGuideRequiredText": [
+      "Recommended handoff and coordination language: Chinese",
+      "## Encoding Rules",
+      "New and edited text files should be UTF-8 without BOM",
+      "Chinese is allowed in human-facing handoffs",
+      "verify it does not become mojibake",
+      "Prefer ASCII for code identifiers",
+      "A00 Direct Execution Rule",
+      "npm.cmd run codex:handoff",
+      "Agent 00 Project Director",
+      "项目导演：",
+      "run `npm.cmd run codex:contract`"
+    ],
+    "nextAgentsRequiredText": [
+      "Agent 14 Formula Catalog Management",
+      "公式目录与管理",
+      "全部子公式可跳转",
+      "公式唯一",
+      "多级标签",
+      "L1/L2/L3",
+      "A15_ContentCloudSync",
+      "npm.cmd run codex:handoff"
+    ],
+    "a01Completion": {
+      "schema": "codex-workline.source_registry.v1",
+      "producer": "A01_ProjectStateRetriever",
+      "status": "complete",
+      "workspaceRoot": "E:/Project/2607-LarkixWeb",
+      "generatedArtifacts": [
+        "docs/codex-workline/source_registry.json",
+        "docs/codex-workline/resource_index.md",
+        "docs/codex-workline/A01_ProjectStateRetriever_handoff.md"
+      ],
+      "runControls": {
+        "readOnlyProjectMaterials": true,
+        "businessCodeModified": false,
+        "databaseMigrationCreated": false,
+        "databaseMigrationRun": false,
+        "gitStaged": false,
+        "gitCommitted": false,
+        "gitPushed": false,
+        "oldWorkspaceTouched": false
+      },
+      "projectState": {
+        "implementationGate": "batch1_paused_by_owner_code_closed",
+        "currentProjectState": "task0_complete_batch1_paused_by_owner_code_still_closed",
+        "businessImplementationAllowed": false,
+        "databaseMutationAllowed": false,
+        "productionReleaseAllowed": false,
+        "gitStagingAllowed": false
+      },
+      "requiredSourceClasses": [
+        "authoritative_gate",
+        "historical_agent_evidence",
+        "runtime_source",
+        "protected_runtime_data",
+        "visual_or_evidence_asset",
+        "external_reference"
+      ],
+      "requiredSourceIds": [
+        "agents_guide",
+        "project_maintenance",
+        "active_agent_dispatch",
+        "top_architect_handoff",
+        "agent0_update_index",
+        "latest_agent0_project_handoff",
+        "agent0_batch1_pause_report",
+        "codex_governance_config",
+        "codex_workline_registry",
+        "a01_work_order",
+        "codex_governance_script",
+        "package_manifest",
+        "protected_env",
+        "protected_database",
+        "protected_runtime_data",
+        "protected_uploads",
+        "protected_codex_logs"
+      ],
+      "postA01CodexCheck": {
+        "command": "npm.cmd run codex:check",
+        "exitCode": 0,
+        "contractFailures": 0,
+        "resourceFailures": 0
+      },
+      "resourceIndexRequiredText": [
+        "# A01 Project State Resource Index",
+        "Generated by: A01_ProjectStateRetriever",
+        "Workspace: `E:/Project/2607-LarkixWeb`",
+        "- Generated only the three A01 files in `docs/codex-workline/`.",
+        "- Did not modify business code.",
+        "- Did not create or run database migrations.",
+        "- Did not deploy, roll back, mutate production data, stage, commit, or push.",
+        "`task0_complete_batch1_paused_by_owner_code_still_closed`",
+        "Business implementation, database mutation, production release, and Git staging are all closed.",
+        "Contract check: 61 passed, 0 warnings, 0 failures.",
+        "Resource inventory: 27 passed, 12 warnings, 0 failures.",
+        "`uploads/.gitkeep` only, matching the explicit allowlist."
+      ],
+      "handoffRequiredText": [
+        "# A01 ProjectStateRetriever Handoff",
+        "Generated by: A01_ProjectStateRetriever",
+        "Workspace: `E:/Project/2607-LarkixWeb`",
+        "- `docs/codex-workline/source_registry.json`",
+        "- `docs/codex-workline/resource_index.md`",
+        "- `docs/codex-workline/A01_ProjectStateRetriever_handoff.md`",
+        "- Did not modify business code.",
+        "- Did not create or run database migrations.",
+        "- Did not deploy, roll back, mutate production data, stage, commit, or push.",
+        "Batch1 is paused by Owner.",
+        "Business implementation is not allowed.",
+        "Database mutation is not allowed.",
+        "Git staging is not allowed.",
+        "Next task: `A03_ResourceManager`",
+        "npm.cmd run codex:resources",
+        "Result: exit code 0."
+      ]
+    },
+    "a05Completion": {
+      "schema": "codex-workline.implementation_slices.v1",
+      "producer": "A05_ImplementationSlicePlanner",
+      "status": "complete",
+      "workspaceRoot": "E:/Project/2607-LarkixWeb",
+      "minSliceCount": 12,
+      "requiredSliceIds": [
+        "S00_batch1_open_dispatch",
+        "S01_data_model_migration_contract",
+        "S02_data_model_migration_implementation",
+        "S03_api_runtime_boundary",
+        "S04_markdown_docx_derivation_links",
+        "S05_cms_knowledge_node_workflow",
+        "S06_public_derivation_and_focus_mode",
+        "S07_cms_formula_authoring_examples",
+        "S08_calculation_book_engineering",
+        "S09_formula_catalog_management",
+        "S10_content_cloud_sync",
+        "S11_regression_evidence_matrix",
+        "S12_release_git_gate"
+      ],
+      "requiredCurrentGate": {
+        "businessImplementationAllowed": false,
+        "databaseMutationAllowed": false,
+        "productionReleaseAllowed": false,
+        "gitStagingAllowed": false
+      },
+      "handoffRequiredText": [
+        "# A05 ImplementationSlicePlanner Handoff",
+        "Generated by: A05_ImplementationSlicePlanner",
+        "status",
+        "complete",
+        "Root cause: A05 existed only as a blocked registry entry.",
+        "docs/codex-workline/implementation_slices.json",
+        "Do not modify business code",
+        "Return to `A00_ProjectDirector`"
+      ]
+    },
+    "a06Completion": {
+      "contractPath": "docs/codex-workline/slices/S01_data_model_migration_contract.md",
+      "handoffPath": "docs/codex-workline/slices/S01_data_model_migration_contract_handoff.md",
+      "contractRequiredText": [
+        "# S01 Data Model Migration Contract",
+        "Generated by: A06_DataModelMigrationContract",
+        "knowledge_nodes",
+        "knowledge_node_revisions",
+        "knowledge_links",
+        "public_focus_mode",
+        "CREATE INDEX IF NOT EXISTS",
+        "publish_status",
+        "visibility_status",
+        "Migration Boundary",
+        "Rollback and Compatibility Assumptions",
+        "Isolated DATA_DIR Test Requirements",
+        "S02 Stop Conditions"
+      ],
+      "handoffRequiredText": [
+        "# S01 Data Model Migration Contract Handoff",
+        "Generated by: A06_DataModelMigrationContract",
+        "complete",
+        "No source code, migration file, database file, runtime data, upload, release script, or Git state was changed.",
+        "Agent 07 Data Model Migration Implementation",
+        "数据迁移实现：仅在门禁打开后落地迁移"
+      ]
+    },
+    "a07Completion": {
+      "migrationRequiredText": {
+        "migrations/011_knowledge_nodes.js": [
+          "id: \"011_knowledge_nodes\"",
+          "knowledge_nodes",
+          "knowledge_node_revisions",
+          "publish_status",
+          "visibility_status",
+          "idx_knowledge_nodes_public",
+          "idx_knowledge_node_revisions_node"
+        ],
+        "migrations/012_knowledge_links.js": [
+          "id: \"012_knowledge_links\"",
+          "knowledge_links",
+          "source_type",
+          "target_slug",
+          "idx_knowledge_links_unique_edge",
+          "idx_knowledge_links_source",
+          "idx_knowledge_links_target"
+        ],
+        "migrations/013_public_focus_mode_default.js": [
+          "id: \"013_public_focus_mode_default\"",
+          "enabled: false",
+          "public_focus_mode",
+          "INSERT OR IGNORE"
+        ]
+      },
+      "handoffPath": "docs/codex-workline/slices/S02_data_model_migration_implementation_handoff.md",
+      "handoffRequiredText": [
+        "# S02 Data Model Migration Implementation Handoff",
+        "Generated by: A07_DataModelMigrationImplementation",
+        "complete",
+        "011_knowledge_nodes",
+        "012_knowledge_links",
+        "013_public_focus_mode_default",
+        "PRAGMA integrity_check",
+        "ok",
+        "Git staging/commit/push: not performed"
+      ]
+    },
+    "a08Completion": {
+      "sourceRequiredText": {
+        "server.js": [
+          "validateKnowledgeNodePayload",
+          "/api/knowledge-nodes",
+          "/api/admin/knowledge-nodes",
+          "knowledge_node_save",
+          "knowledge_node_revision_restore"
+        ],
+        "lib/content.js": [
+          "function extractDeriveLinks",
+          "function allKnowledgeNodes",
+          "function saveKnowledgeNode",
+          "function restoreKnowledgeNodeRevision",
+          "knowledge_links"
+        ],
+        "lib/validators.js": [
+          "function validateKnowledgeNodePayload",
+          "validateDeriveShortcodes",
+          "publishStatus",
+          "visibilityStatus"
+        ],
+        "scripts/verify-api.ps1": [
+          "publicKnowledgeNodes",
+          "knowledge node public/admin boundary",
+          "/api/admin/knowledge-nodes",
+          "/api/knowledge-nodes"
+        ]
+      },
+      "handoffPath": "docs/codex-workline/slices/S03_api_runtime_boundary_handoff.md",
+      "handoffRequiredText": [
+        "# S03 API Runtime Boundary Handoff",
+        "Generated by: A08_ApiRuntimeBoundary",
+        "complete",
+        "GET /api/knowledge-nodes",
+        "POST /api/admin/knowledge-nodes",
+        "publicKnowledgeNodes=1",
+        "No CMS UI, visitor frontend, Markdown/DOCX renderer, current database/runtime data, production release, deployment, Git staging, commit, push, or rollback was performed."
+      ]
+    },
+    "a09Completion": {
+      "sourceRequiredText": {
+        "data/markdown-renderer.js": [
+          "deriveSlugPattern",
+          "deriveColorTokens",
+          "function renderDeriveShortcode",
+          "data-derive-slug",
+          "aria-label=\"查看",
+          "LARKIXDERIVE"
+        ],
+        "lib/md2doc.js": [
+          "derivation-link",
+          "data-derive-slug",
+          "[derive:"
+        ],
+        "scripts/test-markdown-renderer.js": [
+          "derive shortcode link count",
+          "derive shortcode invalid color falls back",
+          "derive shortcodes inside code and math regions are ignored",
+          "DOCX derive shortcode readable fallback"
+        ]
+      },
+      "handoffPath": "docs/codex-workline/slices/S04_markdown_docx_derivation_links_handoff.md",
+      "handoffRequiredText": [
+        "# S04 Markdown DOCX Derivation Links Handoff",
+        "Generated by: A09_MarkdownDocxDerivationLinks",
+        "complete",
+        "derivation-link derivation-link--{token}",
+        "label [derive:slug]",
+        "DOCX V0",
+        "npm.cmd run test:markdown",
+        "CMS UI/访客前端修改",
+        "Git staging"
+      ]
+    },
+    "a10Completion": {
+      "sourceRequiredText": {
+        "admin/index.html": [
+          "data-admin-nav=\"knowledge\"",
+          "value=\"knowledge_node\"",
+          "knowledgeSlugField",
+          "knowledgeWarnings",
+          "knowledgeRevisionsPanel",
+          "knowledgeNodeList"
+        ],
+        "admin/admin.js": [
+          "knowledgeNodes",
+          "isKnowledgeType",
+          "/api/admin/knowledge-nodes",
+          "renderKnowledgeNodeList",
+          "restore-knowledge-revision",
+          "setKnowledgeWarnings"
+        ],
+        "admin/admin.css": [
+          "meta-warnings",
+          "knowledge-revisions-panel",
+          "knowledge-color-dot"
+        ]
+      },
+      "handoffPath": "docs/codex-workline/slices/S05_cms_knowledge_node_workflow_handoff.md",
+      "handoffRequiredText": [
+        "# S05 CMS Knowledge Node Workflow Handoff",
+        "Generated by: A10_CmsKnowledgeNodeWorkflow",
+        "complete",
+        "推导节点",
+        "POST /api/admin/knowledge-nodes",
+        "dangling derive target",
+        "public_focus_mode",
+        "未修改 `server.js`",
+        "Git 状态"
+      ]
+    }
+  },
+  "resourceManager": {
+    "protectedPaths": [
+      ".env",
+      "database",
+      "runtime-data",
+      "uploads",
+      ".codex-logs"
+    ],
+    "allowedTrackedProtectedPaths": [
+      "uploads/.gitkeep"
+    ],
+    "scanExcludeTopLevel": [
+      ".git",
+      "node_modules",
+      "database",
+      "runtime-data",
+      "uploads",
+      ".codex-logs"
+    ],
+    "requiredGitignoreEntries": [
+      "node_modules/",
+      ".env",
+      "database/*.sqlite",
+      "database/*.sqlite-*",
+      "uploads/*",
+      "runtime-data/",
+      ".codex-logs/",
+      "*.log"
+    ],
+    "largeFileWarningBytes": 1048576
+  },
+  "workline": {
+    "mode": "project_director_plus_short_task_agents",
+    "legacyAgentDocsMode": "historical_reference_only",
+    "taskRegistry": "docs/codex-workline/task_registry.json",
+    "onlyLongLivedRole": "A00_ProjectDirector",
+    "nextController": "A00_ProjectDirector",
+    "nextControllerBrief": "agents/A00_ProjectDirector/brief.md",
+    "onlyNextTask": "A14_FormulaCatalogManagement",
+    "expectedNextTaskCount": 1,
+    "agentRoleNotes": {
+      "A00_ProjectDirector": "项目导演：负责顺序、门禁和下一步裁决",
+      "A01_ProjectStateRetriever": "项目状态检索器：只读取资料并建立来源索引",
+      "A02_ContractValidator": "契约校验器：维护可执行治理检查",
+      "A03_ResourceManager": "资源管理器：盘点资源并保护运行时数据",
+      "A04_RuntimeBaseline": "运行基线复测：确认版本、Markdown 回归与治理检查",
+      "A05_ImplementationSlicePlanner": "实现切片规划器：拆分实现切片但不改代码",
+      "A06_DataModelMigrationContract": "数据模型契约：先定表结构和迁移边界",
+      "A07_DataModelMigrationImplementation": "数据迁移实现：仅在门禁打开后落地迁移",
+      "A08_ApiRuntimeBoundary": "API 运行边界：实现推导节点公开/管理接口",
+      "A09_MarkdownDocxDerivationLinks": "Markdown/DOCX：推导短码渲染与降级",
+      "A10_CmsKnowledgeNodeWorkflow": "CMS 工作流：推导节点编辑、预览和发布状态",
+      "A11_PublicDerivationAndFocusMode": "访客端：推导页、点击跳转和聚焦模式",
+      "A12_CmsFormulaAuthoringExamples": "管理端公式编辑与计算书示例：用 CMS 插入公式上角标跳转，并做中文 BOOST 电感选型计算书",
+      "A13_CalculationBookEngineering": "计算书撰写与详细计算细化专家：从输入输出条件完成拓扑总设计，并生成 JSON、MathCAD 与 Larkix 分层计算书",
+      "A14_FormulaCatalogManagement": "公式目录与管理：确保全部子公式可跳转、公式唯一、多级标签、修订与备份",
+      "A15_ContentCloudSync": "内容云端同步：把已验收内容包安全接入云端部署与幂等更新",
+      "A16_RegressionEvidenceMatrix": "质量回归：API、CMS、页面、Markdown 和内容同步证据",
+      "A17_ReleaseGitGate": "发布与 Git 门禁：显式清单、备份、回滚和发布判断"
+    },
+    "expectedTaskStatuses": {
+      "A01_ProjectStateRetriever": "completed",
+      "A02_ContractValidator": "completed",
+      "A03_ResourceManager": "completed",
+      "A04_RuntimeBaseline": "completed",
+      "A05_ImplementationSlicePlanner": "completed",
+      "A06_DataModelMigrationContract": "completed",
+      "A07_DataModelMigrationImplementation": "completed",
+      "A08_ApiRuntimeBoundary": "completed",
+      "A09_MarkdownDocxDerivationLinks": "completed",
+      "A10_CmsKnowledgeNodeWorkflow": "completed",
+      "A11_PublicDerivationAndFocusMode": "completed",
+      "A12_CmsFormulaAuthoringExamples": "completed",
+      "A13_CalculationBookEngineering": "completed",
+      "A14_FormulaCatalogManagement": "next"
+    }
+  },
+  "temporaryExperts": [
+    {
+      "id": "A00_ProjectDirector",
+      "file": ".codex/agents/a00-project-director.toml",
+      "mode": "read-only"
+    },
+    {
+      "id": "A01_ProjectStateRetriever",
+      "file": ".codex/agents/a01-project-state-retriever.toml",
+      "mode": "read-only"
+    },
+    {
+      "id": "A02_ContractValidator",
+      "file": ".codex/agents/a02-contract-validator.toml",
+      "mode": "read-only"
+    },
+    {
+      "id": "A03_ResourceManager",
+      "file": ".codex/agents/a03-resource-manager.toml",
+      "mode": "read-only"
+    },
+    {
+      "id": "A04_RuntimeBaseline",
+      "file": ".codex/agents/a04-runtime-baseline.toml",
+      "mode": "read-only"
+    },
+    {
+      "id": "A05_ImplementationSlicePlanner",
+      "file": ".codex/agents/a05-implementation-slice-planner.toml",
+      "mode": "read-only"
+    },
+    {
+      "id": "A06_DataModelMigrationContract",
+      "file": ".codex/agents/a06-data-model-migration-contract.toml",
+      "mode": "read-only"
+    },
+    {
+      "id": "A07_DataModelMigrationImplementation",
+      "file": ".codex/agents/a07-data-model-migration-implementation.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A08_ApiRuntimeBoundary",
+      "file": ".codex/agents/a08-api-runtime-boundary.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A09_MarkdownDocxDerivationLinks",
+      "file": ".codex/agents/a09-markdown-docx-derivation-links.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A10_CmsKnowledgeNodeWorkflow",
+      "file": ".codex/agents/a10-cms-knowledge-node-workflow.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A11_PublicDerivationAndFocusMode",
+      "file": ".codex/agents/a11-public-derivation-and-focus-mode.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A12_CmsFormulaAuthoringExamples",
+      "file": ".codex/agents/a12-cms-formula-authoring-examples.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A13_CalculationBookEngineering",
+      "file": ".codex/agents/a13-calculation-book-engineering.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A14_FormulaCatalogManagement",
+      "file": ".codex/agents/a14-formula-catalog-management.toml",
+      "mode": "workspace-write"
+    }
+  ]
+}

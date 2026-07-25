@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "larkix.mathcad-open-check.v1",
+  "status": "partial",
+  "application": "Mathcad 15 M050",
+  "worksheet": "Larkix_CCM_Flyback_Traceable_20260721.xmcd",
+  "openedSuccessfully": true,
+  "windowTitleConfirmed": true,
+  "processResponding": true,
+  "contentVisualStatus": "not_verified",
+  "contentVisualReason": "Mathcad 15 window capture returned a fully black image and no accessibility document text; Chinese text, Area rendering, formulas, units, and results could not be honestly verified by screenshot.",
+  "xmlAndRuleValidation": "pass",
+  "closedWithoutSaving": true
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "larkix.calculation-book-isolated-preview.v1",
+  "status": "pass",
+  "dataDirPolicy": "fresh operating-system temporary directory; removed after test",
+  "productionOrCurrentDataTouched": false,
+  "canonicalStatus": {
+    "publishStatus": "draft",
+    "visibilityStatus": "private"
+  },
+  "previewOverride": {
+    "publishStatus": "published",
+    "visibilityStatus": "unlisted",
+    "isolatedDataDirOnly": true
+  },
+  "nodes": [
+    {
+      "slug": "four-switch-buck-boost-reva-calculation-sheet",
+      "api": 200,
+      "page": 200
+    },
+    {
+      "slug": "four-switch-buck-boost-transition-derivation",
+      "api": 200,
+      "page": 200
+    },
+    {
+      "slug": "inductor-volt-second-ripple-foundation",
+      "api": 200,
+      "page": 200
+    }
+  ],
+  "formulaJumpTargets": [
+    "four-switch-buck-boost-transition-derivation",
+    "inductor-volt-second-ripple-foundation"
+  ],
+  "sentinelCount": 18,
+  "serverClosed": true,
+  "temporaryDataRemoved": true
+}

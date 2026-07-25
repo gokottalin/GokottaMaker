@@ -427,6 +427,13 @@
 
   const plainMathWords = new Set(["ADC", "CPU", "DMA", "GPIO", "HAL", "LSB", "MCU", "MOS", "PDF", "ST", "TVS"]);
 
+  function dottedSubscriptMath(value) {
+    return String(value || "").replace(/[\p{L}][\p{L}\p{N}]*(?:\.[\p{L}][\p{L}\p{N}]*)+/gu, (token) => {
+      const [base, ...subscripts] = token.split(".");
+      return `${base}_{${subscripts.join(".")}}`;
+    });
+  }
+
   function identifierHtml(token) {
     if (!token || plainMathWords.has(token)) return escapeHtml(token);
     let match = token.match(/^([VRTCI])([A-Z][A-Z0-9]+)(\+?)$/);
@@ -685,9 +692,28 @@
     return `<img src="${escapeHtml(normalized)}" alt="${escapeHtml(alt)}" loading="lazy" />`;
   }
 
+  const deriveSlugPattern = /^[a-z0-9][a-z0-9-]{1,79}$/;
+  const deriveColorTokens = new Set(["purple", "blue", "green", "amber", "red", "neutral"]);
+
+  function normalizeDeriveColor(value) {
+    const token = String(value || "purple").trim().toLowerCase();
+    return deriveColorTokens.has(token) ? token : "purple";
+  }
+
+  function renderDeriveShortcode(shortcode, slugValue, labelValue, colorValue) {
+    const slug = String(slugValue || "").trim().toLowerCase();
+    const label = String(labelValue || "").trim();
+    const decodedLabel = decodeMathEntities(label).trim();
+    if (!deriveSlugPattern.test(slug) || !decodedLabel || decodedLabel.length > 80) return shortcode;
+    const color = normalizeDeriveColor(colorValue);
+    const title = escapeHtml(`${decodedLabel}详细推导`);
+    return `<a class="derivation-link derivation-link--${color} formula-jump-sup" href="./derive.html?slug=${encodeURIComponent(slug)}" data-derive-slug="${escapeHtml(slug)}" data-derive-label="${label}" data-derive-color="${color}" title="${title}" aria-label="查看 ${title}"><span class="derive-jump-icon" aria-hidden="true">↵</span><span class="derive-jump-label">${label}</span></a>`;
+  }
+
   function inline(value) {
     const codeSpans = [];
     const mathSpans = [];
+    const deriveSpans = [];
     let text = escapeHtml(value).replace(/`([^`]+)`/g, (_, code) => {
       const token = `@@LARKIXCODE${codeSpans.length}@@`;
       const decoded = decodeMathEntities(code);
@@ -706,6 +732,14 @@
         mathSpans.push(renderInlineMath(latex));
         return `${prefix}${token}`;
       });
+
+    text = text.replace(/\{\{derive:([^|{}\s]+)\|([^|{}\n]+?)(?:\|([^|{}\n]+?))?\}\}/g, (shortcode, slug, label, color) => {
+      const html = renderDeriveShortcode(shortcode, slug, label, color);
+      if (html === shortcode) return shortcode;
+      const token = `@@LARKIXDERIVE${deriveSpans.length}@@`;
+      deriveSpans.push(html);
+      return token;
+    });
 
     text = text
       .replace(/!\[([^\]]*)\]\(((?:\\.|[^()\\\n]|\([^()\n]*\))+?)\)/g, (_, alt, src) => renderImage(alt, src))
@@ -729,6 +763,9 @@
     });
     mathSpans.forEach((html, index) => {
       text = text.replaceAll(`@@LARKIXMATH${index}@@`, html);
+    });
+    deriveSpans.forEach((html, index) => {
+      text = text.replaceAll(`@@LARKIXDERIVE${index}@@`, html);
     });
     return text;
   }
@@ -829,6 +866,18 @@
       math = [];
     }
 
+    function isDeriveShortcodeOnly(line) {
+      return /^\s*\{\{derive:[^|{}\s]+\|[^|{}\n]+?(?:\|[^|{}\n]+?)?\}\}\s*$/.test(line);
+    }
+
+    function attachFormulaJumpToLastDisplayMath(jumpHtml) {
+      const lastIndex = blocks.length - 1;
+      if (lastIndex < 0 || !/class="markdown-math markdown-math-display"/.test(blocks[lastIndex])) return false;
+      if (!/class="derivation-link/.test(jumpHtml)) return false;
+      blocks[lastIndex] = blocks[lastIndex].replace(/<\/div>$/, `${jumpHtml}</div>`);
+      return true;
+    }
+
     function readMathStart(line) {
       const trimmed = line.trim();
       if (trimmed.startsWith("$$")) {
@@ -911,6 +960,11 @@
       if (!line.trim()) {
         flushLooseBlocks();
         continue;
+      }
+
+      if (isDeriveShortcodeOnly(line) && !paragraph.length && !list.length && !quote.length) {
+        const jumpHtml = inline(line.trim());
+        if (attachFormulaJumpToLastDisplayMath(jumpHtml)) continue;
       }
 
       const mathStart = readMathStart(line);
@@ -998,5 +1052,5 @@
     return { html: blocks.join("\n"), headings };
   }
 
-  window.LarkixMarkdown = { render, escapeHtml, inline, mathToText, renderDisplayMath };
+  window.LarkixMarkdown = { render, escapeHtml, inline, mathToText, renderDisplayMath, dottedSubscriptMath };
 })();

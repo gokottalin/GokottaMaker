@@ -1,0 +1,1101 @@
+﻿{
+  "schemaVersion": 2,
+  "fileRole": "Agent00 top architecture handoff and project refactor control",
+  "generatedAt": "2026-06-21 19:12 +08:00",
+  "generatedBy": "Agent00-顶部架构师",
+  "status": "active_architecture_control_file_agent0_batch_design_authorized_code_closed",
+  "project": {
+    "name": "LarkixMaker",
+    "root": "E:/Project/2607-LarkixWeb",
+    "packageName": "larkixmaker",
+    "packageVersion": "2.4.10",
+    "siteVersionLabel": "V2.4.10+20260528-001",
+    "runtime": "Node.js >=22.5.0 with --experimental-sqlite",
+    "defaultLocalUrl": "http://localhost:4173",
+    "productionDomains": [
+      "www.larkix.com",
+      "larkix.com"
+    ],
+    "productionTopology": "Nginx/HTTPS -> 127.0.0.1:4173 -> Node HTTP server -> SQLite + uploads",
+    "summary": "LarkixMaker 是面向模拟电子、STM32、ESP32 与独立开源硬件项目的技术内容站，当前包含访客端、CMS 管理端、SQLite 内容数据、小程序工具、Markdown/DOCX 工具、品牌视觉资产和运维发布脚本。"
+  },
+  "readOrderForAllAgents": [
+    "PROJECT_MAINTENANCE.json",
+    "TOP_ARCHITECT_HANDOFF.json",
+    "目标 Agent 自己 docs/AgentX 目录下的最新交接或报告",
+    "涉及发布时再读 docs/deployment.md 与 docs/Agent1+运维与发布稳定性/",
+    "涉及 Git 批次时再读 docs/Agent101-Git/"
+  ],
+  "sourceBasis": [
+    {
+      "path": "PROJECT_MAINTENANCE.json",
+      "role": "永久项目维护与 Agent 协调契约",
+      "usage": "本文件的模块归属、文档输出契约、清理规则和发布检查均以它为准。",
+      "currentStatus": "exists, currently untracked in git status"
+    },
+    {
+      "path": "docs/Agent0+总控与集成/2026-05-28_01-27_Agent0_项目目录整理与Agent输出契约.md",
+      "role": "中文说明版目录职责与 Agent 输出契约",
+      "usage": "用于确认根目录不可继续堆放临时报告、截图、证据 JSON 和未归属对接说明。",
+      "currentStatus": "exists, currently untracked in git status"
+    },
+    {
+      "path": "docs/agent-current-handoff.md",
+      "role": "上一轮发布候选交接总览",
+      "usage": "用于识别历史验证结论、端口说明和已有 Agent 成果；其中 V2.4.9/4335 信息视为历史快照，不覆盖当前 V2.4.10/4173 事实。",
+      "currentStatus": "tracked historical handoff"
+    },
+    {
+      "path": "docs/agent-handoff-plan.md",
+      "role": "早期 Agent 分工与项目能力地图",
+      "usage": "用于继承 server.js 单体风险、CMS/访客端/后端/运维边界和 API 契约。",
+      "currentStatus": "tracked historical plan"
+    },
+    {
+      "path": "docs/architecture.md",
+      "role": "基础架构说明",
+      "usage": "用于确认 Node + SQLite + uploads 的运行形态和后续迁移参考。",
+      "currentStatus": "tracked architecture note"
+    },
+    {
+      "path": "docs/deployment.md",
+      "role": "部署、备份、回滚和生产诊断说明",
+      "usage": "用于定义发布门禁、生产健康检查和 Agent1 的唯一发布入口。",
+      "currentStatus": "tracked deployment guide"
+    }
+  ],
+  "currentRepositoryState": {
+    "branchSummary": "main...origin/main",
+    "headCommit": "300e426 chore: bump release version to V2.4.10",
+    "workingTreeNotes": [
+      "2026-06-21 19:01 Agent00 重新裁决扫描：trackedChangedCount=0，stagedChangedCount=0，trackedImplementationLike=[]，stagedImplementationLike=[]，untrackedImplementationLike=[]。",
+      "当前工作区存在大量未跟踪治理文件、Agent 报告和 status JSON；这些属于架构治理和接口设计材料，不等同于已批准代码实现。",
+      "ACTIVE_AGENT_DISPATCH.json 仍要求 codeChangeAllowed=false、databaseMutationAllowed=false、productionReleaseAllowed=false、mustStopBeforeImplementation=true。",
+      "Agent0 2026-06-21 18:38 已收敛全部回传；Agent00 2026-06-21 19:12 已裁决九项实现前架构细节，并授权 Agent0 设计实现批次。子 Agent 代码实现仍未开放。",
+      "任何 stage、commit、push、迁移、实现或发布前必须重新执行 git status --short --branch，并由 Agent101 明确 staging 清单。"
+    ],
+    "importantUntrackedFiles": [
+      "PROJECT_MAINTENANCE.json",
+      "TOP_ARCHITECT_HANDOFF.json",
+      "docs/Agent0+总控与集成/2026-05-28_01-27_Agent0_项目目录整理与Agent输出契约.md"
+    ],
+    "rootCleanupObservation": [
+      "根目录仍有历史 QA 截图和当前发布说明，这些不应由普通清理直接删除。",
+      ".env、database/、runtime-data/、uploads/、.git/ 默认禁止删除。",
+      ".codex-logs/、.codex-run/、.tmp/、普通日志和 gokotta-elec-core/output/ 可按 PROJECT_MAINTENANCE.json 的规则清理。"
+    ],
+    "releaseWarning": "本文件是架构治理交接，不是上线批准。上线必须由 Agent101 完成 Git 状态审计，并由 Agent1 完成生产验证。"
+  },
+  "agent00ArchitectureDecision": {
+    "decision": "引入 Agent00 作为顶部架构师和重构治理入口；Agent0 保持总控与集成 PMO 职责。",
+    "operatingModel": "balanced_12_agent_model_with_agent00_architecture_gate",
+    "reasoning": [
+      "项目已经从早期 5-Agent 稳定底座扩展为包含后端、CMS、访客端、内容、miniapps、视觉、市场、Markdown、QA、Git 和运维的多域系统。",
+      "如果继续让 Agent0 同时承担架构决策、总控排期、跨 Agent 验收和发布协调，会导致职责过载。",
+      "Agent00 只负责架构边界、重构路线、风险裁决和跨模块设计门禁；Agent0 负责把裁决拆成任务、验收和交接。",
+      "当前本地截图只显示部分 Agent，但 repo docs 已经存在完整 Agent 目录，推荐恢复核心专岗而不是让少量 Agent 越界长期承担所有模块。"
+    ],
+    "nonGoals": [
+      "本次不直接重构业务代码。",
+      "本次不删除根目录历史文件。",
+      "本次不提交 Git、不发布线上、不改变生产配置。",
+      "本次不覆盖 PROJECT_MAINTENANCE.json 的维护契约。"
+    ],
+    "architectureGateRule": "任何跨模块重构、数据库迁移、发布拓扑变化、认证/权限变化、内容模型变化，必须先由 Agent00 输出设计结论，再交 Agent0 拆分执行；Agent100 可作为高风险技术复核，不替代 Agent00 架构门。",
+    "implementationGateCountersign": {
+      "recordedAt": "2026-06-21 19:01 +08:00",
+      "recordedBy": "Agent00",
+      "status": "not_in_code_implementation",
+      "gate": "closed",
+      "decisionReport": "docs/Agent0+总控与集成/2026-06-21_19-01_Agent00_重新裁决_仍未进入代码实现.md",
+      "statusJson": "docs/Agent0+总控与集成/2026-06-21_19-01_Agent00_status.json",
+      "allowedNow": [
+        "Architecture decision queue resolution",
+        "Agent3 parent convergence refresh",
+        "Explicit Agent101 governance staging proposal after approval"
+      ],
+      "blockedNow": [
+        "Database migrations",
+        "Backend API implementation",
+        "CMS implementation",
+        "Visitor frontend implementation",
+        "Markdown renderer implementation",
+        "Production release"
+      ]
+    },
+    "implementationBatchDesignAuthorization": {
+      "recordedAt": "2026-06-21 19:12 +08:00",
+      "recordedBy": "Agent00",
+      "status": "authorized_for_agent0_batch_design_only",
+      "decisionReport": "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_九项实现前架构裁决与Agent0实现批次授权.md",
+      "decisionJson": "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_implementation_decisions.json",
+      "statusJson": "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_status.json",
+      "codeImplementationAllowed": false,
+      "agent0MayDesign": [
+        "implementation batches",
+        "owner/file boundaries",
+        "required gates",
+        "per-batch validation commands",
+        "handoff prompts for child Agents"
+      ]
+    }
+  },
+  "localAgentsFromUserScreenshot": [
+    {
+      "id": "Market",
+      "displayName": "市场部",
+      "observedAge": "1周",
+      "recommendedMapping": "Agent8-市场部设计",
+      "recommendedRole": "产品定位、首页文案、外部传播、商业化表达和转化路径。"
+    },
+    {
+      "id": "Agent0",
+      "displayName": "Agent0-领导",
+      "observedAge": "2周",
+      "recommendedMapping": "Agent0-总控与集成",
+      "recommendedRole": "Owner 之下的总控 PMO，负责分工、验收、交接、优先级和跨 Agent 边界执行。"
+    },
+    {
+      "id": "Agent1",
+      "displayName": "Agent1-网页运维与发布稳定性",
+      "observedAge": "3周",
+      "recommendedMapping": "Agent1-运维与发布稳定性",
+      "recommendedRole": "域名、HTTPS、Nginx、systemd、服务器发布、备份、恢复、回滚和生产健康检查。"
+    },
+    {
+      "id": "Agent7",
+      "displayName": "Agent7-美化设计",
+      "observedAge": "3周",
+      "recommendedMapping": "Agent7-视觉品牌与样式设计",
+      "recommendedRole": "Larkix 品牌、Logo、昼夜主题、视觉规范和设计资产归档。"
+    },
+    {
+      "id": "Agent101",
+      "displayName": "Agent101-Git",
+      "observedAge": "1个月",
+      "recommendedMapping": "Agent101-Git",
+      "recommendedRole": "Git 状态审计、提交批次、发布说明、回滚参考和避免误提交。"
+    },
+    {
+      "id": "Agent9",
+      "displayName": "Agent9-Markdown解析器",
+      "observedAge": "1个月",
+      "recommendedMapping": "Agent9-内容生成对接规范",
+      "recommendedRole": "Markdown 渲染、公式显示、DOCX 输出、LLM 内容生成契约和技术文章格式。"
+    },
+    {
+      "id": "Agent100",
+      "displayName": "Agent100-技术指导",
+      "observedAge": "1个月",
+      "recommendedMapping": "Agent100-技术指导 / Agent00 架构评审协同",
+      "recommendedRole": "技术路线评审、模块拆分建议、技术债治理、高风险实现方案把关。"
+    }
+  ],
+  "agentRoster": {
+    "recommendedActiveModel": "OptionB-plus-Agent00",
+    "layers": [
+      {
+        "layer": "architecture_governance",
+        "agents": [
+          "Agent00-顶部架构师",
+          "Agent100-技术指导",
+          "Agent0-总控与集成"
+        ],
+        "authority": "Agent00 定架构边界和重构门禁；Agent100 给技术方案评审；Agent0 负责拆分任务和收口验收。"
+      },
+      {
+        "layer": "engineering_delivery",
+        "agents": [
+          "Agent2-后端与数据模型",
+          "Agent3-管理端CMS与内容工作流",
+          "Agent4-访客端体验与前端架构",
+          "Agent6-miniapps",
+          "Agent9-内容生成对接规范"
+        ],
+        "authority": "各 Agent 只在自己的模块内直接实现；跨模块改动必须走对接文档。"
+      },
+      {
+        "layer": "product_content_visual",
+        "agents": [
+          "Agent5-内容、SEO与知识体系",
+          "Agent7-视觉品牌与样式设计",
+          "Agent8-市场部设计"
+        ],
+        "authority": "负责内容增长、视觉规范和市场表达，不能绕过前端/后端/发布 Agent 直接落生产。"
+      },
+      {
+        "layer": "quality_release_control",
+        "agents": [
+          "Agent20-体验测试与问题上报",
+          "Agent101-Git",
+          "Agent1-运维与发布稳定性"
+        ],
+        "authority": "Agent20 验证体验和回归；Agent101 管 Git 批次；Agent1 是唯一生产发布入口。"
+      }
+    ],
+    "agents": [
+      {
+        "id": "Agent00",
+        "name": "顶部架构师",
+        "folder": "docs/Agent0+总控与集成",
+        "primaryResponsibilities": [
+          "Architecture decision records",
+          "Cross-module refactor boundaries",
+          "Risk register ownership",
+          "Phase roadmap",
+          "Architecture gate approvals"
+        ],
+        "mustOutputHere": true,
+        "note": "当前没有独立 docs/Agent00 目录时，输出暂归 Agent0 总控目录，并在文件名中标明 Agent00。"
+      },
+      {
+        "id": "Agent0",
+        "name": "总控与集成",
+        "folder": "docs/Agent0+总控与集成",
+        "primaryResponsibilities": [
+          "Task splitting",
+          "Cross-agent coordination",
+          "Acceptance criteria consolidation",
+          "Maintenance contract updates",
+          "Final handoff summaries"
+        ],
+        "mustOutputHere": true
+      },
+      {
+        "id": "Agent1",
+        "name": "运维与发布稳定性",
+        "folder": "docs/Agent1+运维与发布稳定性",
+        "primaryResponsibilities": [
+          "Production deployment",
+          "Nginx and HTTPS",
+          "systemd service management",
+          "Backup and rollback",
+          "Production health checks"
+        ],
+        "mustOutputHere": true
+      },
+      {
+        "id": "Agent101",
+        "name": "Git",
+        "folder": "docs/Agent101-Git",
+        "primaryResponsibilities": [
+          "Git status audit",
+          "Staging discipline",
+          "Commit grouping",
+          "Release notes",
+          "Rollback reference tracking"
+        ],
+        "mustOutputHere": true
+      },
+      {
+        "id": "Agent2",
+        "name": "后端与数据模型",
+        "folder": "docs/Agent2+后端与数据模型",
+        "primaryResponsibilities": [
+          "Node API",
+          "SQLite schema and migrations",
+          "Auth and sessions",
+          "Uploads and validators",
+          "Health payloads"
+        ],
+        "mustOutputHere": true
+      },
+      {
+        "id": "Agent3",
+        "name": "管理端CMS与内容工作流",
+        "folder": "docs/Agent3+管理端CMS与内容工作流",
+        "primaryResponsibilities": [
+          "Admin CMS",
+          "Content editor",
+          "Carousel management",
+          "Layout editor",
+          "CMS login UX"
+        ],
+        "mustOutputHere": true
+      },
+      {
+        "id": "Agent4",
+        "name": "访客端体验、视觉与前端架构",
+        "folder": "docs/Agent4+访客端体验、视觉与前端架构",
+        "primaryResponsibilities": [
+          "Visitor pages",
+          "Responsive layout",
+          "Frontend architecture",
+          "Theme application",
+          "Navigation and page UX"
+        ],
+        "mustOutputHere": true
+      },
+      {
+        "id": "Agent5",
+        "name": "内容、SEO与知识体系",
+        "folder": "docs/Agent5+内容、SEO与知识体系",
+        "primaryResponsibilities": [
+          "Content taxonomy",
+          "SEO fields",
+          "Course paths",
+          "Article and project planning",
+          "Sitemap and RSS content quality"
+        ],
+        "mustOutputHere": true
+      },
+      {
+        "id": "Agent6",
+        "name": "miniapps",
+        "folder": "docs/Agent6-miniapps",
+        "primaryResponsibilities": [
+          "LarkixElec",
+          "MD2File",
+          "Mini app registry",
+          "Mini app UI and API contracts",
+          "Tool-specific assets"
+        ],
+        "mustOutputHere": true
+      },
+      {
+        "id": "Agent7",
+        "name": "视觉品牌与样式设计",
+        "folder": "docs/Agent7+视觉品牌与样式设计",
+        "primaryResponsibilities": [
+          "Logo system",
+          "Brand colors",
+          "Day and night themes",
+          "Visual design direction",
+          "Design asset archive"
+        ],
+        "mustOutputHere": true
+      },
+      {
+        "id": "Agent8",
+        "name": "市场部设计",
+        "folder": "docs/Agent8+市场部设计",
+        "primaryResponsibilities": [
+          "Market positioning",
+          "Homepage copy",
+          "Product matrix expression",
+          "Commercialization planning",
+          "External storytelling"
+        ],
+        "mustOutputHere": true
+      },
+      {
+        "id": "Agent9",
+        "name": "内容生成对接规范",
+        "folder": "docs/Agent9+内容生成对接规范",
+        "primaryResponsibilities": [
+          "Markdown rendering contract",
+          "Formula rendering",
+          "DOCX conversion expectations",
+          "LLM content generation format",
+          "Technical article structure"
+        ],
+        "mustOutputHere": true
+      },
+      {
+        "id": "Agent20",
+        "name": "体验测试与问题上报",
+        "folder": "docs/Agent20+体验测试与问题上报",
+        "primaryResponsibilities": [
+          "Regression reports",
+          "Browser screenshots",
+          "Responsive QA",
+          "Admin smoke tests",
+          "Issue reproduction notes"
+        ],
+        "mustOutputHere": true
+      }
+    ],
+    "activationPolicy": {
+      "minimumForSmallMaintenance": [
+        "Agent0",
+        "Agent101",
+        "target module Agent"
+      ],
+      "minimumForProductionRelease": [
+        "Agent0",
+        "Agent101",
+        "Agent1",
+        "Agent20"
+      ],
+      "minimumForCrossModuleRefactor": [
+        "Agent00",
+        "Agent100",
+        "Agent0",
+        "affected module Agents",
+        "Agent20"
+      ]
+    }
+  },
+  "domainArchitecture": {
+    "visitorFrontend": {
+      "primaryAgent": "Agent4",
+      "reviewAgents": [
+        "Agent7",
+        "Agent5",
+        "Agent20"
+      ],
+      "ownedPaths": [
+        "index.html",
+        "maker.html",
+        "category.html",
+        "projects.html",
+        "miniapps.html",
+        "post.html",
+        "project.html",
+        "main.js",
+        "category-page.js",
+        "post.js",
+        "site-layout.js",
+        "styles.css",
+        "styles/"
+      ],
+      "publicContracts": [
+        "window.LarkixContent.getPosts()",
+        "window.LarkixContent.getProjects()",
+        "GET /api/content.js",
+        "Theme tokens from styles/larkix-brand-theme.css"
+      ],
+      "currentFacts": [
+        "styles.css 已经变成 7 行 CSS import shell，样式主体位于 styles/ 子目录。",
+        "访客端同时承载品牌入口、Maker 首页、分类、项目、小程序和详情页。",
+        "移动端横向溢出曾是 P0/P1 验收关注点，后续任何视觉改动都必须做移动端回归。"
+      ],
+      "refactorDirection": [
+        "继续保持 CSS 分层，不再把新样式回填到根 styles.css。",
+        "把页面级渲染逻辑和共享布局逻辑边界写清，避免 main.js、site-layout.js、post.js 互相扩散。",
+        "图片资产更新必须先由 Agent7 确认视觉规范，再由 Agent4 落地页面。"
+      ]
+    },
+    "adminCms": {
+      "primaryAgent": "Agent3",
+      "reviewAgents": [
+        "Agent2",
+        "Agent4",
+        "Agent20"
+      ],
+      "ownedPaths": [
+        "admin/index.html",
+        "admin/course-paths.html",
+        "admin/admin.js",
+        "admin/admin.css"
+      ],
+      "publicContracts": [
+        "GET /api/session",
+        "POST /api/login",
+        "POST /api/logout",
+        "GET /api/admin/content",
+        "POST /api/posts",
+        "POST /api/projects",
+        "POST /api/uploads",
+        "GET /api/admin/export",
+        "GET /api/admin/health"
+      ],
+      "currentFacts": [
+        "admin/admin.js 约 1564 行，是当前前端工作流复杂度最高的文件之一。",
+        "CMS 包含登录、内容 CRUD、轮播、图片库、Markdown 预览、课程路径预览和系统状态。",
+        "管理端改动经常影响后端 API、访客端展示和 QA 验收。"
+      ],
+      "refactorDirection": [
+        "先拆工作流文档和 API 契约，再拆 admin/admin.js。",
+        "CMS 与访客端共享 Markdown 行为必须通过 data/markdown-renderer.js 或明确封装对接。",
+        "涉及登录、写入、上传、导出的改动必须带 API 回归。"
+      ]
+    },
+    "backendData": {
+      "primaryAgent": "Agent2",
+      "reviewAgents": [
+        "Agent00",
+        "Agent100",
+        "Agent3",
+        "Agent1",
+        "Agent20"
+      ],
+      "ownedPaths": [
+        "server.js",
+        "lib/",
+        "migrations/",
+        "data/content-store.js",
+        "data/seed.js",
+        "database/",
+        "runtime-data/",
+        "uploads/"
+      ],
+      "publicContracts": [
+        "GET /api/content",
+        "GET /api/content.js",
+        "GET /healthz",
+        "GET /sitemap.xml",
+        "GET /robots.txt",
+        "GET /rss.xml",
+        "Admin API routes under /api/admin and write endpoints"
+      ],
+      "currentFacts": [
+        "server.js 约 1246 行，仍是服务入口和多职责聚合点。",
+        "lib/ 已存在 auth、audit、content、db、md2doc、seo、uploads、validators 等模块，说明模块化已经启动但还未完全收口。",
+        "生产事实来源是 SQLite 与 uploads，静态 data/ 文件更多是种子、注入或共享前端数据。"
+      ],
+      "refactorDirection": [
+        "先冻结 API 契约，再拆 server.js 路由层。",
+        "数据库迁移必须写 migrations/，并给出回滚或兼容策略。",
+        "认证、上传、SEO、健康检查、内容 API 应继续向 lib/ 收敛。",
+        "任何涉及 database/、runtime-data/、uploads/ 的操作必须先有备份策略。"
+      ]
+    },
+    "deploymentOps": {
+      "primaryAgent": "Agent1",
+      "reviewAgents": [
+        "Agent101",
+        "Agent2",
+        "Agent20"
+      ],
+      "ownedPaths": [
+        "scripts/",
+        "deploy/",
+        "Dockerfile",
+        "render.yaml",
+        ".env.example",
+        "docs/deployment.md"
+      ],
+      "publicContracts": [
+        "npm start uses node --experimental-sqlite server.js",
+        "scripts/deploy-update.sh is the recommended server update entry",
+        "scripts/rollback.sh handles code rollback without deleting runtime data",
+        "scripts/backup-linux.sh and scripts/restore-linux.sh protect database/uploads"
+      ],
+      "currentFacts": [
+        "项目不是纯静态站，GitHub Pages 不适合作为正式 CMS 部署方案。",
+        "生产推荐形态是 Render/VPS/Docker 主机运行 Node 服务并挂载持久磁盘。",
+        "线上发布、Nginx、HTTPS、systemd、备份和回滚只能由 Agent1 执行。"
+      ],
+      "refactorDirection": [
+        "发布脚本优先增强诊断和回滚提示，不引入不可观测的自动化。",
+        "发布前后必须记录 commit、版本号、健康检查、备份目录和回滚命令。",
+        "生产配置文件和真实密码不得写入仓库文档。"
+      ]
+    },
+    "miniapps": {
+      "primaryAgent": "Agent6",
+      "reviewAgents": [
+        "Agent9",
+        "Agent4",
+        "Agent20"
+      ],
+      "ownedPaths": [
+        "tools/",
+        "tools/assets/",
+        "gokotta-elec-core/",
+        "data/miniapps.js"
+      ],
+      "publicContracts": [
+        "tools/md2doc.html",
+        "tools/larkix-elec.html",
+        "tools/gokotta-elec.html",
+        "gokotta-elec-core/schema/circuit-ir.schema.json",
+        "gokotta-elec-core/llm-handoff/"
+      ],
+      "currentFacts": [
+        "MD2File 与 Markdown/DOCX 能力和 Agent9 高度耦合。",
+        "LarkixElec/GokottaElec 包含电路 CNL、ERC、渲染、组件库和 LLM handoff 资料。",
+        "小程序页同时受访客端体验、品牌视觉和工具本身逻辑影响。"
+      ],
+      "refactorDirection": [
+        "MD2File 的 Markdown/DOCX 契约由 Agent9 主审，页面和工具接入由 Agent6 落地。",
+        "电路核心能力由 Agent6 维护，涉及功能电路知识时再指定专门电路 Agent。",
+        "小程序上架或版本变更必须同步 data/miniapps.js、工具页、视觉证据和回归记录。"
+      ]
+    },
+    "brandVisual": {
+      "primaryAgent": "Agent7",
+      "reviewAgents": [
+        "Agent4",
+        "Agent8",
+        "Agent20"
+      ],
+      "ownedPaths": [
+        "assets/logo/",
+        "assets/hero/",
+        "assets/covers/",
+        "assets/design/",
+        "styles/larkix-brand-theme.css",
+        "docs/Agent7+视觉品牌与样式设计/"
+      ],
+      "publicContracts": [
+        "Brand assets referenced by visitor pages and miniapps",
+        "Day/night theme tokens",
+        "Logo final assets and comparison sheets"
+      ],
+      "currentFacts": [
+        "Logo、主题色、Hero、封面和小程序图标都已形成较多过程稿。",
+        "最终资产和过程资产需要明确归档，不应由清理任务误删。",
+        "视觉改动容易触发移动端、夜间模式和 CMS 同步回归。"
+      ],
+      "refactorDirection": [
+        "建立 final、archive、draft 三类资产边界。",
+        "任何主题 token 改动必须让 Agent4 做页面落地回归。",
+        "市场传播图或首页表达需同步 Agent8。"
+      ]
+    },
+    "contentSeo": {
+      "primaryAgent": "Agent5",
+      "reviewAgents": [
+        "Agent8",
+        "Agent9",
+        "Agent4"
+      ],
+      "ownedPaths": [
+        "content/",
+        "data/posts.js",
+        "data/course-meta.js",
+        "README.md",
+        "docs/Agent5+内容、SEO与知识体系/"
+      ],
+      "publicContracts": [
+        "Post fields used by visitor pages, RSS and sitemap",
+        "Project fields used by project pages",
+        "Course path metadata"
+      ],
+      "currentFacts": [
+        "网站方向包括模拟电子、STM32、ESP32 和独立开源项目。",
+        "内容源存在静态示例、SQLite 内容、Markdown 文件和 CMS 管理数据多条路径。",
+        "SEO、RSS、sitemap、课程路径和首页卡片都依赖内容字段一致性。"
+      ],
+      "refactorDirection": [
+        "先统一 Post/Project 字段契约，再扩展内容规模。",
+        "内容增长任务必须和 Agent8 的市场表达区分，避免把文案策略和技术内容混在一起。",
+        "涉及 Markdown 新语法时必须与 Agent9 协同。"
+      ]
+    },
+    "markdownContentGeneration": {
+      "primaryAgent": "Agent9",
+      "reviewAgents": [
+        "Agent6",
+        "Agent5",
+        "Agent20"
+      ],
+      "ownedPaths": [
+        "data/markdown-renderer.js",
+        "tools/md2doc.html",
+        "tools/md2doc.js",
+        "lib/md2doc.js",
+        "scripts/test-markdown-renderer.js",
+        "docs/Agent9+内容生成对接规范/"
+      ],
+      "publicContracts": [
+        "Markdown renderer shared behavior",
+        "Formula rendering fallback behavior",
+        "DOCX conversion expectations",
+        "LLM-facing content generation format"
+      ],
+      "currentFacts": [
+        "Markdown 回归测试已经是发布前检查之一。",
+        "Markdown 渲染影响文章详情、CMS 预览、MD2File 和 LLM 内容生成。",
+        "公式、代码块、长标题和空输入曾被纳入回归关注点。"
+      ],
+      "refactorDirection": [
+        "新增 Markdown 能力必须先补测试。",
+        "DOCX 导出和网页渲染差异必须写入契约，不能默认为完全一致。",
+        "公式显示先保证安全降级，再考虑复杂渲染。"
+      ]
+    },
+    "testingQa": {
+      "primaryAgent": "Agent20",
+      "reviewAgents": [
+        "Agent0",
+        "affected module Agents"
+      ],
+      "ownedPaths": [
+        "docs/Agent20+体验测试与问题上报/",
+        "scripts/verify-api.ps1",
+        "scripts/test-markdown-renderer.js"
+      ],
+      "publicContracts": [
+        "Regression report must include target URL, viewport, theme, scenario and pass/fail result",
+        "Screenshots and evidence JSON must live under the Agent20 evidence folder"
+      ],
+      "currentFacts": [
+        "历史回归包含桌面、移动端、分类页、项目页、小程序页、Markdown 和 API。",
+        "移动端横向滚动、夜间模式状态、管理端未登录锁定是高价值回归点。",
+        "发布候选服务端口可能变化，测试报告必须写明精确 URL。"
+      ],
+      "refactorDirection": [
+        "把视觉、API、Markdown 和 CMS 回归拆成可复用清单。",
+        "每次跨模块重构后必须由 Agent20 执行最小回归。",
+        "测试证据不得再散落根目录。"
+      ]
+    },
+    "gitReleaseControl": {
+      "primaryAgent": "Agent101",
+      "reviewAgents": [
+        "Agent0",
+        "Agent1"
+      ],
+      "ownedPaths": [
+        ".git/",
+        "说明改动情况.md",
+        "PROJECT_MAINTENANCE.json",
+        "TOP_ARCHITECT_HANDOFF.json",
+        "docs/Agent101-Git/"
+      ],
+      "publicContracts": [
+        "git status --short --branch before staging",
+        "git diff --check before release",
+        "Release notes must match staged scope",
+        "No runtime secrets or local data in commits"
+      ],
+      "currentFacts": [
+        "当前治理 JSON 和 Agent0 输出契约仍未跟踪。",
+        "发布说明存在于根目录，按当前规则只应作为当前批次活动发布说明存在。",
+        "Agent101 需要防止把运行数据、临时证据或过程稿误纳入发布批次。"
+      ],
+      "refactorDirection": [
+        "治理文件是否入库需由 Owner/Agent0/Agent101 确认。",
+        "每次架构重构必须先拆 commit 批次，避免把文档、代码、资产和运行数据混在一起。",
+        "回滚参考要记录到 Agent101 或 Agent1 文档中。"
+      ]
+    }
+  },
+  "crossModuleContracts": {
+    "postObject": {
+      "owner": "Agent2 with Agent5 and Agent4 review",
+      "fields": [
+        "id",
+        "slug",
+        "type",
+        "title",
+        "category",
+        "categoryKey",
+        "excerpt",
+        "cover",
+        "markdown",
+        "readTime",
+        "date",
+        "publishStatus",
+        "featured",
+        "featuredOrder",
+        "deletedAt",
+        "tags"
+      ],
+      "rule": "新增字段必须同时评估 CMS 编辑、访客端展示、RSS、sitemap、导出和旧数据兼容。"
+    },
+    "projectObject": {
+      "owner": "Agent2 with Agent5 and Agent4 review",
+      "fields": [
+        "id",
+        "slug",
+        "type",
+        "title",
+        "status",
+        "statusKey",
+        "summary",
+        "cover",
+        "markdown",
+        "license",
+        "stars",
+        "date",
+        "visibilityStatus",
+        "featured",
+        "featuredOrder",
+        "deletedAt",
+        "repoUrl",
+        "bomUrl",
+        "docsUrl",
+        "version",
+        "progress",
+        "tags"
+      ],
+      "rule": "规划中项目的访客端可见性、详情入口和 SEO 输出必须保持一致。"
+    },
+    "themeBoundary": {
+      "owner": "Agent7 with Agent4 implementation review",
+      "rule": "主题 token、Logo、品牌色由 Agent7 定义；页面适配、响应式和实际渲染由 Agent4 落地；测试由 Agent20 验收。"
+    },
+    "releaseBoundary": {
+      "owner": "Agent1 with Agent101 git review",
+      "rule": "任何生产发布都必须先有 Git 批次确认、版本号确认、本地检查记录、生产健康检查和回滚路径。"
+    },
+    "runtimeDataBoundary": {
+      "owner": "Agent1 and Agent2",
+      "rule": "database/、runtime-data/、uploads/、生产 DATA_DIR、.env 不属于普通源码清理范围，操作前必须确认备份和恢复路径。"
+    }
+  },
+  "riskRegister": [
+    {
+      "id": "R-001",
+      "severity": "high",
+      "area": "backendData",
+      "risk": "server.js 仍聚合多项服务职责，后续改动容易产生隐性回归。",
+      "evidence": [
+        "server.js 约 1246 行",
+        "同一入口处理健康检查、API、认证、静态响应、SEO、上传和工具接口"
+      ],
+      "architectureDecision": "启动后端模块化二期，但先冻结 API 契约和迁移策略，不直接大规模改写。",
+      "nextOwner": "Agent2 with Agent00 and Agent100 review",
+      "nextAction": "输出 server.js 拆分设计文档，列出路由层、服务层、数据层和兼容测试。"
+    },
+    {
+      "id": "R-002",
+      "severity": "high",
+      "area": "adminCms",
+      "risk": "admin/admin.js 工作流复杂，CMS 改动容易同时影响 API、内容模型和访客端展示。",
+      "evidence": [
+        "admin/admin.js 约 1564 行",
+        "CMS 已包含登录、CRUD、上传、轮播、预览、课程路径和健康状态"
+      ],
+      "architectureDecision": "先做 CMS 工作流分层方案和 API 契约梳理，再拆文件。",
+      "nextOwner": "Agent3 with Agent2 review",
+      "nextAction": "为 CMS 输出保存、上传、轮播、预览、课程路径五条工作流的验收清单。"
+    },
+    {
+      "id": "R-003",
+      "severity": "high",
+      "area": "release",
+      "risk": "生产发布涉及 Node 实验 SQLite、Nginx、systemd、持久磁盘、备份和 GitHub 拉取，不能由功能 Agent 直接执行。",
+      "evidence": [
+        "docs/deployment.md 明确项目不是纯静态站",
+        "历史交接记录提示云端 GitHub 拉取存在偶发 TLS/GnuTLS 中断"
+      ],
+      "architectureDecision": "Agent1 是唯一生产发布入口，其他 Agent 只提交发布候选说明。",
+      "nextOwner": "Agent1 with Agent101 review",
+      "nextAction": "发布前生成发布记录草案，包含 commit、版本、备份、健康检查和回滚命令。"
+    },
+    {
+      "id": "R-004",
+      "severity": "medium",
+      "area": "governance",
+      "risk": "治理文件仍未跟踪，后续 Agent 可能继续使用旧规则或把根目录当作输出目录。",
+      "evidence": [
+        "git status 显示 PROJECT_MAINTENANCE.json 和 TOP_ARCHITECT_HANDOFF.json 未跟踪",
+        "Agent0 输出契约文档也未跟踪"
+      ],
+      "architectureDecision": "推荐将治理文件纳入正式提交，但需由 Agent101 独立审计 staged 范围。",
+      "nextOwner": "Agent101 with Agent0 approval",
+      "nextAction": "确认是否将三个治理文件作为单独治理 commit。"
+    },
+    {
+      "id": "R-005",
+      "severity": "medium",
+      "area": "contentData",
+      "risk": "静态 data、Markdown 文件、SQLite 内容和 CMS 导出之间存在多源事实风险。",
+      "evidence": [
+        "README 与部署文档均指向 SQLite + uploads 作为运行数据",
+        "content/posts、data/posts.js、data/seed.js 与数据库内容并存"
+      ],
+      "architectureDecision": "定义 SQLite 为生产事实来源，静态文件作为 seed、示例或开发 fallback。",
+      "nextOwner": "Agent2 with Agent5 review",
+      "nextAction": "输出内容源优先级说明和导入/导出策略。"
+    },
+    {
+      "id": "R-006",
+      "severity": "medium",
+      "area": "visualAssets",
+      "risk": "品牌资产和过程稿数量较多，清理或发布批次容易误删或误提交。",
+      "evidence": [
+        "assets/logo/larkix 下存在 final、comparison、palette、variant 等多类资产",
+        "根目录和 Agent 目录存在历史 QA 截图"
+      ],
+      "architectureDecision": "建立 final/archive/draft 资产归档规则，清理前必须记录影响页面和回滚方式。",
+      "nextOwner": "Agent7 with Agent101 review",
+      "nextAction": "输出视觉资产归档清单。"
+    },
+    {
+      "id": "R-007",
+      "severity": "medium",
+      "area": "qa",
+      "risk": "发布候选端口和测试入口历史上变化较多，测试报告如果不写精确 URL 会造成误验收。",
+      "evidence": [
+        "历史交接中出现 4335、4173、4197、4402 等端口说明",
+        "当前默认本地 URL 是 http://localhost:4173"
+      ],
+      "architectureDecision": "所有 QA 报告必须写明精确 URL、commit、版本、viewport、theme 和数据目录。",
+      "nextOwner": "Agent20",
+      "nextAction": "更新最小回归报告模板。"
+    }
+  ],
+  "refactorRoadmap": {
+    "phase0_governance_lock": {
+      "priority": "P0",
+      "goal": "先固化架构交接、Agent 边界和治理文件入库策略。",
+      "tasks": [
+        "确认 Agent00 与 Agent0 的职责分离。",
+        "确认 PROJECT_MAINTENANCE.json、TOP_ARCHITECT_HANDOFF.json、Agent0 输出契约是否作为单独治理 commit 入库。",
+        "要求后续 Agent 启动前读取本文件和 PROJECT_MAINTENANCE.json。",
+        "冻结根目录输出规则，不再新增临时报告和证据文件。"
+      ],
+      "acceptance": [
+        "git status 中治理文件处理策略明确。",
+        "后续任务能引用 Agent00 架构门禁和 Agent0 执行拆分规则。"
+      ]
+    },
+    "phase1_backend_cms_contracts": {
+      "priority": "P1",
+      "goal": "先整理后端、CMS 和内容模型契约，降低 server.js 与 admin/admin.js 的改造风险。",
+      "tasks": [
+        "Agent2 输出 server.js 拆分设计。",
+        "Agent3 输出 CMS 工作流与 API 契约。",
+        "Agent5/Agent2 输出 Post/Project 字段事实来源策略。",
+        "Agent9 确认 Markdown 渲染与 DOCX 导出差异契约。"
+      ],
+      "acceptance": [
+        "不破坏现有 /api/content、/api/content.js、/healthz、admin 写接口。",
+        "npm.cmd run test:markdown 和 scripts/verify-api.ps1 可作为改造回归基线。"
+      ]
+    },
+    "phase2_module_refactor": {
+      "priority": "P1",
+      "goal": "按已批准设计逐步拆分重文件和跨域职责。",
+      "tasks": [
+        "后端从 server.js 继续向 lib/ 收敛。",
+        "CMS 将大工作流按状态、API、编辑器、媒体库和预览拆分。",
+        "访客端继续保持 CSS 分层和页面脚本边界。",
+        "miniapps 明确 MD2File 与电路核心的不同所有权。"
+      ],
+      "acceptance": [
+        "每个拆分批次都有单独 commit 候选和回滚说明。",
+        "Agent20 最小回归通过。"
+      ]
+    },
+    "phase3_product_growth": {
+      "priority": "P2",
+      "goal": "在发布稳定后恢复内容增长、市场表达和视觉资产治理。",
+      "tasks": [
+        "Agent5 建立内容分类树、标签规范和 12 篇文章路线。",
+        "Agent8 统一首页表达、转化路径和商业化叙事。",
+        "Agent7 整理最终品牌资产、过程稿归档和主题 token 文档。"
+      ],
+      "acceptance": [
+        "内容增长不破坏已有 SEO/RSS/sitemap。",
+        "市场表达不绕过访客端、视觉和发布门禁。"
+      ]
+    }
+  },
+  "handoffProtocol": {
+    "beforeAnyWork": [
+      "读取 PROJECT_MAINTENANCE.json。",
+      "读取 TOP_ARCHITECT_HANDOFF.json。",
+      "读取目标 Agent 自己目录下最新文档。",
+      "执行 git status --short --branch。",
+      "确认本任务是否跨模块；若跨模块，先输出对接文档或设计方案。"
+    ],
+    "outputRules": [
+      "普通报告写入 docs/AgentX+职责目录/YYYY-MM-DD_HH-mm_AgentX_主题.md。",
+      "对接文件写入 docs/AgentX+职责目录/YYYY-MM-DD_HH-mm_AgentX对接AgentY_主题.md。",
+      "测试证据写入对应 Agent 证据子目录。",
+      "发布记录只由 Agent1 写入运维目录。",
+      "Git 批次说明由 Agent101 维护。"
+    ],
+    "architectureChangeRules": [
+      "跨模块改动先写设计，不直接改代码。",
+      "数据库迁移先写迁移策略、兼容策略和回滚说明。",
+      "运行数据、上传数据和生产配置默认不可删除。",
+      "视觉 token 改动需要 Agent7 设计、Agent4 落地、Agent20 验收。",
+      "发布拓扑变化需要 Agent00/Agent100 评审和 Agent1 执行。"
+    ],
+    "prohibitedRootOutputs": [
+      "临时报告 .md",
+      "测试截图 .png",
+      "浏览器证据 JSON",
+      "一次性脚本输出",
+      "未归属的对接说明"
+    ]
+  },
+  "releaseGate": {
+    "localRequiredChecks": [
+      "git status --short --branch",
+      "git diff --check",
+      "npm.cmd run check:version",
+      "npm.cmd run test:markdown"
+    ],
+    "requiredWhenCmsOrApiChanges": [
+      "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-api.ps1",
+      "node --experimental-sqlite --check server.js",
+      "node --check admin/admin.js"
+    ],
+    "recommendedWhenFrontendOrVisualChanges": [
+      "desktop and mobile browser screenshot verification",
+      "day/night theme verification",
+      "home, category, post, project and miniapps smoke check"
+    ],
+    "productionRequiredChecks": [
+      "curl -fsS http://127.0.0.1:4173/healthz",
+      "curl -fsS https://www.larkix.com/healthz",
+      "sudo systemctl status gokottamaker --no-pager",
+      "sudo nginx -t"
+    ],
+    "releaseAuthority": {
+      "gitBatchApproval": "Agent101",
+      "productionExecution": "Agent1",
+      "experienceApproval": "Agent20",
+      "crossModuleArchitectureApproval": "Agent00"
+    }
+  },
+  "nextArchitectTasks": [
+    {
+      "priority": "P0",
+      "task": "Agent0 实现批次设计",
+      "recommendation": "Agent00 已在 2026-06-21 19:12 裁决九项实现前架构细节。Agent0 可读取裁决报告与 JSON，设计实现批次、文件边界、门禁和子 Agent 下发顺序；不得直接让子 Agent 改代码。"
+    },
+    {
+      "priority": "P0",
+      "task": "公式变量推导网络架构下发",
+      "recommendation": "由 Agent0 按 docs/Agent0+总控与集成/2026-06-19_20-35_Agent00_derivation_network_dispatch.json 下发；Agent2/3/4/5/7/9/20/101/1 先回传接口设计，不直接实现代码。"
+    },
+    {
+      "priority": "P0",
+      "task": "电力电子聚焦模式架构确认",
+      "recommendation": "短期只公开强化首页、电力电子入口和推导知识页；数字、模拟、电路分析、项目入口先通过 site_settings.public_focus_mode 隐藏，不删除内容和路由。"
+    },
+    {
+      "priority": "P0",
+      "task": "确认 Agent00 是否建立独立文档目录",
+      "recommendation": "短期可暂挂 docs/Agent0+总控与集成；若后续架构决策频繁，新增 docs/Agent00+顶部架构师。"
+    },
+    {
+      "priority": "P0",
+      "task": "治理文件入库决策",
+      "recommendation": "由 Agent101 单独审计并提交 PROJECT_MAINTENANCE.json、TOP_ARCHITECT_HANDOFF.json、Agent0 输出契约，避免和业务代码混提交。"
+    },
+    {
+      "priority": "P1",
+      "task": "server.js 拆分 ADR",
+      "recommendation": "由 Agent2 起草，Agent00/Agent100 评审；先写设计和回归基线，再分批改代码。"
+    },
+    {
+      "priority": "P1",
+      "task": "CMS 工作流拆分 ADR",
+      "recommendation": "由 Agent3 起草，明确保存、上传、轮播、预览、课程路径和健康面板边界。"
+    },
+    {
+      "priority": "P1",
+      "task": "内容事实来源说明",
+      "recommendation": "由 Agent2/Agent5 共同输出 SQLite、静态 seed、Markdown 文件、CMS 导出之间的优先级和同步规则。"
+    },
+    {
+      "priority": "P2",
+      "task": "视觉资产治理",
+      "recommendation": "由 Agent7 整理 final/archive/draft 资产清单，Agent101 审核哪些资产应入库。"
+    },
+    {
+      "priority": "P2",
+      "task": "QA 模板升级",
+      "recommendation": "由 Agent20 建立最小回归模板，强制记录 URL、版本、commit、viewport、theme 和数据目录。"
+    }
+  ],
+  "suggestedNextFilesToRead": [
+    "PROJECT_MAINTENANCE.json",
+    "docs/Agent0+总控与集成/2026-05-28_01-27_Agent0_项目目录整理与Agent输出契约.md",
+    "docs/agent-current-handoff.md",
+    "docs/agent-handoff-plan.md",
+    "docs/architecture.md",
+    "docs/deployment.md",
+    "docs/Agent0+总控与集成/2026-06-19_20-35_Agent00_公式变量推导网络与电力电子聚焦架构设计.md",
+    "docs/Agent0+总控与集成/2026-06-19_20-35_Agent00_derivation_network_dispatch.json",
+    "docs/Agent0+总控与集成/2026-06-21_19-01_Agent00_重新裁决_仍未进入代码实现.md",
+    "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_九项实现前架构裁决与Agent0实现批次授权.md",
+    "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_implementation_decisions.json",
+    "server.js",
+    "admin/admin.js",
+    "scripts/verify-api.ps1",
+    "scripts/test-markdown-renderer.js",
+    "说明改动情况.md"
+  ]
+}

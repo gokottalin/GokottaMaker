@@ -79,6 +79,7 @@
               <span>内容工作台</span>
               <a href="#editor" data-admin-nav="editor" data-short="编">内容编辑</a>
               <a href="#library" data-admin-nav="library" data-short="列">内容列表</a>
+              <a href="#knowledge" data-admin-nav="knowledge" data-short="导">推导节点</a>
               <a href="#carousel" data-admin-nav="carousel" data-short="轮">首页轮播管理</a>
               <a href="./course-paths.html" data-short="路">课程路径</a>
               <a href="#layout" data-admin-nav="layout" data-short="排">页面排布</a>
@@ -129,11 +130,19 @@
                   <div class="segmented type-switch" role="group" aria-label="内容类型">
                     <label><input type="radio" name="type" value="post" checked />文章</label>
                     <label><input type="radio" name="type" value="project" />项目</label>
+                    <label><input type="radio" name="type" value="knowledge_node" />推导节点</label>
                   </div>
+
+                  <input name="nodeType" type="hidden" value="derivation" />
 
                   <label class="meta-title">
                     标题
                     <input name="title" placeholder="例如：STM32 ADC + DMA 连续采样" required />
+                  </label>
+
+                  <label class="meta-slug" id="knowledgeSlugField" hidden>
+                    节点 slug
+                    <input name="slug" placeholder="例如：d-boost" autocomplete="off" />
                   </label>
 
                   <label id="categoryField">
@@ -160,6 +169,23 @@
                     </select>
                   </label>
 
+                  <label class="meta-symbol" id="knowledgeSymbolField" hidden>
+                    变量符号
+                    <input name="symbol" placeholder="例如：D.boost" autocomplete="off" />
+                  </label>
+
+                  <label class="meta-accent" id="knowledgeAccentField" hidden>
+                    高亮颜色
+                    <select name="accentColor">
+                      <option value="purple">紫色 purple</option>
+                      <option value="blue">蓝色 blue</option>
+                      <option value="green">绿色 green</option>
+                      <option value="amber">琥珀 amber</option>
+                      <option value="red">红色 red</option>
+                      <option value="neutral">中性 neutral</option>
+                    </select>
+                  </label>
+
                   <label class="meta-excerpt">
                     摘要
                     <textarea name="excerpt" rows="4" placeholder="这段内容会显示在首页卡片和详情页顶部。"></textarea>
@@ -175,10 +201,22 @@
                     <select name="publishStatus">
                       <option value="draft">草稿</option>
                       <option value="published">已发布</option>
+                      <option value="archived" data-knowledge-only>已归档</option>
+                    </select>
+                  </label>
+
+                  <label class="meta-node-visibility" id="knowledgeVisibilityField" hidden>
+                    公开范围
+                    <select name="visibilityStatus">
+                      <option value="public">公开列表</option>
+                      <option value="unlisted">仅直链</option>
+                      <option value="private">私有</option>
                     </select>
                   </label>
 
                   <div class="visibility-hint meta-visibility" id="visibilityHint" role="status" aria-live="polite"></div>
+
+                  <div class="knowledge-warning-panel meta-warnings" id="knowledgeWarnings" role="status" aria-live="polite" hidden></div>
 
                   <div class="inline-fields meta-featured">
                     <label class="checkbox-field">
@@ -237,6 +275,17 @@
                     </div>
                     <div id="imageLibrary" class="image-library"></div>
                   </section>
+
+                  <section class="knowledge-revisions-panel meta-revisions" id="knowledgeRevisionsPanel" hidden>
+                    <div class="section-heading compact">
+                      <div>
+                        <h3>推导节点版本记录</h3>
+                        <p>保存、发布、回收和恢复会留下可回滚快照。</p>
+                      </div>
+                      <button class="button secondary" id="refreshKnowledgeRevisionsButton" type="button">刷新版本</button>
+                    </div>
+                    <div id="knowledgeRevisionList" class="knowledge-revision-list"></div>
+                  </section>
                 </div>
               </section>
 
@@ -270,6 +319,50 @@
                         <span class="file-hint" id="markdownHint">支持 .md 或纯文本</span>
                       </span>
                     </label>
+
+                    <section class="formula-helper-panel" id="formulaHelperPanel" aria-labelledby="formulaHelperTitle">
+                      <div class="section-heading compact">
+                        <div>
+                          <p class="poster-kicker poster-kicker-small"><span>公式工具</span><em>Formula Bench</em></p>
+                          <h3 id="formulaHelperTitle">推导节点写作</h3>
+                        </div>
+                      </div>
+                      <div class="formula-helper-grid">
+                        <div class="formula-helper-group">
+                          <strong>公式片段</strong>
+                          <select id="formulaSnippetSelect" aria-label="选择公式片段"></select>
+                          <div class="formula-helper-actions">
+                            <button class="button secondary" id="insertInlineFormulaButton" type="button">行内公式</button>
+                            <button class="button secondary" id="insertDisplayFormulaButton" type="button">块级公式</button>
+                            <button class="button secondary" id="insertFormulaSnippetButton" type="button">插入片段</button>
+                          </div>
+                        </div>
+                        <div class="formula-helper-group">
+                          <strong>公式跳转</strong>
+                          <input id="deriveLinkSlugInput" type="text" placeholder="boost-duty-cycle-ccm" autocomplete="off" aria-label="公式唯一标识 slug" />
+                          <div class="derive-link-helper-row">
+                            <input id="deriveLinkLabelInput" type="text" placeholder="Delta I_L 纹波" autocomplete="off" />
+                            <select id="deriveLinkColorSelect" aria-label="推导链接颜色">
+                              <option value="purple">purple</option>
+                              <option value="blue">blue</option>
+                              <option value="green">green</option>
+                              <option value="amber">amber</option>
+                              <option value="red">red</option>
+                              <option value="neutral">neutral</option>
+                            </select>
+                          </div>
+                          <button class="button secondary" id="insertDeriveLinkButton" type="button">插入标记</button>
+                        </div>
+                        <div class="formula-helper-group">
+                          <strong>BOOST 示例</strong>
+                          <select id="boostTemplateSelect" aria-label="选择 BOOST 示例节点"></select>
+                          <div class="formula-helper-actions">
+                            <button class="button secondary" id="applyBoostTemplateButton" type="button">套用节点</button>
+                            <button class="button secondary" id="insertBoostChainButton" type="button">插入计算书链</button>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
 
                     <label class="markdown-body-field">
                       Markdown 正文
@@ -311,6 +404,7 @@
                   <option value="all">全部</option>
                   <option value="post">文章</option>
                   <option value="project">项目</option>
+                  <option value="knowledge_node">推导节点</option>
                 </select>
               </label>
               <label>
@@ -319,6 +413,7 @@
                   <option value="all">全部</option>
                   <option value="published">已发布</option>
                   <option value="draft">草稿</option>
+                  <option value="archived">已归档</option>
                   <option value="deleted">回收站</option>
                   <option value="featured">首页轮播</option>
                 </select>
@@ -338,6 +433,18 @@
               <button class="button secondary" id="bulkRestoreButton" type="button">批量恢复</button>
             </div>
             <div id="adminContentList" class="admin-article-list"></div>
+          </section>
+
+          <section id="knowledge" class="library-panel knowledge-panel admin-view" data-admin-view="knowledge" hidden>
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Derivation Nodes</p>
+                <h2>推导知识节点</h2>
+              </div>
+              <button class="button primary" id="newKnowledgeNodeButton" type="button">新建推导节点</button>
+            </div>
+            <p class="library-note">这里管理公式变量推导页。发布状态控制是否可访问，公开范围控制是否进入公开列表。</p>
+            <div id="knowledgeNodeList" class="admin-article-list"></div>
           </section>
 
           <section id="carousel" class="library-panel carousel-panel admin-view" data-admin-view="carousel" hidden>

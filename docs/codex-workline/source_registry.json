@@ -1,0 +1,368 @@
+﻿{
+  "schema": "codex-workline.source_registry.v1",
+  "project": "LarkixMaker",
+  "producer": "A01_ProjectStateRetriever",
+  "generatedAt": "2026-07-09T13:50:06.0660167+08:00",
+  "workspaceRoot": "E:/Project/2607-LarkixWeb",
+  "status": "complete",
+  "runControls": {
+    "readOnlyProjectMaterials": true,
+    "businessCodeModified": false,
+    "databaseMigrationCreated": false,
+    "databaseMigrationRun": false,
+    "gitStaged": false,
+    "gitCommitted": false,
+    "gitPushed": false,
+    "oldWorkspaceTouched": false
+  },
+  "projectState": {
+    "currentBranch": "main",
+    "remote": "origin https://github.com/gokottalin/GokottaMaker.git",
+    "head": "300e426 chore: bump release version to V2.4.10",
+    "packageName": "larkixmaker",
+    "packageVersion": "2.4.10",
+    "runtime": "Node.js >=22.5.0 with --experimental-sqlite",
+    "implementationGate": "batch1_paused_by_owner_code_closed",
+    "currentProjectState": "task0_complete_batch1_paused_by_owner_code_still_closed",
+    "businessImplementationAllowed": false,
+    "databaseMutationAllowed": false,
+    "productionReleaseAllowed": false,
+    "gitStagingAllowed": false
+  },
+  "sourceClasses": [
+    "authoritative_gate",
+    "historical_agent_evidence",
+    "runtime_source",
+    "protected_runtime_data",
+    "visual_or_evidence_asset",
+    "external_reference"
+  ],
+  "sources": [
+    {
+      "id": "agents_guide",
+      "class": "authoritative_gate",
+      "path": "AGENTS.md",
+      "status": "read",
+      "summary": "Project Codex guide: establishes the new A00 plus short-task workline, startup read order, hard rules, and no staging/commit/push or migration constraints."
+    },
+    {
+      "id": "project_maintenance",
+      "class": "authoritative_gate",
+      "path": "PROJECT_MAINTENANCE.json",
+      "status": "read",
+      "summary": "Root maintenance control file. It records LarkixMaker project summary, active dispatch status, implementation gate, and Batch1 pause fields."
+    },
+    {
+      "id": "active_agent_dispatch",
+      "class": "authoritative_gate",
+      "path": "ACTIVE_AGENT_DISPATCH.json",
+      "status": "read",
+      "summary": "Active dispatch state. It confirms Batch1 is paused by Owner and code, database, release, and Git staging remain closed."
+    },
+    {
+      "id": "top_architect_handoff",
+      "class": "authoritative_gate",
+      "path": "TOP_ARCHITECT_HANDOFF.json",
+      "status": "read",
+      "summary": "Top architecture control file. It identifies LarkixMaker runtime, production topology, domains, version, and the current architecture gate status."
+    },
+    {
+      "id": "agent0_update_index",
+      "class": "authoritative_gate",
+      "path": "docs/Agent0+总控与集成/AGENT_UPDATE_INDEX.json",
+      "status": "read",
+      "summary": "Agent0-maintained index of latest known Agent reports. It classifies old Agent outputs as evidence and records current Batch1 pause state."
+    },
+    {
+      "id": "latest_agent0_project_handoff",
+      "class": "authoritative_gate",
+      "path": "docs/Agent0+总控与集成/2026-07-09_12-42_Agent0_完整项目情况对接记录.md",
+      "status": "read",
+      "summary": "Latest complete Agent0 project handoff. It maps project structure, runtime, current risks, pause rules, and restart order."
+    },
+    {
+      "id": "agent0_batch1_pause_report",
+      "class": "authoritative_gate",
+      "path": "docs/Agent0+总控与集成/2026-07-09_00-00_Agent0_Task0收敛完成记录_Batch1暂停.md",
+      "status": "read",
+      "summary": "Owner pause record for Batch1. It explicitly forbids implementation, migrations, production release, and Git staging while paused."
+    },
+    {
+      "id": "codex_governance_config",
+      "class": "authoritative_gate",
+      "path": ".codex/larkix-governance.json",
+      "status": "read",
+      "summary": "Machine-readable governance configuration for contract/resource checks, protected paths, required files, workline mode, and temporary experts."
+    },
+    {
+      "id": "codex_workline_registry",
+      "class": "authoritative_gate",
+      "path": "docs/codex-workline/task_registry.json",
+      "status": "read",
+      "summary": "Active task registry. A01 may edit only the three declared output files and must stop after registry, index, and handoff."
+    },
+    {
+      "id": "a01_work_order",
+      "class": "authoritative_gate",
+      "path": "docs/codex-workline/A01_ProjectStateRetriever_work_order.md",
+      "status": "read",
+      "summary": "A01 work order. It defines source classes, forbidden actions, and done criteria including npm.cmd run codex:check."
+    },
+    {
+      "id": "codex_governance_script",
+      "class": "authoritative_gate",
+      "path": "scripts/codex-governance.js",
+      "status": "read",
+      "summary": "Executable checker for codex:contract, codex:resources, and codex:check. It is governance code, not product behavior for this A01 run."
+    },
+    {
+      "id": "package_manifest",
+      "class": "runtime_source",
+      "path": "package.json",
+      "status": "read",
+      "summary": "Node project manifest. Scripts include start, dev, check:version, test:markdown, codex:contract, codex:resources, and codex:check."
+    },
+    {
+      "id": "project_readme",
+      "class": "runtime_source",
+      "path": "README.md",
+      "status": "read",
+      "summary": "Project overview and local/deployment instructions. The file content appears to be UTF-8 text but was previously at risk of mojibake when read without explicit UTF-8."
+    },
+    {
+      "id": "architecture_doc",
+      "class": "runtime_source",
+      "path": "docs/architecture.md",
+      "status": "read",
+      "summary": "Architecture notes for the Node HTTP service, SQLite-backed CMS, upload flow, admin prototype, and draft data model."
+    },
+    {
+      "id": "deployment_doc",
+      "class": "runtime_source",
+      "path": "docs/deployment.md",
+      "status": "read",
+      "summary": "Deployment guidance for Render, VPS/Docker, systemd, health checks, backups, restore, and rollback."
+    },
+    {
+      "id": "server_entry",
+      "class": "runtime_source",
+      "path": "server.js",
+      "status": "indexed_not_modified",
+      "summary": "Primary Node HTTP service entry point for pages, APIs, SQLite runtime, and health endpoints."
+    },
+    {
+      "id": "backend_modules",
+      "class": "runtime_source",
+      "path": "lib/",
+      "status": "indexed_not_modified",
+      "summary": "Backend support modules for db, content, auth, audit, uploads, SEO, DOCX support, and validation."
+    },
+    {
+      "id": "admin_cms",
+      "class": "runtime_source",
+      "path": "admin/",
+      "status": "indexed_not_modified",
+      "summary": "Admin CMS HTML, JS, and CSS. No CMS behavior was edited by A01."
+    },
+    {
+      "id": "visitor_frontend",
+      "class": "runtime_source",
+      "path": "index.html, maker.html, category.html, post.html, project.html, projects.html, miniapps.html, main.js, category-page.js, post.js, site-layout.js, styles/",
+      "status": "indexed_not_modified",
+      "summary": "Static visitor pages, rendering scripts, and style modules. No frontend behavior was edited by A01."
+    },
+    {
+      "id": "content_sources",
+      "class": "runtime_source",
+      "path": "content/, data/",
+      "status": "indexed_not_modified",
+      "summary": "Seed, fallback, content, media, markdown-renderer, footer, site metadata, and sample Markdown posts."
+    },
+    {
+      "id": "database_migrations",
+      "class": "runtime_source",
+      "path": "migrations/",
+      "status": "indexed_not_run",
+      "summary": "Ten existing migration files from 001_initial_schema.js through 010_larkix_brand_rename.js. A01 did not create or run migrations."
+    },
+    {
+      "id": "miniapp_tools",
+      "class": "runtime_source",
+      "path": "tools/, gokotta-elec-core/",
+      "status": "indexed_not_modified",
+      "summary": "Larkix/Gokotta electronics tools, md2doc tool, CNL/LLM handoff docs, samples, schemas, scripts, and component libraries."
+    },
+    {
+      "id": "deployment_sources",
+      "class": "runtime_source",
+      "path": "Dockerfile, render.yaml, deploy/, scripts/",
+      "status": "indexed_not_executed",
+      "summary": "Deployment, backup, restore, rollback, version check, markdown test, and governance scripts. No deploy, rollback, or production operation was run."
+    },
+    {
+      "id": "legacy_agent_docs",
+      "class": "historical_agent_evidence",
+      "path": "docs/Agent*/",
+      "status": "indexed_as_evidence_only",
+      "summary": "Historical Agent reports, status JSON files, design notes, and visual regression evidence. They are source material, not active departments."
+    },
+    {
+      "id": "protected_env",
+      "class": "protected_runtime_data",
+      "path": ".env",
+      "status": "exists_not_read",
+      "summary": "Local environment file. It was counted as protected material but its contents were not read or copied into A01 outputs."
+    },
+    {
+      "id": "protected_database",
+      "class": "protected_runtime_data",
+      "path": "database/",
+      "status": "exists_not_read",
+      "summary": "Local SQLite runtime data directory. It was counted as protected material; database content was not opened, migrated, copied, or modified."
+    },
+    {
+      "id": "protected_runtime_data",
+      "class": "protected_runtime_data",
+      "path": "runtime-data/",
+      "status": "exists_not_read",
+      "summary": "Local runtime data directory. It was counted as protected material and not modified."
+    },
+    {
+      "id": "protected_uploads",
+      "class": "protected_runtime_data",
+      "path": "uploads/",
+      "status": "exists_not_read",
+      "summary": "Runtime upload directory. Git tracks only uploads/.gitkeep according to the allowlist."
+    },
+    {
+      "id": "protected_codex_logs",
+      "class": "protected_runtime_data",
+      "path": ".codex-logs/",
+      "status": "exists_not_read",
+      "summary": "Local Codex logs directory. It was counted as protected/local evidence and not modified."
+    },
+    {
+      "id": "visual_assets",
+      "class": "visual_or_evidence_asset",
+      "path": "assets/",
+      "status": "indexed",
+      "summary": "Brand, hero, cover, concept, and design-option assets. This is one of the main repository size contributors."
+    },
+    {
+      "id": "visual_regression_evidence",
+      "class": "visual_or_evidence_asset",
+      "path": "docs/Agent4+访客端体验、视觉与前端架构/, docs/Agent6-miniapps/, qa-*.png",
+      "status": "indexed",
+      "summary": "Screenshot and visual regression evidence. Several files exceed the 1 MiB warning threshold and should be classified before cleanup."
+    },
+    {
+      "id": "github_origin",
+      "class": "external_reference",
+      "path": "https://github.com/gokottalin/GokottaMaker.git",
+      "status": "configured_not_fetched",
+      "summary": "Git remote origin. A01 did not fetch, push, or otherwise mutate remote state."
+    },
+    {
+      "id": "production_domains",
+      "class": "external_reference",
+      "path": "www.larkix.com, larkix.com",
+      "status": "documented_not_contacted",
+      "summary": "Production domains recorded in TOP_ARCHITECT_HANDOFF.json. A01 did not perform network or production checks."
+    }
+  ],
+  "resourceStats": {
+    "rgFilesBeforeA01Outputs": 699,
+    "topLevelCounts": {
+      "docs": 335,
+      "assets": 228,
+      "scripts": 20,
+      "migrations": 10,
+      "lib": 8,
+      "admin": 4
+    },
+    "dominantExtensions": {
+      ".md": 194,
+      ".svg": 154,
+      ".png": 149,
+      ".json": 74,
+      ".js": 41,
+      ".html": 25,
+      ".css": 12
+    },
+    "protectedPathStats": [
+      {
+        "path": ".env",
+        "exists": true,
+        "files": 1,
+        "bytes": 283,
+        "contentRead": false
+      },
+      {
+        "path": "database",
+        "exists": true,
+        "files": 3,
+        "bytes": 4337144,
+        "contentRead": false
+      },
+      {
+        "path": "runtime-data",
+        "exists": true,
+        "files": 3,
+        "bytes": 3728416,
+        "contentRead": false
+      },
+      {
+        "path": "uploads",
+        "exists": true,
+        "files": 1,
+        "bytes": 2,
+        "contentRead": false
+      },
+      {
+        "path": ".codex-logs",
+        "exists": true,
+        "files": 2,
+        "bytes": 229,
+        "contentRead": false
+      }
+    ],
+    "trackedProtectedPaths": [
+      "uploads/.gitkeep"
+    ],
+    "largeFileWarningBytes": 1048576,
+    "postA01CodexCheck": {
+      "command": "npm.cmd run codex:check",
+      "exitCode": 0,
+      "contract": {
+        "passed": 61,
+        "warnings": 0,
+        "failures": 0
+      },
+      "resources": {
+        "passed": 27,
+        "warnings": 12,
+        "failures": 0,
+        "sourceScanFiles": 712,
+        "sourceScanBytes": "69.1 MB excluding protected/runtime roots"
+      }
+    }
+  },
+  "evidenceCommands": [
+    "git status --short --branch",
+    "git remote -v",
+    "git log --oneline --decorate -n 5",
+    "rg --files",
+    "Get-Content AGENTS.md -Encoding UTF8 -Raw",
+    "Get-Content docs/codex-workline/A01_ProjectStateRetriever_work_order.md -Encoding UTF8 -Raw",
+    "Get-Content docs/codex-workline/task_registry.json -Encoding UTF8 -Raw",
+    "Get-Content .codex/larkix-governance.json -Encoding UTF8 -Raw",
+    "npm.cmd run codex:contract",
+    "Get-ChildItem -Force -Directory",
+    "Get-ChildItem -Recurse -File -Force"
+  ],
+  "generatedArtifacts": [
+    "docs/codex-workline/source_registry.json",
+    "docs/codex-workline/resource_index.md",
+    "docs/codex-workline/A01_ProjectStateRetriever_handoff.md"
+  ]
+}

@@ -1,0 +1,21 @@
+name = "A12_CmsFormulaAuthoringExamples"
+description = "Temporary Agent for CMS formula authoring helpers, derivation jump markers, and a Chinese BOOST calculation sheet."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["Formula CMS", "BOOST Examples", "Authoring"]
+developer_instructions = """
+Implement only the S07 CMS formula authoring and calculation-sheet slice opened by
+governance. Read AGENTS.md, PROJECT_WINDOW.md, task_registry.json,
+implementation_slices.json, S03 API handoff, S04 Markdown/DOCX handoff, S05 CMS
+handoff, S06 public derivation handoff, and the admin UI files before editing.
+Allowed edits are limited to admin/index.html, admin/admin.js, admin/admin.css,
+data/markdown-renderer.js, scripts/test-markdown-renderer.js, post.js,
+styles/20-content.css, styles/30-accessibility-print.css, and the S07 handoff.
+Add admin formula/derive insertion helpers, render formula-level superscript
+jump markers with hover/focus detail text, and verify a Chinese BOOST inductor
+selection calculation sheet using an isolated temporary DATA_DIR only. The
+formula jump target must be a real derivation page; for example,
+boost-duty-cycle-ccm must derive the BOOST duty-cycle formula from CCM inductor
+volt-second balance, not merely introduce the formula. Do not edit server.js,
+lib/, migrations, production data, release scripts, deployment state, or Git
+state.
+"""

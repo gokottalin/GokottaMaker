@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "1.0.0",
+  "bookKind": "template",
+  "bookId": "calculation-book-template-v1",
+  "slug": "calculation-book-template",
+  "title": "拓扑计算书母版",
+  "revision": "template-1",
+  "design": {
+    "topology": "replace-with-topology",
+    "operatingMode": "replace-with-operating-mode",
+    "status": "draft",
+    "confidentiality": "internal",
+    "authors": [],
+    "reviewers": [],
+    "signoff": {
+      "status": "not_applicable",
+      "blockedBy": []
+    }
+  },
+  "publication": {
+    "canonical": {
+      "publishStatus": "draft",
+      "visibilityStatus": "private"
+    },
+    "previewOverride": {
+      "publishStatus": "published",
+      "visibilityStatus": "unlisted",
+      "isolatedDataDirOnly": true
+    }
+  },
+  "outputs": {
+    "mathcad": {
+      "filename": "replace-with-new-output.xmcd",
+      "template": "E:/User/AUX20260708.xmcd",
+      "worksheetTitle": "替换为计算书标题"
+    },
+    "larkix": {
+      "packageFilename": "generated/larkix-package.json",
+      "l1Slug": "replace-with-calculation-sheet",
+      "routeBase": "derive.html?slug="
+    }
+  },
+  "sources": [],
+  "assumptions": [],
+  "inputs": [],
+  "constants": [],
+  "equations": [],
+  "results": [],
+  "derivations": [],
+  "coverage": [
+    { "category": "operating_states", "status": "unresolved", "reason": "实例化后声明工作状态、波形、占空比、传输比与模式边界。", "formulaRefs": [], "unresolvedRefs": [], "validationRefs": [] },
+    { "category": "power_closure", "status": "unresolved", "reason": "实例化后闭合输入/输出功率与各角点电流。", "formulaRefs": [], "unresolvedRefs": [], "validationRefs": [] },
+    { "category": "magnetics", "status": "unresolved", "reason": "按拓扑选择电感、耦合电感或变压器计算，并覆盖磁通、气隙、铜损和磁芯损耗。", "formulaRefs": [], "unresolvedRefs": [], "validationRefs": [] },
+    { "category": "capacitors", "status": "unresolved", "reason": "逐一声明输入、输出、母线、谐振、钳位、吸收、bootstrap 和保持电容是否适用。", "formulaRefs": [], "unresolvedRefs": [], "validationRefs": [] },
+    { "category": "power_devices", "status": "unresolved", "reason": "覆盖适用功率器件的电压/电流应力、导通/开关损耗、SOA、恢复和雪崩或钳位。", "formulaRefs": [], "unresolvedRefs": [], "validationRefs": [] },
+    { "category": "sensing", "status": "unresolved", "reason": "声明电流与电压采样网络、门限、公差、带宽和噪声限制。", "formulaRefs": [], "unresolvedRefs": [], "validationRefs": [] },
+    { "category": "gate_drive", "status": "unresolved", "reason": "声明驱动电压、电荷、峰值电流、死区、bootstrap 和隔离要求。", "formulaRefs": [], "unresolvedRefs": [], "validationRefs": [] },
+    { "category": "control", "status": "unresolved", "reason": "声明软启动、保护、斜坡补偿、环路带宽、RHP 零点或其他控制边界。", "formulaRefs": [], "unresolvedRefs": [], "validationRefs": [] },
+    { "category": "tolerances", "status": "unresolved", "reason": "建立最坏角点矩阵与公差传播。", "formulaRefs": [], "unresolvedRefs": [], "validationRefs": [] },
+    { "category": "thermal", "status": "unresolved", "reason": "建立损耗预算、热阻路径、环境/结温和温升闭合。", "formulaRefs": [], "unresolvedRefs": [], "validationRefs": [] },
+    { "category": "derating", "status": "unresolved", "reason": "声明电压、电流、功率、温度和寿命降额规则。", "formulaRefs": [], "unresolvedRefs": [], "validationRefs": [] },
+    { "category": "validation", "status": "unresolved", "reason": "定义台架波形、热测试、环路、保护和量产签核证据。", "formulaRefs": [], "unresolvedRefs": [], "validationRefs": [] }
+  ],
+  "corners": [],
+  "componentRequirements": [],
+  "decisions": [],
+  "margins": [],
+  "risks": [],
+  "unresolvedItems": [],
+  "validations": []
+}

@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "larkix.calculation-book-isolated-preview.v1",
+  "status": "pass",
+  "dataDirPolicy": "fresh operating-system temporary directory; removed after test",
+  "productionOrCurrentDataTouched": false,
+  "canonicalStatus": {
+    "publishStatus": "draft",
+    "visibilityStatus": "private"
+  },
+  "previewOverride": {
+    "publishStatus": "published",
+    "visibilityStatus": "unlisted",
+    "isolatedDataDirOnly": true
+  },
+  "nodes": [
+    {
+      "slug": "ccm-flyback-reference-calculation-sheet",
+      "api": 200,
+      "page": 200
+    },
+    {
+      "slug": "ccm-flyback-current-chain-derivation",
+      "api": 200,
+      "page": 200
+    },
+    {
+      "slug": "triangular-wave-rms-foundation",
+      "api": 200,
+      "page": 200
+    },
+    {
+      "slug": "four-switch-buck-boost-reva-calculation-sheet",
+      "api": 200,
+      "page": 200
+    },
+    {
+      "slug": "four-switch-buck-boost-transition-derivation",
+      "api": 200,
+      "page": 200
+    },
+    {
+      "slug": "inductor-volt-second-ripple-foundation",
+      "api": 200,
+      "page": 200
+    }
+  ],
+  "formulaJumpTargets": [
+    "ccm-flyback-current-chain-derivation",
+    "triangular-wave-rms-foundation"
+  ],
+  "sentinelCount": 7,
+  "serverClosed": true,
+  "temporaryDataRemoved": true
+}

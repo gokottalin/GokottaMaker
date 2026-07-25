@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "larkix.mathcad-open-check.v1",
+  "status": "partial",
+  "application": "Mathcad 15",
+  "worksheet": "Larkix_BBG474_RevA_BuckBoost_20260721.xmcd",
+  "openedSuccessfully": true,
+  "windowTitleConfirmed": true,
+  "accessibilityTreeConfirmed": true,
+  "processResponding": true,
+  "contentVisualStatus": "not_verified",
+  "contentVisualReason": "Mathcad 15 accepted the generated worksheet and exposed the exact file name in both the window title and accessibility tree, but the screenshot channel returned corrupted or unrelated image content; page layout, Chinese text, formula rendering, units, and displayed results were not honestly marked as visually verified.",
+  "xmlAndRuleValidation": "pass",
+  "closedWithoutSaving": true,
+  "closeNote": "Mathcad prompted only to save the launcher-created Untitled:1 worksheet; No was selected, and the generated worksheet was not modified."
+}

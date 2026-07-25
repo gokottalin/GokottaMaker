@@ -1,0 +1,918 @@
+﻿{
+  "schemaVersion": 1,
+  "dispatchId": "Agent0-2026-06-19-2047-derivation-network-child-agent-dispatch",
+  "createdAt": "2026-06-19 20:47 +08:00",
+  "createdBy": "Agent0",
+  "status": "task0_complete_batch1_paused_by_owner_code_still_closed",
+  "project": {
+    "name": "LarkixMaker",
+    "root": "E:/Project/2607-LarkixWeb"
+  },
+  "sourceArchitectureRequest": {
+    "architect": "Agent00",
+    "requestId": "Agent00-2026-06-19-2035-derivation-network-and-focused-site",
+    "documents": [
+      "docs/Agent0+总控与集成/2026-06-19_20-35_Agent00_公式变量推导网络与电力电子聚焦架构设计.md",
+      "docs/Agent0+总控与集成/2026-06-19_20-35_Agent00_derivation_network_dispatch.json",
+      "docs/Agent0+总控与集成/2026-06-19_20-35_Agent00_status.json"
+    ]
+  },
+  "globalObjective": "Task0A-D governance returns are complete. Owner has paused the next Batch1 round. Batch1 remains not open; business code implementation, database migration, production release, and Git staging remain closed.",
+  "globalRules": {
+    "codeChangeAllowed": false,
+    "productionReleaseAllowed": false,
+    "databaseMutationAllowed": false,
+    "deleteOrMoveContentAllowed": false,
+    "mustWriteReportToOwnFolder": true,
+    "mustWriteStatusJson": true,
+    "mustUpdateOwnContractWhenInterfacesChange": true,
+    "mustWriteHandoffWhenDelegatingToSubAgent": true,
+    "rootOutputAllowedOnlyForThisFile": true,
+    "mustStopBeforeImplementation": true,
+    "agent0ImplementationBatchDesignAllowed": true,
+    "childAgentCodeImplementationAllowed": false,
+    "batchSpecificImplementationOnlyAfterAgent0Open": true,
+    "gitStagingAllowed": false
+  },
+  "agent00ImplementationDecision": {
+    "decidedAt": "2026-06-21 19:12 +08:00",
+    "decidedBy": "Agent00",
+    "decisionReport": "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_九项实现前架构裁决与Agent0实现批次授权.md",
+    "decisionJson": "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_implementation_decisions.json",
+    "statusJson": "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_status.json",
+    "agent0AuthorizedNextStep": "Design implementation batches, file boundaries, owners, gates, and sequencing. Do not dispatch child-Agent code implementation yet.",
+    "implementationDecisionsResolved": [
+      "knowledge_links V0 persistence",
+      "dangling derivation link behavior",
+      "DOCX V0 behavior",
+      "final public derive route",
+      "public_focus_mode V0 default",
+      "publishStatus versus status/visibility field contract",
+      "noindex policy",
+      "rollback.sh default service name",
+      "admin save response shape"
+    ]
+  },
+  "agentStartupProtocol": {
+    "purpose": "Every child Agent can automatically discover the latest Owner/Architect task without the user manually repeating it.",
+    "readOrder": [
+      "PROJECT_MAINTENANCE.json",
+      "ACTIVE_AGENT_DISPATCH.json",
+      "docs/Agent0+总控与集成/2026-06-19_21-09_Agent0_子Agent启动任务包与契约确认.md",
+      "TOP_ARCHITECT_HANDOFF.json",
+      "docs/Agent0+总控与集成/2026-06-19_20-35_Agent00_公式变量推导网络与电力电子聚焦架构设计.md",
+      "the latest report/status JSON in the Agent's own docs folder",
+      "target source files listed in the assignment"
+    ],
+    "selfSelectionRule": "Find assignment by exact agent id. If split sub-agents exist, find assignment by subAgentId. If the sub-agent does not yet exist, the parent Agent must handle the assignment and propose split handoff before implementation.",
+    "requiredFirstCommands": [
+      "git status --short --branch",
+      "read ACTIVE_AGENT_DISPATCH.json",
+      "read latest own Agent report/status JSON"
+    ],
+    "requiredOutputs": [
+      "docs/AgentX+职责目录/YYYY-MM-DD_HH-mm_AgentX_公式变量推导网络接口设计.md",
+      "docs/AgentX+职责目录/YYYY-MM-DD_HH-mm_AgentX_status.json"
+    ],
+    "statusJsonMustInclude": [
+      "agent",
+      "status",
+      "riskLevel",
+      "volumeStatus",
+      "latestReportPath",
+      "interfacesChanged",
+      "requiresArchitectureDecision",
+      "requiresOtherAgents",
+      "nextActions"
+    ]
+  },
+  "childAgentLaunchPrompts": {
+    "purpose": "The Owner can paste one short sentence into a new child-Agent session and the Agent must auto-discover the full task from this dispatch.",
+    "bootstrapReport": "docs/Agent0+总控与集成/2026-06-19_21-09_Agent0_子Agent启动任务包与契约确认.md",
+    "bootstrapContractJson": "docs/Agent0+总控与集成/2026-06-19_21-09_Agent0_child_agent_bootstrap_contract.json",
+    "genericPrompt": "你将作为 {AgentId} 执行 E:/Project/2607-LarkixWeb/ACTIVE_AGENT_DISPATCH.json。请按该文件自动识别你的 assignment，先读取规定输入，只输出接口设计报告和 status JSON，不实现代码。",
+    "subAgentPrompt": "你将作为 {SubAgentId} 隶属 {ParentAgentId} 执行 E:/Project/2607-LarkixWeb/ACTIVE_AGENT_DISPATCH.json。请按 splitRecommendations 中的 subAgentId 自动识别职责，输出自己的接口设计/交接报告和 status JSON，不实现代码。",
+    "agentIdExamples": [
+      "你将作为 Agent2 执行 E:/Project/2607-LarkixWeb/ACTIVE_AGENT_DISPATCH.json",
+      "你将作为 Agent3A 隶属 Agent3 执行 E:/Project/2607-LarkixWeb/ACTIVE_AGENT_DISPATCH.json",
+      "你将作为 Agent20B 隶属 Agent20 执行 E:/Project/2607-LarkixWeb/ACTIVE_AGENT_DISPATCH.json"
+    ],
+    "requiredAgentBehavior": [
+      "Do not ask the Owner to restate the requirement if ACTIVE_AGENT_DISPATCH.json is readable.",
+      "Determine identity from AgentId or SubAgentId and read matching assignment.",
+      "Read PROJECT_MAINTENANCE.json and TOP_ARCHITECT_HANDOFF.json before target source files.",
+      "If identity is missing or no matching assignment exists, stop and write a blocked status JSON in the nearest parent Agent folder.",
+      "If the Agent proposes a new interface, it must update its own report/status JSON contract fields before final response."
+    ]
+  },
+  "contractUpdateProtocol": {
+    "purpose": "Make every child-Agent update discoverable by later Agent0/Agent00 runs without relying on chat history.",
+    "appliesTo": [
+      "Agent1",
+      "Agent2",
+      "Agent2A",
+      "Agent2B",
+      "Agent2C",
+      "Agent3",
+      "Agent3A",
+      "Agent3B",
+      "Agent3C",
+      "Agent4",
+      "Agent5",
+      "Agent7",
+      "Agent8",
+      "Agent9",
+      "Agent20",
+      "Agent20A",
+      "Agent20B",
+      "Agent101"
+    ],
+    "mustUpdateWhen": [
+      "The Agent changes or proposes an API, schema, field, Markdown syntax, visual token, route, release gate, regression requirement, or ownership boundary.",
+      "The Agent discovers a blocker, split requirement, cross-Agent dependency, or architecture decision.",
+      "The Agent produces any handoff that a replacement Agent must rely on.",
+      "The Agent cannot complete the assigned work."
+    ],
+    "requiredUpdates": [
+      "Write a Markdown report or handoff in the responsible Agent folder.",
+      "Write a matching status JSON beside the report.",
+      "Populate interfacesChanged, risksChanged, requiresOtherAgents, blockedBy, nextActions, and replacementStartHere.",
+      "If another Agent must consume the change, write or request an AgentX对接AgentY handoff document.",
+      "Do not edit docs/Agent0+总控与集成/AGENT_UPDATE_INDEX.json directly; Agent0 refreshes it during convergence."
+    ],
+    "statusValues": [
+      "ready_for_convergence",
+      "needs_decision",
+      "blocked",
+      "handoff_current",
+      "ready_for_implementation_after_architecture_approval"
+    ],
+    "agent0RecognitionRule": "Every future Agent0/Agent00 run must scan new status JSON files, compare them with git status and AGENT_UPDATE_INDEX.json, then update AGENT_UPDATE_INDEX.json before making decisions.",
+    "failureConsequence": "If a child Agent changes an interface but omits status JSON, Agent0 must mark the work reporting-incomplete and not approve implementation from that handoff."
+  },
+  "agent0StartupMonitoringContract": {
+    "purpose": "Ensure Agent0 can automatically recognize all child-Agent updates each time it runs.",
+    "requiredEveryAgent0Run": [
+      "Run git status --short --branch.",
+      "Read PROJECT_MAINTENANCE.json.",
+      "Read ACTIVE_AGENT_DISPATCH.json.",
+      "Read TOP_ARCHITECT_HANDOFF.json.",
+      "Read docs/Agent0+总控与集成/AGENT_UPDATE_INDEX.json.",
+      "List newest docs/Agent*/ and docs/Agent*+*/ status JSON files.",
+      "Read any status JSON not present in AGENT_UPDATE_INDEX.json or newer than the indexed lastSeenAt.",
+      "Read Markdown reports for any status JSON reporting blocked, needs_decision, interfacesChanged, risksChanged, split_required, requiresGitAudit, requiresRegression, or requiresReleaseGate.",
+      "Compare reported changedFiles/newFiles/deletedFiles with git status.",
+      "Update AGENT_UPDATE_INDEX.json and write an Agent0 status JSON/report before final response."
+    ],
+    "convergenceRule": "Agent0 may only produce an implementation batch after all required P0/P1/P2 child-Agent reports are either present or explicitly marked reporting-incomplete/blocked.",
+    "ownerNotificationRequired": [
+      "Latest changes found",
+      "Missing or stale child-Agent status JSON files",
+      "Contracts updated or deferred",
+      "Decisions waiting for Agent00/Agent100",
+      "Whether Agent101 audit and Agent20 regression are required"
+    ]
+  },
+  "architectDemandAnalysis": {
+    "coreNeeds": [
+      "Authors can mark selected formula variables as highlighted clickable derivation links.",
+      "Clicking a variable such as D.boost opens a dedicated derivation detail page.",
+      "Derivation pages support Markdown, images, formulas, tables, code blocks, publishing state, and nested links to other derivation variables.",
+      "The derivation system must form a maintainable knowledge graph rather than isolated pages.",
+      "CMS must support editing derivation nodes safely with audit/revision semantics.",
+      "The public site should temporarily look small and focused: homepage + power-electronics + derivation pages first.",
+      "Digital, analog, circuit-analysis, and project sections should be hidden from public navigation/home exposure but not deleted.",
+      "Data safety, backups, migrations, regression, and Git audit are mandatory before implementation/release."
+    ],
+    "minimumArchitectureObjects": [
+      "knowledge_node content type",
+      "optional knowledge_links graph edge table",
+      "Markdown shortcode {{derive:d-boost|D.boost|purple}}",
+      "derive.html?slug=d-boost public page or equivalent route",
+      "CMS derivation-node editor",
+      "site_settings.public_focus_mode",
+      "Agent20 regression evidence contract",
+      "Agent1 migration backup and rollback gate"
+    ],
+    "notAllowedNow": [
+      "No direct implementation before interface-design convergence.",
+      "Do not overload ordinary posts/projects with derivation-node semantics.",
+      "Do not delete existing categories, pages, articles, projects, uploads, or database data.",
+      "Do not let authors inject arbitrary CSS colors.",
+      "Do not modify production data or run production release."
+    ]
+  },
+  "executionOrder": [
+    {
+      "batch": "Gate 0",
+      "sequence": 0,
+      "owner": "Agent0",
+      "purpose": "Publish dispatch and make latest tasks discoverable.",
+      "requiredBeforeNextBatch": [
+        "ACTIVE_AGENT_DISPATCH.json exists and is valid JSON",
+        "PROJECT_MAINTENANCE.json points to ACTIVE_AGENT_DISPATCH.json",
+        "Agent0 dispatch report exists"
+      ]
+    },
+    {
+      "batch": "P0 Interface Design",
+      "sequence": 1,
+      "agents": [
+        "Agent2",
+        "Agent3",
+        "Agent9",
+        "Agent20"
+      ],
+      "purpose": "Design the data/API/CMS/Markdown/regression contracts before implementation.",
+      "parallelAllowed": true
+    },
+    {
+      "batch": "P1 Integration Design",
+      "sequence": 2,
+      "agents": [
+        "Agent4",
+        "Agent5",
+        "Agent7",
+        "Agent101",
+        "Agent1"
+      ],
+      "purpose": "Design visitor integration, taxonomy/SEO, visual token, Git batching, and release gate.",
+      "parallelAllowed": true,
+      "dependsOn": [
+        "P0 Interface Design assumptions"
+      ]
+    },
+    {
+      "batch": "P2 Market Expression",
+      "sequence": 3,
+      "agents": [
+        "Agent8"
+      ],
+      "purpose": "Only after scope is technically bounded, propose market expression for the focused power-electronics launch.",
+      "parallelAllowed": false,
+      "dependsOn": [
+        "Agent5 content semantics",
+        "Agent4 page plan",
+        "Agent7 visual plan"
+      ]
+    },
+    {
+      "batch": "Agent0 Convergence",
+      "sequence": 4,
+      "owner": "Agent0",
+      "purpose": "Collect child-Agent designs, split recommendations, conflicts, and decision queue for Agent00/Agent100.",
+      "requiredOutput": "docs/Agent0+总控与集成/YYYY-MM-DD_HH-mm_Agent0_公式变量推导网络子Agent回传收敛.md"
+    }
+  ],
+  "assignments": [
+    {
+      "agent": "Agent2",
+      "priority": "P0",
+      "volumeStatus": "split_required_before_implementation",
+      "task": "Design knowledge_node schema, APIs, migrations, runtime-data boundaries, and migration safety. Do not implement code.",
+      "mustRead": [
+        "server.js",
+        "lib/content.js",
+        "lib/db.js",
+        "lib/validators.js",
+        "lib/uploads.js",
+        "migrations/",
+        "docs/Agent2+后端与数据模型/2026-06-19_18-24_Agent2_serverjs模块化二期设计.md"
+      ],
+      "mustAnswer": [
+        "knowledge_nodes table fields and constraints",
+        "knowledge_node_revisions table or revision strategy",
+        "knowledge_links V0/V1 decision",
+        "public API paths and response shape",
+        "admin API paths and write semantics",
+        "interaction with posts/projects/content_revisions",
+        "backup, migration, rollback, and isolated DATA_DIR test strategy"
+      ],
+      "interfacesToProvide": [
+        "schema contract for Agent3 CMS",
+        "public API contract for Agent4 derive page",
+        "Markdown link persistence contract for Agent9",
+        "migration and backup notes for Agent1",
+        "API regression requirements for Agent20"
+      ],
+      "output": "docs/Agent2+后端与数据模型/YYYY-MM-DD_HH-mm_Agent2_公式变量推导网络数据API接口设计.md"
+    },
+    {
+      "agent": "Agent3",
+      "priority": "P0",
+      "volumeStatus": "split_required_before_implementation",
+      "task": "Design CMS derivation-node editing workflow, forms, preview, uploads, publish state, soft delete, restore, and revision UI. Do not split admin/admin.js yet.",
+      "mustRead": [
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "admin/course-paths.html",
+        "docs/Agent3+管理端CMS与内容工作流/2026-06-19_18-25_Agent3_CMS工作流拆分设计.md",
+        "Agent2 assignment in ACTIVE_AGENT_DISPATCH.json",
+        "Agent9 assignment in ACTIVE_AGENT_DISPATCH.json"
+      ],
+      "mustAnswer": [
+        "how derivation nodes enter the CMS navigation",
+        "form fields for symbol/slug/title/summary/markdown/cover/accent_color/tags/status",
+        "how image upload is reused",
+        "how Markdown preview and derive shortcode preview are reused",
+        "soft delete/restore/revision/audit UX boundaries",
+        "minimum CMS smoke list"
+      ],
+      "interfacesToProvide": [
+        "CMS field needs for Agent2",
+        "preview needs for Agent9",
+        "admin visual needs for Agent7 if any",
+        "CMS regression scenarios for Agent20"
+      ],
+      "output": "docs/Agent3+管理端CMS与内容工作流/YYYY-MM-DD_HH-mm_Agent3_推导节点CMS工作流接口设计.md"
+    },
+    {
+      "agent": "Agent9",
+      "priority": "P0",
+      "volumeStatus": "watch",
+      "task": "Design derivation shortcode syntax, Markdown rendering contract, formula boundary rules, nested derivation link samples, and DOCX degradation behavior. Do not implement renderer changes yet.",
+      "mustRead": [
+        "data/markdown-renderer.js",
+        "tools/md2doc.js",
+        "lib/md2doc.js",
+        "scripts/test-markdown-renderer.js",
+        "docs/Agent9+内容生成对接规范/2026-06-19_18-38_Agent9_Markdown与DOCX契约复核.md"
+      ],
+      "mustAnswer": [
+        "final shortcode grammar",
+        "HTML output and CSS class contract",
+        "accepted color token whitelist",
+        "plain formula vs clickable variable boundary",
+        "nested derivation link fixture samples",
+        "DOCX export fallback or hyperlink behavior",
+        "security and escaping rules"
+      ],
+      "interfacesToProvide": [
+        "shortcode parse contract for Agent2 link extraction",
+        "preview/rendering contract for Agent3",
+        "CSS class/token contract for Agent7",
+        "browser and DOCX regression needs for Agent20"
+      ],
+      "output": "docs/Agent9+内容生成对接规范/YYYY-MM-DD_HH-mm_Agent9_推导变量Markdown短码接口设计.md"
+    },
+    {
+      "agent": "Agent20",
+      "priority": "P0",
+      "volumeStatus": "split_recommended_for_full_regression",
+      "task": "Design the minimum regression template for derivation links, derivation pages, CMS editing, focus mode, API, migration, backups, and evidence directories. Do not mutate production data.",
+      "mustRead": [
+        "scripts/verify-api.ps1",
+        "scripts/test-markdown-renderer.js",
+        "docs/Agent20+体验测试与问题上报/2026-06-19_18-40_Agent20_最小回归模板与证据规范.md",
+        "Agent2/Agent3/Agent4/Agent9 assignments in ACTIVE_AGENT_DISPATCH.json"
+      ],
+      "mustAnswer": [
+        "article variable link click regression",
+        "derive page render regression",
+        "CMS create/edit/upload/publish derivation node regression",
+        "public focus mode navigation/home regression",
+        "API regression with isolated DATA_DIR",
+        "migration and backup evidence requirements",
+        "screenshots, console, API JSON, downloaded artifact evidence naming"
+      ],
+      "interfacesToProvide": [
+        "release-blocking acceptance checklist for Agent1",
+        "Git evidence inclusion guidance for Agent101",
+        "module-specific regression groups for Agent2/3/4/9"
+      ],
+      "output": "docs/Agent20+体验测试与问题上报/YYYY-MM-DD_HH-mm_Agent20_推导网络与聚焦模式最小回归模板.md"
+    },
+    {
+      "agent": "Agent4",
+      "priority": "P1",
+      "volumeStatus": "watch",
+      "task": "Design derive page frontend, reusable post.js strategy, public focus mode navigation/home hiding, and power-electronics entry. Do not implement code.",
+      "mustRead": [
+        "index.html",
+        "maker.html",
+        "category.html",
+        "post.html",
+        "project.html",
+        "main.js",
+        "post.js",
+        "site-layout.js",
+        "data/footer.js",
+        "docs/Agent4+访客端体验、视觉与前端架构/2026-06-19_18-28_Agent4_访客端边界与回归清单.md"
+      ],
+      "mustAnswer": [
+        "derive.html standalone page vs post.js reuse plan",
+        "route/query contract for slug",
+        "how derivation links behave in articles and derivation pages",
+        "public focus mode hiding rules for navigation and homepage",
+        "power-electronics entry strategy",
+        "mobile/dark-mode/accessibility requirements"
+      ],
+      "interfacesToProvide": [
+        "public page needs for Agent2 API",
+        "CSS class needs for Agent7",
+        "content/sitemap visibility questions for Agent5",
+        "visual/browser regression needs for Agent20"
+      ],
+      "output": "docs/Agent4+访客端体验、视觉与前端架构/YYYY-MM-DD_HH-mm_Agent4_推导页与聚焦模式前端接口设计.md"
+    },
+    {
+      "agent": "Agent5",
+      "priority": "P1",
+      "volumeStatus": "watch",
+      "task": "Define power-electronics taxonomy, derivation-node content semantics, SEO/noindex/sitemap policy, and content-source boundaries. Do not change content files yet.",
+      "mustRead": [
+        "data/posts.js",
+        "data/seed.js",
+        "data/course-meta.js",
+        "lib/seo.js",
+        "docs/Agent5+内容、SEO与知识体系/2026-06-19_18-32_Agent5_内容事实来源与SEO字段契约.md"
+      ],
+      "mustAnswer": [
+        "power-electronics taxonomy and category key",
+        "knowledge node title/summary/tags/SEO semantics",
+        "whether derivation pages enter RSS and/or sitemap",
+        "noindex/hide policy for hidden sections",
+        "content source rules for derivation nodes",
+        "how to avoid making the site look empty"
+      ],
+      "interfacesToProvide": [
+        "field semantics for Agent2 and Agent3",
+        "visibility rules for Agent4",
+        "market wording constraints for Agent8",
+        "SEO regression needs for Agent20"
+      ],
+      "output": "docs/Agent5+内容、SEO与知识体系/YYYY-MM-DD_HH-mm_Agent5_电力电子聚焦与推导节点内容语义.md"
+    },
+    {
+      "agent": "Agent7",
+      "priority": "P1",
+      "volumeStatus": "watch",
+      "task": "Define visual tokens for clickable derivation variables, including purple default, other controlled colors, light/dark readability, hover/focus/visited states, and no arbitrary CSS rule.",
+      "mustRead": [
+        "styles/larkix-brand-theme.css",
+        "styles/20-content.css",
+        "styles/30-accessibility-print.css",
+        "docs/Agent7+视觉品牌与样式设计/2026-06-19_18-35_Agent7_视觉资产治理与主题变更流程.md",
+        "Agent9 assignment in ACTIVE_AGENT_DISPATCH.json"
+      ],
+      "mustAnswer": [
+        "default purple derivation token",
+        "allowed color token names and CSS variables",
+        "light/dark contrast rules",
+        "hover/focus/visited/printed state",
+        "how derivation links should look inside formulas and body text",
+        "visual QA criteria"
+      ],
+      "interfacesToProvide": [
+        "CSS token contract for Agent4 and Agent9",
+        "visual regression needs for Agent20",
+        "asset/token commit guidance for Agent101"
+      ],
+      "output": "docs/Agent7+视觉品牌与样式设计/YYYY-MM-DD_HH-mm_Agent7_公式变量高亮视觉token接口设计.md"
+    },
+    {
+      "agent": "Agent101",
+      "priority": "P1",
+      "volumeStatus": "ok",
+      "task": "Design governance commit and future implementation commit slicing for this architecture request. Do not stage or commit until Owner/Agent00 approves.",
+      "mustRead": [
+        "ACTIVE_AGENT_DISPATCH.json",
+        "PROJECT_MAINTENANCE.json",
+        "TOP_ARCHITECT_HANDOFF.json",
+        "docs/Agent101-Git/2026-06-19_18-21_Agent101_治理文件入库审计.md",
+        "git status --short --branch"
+      ],
+      "mustAnswer": [
+        "which governance documents can enter a governance commit",
+        "how to separate migration/API/CMS/frontend/markdown/test/release commits",
+        "files that must be excluded",
+        "status JSON and AGENT_UPDATE_INDEX audit rules",
+        "rollback references needed for later release"
+      ],
+      "interfacesToProvide": [
+        "explicit staging plan for Agent0",
+        "future implementation commit slices for all Agents",
+        "evidence inclusion/exclusion rules for Agent20"
+      ],
+      "output": "docs/Agent101-Git/YYYY-MM-DD_HH-mm_Agent101_推导网络治理与实现提交拆分审计.md"
+    },
+    {
+      "agent": "Agent1",
+      "priority": "P1",
+      "volumeStatus": "watch",
+      "task": "Design migration, backup, rollback, health check, and release gate for derivation nodes and public focus mode. Do not deploy.",
+      "mustRead": [
+        "docs/deployment.md",
+        "scripts/deploy-update.sh",
+        "scripts/rollback.sh",
+        "scripts/backup-linux.sh",
+        "scripts/restore-linux.sh",
+        "scripts/gokottamaker.service",
+        "docs/Agent1+运维与发布稳定性/2026-06-19_18-42_Agent1_发布门禁复核与上线输入模板.md",
+        "Agent2 assignment in ACTIVE_AGENT_DISPATCH.json",
+        "Agent20 assignment in ACTIVE_AGENT_DISPATCH.json"
+      ],
+      "mustAnswer": [
+        "backup requirements before new migrations",
+        "uploads backup requirements",
+        "rollback command and service name",
+        "production healthz and database integrity checks",
+        "whether pre-release rehearsal is required",
+        "release blocking conditions"
+      ],
+      "interfacesToProvide": [
+        "release gate for Agent0",
+        "backup/rollback inputs for Agent101",
+        "production verification needs for Agent20"
+      ],
+      "output": "docs/Agent1+运维与发布稳定性/YYYY-MM-DD_HH-mm_Agent1_推导网络迁移备份回滚发布门禁.md"
+    },
+    {
+      "agent": "Agent8",
+      "priority": "P2",
+      "volumeStatus": "ok",
+      "task": "After technical scope is bounded, draft focused power-electronics public expression. Do not edit pages or promise unavailable commerce features.",
+      "mustRead": [
+        "Agent4 assignment in ACTIVE_AGENT_DISPATCH.json",
+        "Agent5 assignment in ACTIVE_AGENT_DISPATCH.json",
+        "Agent7 assignment in ACTIVE_AGENT_DISPATCH.json",
+        "docs/Agent8+市场部设计/2026-06-19_18-36_Agent8_市场表达输入与转化路径建议.md"
+      ],
+      "mustAnswer": [
+        "homepage/power-electronics positioning draft",
+        "what should be hidden until content is sufficient",
+        "what user CTA is safe without payment/order system",
+        "what must be fact-checked by Agent5",
+        "what visual support is needed from Agent7"
+      ],
+      "interfacesToProvide": [
+        "copy draft for Agent4",
+        "fact-check requests for Agent5",
+        "visual direction requests for Agent7"
+      ],
+      "output": "docs/Agent8+市场部设计/YYYY-MM-DD_HH-mm_Agent8_电力电子聚焦首页表达草案.md"
+    }
+  ],
+  "splitRecommendations": {
+    "Agent2": {
+      "decision": "split_required_before_implementation",
+      "reason": "The request touches schema, migrations, public APIs, admin APIs, runtime data, uploads, auth, audit, backup, and server.js modularization.",
+      "subAgents": [
+        {
+          "subAgentId": "Agent2A",
+          "name": "知识节点数据模型与迁移",
+          "owns": [
+            "knowledge_nodes schema",
+            "knowledge_links schema",
+            "knowledge_node_revisions schema",
+            "migration plan"
+          ],
+          "provides": [
+            "migration files plan",
+            "field constraints",
+            "backward compatibility notes"
+          ],
+          "consumes": [
+            "Agent5 field semantics",
+            "Agent1 backup gate",
+            "Agent20 migration regression"
+          ],
+          "interface": "Agent2A provides schema and migration contract to Agent2B/Agent3/Agent20. It does not define CMS UI or visual behavior."
+        },
+        {
+          "subAgentId": "Agent2B",
+          "name": "知识节点公开与管理 API",
+          "owns": [
+            "GET /api/knowledge-nodes",
+            "GET /api/knowledge-nodes/:slug",
+            "admin knowledge-node CRUD API",
+            "response shapes"
+          ],
+          "provides": [
+            "public API contract",
+            "admin API contract",
+            "error/status code contract"
+          ],
+          "consumes": [
+            "Agent2A schema",
+            "Agent3 CMS needs",
+            "Agent4 derive page needs",
+            "Agent9 shortcode extraction needs"
+          ],
+          "interface": "Agent2B exposes stable API contracts. It does not alter database schema without Agent2A."
+        },
+        {
+          "subAgentId": "Agent2C",
+          "name": "运行数据、安全、上传与审计边界",
+          "owns": [
+            "DATA_DIR boundary",
+            "uploads reuse",
+            "auth/CSRF/audit integration",
+            "health impact"
+          ],
+          "provides": [
+            "security boundary",
+            "upload and audit contract",
+            "runtime-data safety notes"
+          ],
+          "consumes": [
+            "Agent1 release gate",
+            "Agent3 upload workflow",
+            "Agent20 security regression"
+          ],
+          "interface": "Agent2C makes new knowledge-node APIs safe. It does not define content semantics or page UX."
+        }
+      ]
+    },
+    "Agent3": {
+      "decision": "split_required_before_implementation",
+      "reason": "CMS work touches admin navigation, editor state, uploads, Markdown preview, revision/audit, layout/focus settings, and a large admin/admin.js file.",
+      "subAgents": [
+        {
+          "subAgentId": "Agent3A",
+          "name": "推导节点编辑器与表单状态",
+          "owns": [
+            "CMS content type switch",
+            "derivation-node form fields",
+            "draft state",
+            "save payload"
+          ],
+          "provides": [
+            "CMS editor workflow",
+            "field validation needs"
+          ],
+          "consumes": [
+            "Agent2B admin API",
+            "Agent5 field semantics",
+            "Agent9 shortcode preview"
+          ],
+          "interface": "Agent3A owns editor behavior only. It does not own media library or site focus mode."
+        },
+        {
+          "subAgentId": "Agent3B",
+          "name": "媒体上传、Markdown预览、revision和audit",
+          "owns": [
+            "cover upload reuse",
+            "Markdown preview integration",
+            "revision list/restore UX",
+            "audit feedback"
+          ],
+          "provides": [
+            "media and revision UI contract"
+          ],
+          "consumes": [
+            "Agent2C upload/audit boundary",
+            "Agent9 renderer contract",
+            "Agent20 CMS regression"
+          ],
+          "interface": "Agent3B owns support workflows. It does not decide schema fields or navigation visibility."
+        },
+        {
+          "subAgentId": "Agent3C",
+          "name": "站点聚焦模式管理端配置",
+          "owns": [
+            "public_focus_mode CMS controls",
+            "visibleScopes/hiddenScopes UI",
+            "layout editor interaction"
+          ],
+          "provides": [
+            "focus-mode admin workflow"
+          ],
+          "consumes": [
+            "Agent4 public rendering plan",
+            "Agent5 SEO/noindex policy",
+            "Agent2B site_settings API"
+          ],
+          "interface": "Agent3C owns admin controls for focus mode. It does not decide public SEO policy."
+        }
+      ]
+    },
+    "Agent20": {
+      "decision": "split_recommended_for_full_regression",
+      "reason": "The regression scope spans browser UI, CMS writes, API, migrations, Markdown/DOCX, and release evidence.",
+      "subAgents": [
+        {
+          "subAgentId": "Agent20A",
+          "name": "浏览器体验与视觉回归",
+          "owns": [
+            "article link click",
+            "derive page screenshots",
+            "focus-mode navigation",
+            "mobile/dark mode"
+          ],
+          "provides": [
+            "screenshots",
+            "console logs",
+            "visual pass/fail"
+          ],
+          "interface": "Agent20A handles browser evidence only."
+        },
+        {
+          "subAgentId": "Agent20B",
+          "name": "API/CMS/迁移与下载产物回归",
+          "owns": [
+            "isolated DATA_DIR API tests",
+            "CMS create/edit/upload/publish",
+            "migration smoke",
+            "DOCX fallback checks"
+          ],
+          "provides": [
+            "API JSON",
+            "command logs",
+            "regression-results.json"
+          ],
+          "interface": "Agent20B handles data/API evidence only and never touches production data."
+        }
+      ]
+    },
+    "Agent4": {
+      "decision": "watch_not_split_yet",
+      "reason": "Frontend scope is broad but currently design-only. Split if implementation combines derive page, navigation focus, and large style work in one batch."
+    },
+    "Agent9": {
+      "decision": "watch_not_split_yet",
+      "reason": "Markdown and DOCX are coupled. Split into renderer and DOCX only if implementation expands beyond shortcode parsing and hyperlink fallback."
+    }
+  },
+  "stopConditions": [
+    "Any Agent starts implementation before its interface design is accepted by Agent0 and Agent00/Agent100.",
+    "Any Agent wants to add database migrations without Agent2A/Agent2 design and Agent1 release gate.",
+    "Any Agent hides sections by deleting files or database rows instead of using settings.",
+    "Any Agent changes navigation visibility without Agent4 and Agent5 review.",
+    "Any Agent touches production data, uploads, .env, or runtime-data.",
+    "Any Agent outputs reports outside its own docs folder or omits status JSON."
+  ],
+  "agent0ConvergenceRequirements": [
+    "Collect all P0/P1/P2 reports and status JSON files.",
+    "Mark missing reports as reporting-incomplete.",
+    "Summarize split_required domains and sub-agent interfaces.",
+    "List decisions for Agent00/Agent100.",
+    "List implementation batches only after interface designs exist.",
+    "Do not approve production release in this dispatch."
+  ],
+  "agent0ImplementationBatchDesign": {
+    "publishedAt": "2026-06-21 19:44 +08:00",
+    "status": "implementation_batch_design_published_code_still_gated",
+    "report": "docs/Agent0+总控与集成/2026-06-21_19-44_Agent0_??????_???????????.md",
+    "dispatchJson": "docs/Agent0+总控与集成/2026-06-21_19-44_Agent0_implementation_batch_dispatch.json",
+    "statusJson": "docs/Agent0+总控与集成/2026-06-21_19-44_Agent0_status.json",
+    "sourceDecisionJson": "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_implementation_decisions.json",
+    "sourceDecisionReport": "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_九项实现前架构裁决与Agent0实现批次授权.md",
+    "codeImplementationAllowedNow": false,
+    "immediateOpenTasks": [
+      {
+        "id": "Task0A",
+        "agent": "Agent101",
+        "action": "explicit staging plan only",
+        "mayEditCode": false
+      },
+      {
+        "id": "Task0B",
+        "agent": "Agent3",
+        "action": "parent convergence refresh only",
+        "mayEditCode": false
+      },
+      {
+        "id": "Task0C",
+        "agent": "Agent20",
+        "action": "batch regression matrix mapping only",
+        "mayEditCode": false
+      },
+      {
+        "id": "Task0D",
+        "agent": "Agent1",
+        "action": "release gate plan only",
+        "mayEditCode": false
+      }
+    ],
+    "plannedImplementationBatches": [
+      {
+        "batch": 1,
+        "owner": "Agent2A+Agent1+Agent20B",
+        "state": "planned_not_open",
+        "name": "Data model and migrations"
+      },
+      {
+        "batch": 2,
+        "owner": "Agent2B+Agent2C",
+        "state": "planned_not_open",
+        "name": "Backend API, transactions, security and audit"
+      },
+      {
+        "batch": 3,
+        "owner": "Agent9",
+        "state": "planned_not_open",
+        "name": "Markdown shortcode and DOCX V0 fallback"
+      },
+      {
+        "batch": 4,
+        "owner": "Agent3A+Agent3B+Agent3C",
+        "state": "planned_not_open",
+        "name": "CMS derivation nodes and focus mode"
+      },
+      {
+        "batch": 5,
+        "owner": "Agent4",
+        "state": "planned_not_open",
+        "name": "Public derive page and focus frontend"
+      },
+      {
+        "batch": 6,
+        "owner": "Agent7",
+        "state": "planned_not_open",
+        "name": "Visual tokens and print behavior"
+      },
+      {
+        "batch": 7,
+        "owner": "Agent5",
+        "state": "planned_not_open",
+        "name": "SEO, sitemap, RSS and discoverability"
+      },
+      {
+        "batch": 8,
+        "owner": "Agent20A+Agent20B",
+        "state": "planned_not_open",
+        "name": "Formal regression evidence"
+      },
+      {
+        "batch": 9,
+        "owner": "Agent1+Agent101",
+        "state": "planned_not_open",
+        "name": "Release gate and rollback references"
+      }
+    ]
+  },
+  "agent0LatestTask0Convergence": {
+    "updatedAt": "2026-07-08 23:15 +08:00",
+    "report": "docs/Agent0+总控与集成/2026-07-08_23-15_Agent0_Task0全部回传收敛_Batch1待开启裁决.md",
+    "statusJson": "docs/Agent0+总控与集成/2026-07-08_23-15_Agent0_status.json",
+    "status": "task0_complete_batch1_paused_by_owner_code_still_closed",
+    "task0Status": {
+      "Task0A_Agent101": "complete",
+      "Task0B_Agent3": "complete",
+      "Task0C_Agent20": "complete",
+      "Task0D_Agent1": "complete"
+    },
+    "task0Complete": true,
+    "task0Missing": [],
+    "batch1ReadyForOpenDecision": true,
+    "batch1Open": false,
+    "codeImplementationAllowedNow": false,
+    "databaseMutationAllowedNow": false,
+    "productionReleaseAllowedNow": false,
+    "requiredBeforeBatch1Open": [
+      "Owner/Agent0 explicit Batch1 open dispatch",
+      "Batch1 scope limited to data model and migrations",
+      "Agent101 explicit staging/exclusion list absorbed",
+      "Agent1 backup/restore/rollback gate absorbed",
+      "Agent20B isolated DATA_DIR regression plan attached"
+    ],
+    "nextAgents": [
+      "Agent0",
+      "Agent2A",
+      "Agent1",
+      "Agent20B",
+      "Agent101"
+    ],
+    "nextDecision": "Batch1 paused by Owner on 2026-07-09. Do not issue implementation work until Owner resumes.",
+    "batch1PausedByOwner": true,
+    "gitStagingAllowedNow": false
+  },
+  "agent0LatestBatch1Pause": {
+    "updatedAt": "2026-07-09 00:00 +08:00",
+    "report": "docs/Agent0+总控与集成/2026-07-09_00-00_Agent0_Task0收敛完成记录_Batch1暂停.md",
+    "statusJson": "docs/Agent0+总控与集成/2026-07-09_00-00_Agent0_status.json",
+    "status": "task0_complete_batch1_paused_by_owner_code_still_closed",
+    "ownerDecision": "pause_next_batch1",
+    "task0Complete": true,
+    "batch1ReadyForOpenDecision": true,
+    "batch1PausedByOwner": true,
+    "batch1Open": false,
+    "codeImplementationAllowedNow": false,
+    "databaseMutationAllowedNow": false,
+    "productionReleaseAllowedNow": false,
+    "gitStagingAllowedNow": false,
+    "resumeRequires": [
+      "Owner explicitly asks Agent0 to resume Batch1",
+      "Agent0 publishes a separate Batch1 open dispatch",
+      "Allowed Agent/file/data/test/Git scope is written explicitly"
+    ],
+    "nextDecision": "Batch1 is paused by Owner. Do not open or implement until a new explicit resume instruction exists."
+  },
+  "agent0LatestProjectHandoff": {
+    "updatedAt": "2026-07-09 12:42 +08:00",
+    "status": "project_handoff_recorded_batch1_paused_code_still_closed",
+    "currentProjectState": "task0_complete_batch1_paused_by_owner_code_still_closed",
+    "report": "docs/Agent0+总控与集成/2026-07-09_12-42_Agent0_完整项目情况对接记录.md",
+    "snapshotJson": "docs/Agent0+总控与集成/2026-07-09_12-42_Agent0_project_handoff_snapshot.json",
+    "statusJson": "docs/Agent0+总控与集成/2026-07-09_12-42_Agent0_status.json",
+    "purpose": "Complete project situation handoff for Owner, top architect, or child Agents.",
+    "batch1PausedByOwner": true,
+    "batch1Open": false,
+    "codeImplementationAllowedNow": false,
+    "databaseMutationAllowedNow": false,
+    "productionReleaseAllowedNow": false,
+    "gitStagingAllowedNow": false
+  }
+}

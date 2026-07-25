@@ -1,0 +1,223 @@
+{
+  "schemaVersion": "larkix.calculation-book-package.v1",
+  "generatorVersion": "1.0.0",
+  "bookId": "larkix-ccm-flyback-reference-20260721",
+  "revision": "2026-07-21-r1",
+  "sourceDigest": "c81433c3b536b021abbf0a0727bd93410ca080de74e206d785d7957550947162",
+  "preview": false,
+  "routeBase": "derive.html?slug=",
+  "calculations": [
+    {
+      "equationId": "eq.pin-bcm",
+      "symbol": "P.inbcm",
+      "valueSi": 6,
+      "unit": "W",
+      "displayValue": "6 W",
+      "sentinel": false
+    },
+    {
+      "equationId": "eq.ipk-bcm",
+      "symbol": "I.pkbc",
+      "valueSi": 2.9814239699997196,
+      "unit": "A",
+      "displayValue": "2.981 A",
+      "sentinel": false
+    },
+    {
+      "equationId": "eq.duty-bcm",
+      "symbol": "D.bcm",
+      "valueSi": 0.6708203932499369,
+      "unit": "1",
+      "displayValue": "0.67082",
+      "sentinel": false
+    },
+    {
+      "equationId": "eq.reflected-voltage",
+      "symbol": "V.or",
+      "valueSi": 12.227131562726584,
+      "unit": "V",
+      "displayValue": "12.227 V",
+      "sentinel": true
+    },
+    {
+      "equationId": "eq.duty-ccm",
+      "symbol": "D.ccm",
+      "valueSi": 0.6708203932499369,
+      "unit": "1",
+      "displayValue": "0.67082",
+      "sentinel": true
+    },
+    {
+      "equationId": "eq.period",
+      "symbol": "T.sw",
+      "valueSi": 0.0000074074074074074075,
+      "unit": "s",
+      "displayValue": "7.407 μs",
+      "sentinel": false
+    },
+    {
+      "equationId": "eq.ton",
+      "symbol": "T.on",
+      "valueSi": 0.000004969039949999533,
+      "unit": "s",
+      "displayValue": "4.969 μs",
+      "sentinel": false
+    },
+    {
+      "equationId": "eq.toff",
+      "symbol": "T.off",
+      "valueSi": 0.0000024383674574078746,
+      "unit": "s",
+      "displayValue": "2.438 μs",
+      "sentinel": false
+    },
+    {
+      "equationId": "eq.delta-current",
+      "symbol": "ΔI.m",
+      "valueSi": 2.9814239699997196,
+      "unit": "A",
+      "displayValue": "2.981 A",
+      "sentinel": true
+    },
+    {
+      "equationId": "eq.pin-rated",
+      "symbol": "P.in",
+      "valueSi": 16,
+      "unit": "W",
+      "displayValue": "16 W",
+      "sentinel": false
+    },
+    {
+      "equationId": "eq.iin-average",
+      "symbol": "I.inavg",
+      "valueSi": 2.6666666666666665,
+      "unit": "A",
+      "displayValue": "2.667 A",
+      "sentinel": false
+    },
+    {
+      "equationId": "eq.ion-average",
+      "symbol": "I.onavg",
+      "valueSi": 3.975231959999626,
+      "unit": "A",
+      "displayValue": "3.975 A",
+      "sentinel": false
+    },
+    {
+      "equationId": "eq.i-valley",
+      "symbol": "I.valley",
+      "valueSi": 2.484519974999766,
+      "unit": "A",
+      "displayValue": "2.485 A",
+      "sentinel": true
+    },
+    {
+      "equationId": "eq.i-peak",
+      "symbol": "I.peak",
+      "valueSi": 5.465943944999486,
+      "unit": "A",
+      "displayValue": "5.466 A",
+      "sentinel": true
+    },
+    {
+      "equationId": "eq.i-primary-rms",
+      "symbol": "I.prirms",
+      "valueSi": 3.331294426345254,
+      "unit": "A",
+      "displayValue": "3.331 A",
+      "sentinel": true
+    },
+    {
+      "equationId": "eq.energy-transfer",
+      "symbol": "E.transfer",
+      "valueSi": 0.00011851851851851852,
+      "unit": "J",
+      "displayValue": "118.519 μJ",
+      "sentinel": false
+    },
+    {
+      "equationId": "eq.pin-closure",
+      "symbol": "P.check",
+      "valueSi": 16,
+      "unit": "W",
+      "displayValue": "16 W",
+      "sentinel": false
+    },
+    {
+      "equationId": "eq.pout-closure",
+      "symbol": "P.outcheck",
+      "valueSi": 12,
+      "unit": "W",
+      "displayValue": "12 W",
+      "sentinel": true
+    },
+    {
+      "equationId": "eq.primary-copper-loss",
+      "symbol": "P.cudc",
+      "valueSi": 0.2219504510999791,
+      "unit": "W",
+      "displayValue": "0.222 W",
+      "sentinel": false
+    },
+    {
+      "equationId": "eq.leakage-energy",
+      "symbol": "E.lkmax",
+      "valueSi": 0.000004481481481481482,
+      "unit": "J",
+      "displayValue": "4.481 μJ",
+      "sentinel": false
+    },
+    {
+      "equationId": "eq.leakage-power",
+      "symbol": "P.lkmax",
+      "valueSi": 0.605,
+      "unit": "W",
+      "displayValue": "0.605 W",
+      "sentinel": false
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ccm-flyback-reference-calculation-sheet",
+      "slug": "ccm-flyback-reference-calculation-sheet",
+      "nodeType": "derivation",
+      "symbol": "CalculationBook",
+      "title": "CCM 反激变压器计算书（来源可追溯参考版）",
+      "summary": "从同一 JSON 母版生成的 CCM 反激变压器计算书（来源可追溯参考版） L1 设计计算主线；未决输入闭环前保持签核阻断。",
+      "markdown": "> 状态：草稿 / 私有。本文中的场景值、候选器件与目标阈值必须按来源和状态解释；未决输入闭环前不得用于量产签核。\n\n## 1. 设计输入、符号与假设\n\n| 符号 | 数值 | 状态 | 来源或假设 |\n|---|---:|---|---|\n| $P_{out}$ | 12 W | user_confirmed | 用户确认的额定/边界工作点（2026-07-14） |\n| $P_{bcm}$ | 4.5 W | user_confirmed | 用户确认的额定/边界工作点（2026-07-14） |\n| $f_{sw}$ | 135 kHz | confirmed | 项目交接：拓扑与开关频率 |\n| $L_{m}$ | 10 μH | confirmed | AD26001R 变压器规格书 |\n| $V_{in}$ | 6 V | scenario | 低线一致性场景取 6 V |\n| $η$ | 0.75 | scenario | 一致性场景效率取 75%；4.5 W 与 12 W 两点效率近似相同 |\n| $R_{dcr}$ | 0.02 Ω | confirmed | AD26001R 变压器规格书 |\n| $L_{lk}$ | 0.3 μH | confirmed | AD26001R 变压器规格书 |\n| $N_{p}$ | 12 | assumption | 等效原边匝数暂按 12 匝解释 |\n| $A_{e}$ | 未解决 | unresolved | 未解决 |\n| $V_{clamp}$ | 未解决 | unresolved | 未解决 |\n| $R_{sense}$ | 未解决 | unresolved | 未解决 |\n\n当前假设：\n\n- 低线一致性场景取 6 V：项目设计资料存在 6 V 或 9 V 待确认选项；为与既有 DCM/CCM 两册闭合，取更严苛的 6 V。 替换证据：用 12 W 与 4.5 W 测试时的准确输入电压替换。\n- 一致性场景效率取 75%：75% 是项目初算 70%-80% 区间中点，并用于保持两功率点的演算一致。 替换证据：分别测量 4.5 W 与 12 W 工作点的输入功率和效率。\n- 4.5 W 与 12 W 两点效率近似相同：参考书使用输出功率比解释 CCM 电流位置；若效率不同，应改用输入功率比。 替换证据：分别测得两工作点效率并改用输入功率比。\n- 等效原边匝数暂按 12 匝解释：规格书绕制顺序显示两个 6 匝原边分段，但内部串接点尚未由供应商或低压匝比测试确认。 替换证据：供应商确认内部连接或执行低压匝比测试。\n\n## 2. BCM 边界反推\n\n### BCM 边界输入功率\n\n$$\nP_{inbcm} = P_{bcm} / η\n$$\n\n代入：$P_{bcm}$ = 4.5 W，$η$ = 0.75。\n\n结果：$P_{inbcm}$ ≈ **6 W**。\n\n适用范围：4.5 W 边界点采用一致性场景效率\n\n有效性边界：稳态功率平衡；效率被显式视为假设\n\n来源路径：数学/物理定义；效率定义 η=Pout/Pin 的代数变形。\n\n### BCM 峰值电流\n\n$$\nI_{pkbc} = sqrt(2·P_{inbcm} / (L_{m}·f_{sw}))\n$$\n{{derive:ccm-flyback-current-chain-derivation|CCM 电流链|purple}}\n\n代入：$P_{inbcm}$ = 6 W，$L_{m}$ = 10 μH，$f_{sw}$ = 135 kHz。\n\n结果：$I_{pkbc}$ ≈ **2.981 A**。\n\n适用范围：BCM 磁化电流每周期从零上升到峰值再回零\n\n有效性边界：边界模式、每周期传递能量近似等于 0.5·L·Ipk²\n\n来源路径：由电感储能与每周期功率闭合得到。\n\n### 由 BCM 峰值反推占空比\n\n$$\nD_{bcm} = I_{pkbc}·L_{m}·f_{sw} / V_{in}\n$$\n{{derive:ccm-flyback-current-chain-derivation|CCM 电流链|purple}}\n\n代入：$I_{pkbc}$ = 2.981 A，$L_{m}$ = 10 μH，$f_{sw}$ = 135 kHz，$V_{in}$ = 6 V。\n\n结果：$D_{bcm}$ ≈ **0.67082**。\n\n适用范围：BCM 导通期间电流从零线性上升\n\n有效性边界：输入电压与电感在单周期内近似恒定\n\n来源路径：由 V=L·di/dt 积分得到。\n\n### 反推反射电压\n\n$$\nV_{or} = V_{in}·D_{bcm} / (1-D_{bcm})\n$$\n{{derive:ccm-flyback-current-chain-derivation|伏秒与电流链|purple}}\n\n代入：$V_{in}$ = 6 V，$D_{bcm}$ = 0.67082。\n\n结果：$V_{or}$ ≈ **12.227 V**；跨输出哨兵结果。\n\n适用范围：理想稳态反激伏秒平衡的一致性场景\n\n有效性边界：忽略开关、绕组和整流压降；结果不是实测 Vor\n\n来源路径：由 Vin·D=Vor·(1-D) 解出。\n\n\n## 3. 12 W CCM 主设计链\n\n### CCM 稳态占空比\n\n$$\nD_{ccm} = V_{or} / (V_{in}+V_{or})\n$$\n{{derive:ccm-flyback-current-chain-derivation|CCM 电流链|purple}}\n\n代入：$V_{or}$ = 12.227 V，$V_{in}$ = 6 V。\n\n结果：$D_{ccm}$ ≈ **0.67082**；跨输出哨兵结果。\n\n适用范围：理想稳态 CCM 反激\n\n有效性边界：忽略器件压降；须以 Vds 平台实测 Vor 替换一致性值\n\n来源路径：由伏秒平衡解出。\n\n### 开关周期\n\n$$\nT_{sw} = 1 / f_{sw}\n$$\n\n代入：$f_{sw}$ = 135 kHz。\n\n结果：$T_{sw}$ ≈ **7.407 μs**。\n\n适用范围：固定频率工作点\n\n有效性边界：$f_{sw}$>0\n\n来源路径：数学/物理定义；频率与周期定义。\n\n### 导通时间\n\n$$\nT_{on} = D_{ccm}·T_{sw}\n$$\n\n代入：$D_{ccm}$ = 0.67082，$T_{sw}$ = 7.407 μs。\n\n结果：$T_{on}$ ≈ **4.969 μs**。\n\n适用范围：固定频率 CCM 参考工作点\n\n有效性边界：0<$D_{ccm}$<1\n\n来源路径：数学/物理定义；占空比定义。\n\n### 关断/退磁时间\n\n$$\nT_{off} = (1-D_{ccm})·T_{sw}\n$$\n\n代入：$D_{ccm}$ = 0.67082，$T_{sw}$ = 7.407 μs。\n\n结果：$T_{off}$ ≈ **2.438 μs**。\n\n适用范围：固定频率 CCM 参考工作点\n\n有效性边界：忽略死区和过渡时间\n\n来源路径：数学/物理定义；周期分配定义。\n\n### 磁化电流峰峰值纹波\n\n$$\nΔI_{m} = V_{in}·D_{ccm} / (L_{m}·f_{sw})\n$$\n{{derive:ccm-flyback-current-chain-derivation|电流纹波推导|purple}}\n\n代入：$V_{in}$ = 6 V，$D_{ccm}$ = 0.67082，$L_{m}$ = 10 μH，$f_{sw}$ = 135 kHz。\n\n结果：$ΔI_{m}$ ≈ **2.981 A**；跨输出哨兵结果。\n\n适用范围：导通区间电感两端电压近似为 $V_{in}$\n\n有效性边界：磁化电感近似线性，忽略开关压降\n\n来源路径：由 V=L·di/dt 对导通区间积分。\n\n### 额定输入功率\n\n$$\nP_{in} = P_{out} / η\n$$\n\n代入：$P_{out}$ = 12 W，$η$ = 0.75。\n\n结果：$P_{in}$ ≈ **16 W**。\n\n适用范围：12 W 一致性场景\n\n有效性边界：效率为显式场景假设\n\n来源路径：数学/物理定义；效率定义的代数变形。\n\n### 输入平均电流\n\n$$\nI_{inavg} = P_{in} / V_{in}\n$$\n\n代入：$P_{in}$ = 16 W，$V_{in}$ = 6 V。\n\n结果：$I_{inavg}$ ≈ **2.667 A**。\n\n适用范围：稳态直流输入\n\n有效性边界：输入电压取周期平均值\n\n来源路径：数学/物理定义；直流功率定义。\n\n### 导通区间平均原边电流\n\n$$\nI_{onavg} = I_{inavg} / D_{ccm}\n$$\n{{derive:ccm-flyback-current-chain-derivation|CCM 电流链|purple}}\n\n代入：$I_{inavg}$ = 2.667 A，$D_{ccm}$ = 0.67082。\n\n结果：$I_{onavg}$ ≈ **3.975 A**。\n\n适用范围：反激原边只在开关导通期间从输入取电流\n\n有效性边界：稳态、忽略输入电容高频纹波分流\n\n来源路径：由整周期平均电流等于 D 乘导通区间平均值。\n\n### CCM 谷值电流\n\n$$\nI_{valley} = I_{onavg} - ΔI_{m}/2\n$$\n{{derive:ccm-flyback-current-chain-derivation|峰谷电流推导|purple}}\n\n代入：$I_{onavg}$ = 3.975 A，$ΔI_{m}$ = 2.981 A。\n\n结果：$I_{valley}$ ≈ **2.485 A**；跨输出哨兵结果。\n\n适用范围：导通电流为围绕 $I_{onavg}$ 的线性斜坡\n\n有效性边界：$I_{valley}$>0 才能自洽为 CCM\n\n来源路径：由线性斜坡平均值等于峰谷中点。\n\n### CCM 峰值电流\n\n$$\nI_{peak} = I_{onavg} + ΔI_{m}/2\n$$\n{{derive:ccm-flyback-current-chain-derivation|峰谷电流推导|purple}}\n\n代入：$I_{onavg}$ = 3.975 A，$ΔI_{m}$ = 2.981 A。\n\n结果：$I_{peak}$ ≈ **5.466 A**；跨输出哨兵结果。\n\n适用范围：导通电流为围绕 $I_{onavg}$ 的线性斜坡\n\n有效性边界：磁件未饱和且采样链未截断电流\n\n来源路径：由线性斜坡平均值等于峰谷中点。\n\n### 原边 MOSFET RMS 电流\n\n$$\nI_{prirms} = sqrt[D_{ccm}/3·(I_{valley²}+I_{valley}·I_{peak}+I_{peak²})]\n$$\n{{derive:triangular-wave-rms-foundation|三角斜坡 RMS 基础推导|blue}}\n\n代入：$D_{ccm}$ = 0.67082，$I_{valley}$ = 2.485 A，$I_{peak}$ = 5.466 A。\n\n结果：$I_{prirms}$ ≈ **3.331 A**；跨输出哨兵结果。\n\n适用范围：开关导通区间为线性斜坡，关断区间原边开关电流为零\n\n有效性边界：周期稳态且波形可用线性斜坡近似\n\n来源路径：由分段线性电流平方积分得到。\n\n\n## 4. 闭合与应力量级\n\n### 每周期传递能量\n\n$$\nE_{transfer} = 0.5·L_{m}·(I_{peak²}-I_{valley²})\n$$\n\n代入：$L_{m}$ = 10 μH，$I_{peak}$ = 5.466 A，$I_{valley}$ = 2.485 A。\n\n结果：$E_{transfer}$ ≈ **118.519 μJ**。\n\n适用范围：CCM 每周期只传递峰谷储能差\n\n有效性边界：磁化电感线性且忽略漏感能量\n\n来源路径：数学/物理定义；线性电感储能 E=0.5·L·I² 的峰谷差。\n\n### 输入功率闭合检查\n\n$$\nP_{check} = E_{transfer}·f_{sw}\n$$\n\n代入：$E_{transfer}$ = 118.519 μJ，$f_{sw}$ = 135 kHz。\n\n结果：$P_{check}$ ≈ **16 W**。\n\n适用范围：周期稳态能量闭合\n\n有效性边界：每周期传递能量重复且无漏脉冲\n\n来源路径：数学/物理定义；功率等于每周期能量乘频率。\n\n### 输出功率闭合检查\n\n$$\nP_{outcheck} = η·P_{check}\n$$\n\n代入：$η$ = 0.75，$P_{check}$ = 16 W。\n\n结果：$P_{outcheck}$ ≈ **12 W**；跨输出哨兵结果。\n\n适用范围：一致性场景效率假设\n\n有效性边界：不是独立测量，只用于演算闭合\n\n来源路径：数学/物理定义；效率定义。\n\n### 原边直流铜损分量（25°C）\n\n$$\nP_{cudc} = I_{prirms²}·R_{dcr}\n$$\n\n代入：$I_{prirms}$ = 3.331 A，$R_{dcr}$ = 0.02 Ω。\n\n结果：$P_{cudc}$ ≈ **0.222 W**。\n\n适用范围：DCR 最大值@25°C 的直流分量保守估算\n\n有效性边界：不含热态电阻、趋肤与邻近效应，不能当作总绕组损耗上限\n\n来源路径：数学/物理定义；电阻损耗 P=I_rms²R。\n\n### 最大漏感能量\n\n$$\nE_{lkmax} = 0.5·L_{lk}·I_{peak²}\n$$\n\n代入：$L_{lk}$ = 0.3 μH，$I_{peak}$ = 5.466 A。\n\n结果：$E_{lkmax}$ ≈ **4.481 μJ**。\n\n适用范围：以规格书漏感上限和场景峰值估算吸收能量量级\n\n有效性边界：RCD 实际损耗还取决于钳位电压、耦合与波形\n\n来源路径：数学/物理定义；线性电感储能公式。\n\n### 最大漏感吸收功率量级\n\n$$\nP_{lkmax} = E_{lkmax}·f_{sw}\n$$\n\n代入：$E_{lkmax}$ = 4.481 μJ，$f_{sw}$ = 135 kHz。\n\n结果：$P_{lkmax}$ ≈ **0.605 W**。\n\n适用范围：每周期均产生相同漏感能量的上界量级\n\n有效性边界：不能直接替代 RCD 电阻实耗和温升测试\n\n来源路径：数学/物理定义；功率等于每周期能量乘频率。\n\n## 5. 容差、验证与结论\n\n- [provisional] 在 6 V/75% 一致性场景下，12 W 点 $I_{valley}$>0，因此参考演算工作模式为 CCM。\n- [blocked] 该计算书用于证明来源可追溯的计算链与生成流程，不替代原理图、实测和量产签核。\n\n裕量：\n\n- [pass] CCM 谷值裕量：$I_{valley}$ > 0 A\n- [pass] 输出功率闭合：与 12 W 场景输入在显示精度内一致\n- [unresolved] MOSFET 电压降额：需用 Vds 实测与钳位数据计算，当前结果仅为漏感功率量级\n\n阻断签核的必填项：\n\n- 磁芯有效截面积 Ae：取得准确磁芯型号/尺寸表或供应商数据。\n- Vds 钳位电压与残余振铃：在输入与负载角点同步测量 Vgs/Vds/原边电流。\n- 实际 Rsense 与 ISEN 网络：取得原理图并测量 ISEN 斜坡、门限与前沿尖峰。\n- 4.5 W 与 12 W 工作点的 Vin/Pin/η/Vor/峰谷电流实测：按同一输入工况采集两功率点的准确功率与同步波形。\n- 各输出轨负载与绕组 pin/net 映射：取得 AUX 原理图和负载预算并由低压匝比测试交叉确认。\n- 磁件、开关、整流器与吸收器完整损耗/热路径：补齐热态 AC 电阻、磁芯损耗曲线、器件损耗、热阻和温升测试。\n- 多路 CCM 反激环路与补偿模型：取得反馈/补偿网络与等效负载，建立模型并测 Bode 和瞬态。\n\n## 风险与验证\n\n- **high**：6 V、75% 与反推 Vor 是一致性场景，不是生产输入规范或实测值。 处置：将两工作点的 Vin、Pin、效率、Vor、Ivalley、Ipeak 实测回填后重新生成。\n- **high**：缺少 Ae、热态 Bsat、磁芯损耗、气隙和真实匝比，无法签核磁通与磁件温升。 处置：取得磁芯数据与供应商确认，并做低压匝比和热态波形测试。\n- **high**：多路输出负载与绕组映射未确认，不能把等效副边电流直接用于整流器和电容选型。 处置：取得原理图 pin/net 与各轨负载，逐路建模和交叉负载测试。\n- **high**：占空比约 67%，峰值电流模式需重点验证斜坡补偿、次谐波和 RHP 零点带宽限制。 处置：取得补偿/采样网络，建立小信号模型并测 Bode、周期交替电流与负载瞬态。\n\n计划验证：\n\n- [planned] 输入/输出功率闭合：测量功率与更新后的 JSON 计算在仪器不确定度内闭合。\n- [planned] CCM 峰谷电流与 Vds 平台：12 W 时下一周期起点显著大于零，峰谷值可重复且 Vds 在降额范围内。\n- [planned] 低压匝比与绕组映射：确认等效 Np、各 Ns 与极性，消除 12 匝假设。\n- [planned] 电流采样与限流：最坏角点不误触发且短路/过流在安全峰值内可靠保护。\n- [planned] 多路输出纹波与交叉调整：所有轨满足纹波、反压、RMS、温升和寿命要求。\n- [planned] CCM 环路、次谐波与负载瞬态：交越频率低于最低控制限制并具有批准的增益/相位裕量，无二分频或低频振荡。\n- [planned] 热态损耗与降额：结温、磁芯、绕组、电容与吸收器均满足批准的热与寿命降额。\n\n> 只有在必填输入、实测波形、热与环路证据全部回填后，才能把本草稿转入评审。",
+      "cover": "",
+      "accentColor": "purple",
+      "tags": "电力电子, Flyback, 计算书, L1",
+      "publishStatus": "draft",
+      "visibilityStatus": "private"
+    },
+    {
+      "id": "ccm-flyback-current-chain-derivation",
+      "slug": "ccm-flyback-current-chain-derivation",
+      "nodeType": "derivation",
+      "symbol": "I.peak / I.valley",
+      "title": "CCM 反激峰谷电流与占空比工程推导",
+      "summary": "从稳态伏秒、V=L·di/dt、功率平衡与分段平均连续推出占空比、纹波和峰谷电流，不把公式作为无来源结论。",
+      "markdown": "> 推导层级：L2_engineering_derivation。父公式：$I_{peak}$。\n\n从稳态伏秒、V=L·di/dt、功率平衡与分段平均连续推出占空比、纹波和峰谷电流，不把公式作为无来源结论。\n\n## 前提与适用范围\n\n- 前置知识：稳态反激开关状态；电感伏秒平衡；输入功率平衡；线性磁化电感\n- 假设：低线一致性场景取 6 V；一致性场景效率取 75%；4.5 W 与 12 W 两点效率近似相同\n- 有效范围：固定频率稳态 CCM；磁化电感近似线性；忽略器件压降；$I_{valley}$ 必须大于零。\n\n## 逐步推导\n\n### 1. 一个周期磁化电感的净伏秒为零。\n\n$$\nV_{in}·D = V_{or}·(1-D)\n$$\n\n稳态时每周期磁化电流回到相同起点。\n\n依据：电感周期稳态伏秒平衡。\n\n### 2. 解伏秒平衡得到占空比。\n\n$$\nD = V_{or} / (V_{in}+V_{or})\n$$\n\n将 D 的项移到方程同一侧并除以 $V_{in}$+$V_{or}$。\n\n依据：代数变形。\n\n### 3. 导通区间的磁化电流增量由电感本构关系积分。\n\n$$\nΔI = ∫(V_{in}/L_{m})dt = V_{in}·D/(L_{m}·f_{sw})\n$$\n\n导通时间为 D/$f_{sw}$，且该区间电感电压近似恒定。\n\n依据：V=L·di/dt 的定电压积分。\n\n### 4. 整周期输入平均电流由输入功率得到。\n\n$$\nI_{inavg} = P_{out}/(η·V_{in})\n$$\n\n$P_{in}$=$P_{out}$/η 且直流输入 $P_{in}$=$V_{in}$·$I_{inavg}$。\n\n依据：功率与效率定义。\n\n### 5. 输入只在原边开关导通期间提供磁化电流。\n\n$$\nI_{inavg} = D·I_{onavg} ⇒ I_{onavg}=I_{inavg}/D\n$$\n\n关断期间原边输入电流理想为零。\n\n依据：分段波形的周期平均。\n\n### 6. 线性斜坡的平均值是峰谷中点。\n\n$$\nI_{valley}=I_{onavg}-ΔI/2；I_{peak}=I_{onavg}+ΔI/2\n$$\n\n导通电流从谷值线性上升到峰值。\n\n依据：线性函数区间平均值。\n\n### 7. 最终用谷值判定公式适用模式。\n\n$$\nI_{valley}>0 ⇒ CCM；I_{valley}=0 ⇒ BCM\n$$\n\nCCM 的定义是磁化电流在周期边界不回到零。\n\n依据：工作模式定义。\n\n## 量纲检查\n\nD 为 1；ΔI 的量纲 V·s/H=A；P/(V·D) 的量纲 A，因此 $I_{valley}$ 与 $I_{peak}$ 均为 A。\n\n[返回上一级计算书](./derive.html?slug=ccm-flyback-reference-calculation-sheet)",
+      "cover": "",
+      "accentColor": "purple",
+      "tags": "电力电子, Flyback, L2, 公式推导",
+      "publishStatus": "draft",
+      "visibilityStatus": "private"
+    },
+    {
+      "id": "triangular-wave-rms-foundation",
+      "slug": "triangular-wave-rms-foundation",
+      "nodeType": "derivation",
+      "symbol": "I.rms",
+      "title": "线性斜坡电流 RMS 的基础积分推导",
+      "summary": "该式不是经验系数，而是线性斜坡在导通占比 D 内的平方积分结果。",
+      "markdown": "> 推导层级：L3_foundation_derivation。父公式：$I_{prirms}$。\n\n该式不是经验系数，而是线性斜坡在导通占比 D 内的平方积分结果。\n\n## 前提与适用范围\n\n- 前置知识：RMS 定义；线性插值；多项式定积分\n- 假设：无额外工程假设\n- 有效范围：电流在导通区间由 $I_{valley}$ 线性变化到 $I_{peak}$，关断区间为零。\n\n## 逐步推导\n\n### 1. 从整周期 RMS 定义出发。\n\n$$\nI_{rms²}=(1/T)∫₀ᵀ i²(t)dt\n$$\n\nRMS 是平方平均的平方根。\n\n依据：RMS 定义。\n\n### 2. 把导通区间归一化为 x∈[0,1] 的线性电流。\n\n$$\ni(x)=I_{valley}+(I_{peak}-I_{valley})x\n$$\n\n定电感、定电压下 di/dt 为常数。\n\n依据：线性插值。\n\n### 3. 对线性电流平方积分。\n\n$$\n∫₀¹i²(x)dx=(I_{valley²}+I_{valley}·I_{peak}+I_{peak²})/3\n$$\n\n展开二次多项式并逐项积分。\n\n依据：多项式定积分。\n\n### 4. 导通区间只占整周期 D。\n\n$$\nI_{prirms}=sqrt{D/3·(I_{valley²}+I_{valley}·I_{peak}+I_{peak²})}\n$$\n\n关断区间原边开关电流为零，平方积分只乘导通占比 D。\n\n依据：分段积分合并。\n\n## 量纲检查\n\n括号内为 A²，D/3 为无量纲，平方根后为 A。\n\n[返回上一级计算书](./derive.html?slug=ccm-flyback-current-chain-derivation)",
+      "cover": "",
+      "accentColor": "blue",
+      "tags": "电力电子, Flyback, L3, 公式推导",
+      "publishStatus": "draft",
+      "visibilityStatus": "private"
+    }
+  ]
+}

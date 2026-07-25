@@ -11,7 +11,7 @@ const { createDatabase } = require("./lib/db");
 const { createSeo } = require("./lib/seo");
 const { createUploadStore } = require("./lib/uploads");
 const { markdownToDocx } = require("./lib/md2doc");
-const { validatePostPayload, validateProjectPayload, validateUploadPayload } = require("./lib/validators");
+const { validatePostPayload, validateProjectPayload, validateKnowledgeNodePayload, validateUploadPayload } = require("./lib/validators");
 
 const root = __dirname;
 const dataDir = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : root;
@@ -284,16 +284,24 @@ const {
   withTransaction,
   allPosts,
   allProjects,
+  allKnowledgeNodes,
+  publicKnowledgeNodeBySlug,
+  adminKnowledgeNode,
   listRevisions,
+  listKnowledgeNodeRevisions,
   restoreRevision,
+  restoreKnowledgeNodeRevision,
   savePost,
   saveProject,
+  saveKnowledgeNode,
   restorePost,
   restoreProject,
+  restoreKnowledgeNode,
   hardDeletePost,
   hardDeleteProject,
   softDeletePost,
-  softDeleteProject
+  softDeleteProject,
+  softDeleteKnowledgeNode
 } = contentStore;
 const { saveUpload, uploads } = uploadStore;
 const seo = createSeo({ siteUrl, allPosts, allProjects, text });
@@ -316,6 +324,7 @@ function exportContent() {
     exportedAt: new Date().toISOString(),
     posts: allPosts(true),
     projects: allProjects(true),
+    knowledgeNodes: allKnowledgeNodes(true),
     siteLayout: siteLayout(),
     uploads: uploads()
   };
@@ -1043,9 +1052,30 @@ function recordLoginFailure(key) {
   loginFailures.set(key, record);
 }
 
+function knowledgeNodeAuditMetadata(result) {
+  const node = result?.node || {};
+  const linkSummary = result?.linkSummary || {};
+  return {
+    slug: node.slug || "",
+    publishStatus: node.publishStatus || "",
+    visibilityStatus: node.visibilityStatus || "",
+    accentColor: node.accentColor || "",
+    linksCount: Number(linkSummary.linksCount || 0),
+    danglingCount: Number(linkSummary.danglingCount || 0)
+  };
+}
+
 async function api(req, res, pathname) {
   if (pathname === "/api/content.js" && req.method === "GET") return contentScript(res);
   if (pathname === "/api/content" && req.method === "GET") return json(res, 200, publicContentPayload());
+  if (pathname === "/api/knowledge-nodes" && req.method === "GET") return json(res, 200, { nodes: allKnowledgeNodes(false) });
+  const publicKnowledgeNode = pathname.match(/^\/api\/knowledge-nodes\/([^/]+)$/);
+  if (publicKnowledgeNode && req.method === "GET") {
+    const slug = decodeURIComponent(publicKnowledgeNode[1]);
+    const node = publicKnowledgeNodeBySlug(slug);
+    if (!node) return json(res, 404, { error: "not found" });
+    return json(res, 200, { node });
+  }
   if (pathname === "/api/elec/samples" && req.method === "GET") return elecResponse(res, 200, elecSamples());
   if (pathname === "/api/elec/llm-handoff" && req.method === "GET") return elecHandoff(req, res);
   if (pathname === "/api/elec/build" && req.method === "POST") return elecBuild(res, await readBody(req, elecInputLimitBytes + 4096));
@@ -1093,7 +1123,9 @@ async function api(req, res, pathname) {
   if (!user) return;
   if (!requireCsrf(req, res, user)) return;
 
-  if (pathname === "/api/admin/content" && req.method === "GET") return json(res, 200, { posts: allPosts(true), projects: allProjects(true), siteLayout: siteLayout() });
+  if (pathname === "/api/admin/content" && req.method === "GET") {
+    return json(res, 200, { posts: allPosts(true), projects: allProjects(true), knowledgeNodes: allKnowledgeNodes(true), siteLayout: siteLayout() });
+  }
   if (pathname === "/api/admin/health" && req.method === "GET") return json(res, 200, healthPayload({ detailed: true }));
   if (pathname === "/api/admin/export" && req.method === "GET") {
     logAudit(db, req, user, "content_export", "content", "all");
@@ -1107,6 +1139,78 @@ async function api(req, res, pathname) {
     return json(res, 200, { siteLayout: nextLayout });
   }
   if (pathname === "/api/uploads" && req.method === "GET") return json(res, 200, { uploads: uploads() });
+
+  if (pathname === "/api/admin/knowledge-nodes" && req.method === "GET") {
+    return json(res, 200, { nodes: allKnowledgeNodes(true) });
+  }
+
+  if (pathname === "/api/admin/knowledge-nodes" && req.method === "POST") {
+    const body = validateKnowledgeNodePayload(await readBody(req));
+    let saved;
+    withTransaction(() => {
+      saved = saveKnowledgeNode({ ...body, actor: user });
+      logAudit(db, req, user, "knowledge_node_save", "knowledge_node", saved.node.id, knowledgeNodeAuditMetadata(saved));
+    });
+    return json(res, 200, { node: saved.node, nodes: allKnowledgeNodes(true), warnings: saved.warnings });
+  }
+
+  const knowledgeNodeRevisionRestore = pathname.match(/^\/api\/admin\/knowledge-nodes\/([^/]+)\/revisions\/(\d+)\/restore$/);
+  if (knowledgeNodeRevisionRestore && req.method === "POST") {
+    const id = decodeURIComponent(knowledgeNodeRevisionRestore[1]);
+    const revisionId = Number(knowledgeNodeRevisionRestore[2]);
+    let restored;
+    withTransaction(() => {
+      restored = restoreKnowledgeNodeRevision(id, revisionId, { actor: user });
+      logAudit(db, req, user, "knowledge_node_revision_restore", "knowledge_node", restored.node.id, {
+        revisionId,
+        slug: restored.node.slug
+      });
+    });
+    return json(res, 200, { node: restored.node, nodes: allKnowledgeNodes(true), revisions: listKnowledgeNodeRevisions(restored.node.id), warnings: restored.warnings });
+  }
+
+  const knowledgeNodeRevisions = pathname.match(/^\/api\/admin\/knowledge-nodes\/([^/]+)\/revisions$/);
+  if (knowledgeNodeRevisions && req.method === "GET") {
+    const id = decodeURIComponent(knowledgeNodeRevisions[1]);
+    const node = adminKnowledgeNode(id);
+    if (!node) return json(res, 404, { error: "not found" });
+    return json(res, 200, { node, revisions: listKnowledgeNodeRevisions(node.id) });
+  }
+
+  const knowledgeNodeRestore = pathname.match(/^\/api\/admin\/knowledge-nodes\/([^/]+)\/restore$/);
+  if (knowledgeNodeRestore && req.method === "POST") {
+    const id = decodeURIComponent(knowledgeNodeRestore[1]);
+    let node;
+    withTransaction(() => {
+      node = restoreKnowledgeNode(id, { actor: user });
+      logAudit(db, req, user, "knowledge_node_restore", "knowledge_node", node.id, {
+        slug: node.slug,
+        symbol: node.symbol
+      });
+    });
+    return json(res, 200, { node, nodes: allKnowledgeNodes(true), warnings: [] });
+  }
+
+  const knowledgeNodeDetail = pathname.match(/^\/api\/admin\/knowledge-nodes\/([^/]+)$/);
+  if (knowledgeNodeDetail && req.method === "GET") {
+    const id = decodeURIComponent(knowledgeNodeDetail[1]);
+    const node = adminKnowledgeNode(id);
+    if (!node) return json(res, 404, { error: "not found" });
+    return json(res, 200, { node, revisions: listKnowledgeNodeRevisions(node.id) });
+  }
+
+  if (knowledgeNodeDetail && req.method === "DELETE") {
+    const id = decodeURIComponent(knowledgeNodeDetail[1]);
+    let node;
+    withTransaction(() => {
+      node = softDeleteKnowledgeNode(id, { actor: user });
+      logAudit(db, req, user, "knowledge_node_soft_delete", "knowledge_node", node.id, {
+        slug: node.slug,
+        symbol: node.symbol
+      });
+    });
+    return json(res, 200, { node, nodes: allKnowledgeNodes(true), warnings: [] });
+  }
 
   if (pathname === "/api/posts" && req.method === "POST") {
     const body = validatePostPayload(await readBody(req));
@@ -1259,6 +1363,7 @@ const publicStaticFiles = new Set([
   "/404.html",
   "/category.html",
   "/category-page.js",
+  "/derive.html",
   "/index.html",
   "/maker.html",
   "/miniapps.html",

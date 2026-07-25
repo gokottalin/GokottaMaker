@@ -8,7 +8,12 @@
     "start": "node --experimental-sqlite server.js",
     "dev": "node --experimental-sqlite --watch server.js",
     "check:version": "node scripts/check-version.js",
-    "test:markdown": "node scripts/test-markdown-renderer.js"
+    "test:markdown": "node scripts/test-markdown-renderer.js",
+    "test:calculation-book": "node --experimental-sqlite scripts/test-calculation-book.js",
+    "codex:handoff": "node scripts/codex-handoff.js",
+    "codex:contract": "node scripts/codex-governance.js contract",
+    "codex:resources": "node scripts/codex-governance.js resources",
+    "codex:check": "node scripts/codex-governance.js all"
   },
   "engines": {
     "node": ">=22.5.0"

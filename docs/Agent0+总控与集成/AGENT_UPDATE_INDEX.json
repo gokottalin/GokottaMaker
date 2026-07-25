@@ -1,0 +1,288 @@
+{
+  "schemaVersion": 1,
+  "lastUpdatedAt": "2026-07-09 12:42 +08:00",
+  "updatedBy": "Agent0",
+  "purpose": "Agent0-maintained index of latest known Agent reports. Agent00 may update architecture-gate countersign state. Child Agents must not edit this file directly.",
+  "gitHead": "300e426",
+  "gitStatusSummary": "main...origin/main, governance and Agent report batch untracked; complete project handoff recorded; Batch1 remains paused by Owner and closed",
+  "monitoringProtocolVersion": 1,
+  "activeDispatchPath": "ACTIVE_AGENT_DISPATCH.json",
+  "activeDispatchId": "Agent0-2026-06-19-2047-derivation-network-child-agent-dispatch",
+  "notes": [
+    "2026-06-21 Agent0 startup scan consumed new Agent2, Agent3, Agent3C, Agent4, Agent5, Agent7, Agent8, Agent20, Agent101 and Agent1 status JSON files.",
+    "Current code version remains V2.4.10+20260528-001 at commit 300e426; latest work is documentation and interface-design governance, not implementation.",
+    "Implementation and production release remain blocked until Agent00 resolves implementation-detail architecture decisions, with Agent100 as optional technical review, plus Agent101/Agent20/Agent1 release inputs.",
+    "Agent3C, Agent1 current active-dispatch status, and Agent8 P2 status have been added in this scan to close previously reported missing status gaps.",
+    "2026-06-21 18:30 Agent0 re-read latest contracts and ran allowed post-convergence checks: git diff --check, check:version, test:markdown, and key JSON parse checks all passed; implementation remains blocked.",
+    "2026-06-21 18:38 Agent0 converged all currently returned child-Agent information; Agent3C missing-input blocker is resolved but Agent3 parent refresh is still required. Implementation and release remain blocked by Agent00/Agent100 decisions.",
+    "2026-06-21 18:53 Agent00 countersigned project state: active derivation-network request has not entered code implementation. Git verification found trackedChangedCount=0, stagedChangedCount=0, trackedImplementationLike=[], stagedImplementationLike=[], untrackedImplementationLike=[].",
+    "2026-06-21 19:01 Agent00 re-adjudicated after rereading ACTIVE_AGENT_DISPATCH.json, AGENT_UPDATE_INDEX.json, and git status. The project still has not entered code implementation; implementation gate remains closed.",
+    "2026-06-21 19:12 Agent00 resolved the nine implementation-detail architecture decisions and authorized Agent0 to design the implementation batch. Child-Agent code implementation remains closed until Agent0 publishes that batch and gates are satisfied.",
+    "2026-06-21 19:44 Agent0 published implementation batch design from Agent00 decisions. Only Task0A Agent101, Task0B Agent3, Task0C Agent20, and Task0D Agent1 are open; Batch 1-9 implementation remains planned_not_open.",
+    "2026-07-07 15:15 Agent0 converged all currently returned Task0 information: Task0B Agent3 and Task0C Agent20 are complete; Task0A Agent101 and Task0D Agent1 are still missing post-19:44 returns; Batch 1 remains closed.",
+    "2026-07-08 23:15 Agent0 converged Agent101 and Agent1 post-decision returns; Task0A-D complete; Batch1 is ready for an explicit opening decision but remains closed and code/prod/db changes are forbidden.",
+    "2026-07-09 00:00 Owner paused next Batch1 round. Task0A-D remain complete, but Batch1 must not open or implement until Owner explicitly resumes it.",
+    "2026-07-09 12:42 Agent0 recorded a complete project situation handoff and machine-readable snapshot. Batch1 remains paused by Owner; no code, migration, release, or Git staging is authorized."
+  ],
+  "agents": {
+    "Agent00": {
+      "latestStatusPath": "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_status.json",
+      "latestReportPath": "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_九项实现前架构裁决与Agent0实现批次授权.md",
+      "lastSeenAt": "2026-06-21 19:12 +08:00",
+      "status": "decisions_resolved_agent0_batch_design_authorized_code_closed",
+      "riskLevel": "high",
+      "volumeStatus": "watch",
+      "reportingState": "status_json_present",
+      "unresolvedDecisions": [],
+      "requires": [
+        "Agent0 implementation batch design",
+        "Agent100 optional technical review for high-risk decisions",
+        "Agent3 parent refresh",
+        "Agent101 explicit staging approval",
+        "Agent20 regression readiness before implementation",
+        "Agent1 release gate before migration or release"
+      ]
+    },
+    "Agent0": {
+      "latestStatusPath": "docs/Agent0+总控与集成/2026-07-09_12-42_Agent0_status.json",
+      "latestReportPath": "docs/Agent0+总控与集成/2026-07-09_12-42_Agent0_完整项目情况对接记录.md",
+      "latestDispatchJsonPath": "ACTIVE_AGENT_DISPATCH.json",
+      "lastSeenAt": "2026-07-09 12:42 +08:00",
+      "status": "project_handoff_recorded_batch1_paused_code_still_closed",
+      "riskLevel": "medium",
+      "volumeStatus": "watch",
+      "reportingState": "status_json_present",
+      "openNow": [],
+      "completedNow": [
+        "Task0A Agent101",
+        "Task0B Agent3",
+        "Task0C Agent20",
+        "Task0D Agent1",
+        "complete project situation handoff"
+      ],
+      "unresolvedDecisions": [],
+      "requires": [
+        "Owner explicit resume instruction before Batch1 open dispatch"
+      ],
+      "pausedNow": [
+        "Batch1"
+      ],
+      "latestSnapshotPath": "docs/Agent0+总控与集成/2026-07-09_12-42_Agent0_project_handoff_snapshot.json",
+      "currentProjectState": "task0_complete_batch1_paused_by_owner_code_still_closed"
+    },
+    "Agent1": {
+      "latestStatusPath": "docs/Agent1+运维与发布稳定性/2026-07-07_16-53_Agent1_status.json",
+      "latestReportPath": "docs/Agent1+运维与发布稳定性/2026-07-07_16-53_Agent1_裁决后迁移备份回滚门禁补齐.md",
+      "lastSeenAt": "2026-07-07 16:53 +08:00",
+      "status": "task0d_complete_release_gate_ready_no_deploy",
+      "riskLevel": "high",
+      "volumeStatus": "watch",
+      "reportingState": "status_json_present",
+      "unresolvedDecisions": [
+        "rollback.sh default SERVICE_NAME still needs physical closure before production release"
+      ],
+      "requires": [
+        "Agent0 explicit Batch1 open before migration",
+        "backup verification and restore dry-run before real migration",
+        "rollback service-name closure before production release"
+      ]
+    },
+    "Agent101": {
+      "latestStatusPath": "docs/Agent101-Git/2026-07-07_16-25_Agent101_status.json",
+      "latestReportPath": "docs/Agent101-Git/2026-07-07_16-25_Agent101_裁决后治理入库显式staging清单.md",
+      "lastSeenAt": "2026-07-07 16:25 +08:00",
+      "status": "task0a_complete_staging_plan_ready_no_git_action",
+      "riskLevel": "medium",
+      "volumeStatus": "ok",
+      "reportingState": "status_json_present",
+      "unresolvedDecisions": [
+        "actual staging still requires explicit Owner/Agent0 approval"
+      ],
+      "requires": [
+        "no git add .",
+        "explicit path-level staging list before any staging"
+      ]
+    },
+    "Agent2": {
+      "latestStatusPath": "docs/Agent2+后端与数据模型/2026-06-20_11-26_Agent2_status.json",
+      "latestReportPath": "docs/Agent2+后端与数据模型/2026-06-20_11-26_Agent2_子Agent结果复测与收敛汇总.md",
+      "lastSeenAt": "2026-06-20 11:26 +08:00",
+      "status": "ready_for_agent0_convergence",
+      "riskLevel": "high",
+      "volumeStatus": "split_required",
+      "reportingState": "status_json_present",
+      "unresolvedDecisions": [
+        "knowledge_links V0",
+        "dangling links",
+        "DOCX behavior",
+        "final route",
+        "focus-mode default",
+        "save response shape"
+      ],
+      "requires": [
+        "Agent00/Agent100 decision",
+        "Agent1 release gate",
+        "Agent20 regression",
+        "Agent101 audit"
+      ]
+    },
+    "Agent3": {
+      "latestStatusPath": "docs/Agent3+管理端CMS与内容工作流/2026-06-21_20-13_Agent3_status.json",
+      "latestReportPath": "docs/Agent3+管理端CMS与内容工作流/2026-06-21_20-13_Agent3_裁决后CMS子Agent收敛刷新.md",
+      "lastSeenAt": "2026-06-21 20:13 +08:00",
+      "status": "parent_convergence_refreshed_agent3c_absorbed_code_gated",
+      "riskLevel": "medium",
+      "volumeStatus": "split_required",
+      "reportingState": "status_json_present",
+      "unresolvedDecisions": [],
+      "requires": [
+        "Batch2 admin API availability",
+        "Agent20B CMS smoke plan readiness",
+        "Agent0 explicit Batch4 opening"
+      ]
+    },
+    "Agent3C": {
+      "latestStatusPath": "docs/Agent3+管理端CMS与内容工作流/2026-06-21_18-10_Agent3C_status.json",
+      "latestReportPath": "docs/Agent3+管理端CMS与内容工作流/2026-06-21_18-10_Agent3C_聚焦模式CMS配置接口设计.md",
+      "lastSeenAt": "2026-06-21 18:10 +08:00",
+      "status": "ready_for_convergence",
+      "riskLevel": "medium",
+      "volumeStatus": "watch",
+      "reportingState": "status_json_present",
+      "unresolvedDecisions": [
+        "public_focus_mode default",
+        "noindex hidden scope behavior",
+        "miniapps/admin public-nav hiding"
+      ],
+      "requires": [
+        "Agent00/Agent100 decision",
+        "Agent2 site settings API",
+        "Agent20B regression"
+      ]
+    },
+    "Agent4": {
+      "latestStatusPath": "docs/Agent4+访客端体验、视觉与前端架构/2026-06-21_17-53_Agent4_status.json",
+      "latestReportPath": "docs/Agent4+访客端体验、视觉与前端架构/2026-06-21_17-53_Agent4_推导页与聚焦模式前端接口设计.md",
+      "lastSeenAt": "2026-06-21 17:53 +08:00",
+      "status": "ready_for_convergence",
+      "riskLevel": "high",
+      "volumeStatus": "watch",
+      "reportingState": "status_json_present",
+      "unresolvedDecisions": [
+        "derive.html route",
+        "dangling link UX",
+        "focus-mode hidden scopes"
+      ],
+      "requires": [
+        "Agent00/Agent100 decision",
+        "Agent2 API",
+        "Agent5 visibility rules",
+        "Agent7 tokens",
+        "Agent20A regression"
+      ]
+    },
+    "Agent5": {
+      "latestStatusPath": "docs/Agent5+内容、SEO与知识体系/2026-06-21_17-52_Agent5_status.json",
+      "latestReportPath": "docs/Agent5+内容、SEO与知识体系/2026-06-21_17-52_Agent5_电力电子聚焦与推导节点内容语义.md",
+      "lastSeenAt": "2026-06-21 17:52 +08:00",
+      "status": "ready_for_agent0_convergence",
+      "riskLevel": "medium_high",
+      "volumeStatus": "watch",
+      "reportingState": "status_json_present",
+      "unresolvedDecisions": [
+        "power-electronics route",
+        "sitemap/noindex policy",
+        "publishStatus field contract"
+      ],
+      "requires": [
+        "Agent00/Agent100 decision",
+        "Agent2/Agent3 field alignment",
+        "Agent20 SEO regression"
+      ]
+    },
+    "Agent6": {
+      "latestStatusPath": null,
+      "latestReportPath": "docs/Agent6-miniapps/2026-06-19_18-33_Agent6_小程序职责边界与版本同步清单.md",
+      "lastSeenAt": "2026-06-19 18:33 +08:00",
+      "status": "not_in_current_active_dispatch",
+      "riskLevel": "medium",
+      "volumeStatus": "watch",
+      "reportingState": "legacy_report_without_status_json",
+      "unresolvedDecisions": [],
+      "requires": []
+    },
+    "Agent7": {
+      "latestStatusPath": "docs/Agent7+视觉品牌与样式设计/2026-06-21_17-51_Agent7_status.json",
+      "latestReportPath": "docs/Agent7+视觉品牌与样式设计/2026-06-21_17-51_Agent7_公式变量高亮视觉token接口设计.md",
+      "lastSeenAt": "2026-06-21 17:51 +08:00",
+      "status": "ready_for_convergence",
+      "riskLevel": "medium",
+      "volumeStatus": "watch",
+      "reportingState": "status_json_present",
+      "unresolvedDecisions": [
+        "fixed color token whitelist",
+        "print slug behavior",
+        "red token semantics"
+      ],
+      "requires": [
+        "Agent00/Agent100 decision",
+        "Agent4/Agent9 implementation alignment",
+        "Agent20A visual regression"
+      ]
+    },
+    "Agent8": {
+      "latestStatusPath": "docs/Agent8+市场部设计/2026-06-21_18-12_Agent8_status.json",
+      "latestReportPath": "docs/Agent8+市场部设计/2026-06-21_18-12_Agent8_电力电子聚焦首页表达草案.md",
+      "lastSeenAt": "2026-06-21 18:12 +08:00",
+      "status": "ready_for_convergence",
+      "riskLevel": "low",
+      "volumeStatus": "ok",
+      "reportingState": "status_json_present",
+      "unresolvedDecisions": [
+        "strong CTA waits until derive route and public node exist"
+      ],
+      "requires": [
+        "Agent5 fact-check",
+        "Agent4 implementation",
+        "Agent20 copy/function regression"
+      ]
+    },
+    "Agent9": {
+      "latestStatusPath": "docs/Agent9+内容生成对接规范/2026-06-19_21-09_Agent9_status.json",
+      "latestReportPath": "docs/Agent9+内容生成对接规范/2026-06-19_21-09_Agent9_推导变量Markdown短码接口设计.md",
+      "lastSeenAt": "2026-06-19 21:09 +08:00",
+      "status": "ready_for_convergence",
+      "riskLevel": "medium",
+      "volumeStatus": "watch",
+      "reportingState": "status_json_present",
+      "unresolvedDecisions": [
+        "DOCX V0 behavior",
+        "final public route",
+        "knowledge_links V0 persistence"
+      ],
+      "requires": [
+        "Agent00/Agent100 decision",
+        "Agent2 link persistence",
+        "Agent4 route",
+        "Agent20 regression"
+      ]
+    },
+    "Agent20": {
+      "latestStatusPath": "docs/Agent20+体验测试与问题上报/2026-06-21_21-21_Agent20_status.json",
+      "latestReportPath": "docs/Agent20+体验测试与问题上报/2026-06-21_21-21_Agent20_裁决后分批回归矩阵.md",
+      "lastSeenAt": "2026-06-21 21:21 +08:00",
+      "status": "regression_matrix_mapped_batch_1_9_code_still_gated",
+      "riskLevel": "medium",
+      "volumeStatus": "split_required_for_execution",
+      "reportingState": "status_json_present",
+      "unresolvedDecisions": [
+        "formal regression waits until implementation exists"
+      ],
+      "requires": [
+        "Agent0 explicit batch opening before running evidence",
+        "Batch 1-7 implementation or explicit deferral before Batch 8",
+        "Agent1 and Agent101 gates before Batch 9"
+      ]
+    }
+  }
+}

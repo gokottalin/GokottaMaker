@@ -1,0 +1,217 @@
+{
+  "schemaVersion": "larkix.calculation-book-validation.v1",
+  "bookId": "larkix-ccm-flyback-reference-20260721",
+  "revision": "2026-07-21-r1",
+  "status": "pass",
+  "paths": {
+    "master": "content/calculation-books/ccm-flyback-reference/calculation-book.json",
+    "mathcad": "E:\\User\\Larkix_CCM_Flyback_Traceable_20260721.xmcd",
+    "larkixPackage": "content/calculation-books/ccm-flyback-reference/generated/larkix-package.json"
+  },
+  "sourceCoverage": {
+    "registeredSources": 5,
+    "sourceTracedValues": 6,
+    "assumptionTracedValues": 3,
+    "formulas": 21,
+    "formulaTraces": 21,
+    "missingTracePaths": [],
+    "unresolvedMandatory": 7
+  },
+  "dependencyAndUnits": {
+    "acyclic": true,
+    "definedSymbols": true,
+    "unitClosure": true
+  },
+  "derivationLevels": {
+    "L1": 21,
+    "L2": [
+      "ccm-flyback-current-chain-derivation"
+    ],
+    "L3": [
+      "triangular-wave-rms-foundation"
+    ]
+  },
+  "mathcad": {
+    "ok": true,
+    "errors": [],
+    "bytes": 260051,
+    "xmlParse": "OK",
+    "areas": [
+      "1. 输入、来源、假设与未解决项",
+      "2. BCM 边界反推",
+      "3. 12 W CCM 主设计链",
+      "4. 闭合与应力量级",
+      "5. 裕量、风险、待确认与验证"
+    ],
+    "mathRegions": 30,
+    "areaErrors": [],
+    "formulaExplanationDiffs": [
+      39
+    ],
+    "badBinaryOps": [],
+    "formulaResults": {
+      "eq.pin-bcm": 6,
+      "eq.ipk-bcm": 2.98142396999972,
+      "eq.duty-bcm": 0.670820393249937,
+      "eq.reflected-voltage": 12.2271315627266,
+      "eq.duty-ccm": 0.670820393249937,
+      "eq.period": 0.00000740740740740741,
+      "eq.ton": 0.00000496903994999953,
+      "eq.toff": 0.00000243836745740787,
+      "eq.delta-current": 2.98142396999972,
+      "eq.pin-rated": 16,
+      "eq.iin-average": 2.66666666666667,
+      "eq.ion-average": 3.97523195999963,
+      "eq.i-valley": 2.48451997499977,
+      "eq.i-peak": 5.46594394499949,
+      "eq.i-primary-rms": 3.33129442634525,
+      "eq.energy-transfer": 0.000118518518518519,
+      "eq.pin-closure": 16,
+      "eq.pout-closure": 12,
+      "eq.primary-copper-loss": 0.221950451099979,
+      "eq.leakage-energy": 0.00000448148148148148,
+      "eq.leakage-power": 0.605
+    },
+    "prohibitedTokenHits": [],
+    "prohibitedUnitHits": [],
+    "hasSqrt": true,
+    "hasLiteralSubscripts": true,
+    "hasUnitedResults": true
+  },
+  "larkix": {
+    "ok": true,
+    "errors": [],
+    "nodes": 3,
+    "slugs": [
+      "ccm-flyback-reference-calculation-sheet",
+      "ccm-flyback-current-chain-derivation",
+      "triangular-wave-rms-foundation"
+    ]
+  },
+  "consistency": {
+    "ok": true,
+    "errors": [],
+    "sentinelCount": 7,
+    "comparisons": [
+      {
+        "resultId": "result.reflected-voltage",
+        "equationId": "eq.reflected-voltage",
+        "symbol": "V.or",
+        "unit": "V",
+        "jsonValueSi": 12.227131562726584,
+        "mathcadValueSi": 12.2271315627266,
+        "larkixValueSi": 12.227131562726584,
+        "larkixDisplay": "12.227 V",
+        "tolerance": 1.2227131562726584e-11,
+        "mathcadDifference": 1.5987211554602254e-14,
+        "larkixDifference": 0,
+        "status": "pass"
+      },
+      {
+        "resultId": "result.duty-ccm",
+        "equationId": "eq.duty-ccm",
+        "symbol": "D.ccm",
+        "unit": "1",
+        "jsonValueSi": 0.6708203932499369,
+        "mathcadValueSi": 0.670820393249937,
+        "larkixValueSi": 0.6708203932499369,
+        "larkixDisplay": "0.67082",
+        "tolerance": 1e-12,
+        "mathcadDifference": 1.1102230246251565e-16,
+        "larkixDifference": 0,
+        "status": "pass"
+      },
+      {
+        "resultId": "result.delta-current",
+        "equationId": "eq.delta-current",
+        "symbol": "ΔI.m",
+        "unit": "A",
+        "jsonValueSi": 2.9814239699997196,
+        "mathcadValueSi": 2.98142396999972,
+        "larkixValueSi": 2.9814239699997196,
+        "larkixDisplay": "2.981 A",
+        "tolerance": 2.9814239699997194e-12,
+        "mathcadDifference": 4.440892098500626e-16,
+        "larkixDifference": 0,
+        "status": "pass"
+      },
+      {
+        "resultId": "result.i-valley",
+        "equationId": "eq.i-valley",
+        "symbol": "I.valley",
+        "unit": "A",
+        "jsonValueSi": 2.484519974999766,
+        "mathcadValueSi": 2.48451997499977,
+        "larkixValueSi": 2.484519974999766,
+        "larkixDisplay": "2.485 A",
+        "tolerance": 2.4845199749997657e-12,
+        "mathcadDifference": 3.9968028886505635e-15,
+        "larkixDifference": 0,
+        "status": "pass"
+      },
+      {
+        "resultId": "result.i-peak",
+        "equationId": "eq.i-peak",
+        "symbol": "I.peak",
+        "unit": "A",
+        "jsonValueSi": 5.465943944999486,
+        "mathcadValueSi": 5.46594394499949,
+        "larkixValueSi": 5.465943944999486,
+        "larkixDisplay": "5.466 A",
+        "tolerance": 5.465943944999486e-12,
+        "mathcadDifference": 4.440892098500626e-15,
+        "larkixDifference": 0,
+        "status": "pass"
+      },
+      {
+        "resultId": "result.i-primary-rms",
+        "equationId": "eq.i-primary-rms",
+        "symbol": "I.prirms",
+        "unit": "A",
+        "jsonValueSi": 3.331294426345254,
+        "mathcadValueSi": 3.33129442634525,
+        "larkixValueSi": 3.331294426345254,
+        "larkixDisplay": "3.331 A",
+        "tolerance": 3.331294426345254e-12,
+        "mathcadDifference": 3.9968028886505635e-15,
+        "larkixDifference": 0,
+        "status": "pass"
+      },
+      {
+        "resultId": "result.pout-closure",
+        "equationId": "eq.pout-closure",
+        "symbol": "P.outcheck",
+        "unit": "W",
+        "jsonValueSi": 12,
+        "mathcadValueSi": 12,
+        "larkixValueSi": 12,
+        "larkixDisplay": "12 W",
+        "tolerance": 1.2e-11,
+        "mathcadDifference": 0,
+        "larkixDifference": 0,
+        "status": "pass"
+      }
+    ]
+  },
+  "canonicalPublication": {
+    "publishStatus": "draft",
+    "visibilityStatus": "private"
+  },
+  "previewPolicy": {
+    "publishStatus": "published",
+    "visibilityStatus": "unlisted",
+    "isolatedDataDirOnly": true
+  },
+  "signoff": {
+    "status": "blocked",
+    "blockedBy": [
+      "input.ae",
+      "input.vclamp",
+      "input.rsense",
+      "unresolved.operating-point-measurement",
+      "unresolved.output-winding-map",
+      "unresolved.thermal-path",
+      "unresolved.loop-model"
+    ]
+  }
+}

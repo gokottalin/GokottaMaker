@@ -80,6 +80,61 @@ function Invoke-CurlJson {
   }
 }
 
+function Assert-JsonStatus {
+  param(
+    [Parameter(Mandatory = $true)]
+    [string]$Uri,
+    [string]$Method = "GET",
+    [object]$Body = $null,
+    [Microsoft.PowerShell.Commands.WebRequestSession]$Session = $null,
+    [hashtable]$Headers = @{},
+    [Parameter(Mandatory = $true)]
+    [int]$ExpectedStatus,
+    [Parameter(Mandatory = $true)]
+    [string]$Label
+  )
+
+  try {
+    Invoke-Json -Uri $Uri -Method $Method -Body $Body -Session $Session -Headers $Headers | Out-Null
+    throw "$Label expected HTTP $ExpectedStatus but request succeeded"
+  } catch {
+    $response = $_.Exception.Response
+    if (-not $response) { throw }
+    $actual = [int]$response.StatusCode.value__
+    if ($actual -ne $ExpectedStatus) {
+      throw "$Label expected HTTP $ExpectedStatus but got $actual"
+    }
+  }
+}
+
+function Remove-IsolatedDataDir {
+  param(
+    [Parameter(Mandatory = $true)]
+    [string]$PathToRemove,
+    [Parameter(Mandatory = $true)]
+    [string]$RootPath
+  )
+
+  if (-not (Test-Path -LiteralPath $PathToRemove)) { return }
+  $fullPath = [System.IO.Path]::GetFullPath($PathToRemove)
+  $fullRoot = [System.IO.Path]::GetFullPath($RootPath)
+  $fullRoot = $fullRoot.TrimEnd([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar)
+  $requiredPrefix = $fullRoot + [System.IO.Path]::DirectorySeparatorChar
+  if (-not $fullPath.StartsWith($requiredPrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+    throw "Refusing to remove non-isolated DATA_DIR path: $fullPath"
+  }
+
+  for ($attempt = 1; $attempt -le 8; $attempt++) {
+    try {
+      Remove-Item -LiteralPath $fullPath -Recurse -Force
+      return
+    } catch {
+      if ($attempt -eq 8) { throw }
+      Start-Sleep -Milliseconds (250 * $attempt)
+    }
+  }
+}
+
 $root = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $base = "http://127.0.0.1:$Port"
 $testData = Join-Path $root ".verify-api-data"
@@ -93,7 +148,7 @@ $previousEnv = @{
 
 try {
   if (-not $UseCurrentData) {
-    if (Test-Path -LiteralPath $testData) { Remove-Item -LiteralPath $testData -Recurse -Force }
+    Remove-IsolatedDataDir -PathToRemove $testData -RootPath $root
     $env:DATA_DIR = $testData
   }
   $env:PORT = [string]$Port
@@ -135,6 +190,7 @@ try {
   $csrfHeaders = @{ "X-CSRF-Token" = $login.csrfToken }
 
   $adminContent = Invoke-Json -Uri "$base/api/admin/content" -Session $session
+  if ($null -eq $adminContent.knowledgeNodes) { throw "API verify failed: admin content missing knowledgeNodes" }
   $featuredItems = @($adminContent.posts + $adminContent.projects) | Where-Object { $_.featured -eq $true -and -not $_.deletedAt }
   if ($featuredItems.Count -ne 4) { throw "API verify failed: expected 4 featured items in seed data, got $($featuredItems.Count)" }
   $featuredOrders = $featuredItems | ForEach-Object { [int]$_.featuredOrder } | Sort-Object
@@ -181,6 +237,185 @@ try {
   $uploadAsset = Invoke-WebRequest -Uri "$base/$($upload.url.TrimStart('./'))" -TimeoutSec 10
   if ($uploadAsset.StatusCode -ne 200) { throw "API verify failed: uploaded image returned $($uploadAsset.StatusCode)" }
   if ("$($uploadAsset.Headers['Content-Type'])" -notmatch "image/") { throw "API verify failed: uploaded image content-type is $($uploadAsset.Headers['Content-Type'])" }
+
+  Assert-JsonStatus -Uri "$base/api/admin/knowledge-nodes" -Method "POST" -Session $session -Headers $csrfHeaders -ExpectedStatus 400 -Label "knowledge invalid slug" -Body @{
+    id = "verify-api-invalid-slug"
+    slug = "Invalid Slug"
+    nodeType = "derivation"
+    symbol = "D.bad"
+    title = "Invalid Slug"
+    summary = "Invalid slug test"
+    markdown = "# Invalid"
+    publishStatus = "draft"
+    visibilityStatus = "public"
+  }
+  Assert-JsonStatus -Uri "$base/api/admin/knowledge-nodes" -Method "POST" -Session $session -Headers $csrfHeaders -ExpectedStatus 400 -Label "knowledge invalid color" -Body @{
+    id = "verify-api-invalid-color"
+    slug = "verify-api-invalid-color"
+    nodeType = "derivation"
+    symbol = "D.bad"
+    title = "Invalid Color"
+    summary = "Invalid color test"
+    markdown = "# Invalid"
+    accentColor = "mauve"
+    publishStatus = "draft"
+    visibilityStatus = "public"
+  }
+  Assert-JsonStatus -Uri "$base/api/admin/knowledge-nodes" -Method "POST" -Session $session -Headers $csrfHeaders -ExpectedStatus 400 -Label "knowledge invalid node type" -Body @{
+    id = "verify-api-invalid-type"
+    slug = "verify-api-invalid-type"
+    nodeType = "concept"
+    symbol = "D.bad"
+    title = "Invalid Type"
+    summary = "Invalid type test"
+    markdown = "# Invalid"
+    publishStatus = "draft"
+    visibilityStatus = "public"
+  }
+  Assert-JsonStatus -Uri "$base/api/admin/knowledge-nodes" -Method "POST" -Session $session -Headers $csrfHeaders -ExpectedStatus 400 -Label "knowledge invalid cover" -Body @{
+    id = "verify-api-invalid-cover"
+    slug = "verify-api-invalid-cover"
+    nodeType = "derivation"
+    symbol = "D.bad"
+    title = "Invalid Cover"
+    summary = "Invalid cover test"
+    markdown = "# Invalid"
+    cover = "data:image/png;base64,iVBORw0KGgo="
+    publishStatus = "draft"
+    visibilityStatus = "public"
+  }
+  Assert-JsonStatus -Uri "$base/api/admin/knowledge-nodes" -Method "POST" -Session $session -Headers $csrfHeaders -ExpectedStatus 400 -Label "knowledge publish completeness" -Body @{
+    id = "verify-api-incomplete-node"
+    slug = "verify-api-incomplete-node"
+    nodeType = "derivation"
+    symbol = "D.bad"
+    title = "Incomplete Node"
+    summary = ""
+    markdown = ""
+    publishStatus = "published"
+    visibilityStatus = "public"
+  }
+
+  $draftNodeId = "verify-api-node-draft"
+  $privateNodeId = "verify-api-node-private"
+  $archivedNodeId = "verify-api-node-archived"
+  $unlistedNodeId = "verify-api-node-unlisted"
+  $nodeId = "verify-api-node"
+
+  Invoke-Json -Uri "$base/api/admin/knowledge-nodes" -Method "POST" -Session $session -Headers $csrfHeaders -Body @{
+    id = $draftNodeId
+    slug = $draftNodeId
+    nodeType = "derivation"
+    symbol = "D.draft"
+    title = "Verify Draft Node"
+    summary = "Draft node should stay hidden"
+    markdown = "# Verify Draft Node"
+    publishStatus = "draft"
+    visibilityStatus = "public"
+  } | Out-Null
+  Invoke-Json -Uri "$base/api/admin/knowledge-nodes" -Method "POST" -Session $session -Headers $csrfHeaders -Body @{
+    id = $privateNodeId
+    slug = $privateNodeId
+    nodeType = "derivation"
+    symbol = "D.private"
+    title = "Verify Private Node"
+    summary = "Private node should stay hidden"
+    markdown = "# Verify Private Node"
+    publishStatus = "published"
+    visibilityStatus = "private"
+  } | Out-Null
+  Invoke-Json -Uri "$base/api/admin/knowledge-nodes" -Method "POST" -Session $session -Headers $csrfHeaders -Body @{
+    id = $archivedNodeId
+    slug = $archivedNodeId
+    nodeType = "derivation"
+    symbol = "D.archived"
+    title = "Verify Archived Node"
+    summary = "Archived node should stay hidden"
+    markdown = "# Verify Archived Node"
+    publishStatus = "archived"
+    visibilityStatus = "public"
+  } | Out-Null
+  Invoke-Json -Uri "$base/api/admin/knowledge-nodes" -Method "POST" -Session $session -Headers $csrfHeaders -Body @{
+    id = $unlistedNodeId
+    slug = $unlistedNodeId
+    nodeType = "derivation"
+    symbol = "D.unlisted"
+    title = "Verify Unlisted Node"
+    summary = "Unlisted node allows direct detail only"
+    markdown = "# Verify Unlisted Node"
+    publishStatus = "published"
+    visibilityStatus = "unlisted"
+  } | Out-Null
+
+  $nodeResult = Invoke-Json -Uri "$base/api/admin/knowledge-nodes" -Method "POST" -Session $session -Headers $csrfHeaders -Body @{
+    id = $nodeId
+    slug = $nodeId
+    nodeType = "derivation"
+    symbol = "D.verify"
+    title = "Verify Knowledge Node"
+    summary = "Published public derivation node"
+    markdown = "# Verify Knowledge Node`n`n{{derive:missing-node|Missing Node|purple}}"
+    cover = $upload.url
+    accentColor = "purple"
+    tags = "verify, derive"
+    publishStatus = "published"
+    visibilityStatus = "public"
+  }
+  if ($nodeResult.node.publishStatus -ne "published" -or $nodeResult.node.visibilityStatus -ne "public") {
+    throw "API verify failed: knowledge node save did not return canonical status fields"
+  }
+  if (-not (@($nodeResult.warnings) -match "missing-node")) {
+    throw "API verify failed: knowledge node save did not warn about dangling derive target"
+  }
+  if (-not ($nodeResult.nodes | Where-Object { $_.id -eq $nodeId })) {
+    throw "API verify failed: knowledge node save not visible in admin list"
+  }
+
+  $nodeUpdate = Invoke-Json -Uri "$base/api/admin/knowledge-nodes" -Method "POST" -Session $session -Headers $csrfHeaders -Body @{
+    id = $nodeId
+    slug = $nodeId
+    nodeType = "derivation"
+    symbol = "D.verify"
+    title = "Verify Knowledge Node Updated"
+    summary = "Updated public derivation node"
+    markdown = "# Verify Knowledge Node Updated`n`n{{derive:missing-node|Missing Node|blue}}"
+    cover = $upload.url
+    accentColor = "blue"
+    tags = "verify, derive"
+    publishStatus = "published"
+    visibilityStatus = "public"
+  }
+  if ($nodeUpdate.node.accentColor -ne "blue") { throw "API verify failed: knowledge node update did not persist accentColor" }
+
+  $revisionResult = Invoke-Json -Uri "$base/api/admin/knowledge-nodes/$nodeId/revisions" -Session $session
+  if (@($revisionResult.revisions).Count -lt 1) { throw "API verify failed: knowledge node revisions were not recorded" }
+  $revisionId = [int]$revisionResult.revisions[0].id
+  $revisionRestore = Invoke-Json -Uri "$base/api/admin/knowledge-nodes/$nodeId/revisions/$revisionId/restore" -Method "POST" -Session $session -Headers $csrfHeaders -Body @{}
+  if (-not $revisionRestore.node.id) { throw "API verify failed: knowledge node revision restore did not return node" }
+
+  $publicNodes = Invoke-Json -Uri "$base/api/knowledge-nodes"
+  $publicNodeIds = @($publicNodes.nodes | ForEach-Object { $_.id })
+  if (-not ($publicNodeIds -contains $nodeId)) { throw "API verify failed: public knowledge list missing published public node" }
+  foreach ($hiddenId in @($draftNodeId, $privateNodeId, $archivedNodeId, $unlistedNodeId)) {
+    if ($publicNodeIds -contains $hiddenId) { throw "API verify failed: public knowledge list leaked hidden node $hiddenId" }
+  }
+
+  $publicNodeDetail = Invoke-Json -Uri "$base/api/knowledge-nodes/$nodeId"
+  if ($publicNodeDetail.node.slug -ne $nodeId) { throw "API verify failed: public knowledge detail returned wrong node" }
+  if (-not ($publicNodeDetail.node.links | Where-Object { $_.targetSlug -eq "missing-node" -and $_.resolved -eq $false })) {
+    throw "API verify failed: public knowledge detail missing safe dangling link summary"
+  }
+  $unlistedDetail = Invoke-Json -Uri "$base/api/knowledge-nodes/$unlistedNodeId"
+  if ($unlistedDetail.node.visibilityStatus -ne "unlisted") { throw "API verify failed: unlisted direct detail did not return canonical visibilityStatus" }
+  foreach ($hiddenId in @($draftNodeId, $privateNodeId, $archivedNodeId)) {
+    Assert-JsonStatus -Uri "$base/api/knowledge-nodes/$hiddenId" -ExpectedStatus 404 -Label "knowledge public detail hides $hiddenId"
+  }
+
+  $deletedKnowledgeNode = Invoke-Json -Uri "$base/api/admin/knowledge-nodes/$nodeId" -Method "DELETE" -Session $session -Headers $csrfHeaders
+  if (-not $deletedKnowledgeNode.node.deletedAt) { throw "API verify failed: knowledge node soft delete did not set deletedAt" }
+  Assert-JsonStatus -Uri "$base/api/knowledge-nodes/$nodeId" -ExpectedStatus 404 -Label "knowledge public detail hides soft-deleted node"
+  $restoredKnowledgeNode = Invoke-Json -Uri "$base/api/admin/knowledge-nodes/$nodeId/restore" -Method "POST" -Session $session -Headers $csrfHeaders -Body @{}
+  if ($restoredKnowledgeNode.node.deletedAt) { throw "API verify failed: knowledge node restore still has deletedAt" }
 
   $zhTitle = [string]::Concat([char]0x4E2D, [char]0x6587, [char]0x5BFC, [char]0x51FA, [char]0x9A8C, [char]0x8BC1)
   $zhParagraph = [string]::Concat([char]0x8FD9, [char]0x662F, [char]0x4E00, [char]0x6BB5, [char]0x4E2D, [char]0x6587, [char]0x5185, [char]0x5BB9, [char]0x3002)
@@ -290,23 +525,26 @@ $zhParagraph
     versionLabel = $health.versionLabel
     publicPosts = $publicContent.posts.Count
     publicProjects = $publicContent.projects.Count
+    publicKnowledgeNodes = $publicNodes.nodes.Count
     featuredSlots = (@($featuredOrders) -join ",")
     uploadUrl = $upload.url
     csrfBlocked = $csrfBlocked
     carouselOrderBlocked = $featuredOrderBlocked
+    knowledgeNodeId = $nodeId
     md2fileChecks = "success, empty blocked, format blocked, size blocked"
     utf8Checked = $true
-    verified = "login, csrf, carousel slots, upload, md2file, post CRUD, project CRUD, export, sitemap, rss, logout"
+    verified = "login, csrf, carousel slots, upload, knowledge node public/admin boundary, md2file, post CRUD, project CRUD, export, sitemap, rss, logout"
   } | Format-List
 } finally {
   if ($serverProcess -and -not $serverProcess.HasExited) {
     Stop-Process -Id $serverProcess.Id -Force
+    $serverProcess.WaitForExit(5000) | Out-Null
   }
   $env:PORT = $previousEnv.PORT
   $env:DATA_DIR = $previousEnv.DATA_DIR
   $env:ADMIN_USERNAME = $previousEnv.ADMIN_USERNAME
   $env:ADMIN_PASSWORD = $previousEnv.ADMIN_PASSWORD
   if (-not $UseCurrentData -and (Test-Path -LiteralPath $testData)) {
-    Remove-Item -LiteralPath $testData -Recurse -Force
+    Remove-IsolatedDataDir -PathToRemove $testData -RootPath $root
   }
 }

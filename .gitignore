@@ -8,6 +8,8 @@ database/*.sqlite
 database/*.sqlite-*
 uploads/*
 !uploads/.gitkeep
+runtime-data/
+.codex-logs/
 
 # Local debug artifacts
 *-debug.png

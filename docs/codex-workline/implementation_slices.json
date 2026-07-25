@@ -1,0 +1,652 @@
+{
+  "schema": "codex-workline.implementation_slices.v1",
+  "project": "LarkixMaker",
+  "producer": "A05_ImplementationSlicePlanner",
+  "status": "complete",
+  "workspaceRoot": "E:/Project/2607-LarkixWeb",
+  "generatedAt": "2026-07-09 22:20 +08:00",
+  "mainline": "Formula-variable derivation knowledge network plus focused power-electronics public mode.",
+  "currentGate": {
+    "batch1": "s09_formula_catalog_management_open",
+    "businessImplementationAllowed": false,
+    "databaseMutationAllowed": false,
+    "migrationFileImplementationAllowed": false,
+    "isolatedDataDirVerificationAllowed": true,
+    "apiRuntimeBoundaryAllowed": false,
+    "productionReleaseAllowed": false,
+    "gitStagingAllowed": false,
+    "markdownDocxDerivationLinksAllowed": false,
+    "cmsKnowledgeNodeWorkflowAllowed": false,
+    "publicDerivationAndFocusModeAllowed": false,
+    "cmsFormulaAuthoringExamplesAllowed": false,
+    "calculationBookEngineeringAllowed": false,
+    "formulaCatalogManagementAllowed": true,
+    "contentCloudSyncAllowed": false
+  },
+  "repairFinding": {
+    "problem": "A05 was declared in task_registry.json but remained blocked and had no active brief, implementation_slices.json, or handoff in the current workspace.",
+    "rootCause": "The handoff program still routed fresh sessions to A00 because governance expected zero next task agents and A05 stayed blocked_until_owner_opens_scope. The A05 artifact contract existed only as registry text, not as required files checked by codex:contract.",
+    "fix": "Add the A05 brief, implementation_slices.json, A05 handoff, and contract checks so missing A05 artifacts become visible in future verification."
+  },
+  "globalStopConditions": [
+    "Stop before any business code edit unless A00 and Owner explicitly open the named slice.",
+    "Stop before any database migration, migration run, or runtime data mutation unless the slice declares isolated DATA_DIR tests and release gates.",
+    "Stop before Git staging, commit, push, deployment, rollback, or production checks unless Agent101 and Agent1 scopes are explicitly opened.",
+    "Stop if a slice cannot name read files, allowed edit files, outputs, and verification."
+  ],
+  "slices": [
+    {
+      "id": "S00_batch1_open_dispatch",
+      "agent": "A00_ProjectDirector",
+      "roleNote": "项目导演：只负责打开或继续关闭门禁",
+      "status": "completed",
+      "purpose": "If the Owner wants implementation to begin, publish an explicit Batch1 open dispatch with file, data, test, and Git boundaries.",
+      "reads": [
+        "PROJECT_WINDOW.md",
+        "PROJECT_MAINTENANCE.json",
+        "ACTIVE_AGENT_DISPATCH.json",
+        "docs/codex-workline/implementation_slices.json",
+        "agents/A05_ImplementationSlicePlanner/handoff.md"
+      ],
+      "mayEdit": [
+        "PROJECT_WINDOW.md",
+        "docs/prompts/next_agents.md",
+        "docs/codex-workline/task_registry.json",
+        ".codex/larkix-governance.json"
+      ],
+      "outputs": [
+        "Updated governance pointers naming the first open implementation slice",
+        "Short handoff prompt for the next slice Agent"
+      ],
+      "verification": [
+        "npm.cmd run codex:contract",
+        "npm.cmd run codex:handoff"
+      ],
+      "dependencies": [
+        "Owner explicitly resumes Batch1"
+      ],
+      "forbidden": [
+        "business code edits",
+        "database mutation",
+        "Git staging"
+      ]
+    },
+    {
+      "id": "S01_data_model_migration_contract",
+      "agent": "A06_DataModelMigrationContract",
+      "roleNote": "数据模型契约：先定表结构和迁移边界",
+      "status": "completed",
+      "purpose": "Define knowledge node, link, revision, and site setting data contracts before migration implementation.",
+      "reads": [
+        "server.js",
+        "lib/db.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "migrations",
+        "ACTIVE_AGENT_DISPATCH.json",
+        "PROJECT_MAINTENANCE.json"
+      ],
+      "mayEdit": [
+        "docs/codex-workline/slices/S01_data_model_migration_contract.md"
+      ],
+      "outputs": [
+        "schema field contract",
+        "migration safety notes",
+        "isolated DATA_DIR test plan"
+      ],
+      "verification": [
+        "npm.cmd run codex:contract"
+      ],
+      "dependencies": [
+        "S00_batch1_open_dispatch"
+      ],
+      "forbidden": [
+        "creating migrations",
+        "running migrations",
+        "editing database files"
+      ]
+    },
+    {
+      "id": "S02_data_model_migration_implementation",
+      "agent": "A07_DataModelMigrationImplementation",
+      "roleNote": "数据迁移实现：仅在门禁打开后落地迁移",
+      "status": "completed",
+      "purpose": "Implement the accepted schema and migration files using isolated local data only.",
+      "reads": [
+        "docs/codex-workline/slices/S01_data_model_migration_contract.md",
+        "migrations",
+        "lib/db.js",
+        "lib/content.js",
+        "scripts/backup-linux.sh",
+        "scripts/restore-linux.sh"
+      ],
+      "mayEdit": [
+        "migrations/011_knowledge_nodes.js",
+        "migrations/012_knowledge_links.js",
+        "migrations/013_public_focus_mode_default.js",
+        "docs/codex-workline/slices/S02_data_model_migration_implementation_handoff.md"
+      ],
+      "outputs": [
+        "migration files",
+        "schema integration code",
+        "isolated migration smoke notes"
+      ],
+      "verification": [
+        "npm.cmd run check:version",
+        "npm.cmd run test:markdown",
+        "isolated DATA_DIR migration smoke command declared by S01"
+      ],
+      "dependencies": [
+        "S01_data_model_migration_contract",
+        "A00 acceptance of A06 handoff",
+        "isolated DATA_DIR verification only"
+      ],
+      "forbidden": [
+        "production database mutation",
+        "runtime-data mutation",
+        "Git staging"
+      ]
+    },
+    {
+      "id": "S03_api_runtime_boundary",
+      "agent": "A08_ApiRuntimeBoundary",
+      "roleNote": "API 与运行边界：公开/管理接口和安全约束",
+      "status": "completed",
+      "purpose": "Add public and admin API behavior for knowledge nodes while preserving auth, uploads, audit, and DATA_DIR boundaries.",
+      "reads": [
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "lib/uploads.js",
+        "scripts/verify-api.ps1",
+        "docs/codex-workline/slices/S01_data_model_migration_contract.md"
+      ],
+      "mayEdit": [
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "lib/uploads.js",
+        "scripts/verify-api.ps1",
+        "docs/codex-workline/slices/S03_api_runtime_boundary_handoff.md"
+      ],
+      "outputs": [
+        "public API endpoints",
+        "admin API endpoints",
+        "validation and error contract",
+        "API smoke evidence"
+      ],
+      "verification": [
+        "powershell -ExecutionPolicy Bypass -File scripts/verify-api.ps1",
+        "npm.cmd run codex:contract"
+      ],
+      "dependencies": [
+        "S02_data_model_migration_implementation"
+      ],
+      "forbidden": [
+        "changing public UI",
+        "running production checks",
+        "Git staging"
+      ]
+    },
+    {
+      "id": "S04_markdown_docx_derivation_links",
+      "agent": "A09_MarkdownDocxDerivationLinks",
+      "roleNote": "Markdown/DOCX：推导短码渲染与降级",
+      "status": "completed",
+      "purpose": "Implement derivation shortcode parsing, safe HTML output, fixture tests, and DOCX V0 fallback.",
+      "reads": [
+        "data/markdown-renderer.js",
+        "tools/md2doc.js",
+        "lib/md2doc.js",
+        "scripts/test-markdown-renderer.js",
+        "docs/Agent9+内容生成对接规范"
+      ],
+      "mayEdit": [
+        "data/markdown-renderer.js",
+        "tools/md2doc.js",
+        "lib/md2doc.js",
+        "scripts/test-markdown-renderer.js",
+        "docs/codex-workline/slices/S04_markdown_docx_derivation_links_handoff.md"
+      ],
+      "outputs": [
+        "shortcode grammar implementation",
+        "renderer fixtures",
+        "DOCX fallback behavior",
+        "escaping and token whitelist notes"
+      ],
+      "verification": [
+        "npm.cmd run test:markdown",
+        "npm.cmd run codex:contract"
+      ],
+      "dependencies": [
+        "S01_data_model_migration_contract"
+      ],
+      "forbidden": [
+        "database mutation",
+        "CMS implementation",
+        "Git staging"
+      ]
+    },
+    {
+      "id": "S05_cms_knowledge_node_workflow",
+      "agent": "A10_CmsKnowledgeNodeWorkflow",
+      "roleNote": "CMS 工作流：推导节点编辑、预览和发布状态",
+      "status": "completed",
+      "purpose": "Add derivation-node editing, preview, image reuse, publish state, revision, and focus mode controls in CMS.",
+      "reads": [
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "admin/course-paths.html",
+        "docs/Agent3+管理端CMS与内容工作流",
+        "docs/codex-workline/slices/S03_api_runtime_boundary_handoff.md",
+        "docs/codex-workline/slices/S04_markdown_docx_derivation_links_handoff.md"
+      ],
+      "mayEdit": [
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "admin/course-paths.html",
+        "docs/codex-workline/slices/S05_cms_knowledge_node_workflow_handoff.md"
+      ],
+      "outputs": [
+        "CMS navigation and form updates",
+        "preview and upload integration",
+        "publish/soft-delete/revision workflow",
+        "CMS smoke notes"
+      ],
+      "verification": [
+        "powershell -ExecutionPolicy Bypass -File scripts/verify-api.ps1",
+        "npm.cmd run test:markdown",
+        "npm.cmd run codex:contract"
+      ],
+      "dependencies": [
+        "S03_api_runtime_boundary",
+        "S04_markdown_docx_derivation_links"
+      ],
+      "forbidden": [
+        "production data writes",
+        "deployment",
+        "Git staging"
+      ]
+    },
+    {
+      "id": "S06_public_derivation_and_focus_mode",
+      "agent": "A11_PublicDerivationAndFocusMode",
+      "roleNote": "访客端：推导页、点击跳转和聚焦模式",
+      "status": "completed",
+      "purpose": "Add public derivation page behavior and focused power-electronics public navigation without deleting hidden sections.",
+      "reads": [
+        "index.html",
+        "maker.html",
+        "category.html",
+        "post.html",
+        "project.html",
+        "main.js",
+        "post.js",
+        "site-layout.js",
+        "styles.css",
+        "styles",
+        "docs/Agent4+访客端体验、视觉与前端架构"
+      ],
+      "mayEdit": [
+        "derive.html",
+        "main.js",
+        "post.js",
+        "site-layout.js",
+        "styles.css",
+        "styles",
+        "docs/codex-workline/slices/S06_public_derivation_and_focus_mode_handoff.md"
+      ],
+      "outputs": [
+        "derive page or reused renderer route",
+        "article derivation link click behavior",
+        "focused navigation and homepage rules",
+        "responsive QA notes"
+      ],
+      "verification": [
+        "npm.cmd run test:markdown",
+        "browser smoke checklist declared in handoff",
+        "npm.cmd run codex:contract"
+      ],
+      "dependencies": [
+        "S03_api_runtime_boundary",
+        "S04_markdown_docx_derivation_links"
+      ],
+      "forbidden": [
+        "deleting hidden pages or content",
+        "database mutation",
+        "Git staging"
+      ]
+    },
+    {
+      "id": "S11_regression_evidence_matrix",
+      "agent": "A16_RegressionEvidenceMatrix",
+      "roleNote": "质量回归：API、CMS、页面、Markdown 和迁移证据",
+      "status": "planned_not_open",
+      "purpose": "Run and collect regression evidence after implementation slices are complete, using isolated data where needed.",
+      "reads": [
+        "scripts/verify-api.ps1",
+        "scripts/test-markdown-renderer.js",
+        "docs/Agent20+体验测试与问题上报",
+        "docs/codex-workline/slices"
+      ],
+      "mayEdit": [
+        "docs/codex-workline/slices/S11_regression_evidence_matrix_handoff.md",
+        "docs/codex-workline/regression_results.json"
+      ],
+      "outputs": [
+        "API regression result",
+        "CMS smoke result",
+        "browser smoke checklist",
+        "Markdown/DOCX regression result",
+        "isolated DATA_DIR migration evidence"
+      ],
+      "verification": [
+        "npm.cmd run codex:check",
+        "npm.cmd run check:version",
+        "npm.cmd run test:markdown",
+        "powershell -ExecutionPolicy Bypass -File scripts/verify-api.ps1"
+      ],
+      "dependencies": [
+        "S02_data_model_migration_implementation",
+        "S03_api_runtime_boundary",
+        "S04_markdown_docx_derivation_links",
+        "S05_cms_knowledge_node_workflow",
+        "S06_public_derivation_and_focus_mode",
+        "S07_cms_formula_authoring_examples",
+        "S08_calculation_book_engineering",
+        "S09_formula_catalog_management",
+        "S10_content_cloud_sync"
+      ],
+      "forbidden": [
+        "production release",
+        "Git staging"
+      ]
+    },
+    {
+      "id": "S12_release_git_gate",
+      "agent": "A17_ReleaseGitGate",
+      "roleNote": "发布与 Git 门禁：显式清单、备份、回滚和发布判断",
+      "status": "planned_not_open",
+      "purpose": "Prepare explicit staging, backup, rollback, and release readiness only after regression passes.",
+      "reads": [
+        "git status --short --branch",
+        "docs/deployment.md",
+        "scripts/deploy-update.sh",
+        "scripts/rollback.sh",
+        "scripts/backup-linux.sh",
+        "scripts/restore-linux.sh",
+        "docs/Agent101-Git",
+        "docs/Agent1+运维与发布稳定性",
+        "docs/codex-workline/regression_results.json"
+      ],
+      "mayEdit": [
+        "docs/codex-workline/release_gate_plan.md",
+        "docs/codex-workline/git_staging_plan.md"
+      ],
+      "outputs": [
+        "explicit staging list",
+        "explicit exclusion list",
+        "backup and rollback gate",
+        "release readiness decision"
+      ],
+      "verification": [
+        "git diff --check",
+        "npm.cmd run codex:check"
+      ],
+      "dependencies": [
+        "S11_regression_evidence_matrix"
+      ],
+      "forbidden": [
+        "git add .",
+        "commit",
+        "push",
+        "deploy",
+        "rollback"
+      ]
+    },
+    {
+      "id": "S07_cms_formula_authoring_examples",
+      "agent": "A12_CmsFormulaAuthoringExamples",
+      "roleNote": "管理端公式编辑与计算书示例：用 CMS 插入公式上角标跳转，并做中文 BOOST 电感选型计算书",
+      "status": "completed",
+      "purpose": "Improve formula-node authoring in the CMS, render derivation jump markers, and create a local Chinese BOOST inductor selection calculation sheet for visible validation.",
+      "reads": [
+        "docs/codex-workline/slices/S03_api_runtime_boundary_handoff.md",
+        "docs/codex-workline/slices/S04_markdown_docx_derivation_links_handoff.md",
+        "docs/codex-workline/slices/S05_cms_knowledge_node_workflow_handoff.md",
+        "docs/codex-workline/slices/S06_public_derivation_and_focus_mode_handoff.md",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "derive.html",
+        "post.js",
+        "data/markdown-renderer.js",
+        "scripts/test-markdown-renderer.js",
+        "styles/20-content.css"
+      ],
+      "mayEdit": [
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "data/markdown-renderer.js",
+        "scripts/test-markdown-renderer.js",
+        "post.js",
+        "styles/20-content.css",
+        "styles/30-accessibility-print.css",
+        "docs/codex-workline/slices/S07_cms_formula_authoring_examples_handoff.md"
+      ],
+      "outputs": [
+        "CMS formula and derivation-jump authoring helpers",
+        "formula-level superscript jump marker rendering with tooltip/accessibility text",
+        "BOOST duty-cycle derivation page based on CCM inductor volt-second balance",
+        "verified knowledge-node CRUD workflow notes",
+        "Chinese BOOST inductor selection calculation sheet seeded in isolated DATA_DIR",
+        "local preview and smoke-test evidence"
+      ],
+      "verification": [
+        "node --check admin/admin.js",
+        "npm.cmd run test:markdown",
+        "npm.cmd run codex:contract",
+        "isolated DATA_DIR local preview with BOOST calculation-sheet and formula-level superscript jump markers visible through derive.html"
+      ],
+      "dependencies": [
+        "S05_cms_knowledge_node_workflow",
+        "S06_public_derivation_and_focus_mode"
+      ],
+      "forbidden": [
+        "server/API route changes",
+        "database schema or production data mutation",
+        "server/API route changes, database schema changes, production release, deployment, or Git staging"
+      ]
+    },
+    {
+      "id": "S08_calculation_book_engineering",
+      "agent": "A13_CalculationBookEngineering",
+      "roleNote": "计算书撰写与详细计算细化专家：从输入输出条件完成拓扑总设计，并生成 JSON、MathCAD 与 Larkix 分层计算书",
+      "status": "completed",
+      "purpose": "Define a source-traceable topology calculation-book JSON master, generate synchronized Mathcad 15 and Larkix L1/L2/L3 outputs, and prove the framework with the CCM flyback reference book.",
+      "reads": [
+        "docs/codex-workline/slices/S03_api_runtime_boundary_handoff.md",
+        "docs/codex-workline/slices/S04_markdown_docx_derivation_links_handoff.md",
+        "docs/codex-workline/slices/S05_cms_knowledge_node_workflow_handoff.md",
+        "docs/codex-workline/slices/S06_public_derivation_and_focus_mode_handoff.md",
+        "docs/codex-workline/slices/S07_cms_formula_authoring_examples_handoff.md",
+        "lib/db.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "data/markdown-renderer.js",
+        "C:/Users/OBC项目/MathCAD生成规则.json",
+        "C:/Users/OBC项目/Agent0/build_aux_mathcad_calculation_book.py",
+        "C:/Users/OBC项目/Agent0/build_interview_hard_switch_pfc_xmcd.py",
+        "C:/Users/OBC项目/Agent0/build_pfc_interview_xmcd.py",
+        "C:/Users/OBC项目/Agent0/build_pfc_mathcad_xmcd.py",
+        "E:/User/AUX20260708.xmcd",
+        "E:/User/Agent10_CCM反激变压器计算书_数据可追溯版_20260714.md"
+      ],
+      "mayEdit": [
+        "schemas/calculation-book-master.schema.json",
+        "content/calculation-books/**",
+        "tools/calculation-book/**",
+        "scripts/test-calculation-book.js",
+        "package.json",
+        "docs/calculation-book-authoring-guide.md",
+        "docs/codex-workline/slices/S08_calculation_book_engineering_handoff.md",
+        "new task-specific MathCAD and validation outputs under E:/User"
+      ],
+      "outputs": [
+        "topology-neutral UTF-8 calculation-book JSON Schema and template",
+        "strict source, assumption, dependency, unit, and applicability validator",
+        "deterministic Mathcad 15 xmcd generator compliant with MathCAD生成规则.json",
+        "deterministic Larkix L1/L2/L3 calculation and derivation package generator",
+        "CCM flyback reference master, generated outputs, and cross-output consistency report",
+        "Chinese calculation-book expert and administrator guide"
+      ],
+      "verification": [
+        "JSON Schema and semantic source-coverage validation",
+        "acyclic formula dependency graph and defined-symbol checks",
+        "MathCAD XML, Area, math-region, unit, naming, spacing, and prohibited-pattern checks",
+        "Mathcad 15 visual open check when available",
+        "isolated DATA_DIR Larkix L1/L2/L3 preview and formula-jump checks",
+        "three or more sentinel results agree across JSON, MathCAD, and Larkix",
+        "npm.cmd run test:calculation-book",
+        "npm.cmd run test:markdown",
+        "npm.cmd run codex:contract"
+      ],
+      "dependencies": [
+        "S05_cms_knowledge_node_workflow",
+        "S06_public_derivation_and_focus_mode",
+        "S07_cms_formula_authoring_examples"
+      ],
+      "forbidden": [
+        "unsupported values or formulas without source, derivation, or declared assumption",
+        "server/API/CMS UI or database schema changes",
+        "overwriting OBC source files or existing MathCAD worksheets",
+        "current or production database/runtime data mutation",
+        "deployment, cloud write, or Git staging"
+      ]
+    },
+    {
+      "id": "S09_formula_catalog_management",
+      "agent": "A14_FormulaCatalogManagement",
+      "roleNote": "公式目录与管理：确保全部子公式可跳转、公式唯一、多级标签、修订与备份",
+      "status": "next",
+      "purpose": "Make every accepted calculation-book formula uniquely addressable, strictly tagged, fully jumpable, manageable in CMS, and recoverable through deterministic export and local snapshots.",
+      "reads": [
+        "docs/codex-workline/slices/S05_cms_knowledge_node_workflow_handoff.md",
+        "docs/codex-workline/slices/S07_cms_formula_authoring_examples_handoff.md",
+        "docs/codex-workline/slices/S08_calculation_book_engineering_handoff.md",
+        "docs/calculation-book-authoring-guide.md",
+        "schemas/calculation-book-master.schema.json",
+        "content/calculation-books/**/calculation-book.json",
+        "tools/calculation-book",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "lib/content.js",
+        "lib/validators.js",
+        "data/markdown-renderer.js",
+        "post.js",
+        "main.js",
+        "scripts/test-calculation-book.js"
+      ],
+      "mayEdit": [
+        "schemas/calculation-book-master.schema.json",
+        "content/calculation-books/**",
+        "tools/calculation-book/**",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "lib/content.js",
+        "lib/validators.js",
+        "data/markdown-renderer.js",
+        "post.js",
+        "main.js",
+        "scripts/test-calculation-book.js",
+        "scripts/test-formula-catalog.js",
+        "package.json",
+        "docs/calculation-book-authoring-guide.md",
+        "docs/codex-workline/slices/S09_formula_catalog_management_handoff.md"
+      ],
+      "outputs": [
+        "stable globally namespaced formula identity and parent-child catalog",
+        "required namespaced tags and optional validated hierarchy paths",
+        "complete L1/L2/L3 subformula jump coverage with no dangling targets",
+        "CMS formula search, filters, relationships, direct preview, and precise validation",
+        "deterministic catalog export plus non-overwriting pre-change local snapshots",
+        "isolated CRUD, revision, soft-delete, restore, backup, and visitor-route evidence"
+      ],
+      "verification": [
+        "node --check on changed JavaScript files",
+        "npm.cmd run test:formula-catalog",
+        "npm.cmd run test:calculation-book",
+        "npm.cmd run test:markdown",
+        "isolated DATA_DIR admin and visitor browser smoke test for both accepted books",
+        "npm.cmd run codex:contract"
+      ],
+      "dependencies": [
+        "S05_cms_knowledge_node_workflow",
+        "S07_cms_formula_authoring_examples",
+        "S08_calculation_book_engineering",
+        "A00 acceptance of A13 handoff"
+      ],
+      "forbidden": [
+        "database migrations or current/production data mutation",
+        "unsupported derivation filler",
+        "cloud synchronization or deployment",
+        "Git staging, commit, or push"
+      ]
+    },
+    {
+      "id": "S10_content_cloud_sync",
+      "agent": "A15_ContentCloudSync",
+      "roleNote": "内容云端同步：把已验收内容包安全接入云端部署与幂等更新",
+      "status": "planned_not_open",
+      "purpose": "Wire accepted calculation-book packages into the cloud deployment flow with dry-run, backup, checksum, idempotent import, and rollback-aware failure behavior.",
+      "reads": [
+        "docs/codex-workline/slices/S08_calculation_book_engineering_handoff.md",
+        "docs/calculation-book-authoring-guide.md",
+        "tools/calculation-book",
+        "scripts/deploy-update.sh",
+        "scripts/backup-linux.sh",
+        "scripts/restore-linux.sh",
+        "docs/deployment.md"
+      ],
+      "mayEdit": [
+        "scripts/content-sync-cloud.sh",
+        "scripts/deploy-update.sh",
+        "scripts/gokottamaker.env.example",
+        "docs/deployment.md",
+        "docs/codex-workline/slices/S10_content_cloud_sync_handoff.md"
+      ],
+      "outputs": [
+        "cloud content-package dry-run and apply command",
+        "backup-before-import and checksum gate",
+        "idempotent slug update behavior",
+        "deployment integration notes without executing production release"
+      ],
+      "verification": [
+        "shell syntax checks",
+        "isolated Linux-compatible DATA_DIR rehearsal",
+        "npm.cmd run test:calculation-book",
+        "npm.cmd run codex:contract"
+      ],
+      "dependencies": [
+        "S08_calculation_book_engineering",
+        "S09_formula_catalog_management",
+        "A00 acceptance of A14 handoff"
+      ],
+      "forbidden": [
+        "production deployment or cloud data mutation",
+        "Git staging, commit, or push",
+        "schema changes"
+      ]
+    }
+  ],
+  "nextDecision": {
+    "agent": "A14_FormulaCatalogManagement",
+    "decision": "Run S09 strict formula identity, hierarchical tags, complete L1/L2/L3 child-formula jumps, CMS management, deterministic export, and isolated local backup verification. Migrations, current/production data, cloud writes, deployment, and Git remain closed.",
+    "shortPrompt": "Agent 14 Formula Catalog Management（公式目录与管理：确保全部子公式可跳转、公式唯一、多级标签、修订与备份）：请进入 E:\\Project\\2607-LarkixWeb，运行 npm.cmd run codex:handoff，然后按输出的 Next Agent brief 执行当前任务；使用中文交接，遵守 AGENTS.md 门禁。"
+  }
+}

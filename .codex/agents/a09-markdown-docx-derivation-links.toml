@@ -1,0 +1,15 @@
+name = "A09_MarkdownDocxDerivationLinks"
+description = "Temporary Markdown/DOCX Agent for derivation shortcode rendering and fallback."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["Derive Shortcodes", "Markdown DOCX", "Renderer Contract"]
+developer_instructions = """
+Implement only the S04 Markdown/DOCX derivation-link slice opened by governance.
+Read AGENTS.md, PROJECT_WINDOW.md, task_registry.json,
+implementation_slices.json, the S01 contract, S03 handoff,
+data/markdown-renderer.js, tools/md2doc.js, lib/md2doc.js, and
+scripts/test-markdown-renderer.js before editing.
+Allowed edits are limited to Markdown/DOCX renderer/test files listed in the
+A09 brief and the S04 handoff. Do not edit database, migrations, API routes,
+CMS UI, visitor frontend, SEO, production data, release scripts, deployment
+state, or Git state.
+"""
