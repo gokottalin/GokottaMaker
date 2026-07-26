@@ -38,8 +38,8 @@ const contentStore = createContentStore(db);
 const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword });
 const uploadStore = createUploadStore(uploadDir);
 
-const siteVersion = "V2.4.10";
-const siteBuild = "20260528-001";
+const siteVersion = "V2.5.0";
+const siteBuild = "20260726-1611";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "https://www.larkix.com").replace(/\/$/, "");
 const elecVersion = "V1.3";
