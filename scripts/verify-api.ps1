@@ -174,6 +174,8 @@ try {
 
   $publicContent = Invoke-Json -Uri "$base/api/content"
   if ($publicContent.posts.Count -lt 1) { throw "API verify failed: public posts are empty" }
+  if ($null -eq $publicContent.publicFocusMode) { throw "API verify failed: public content missing publicFocusMode" }
+  if ($publicContent.publicFocusMode.enabled -ne $false) { throw "API verify failed: public focus mode must be disabled by default" }
 
   $contentResponse = Invoke-WebRequest -Uri "$base/api/content" -TimeoutSec 10
   if ("$($contentResponse.Headers['Content-Type'])" -notmatch "charset=utf-8") {
@@ -194,6 +196,10 @@ try {
 
   $adminContent = Invoke-Json -Uri "$base/api/admin/content" -Session $session
   if ($null -eq $adminContent.knowledgeNodes) { throw "API verify failed: admin content missing knowledgeNodes" }
+  if ($null -eq $adminContent.publicFocusMode) { throw "API verify failed: admin content missing publicFocusMode" }
+  if ($adminContent.publicFocusMode.enabled -ne $publicContent.publicFocusMode.enabled) {
+    throw "API verify failed: public/admin focus mode values differ"
+  }
   $featuredItems = @($adminContent.posts + $adminContent.projects) | Where-Object { $_.featured -eq $true -and -not $_.deletedAt }
   if ($featuredItems.Count -ne 4) { throw "API verify failed: expected 4 featured items in seed data, got $($featuredItems.Count)" }
   $featuredOrders = $featuredItems | ForEach-Object { [int]$_.featuredOrder } | Sort-Object
@@ -514,6 +520,7 @@ $zhParagraph
 
   $export = Invoke-Json -Uri "$base/api/admin/export" -Session $session
   if (-not $export.site.versionLabel) { throw "API verify failed: export missing versionLabel" }
+  if ($null -eq $export.publicFocusMode) { throw "API verify failed: export missing publicFocusMode" }
 
   $sitemap = Invoke-WebRequest -Uri "$base/sitemap.xml" -TimeoutSec 10
   if ($sitemap.StatusCode -ne 200) { throw "API verify failed: sitemap.xml returned $($sitemap.StatusCode)" }
@@ -530,6 +537,7 @@ $zhParagraph
     publicPosts = $publicContent.posts.Count
     publicProjects = $publicContent.projects.Count
     publicKnowledgeNodes = $publicNodes.nodes.Count
+    publicFocusMode = $publicContent.publicFocusMode.enabled
     featuredSlots = (@($featuredOrders) -join ",")
     uploadUrl = $upload.url
     csrfBlocked = $csrfBlocked
@@ -537,7 +545,7 @@ $zhParagraph
     knowledgeNodeId = $nodeId
     md2fileChecks = "success, empty blocked, format blocked, size blocked"
     utf8Checked = $true
-    verified = "login, csrf, carousel slots, upload, knowledge node public/admin boundary, md2file, post CRUD, project CRUD, export, sitemap, rss, logout"
+    verified = "login, csrf, public focus mode, carousel slots, upload, knowledge node public/admin boundary, md2file, post CRUD, project CRUD, export, sitemap, rss, logout"
   } | Format-List
 } finally {
   if ($serverProcess -and -not $serverProcess.HasExited) {

@@ -54,7 +54,7 @@
 
   function normalizePublicFocusMode(value) {
     const fallback = {
-      enabled: true,
+      enabled: false,
       hideMiniappsFromPrimaryNav: true,
       hideAdminFromPublicNav: true
     };

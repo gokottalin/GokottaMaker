@@ -38,8 +38,8 @@ const contentStore = createContentStore(db);
 const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword });
 const uploadStore = createUploadStore(uploadDir);
 
-const siteVersion = "V2.5.0";
-const siteBuild = "20260726-1611";
+const siteVersion = "V2.5.1";
+const siteBuild = "20260726-1650";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "https://www.larkix.com").replace(/\/$/, "");
 const elecVersion = "V1.3";
@@ -326,6 +326,7 @@ function exportContent() {
     projects: allProjects(true),
     knowledgeNodes: allKnowledgeNodes(true),
     siteLayout: siteLayout(),
+    publicFocusMode: publicFocusMode(),
     uploads: uploads()
   };
 }
@@ -625,6 +626,19 @@ const defaultSiteLayout = {
   ]
 };
 
+const defaultPublicFocusMode = {
+  enabled: false,
+  primaryScope: "power-electronics",
+  visibleScopes: ["home", "power-electronics", "derivations"],
+  hiddenScopes: ["analog", "stm32", "esp32", "projects"],
+  hideMiniappsFromPrimaryNav: true,
+  hideAdminFromPublicNav: true,
+  noindexHiddenLandingPages: true,
+  noindexHiddenDetailPages: false,
+  homepageMode: "focused",
+  bannerCopy: ""
+};
+
 function siteSetting(key, fallback) {
   const row = db.prepare("SELECT value_json AS valueJson FROM site_settings WHERE key = ?").get(key);
   if (!row) return fallback;
@@ -664,6 +678,10 @@ function siteLayout() {
   return normalizeSiteLayout(siteSetting("site_layout", defaultSiteLayout));
 }
 
+function publicFocusMode() {
+  return siteSetting("public_focus_mode", defaultPublicFocusMode);
+}
+
 function saveSiteLayout(payload) {
   const normalized = normalizeSiteLayout(payload);
   db.prepare(
@@ -679,7 +697,8 @@ function publicContentPayload() {
     posts: allPosts(false),
     projects: allProjects(false),
     projectDirectory: publicProjectDirectory(),
-    siteLayout: siteLayout()
+    siteLayout: siteLayout(),
+    publicFocusMode: publicFocusMode()
   };
 }
 
@@ -1166,7 +1185,13 @@ async function api(req, res, pathname) {
   if (!requireCsrf(req, res, user)) return;
 
   if (pathname === "/api/admin/content" && req.method === "GET") {
-    return json(res, 200, { posts: allPosts(true), projects: allProjects(true), knowledgeNodes: allKnowledgeNodes(true), siteLayout: siteLayout() });
+    return json(res, 200, {
+      posts: allPosts(true),
+      projects: allProjects(true),
+      knowledgeNodes: allKnowledgeNodes(true),
+      siteLayout: siteLayout(),
+      publicFocusMode: publicFocusMode()
+    });
   }
   if (pathname === "/api/admin/health" && req.method === "GET") return json(res, 200, healthPayload({ detailed: true }));
   if (pathname === "/api/admin/export" && req.method === "GET") {

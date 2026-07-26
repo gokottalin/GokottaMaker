@@ -20,7 +20,7 @@ window.LARKIX_MINIAPPS = [
     status: "新增设计",
     version: "V0.3",
     href: "./tools/md2doc.html",
-    icon: "./assets/logo/md2file/md2file-miniapp-icon.svg?v=20260726-1611",
+    icon: "./assets/logo/md2file/md2file-miniapp-icon.svg?v=20260726-1650",
     capabilities: ["Markdown 输入", "实时预览", "DOCX 导出", "PDF 预留"]
   }
 ];

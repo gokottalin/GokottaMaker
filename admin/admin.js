@@ -90,7 +90,13 @@
   let editingId = null;
   let currentCover = "";
   let csrfToken = "";
-  let serverContent = { posts: [], projects: [], knowledgeNodes: [], siteLayout: { home: [] } };
+  let serverContent = {
+    posts: [],
+    projects: [],
+    knowledgeNodes: [],
+    siteLayout: { home: [] },
+    publicFocusMode: { enabled: false }
+  };
   let isDirty = false;
   let isRestoringForm = false;
   let autosaveTimer = 0;
@@ -576,7 +582,8 @@ $$
       posts: payload.posts || [],
       projects: payload.projects || [],
       knowledgeNodes: payload.knowledgeNodes || [],
-      siteLayout: payload.siteLayout || { home: [] }
+      siteLayout: payload.siteLayout || { home: [] },
+      publicFocusMode: payload.publicFocusMode || { enabled: false }
     };
   }
 
@@ -916,8 +923,129 @@ $$
 
   function featuredItems() {
     return combinedItems()
-      .filter((item) => item.contentType !== "knowledge_node" && item.featured && !item.deletedAt)
+      .filter((item) => item.contentType !== "knowledge_node" && item.featured)
       .sort((a, b) => featuredOrderValue(a.featuredOrder) - featuredOrderValue(b.featuredOrder) || itemTimestamp(b) - itemTimestamp(a));
+  }
+
+  function visitorFocusCorpus(item) {
+    return [
+      item.categoryKey,
+      item.category,
+      item.title,
+      item.excerpt,
+      item.summary,
+      item.tags,
+      item.markdown,
+      item.id,
+      item.slug
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+  }
+
+  function matchesVisitorFocus(item) {
+    const corpus = visitorFocusCorpus(item);
+    return [
+      "power-electronics",
+      "电力电子",
+      "开关电源",
+      "boost",
+      "buck",
+      "flyback",
+      "占空比",
+      "纹波",
+      "电感",
+      "mosfet",
+      "power supply"
+    ].some((token) => corpus.includes(token));
+  }
+
+  function visitorPublicState(item) {
+    if (item.deletedAt) {
+      return {
+        code: "VISITOR_HIDDEN_DELETED",
+        visible: false,
+        label: "游客端已隐藏",
+        message: "内容位于回收站。",
+        recommendation: "建议取消轮播；如需展示，先恢复内容。"
+      };
+    }
+    if (
+      (item.contentType === "post" && item.publishStatus !== "published") ||
+      (item.contentType === "project" && item.visibilityStatus !== "published")
+    ) {
+      return {
+        code: "VISITOR_HIDDEN_UNPUBLISHED",
+        visible: false,
+        label: "游客端已隐藏",
+        message: "内容尚未发布。",
+        recommendation: "发布后可保留；暂不发布时建议取消轮播。"
+      };
+    }
+    if (item.contentType === "project" && item.statusKey !== "online") {
+      return {
+        code: "VISITOR_HIDDEN_PROJECT_OFFLINE",
+        visible: false,
+        label: "游客端已隐藏",
+        message: "项目状态不是“已上线”。",
+        recommendation: "设为已上线后可保留；否则建议取消轮播。"
+      };
+    }
+    if (serverContent.publicFocusMode?.enabled === true && !matchesVisitorFocus(item)) {
+      return {
+        code: "VISITOR_HIDDEN_FOCUS_SCOPE",
+        visible: false,
+        label: "游客端已隐藏",
+        message: "内容不属于当前电力电子聚焦范围。",
+        recommendation: "建议取消轮播；仅在内容确属电力电子时补充准确分类或标签。"
+      };
+    }
+    return null;
+  }
+
+  function visitorFeaturedKeys() {
+    const focusEnabled = serverContent.publicFocusMode?.enabled === true;
+    let posts = (serverContent.posts || [])
+      .map((item) => ({ ...item, contentType: "post" }))
+      .filter((item) => !visitorPublicState(item));
+    let projects = (serverContent.projects || [])
+      .map((item) => ({ ...item, contentType: "project" }))
+      .filter((item) => !visitorPublicState(item));
+    if (focusEnabled) {
+      const byRecommendation = (a, b) =>
+        recommendationPriorityValue(a.recommendationPriority) - recommendationPriorityValue(b.recommendationPriority) ||
+        itemTimestamp(b) - itemTimestamp(a);
+      posts = posts.slice().sort(byRecommendation);
+      projects = projects.slice().sort(byRecommendation);
+    }
+    const eligible = [...posts, ...projects]
+      .filter((item) => !focusEnabled || matchesVisitorFocus(item))
+      .filter((item) => item.featured)
+      .sort((a, b) => featuredOrderValue(a.featuredOrder) - featuredOrderValue(b.featuredOrder))
+      .slice(0, featuredLimit);
+    return new Set(eligible.map(itemKey));
+  }
+
+  function visitorVisibility(item, visibleKeys) {
+    const hidden = visitorPublicState(item);
+    if (hidden) return hidden;
+    if (!visibleKeys.has(itemKey(item))) {
+      return {
+        code: "VISITOR_HIDDEN_LIMIT",
+        visible: false,
+        label: "游客端已隐藏",
+        message: "轮播排序后超出游客端前 4 项。",
+        recommendation: "调整槽位；无法进入前 4 项时建议取消轮播。"
+      };
+    }
+    return {
+      code: "VISITOR_VISIBLE",
+      visible: true,
+      label: "游客端可见",
+      message: serverContent.publicFocusMode?.enabled === true ? "已发布并符合当前聚焦范围。" : "已发布并进入游客端轮播。",
+      recommendation: ""
+    };
   }
 
   function searchableText(item) {
@@ -1416,6 +1544,7 @@ $$
   function renderFeaturedSlots() {
     if (!featuredSlots) return;
     const byOrder = new Map();
+    const visibleKeys = visitorFeaturedKeys();
     featuredItems().forEach((item) => {
       const order = featuredOrderValue(item.featuredOrder);
       if (!byOrder.has(order)) byOrder.set(order, item);
@@ -1440,8 +1569,9 @@ $$
       const publish = publishLabel(publishValue(item));
       const meta = item.contentType === "project" ? item.status || "项目" : item.category || "文章";
       const cover = fallbackCover(item);
+      const visibility = visitorVisibility(item, visibleKeys);
       return `
-        <article class="featured-slot is-filled" data-slot="${order}">
+        <article class="featured-slot is-filled ${visibility.visible ? "is-visitor-visible" : "is-visitor-hidden"}" data-slot="${order}" data-visitor-reason="${visibility.code}">
           <div class="featured-slot-head">
             <span>${featuredSlotLabel(order)}</span>
             <small>${kind} · ${escapeHtml(publish)}</small>
@@ -1449,10 +1579,16 @@ $$
           <img src="${adminSrc(cover)}" alt="${escapeHtml(item.title || "未命名内容")}封面" />
           <strong>${escapeHtml(item.title || "未命名内容")}</strong>
           <small>${escapeHtml(meta)}</small>
+          <div class="visitor-visibility ${visibility.visible ? "is-visible" : "is-hidden"}" role="status">
+            <strong>${visibility.label}</strong>
+            <span>${escapeHtml(visibility.message)}</span>
+            <code>${visibility.code}</code>
+            ${visibility.recommendation ? `<p>${escapeHtml(visibility.recommendation)}</p>` : ""}
+          </div>
           <div class="featured-slot-actions">
             <button class="button secondary" data-action="edit-featured" data-type="${item.contentType}" data-id="${item.id}" type="button">编辑</button>
             <button class="button secondary" data-action="replace-featured-slot" data-slot="${order}" data-type="${item.contentType}" data-id="${item.id}" type="button" ${canAssignCurrent ? "" : "disabled"}>替换</button>
-            <button class="button secondary danger" data-action="clear-featured-slot" data-type="${item.contentType}" data-id="${item.id}" type="button">取消</button>
+            <button class="button secondary danger ${visibility.visible ? "" : "is-recommended"}" data-action="clear-featured-slot" data-type="${item.contentType}" data-id="${item.id}" type="button">${visibility.visible ? "取消轮播" : "建议取消轮播"}</button>
           </div>
         </article>
       `;
@@ -2379,13 +2515,13 @@ $$
       return;
     }
     if (action === "clear-featured-slot" && item) {
-      if (!window.confirm(`确认将《${item.title || "未命名内容"}》移出首页轮播吗？`)) return;
+      if (!window.confirm(`确认将《${item.title || "未命名内容"}》移出首页轮播吗？\n\n本操作只会取消首页推荐并释放槽位，不会删除文章或项目正文。`)) return;
       withBusy(button, "取消中...", async () => {
         await saveItemFeatured(item, false, item.featuredOrder);
         renderList();
         renderRecentContent();
         renderFeaturedSlots();
-        setNotice("已取消该位置的首页轮播。", "success");
+        setNotice("已取消首页轮播并释放槽位，文章或项目正文仍完整保留。", "success");
       }).catch((error) => setNotice(error.message, "error"));
     }
   });
