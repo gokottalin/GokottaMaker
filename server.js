@@ -860,11 +860,19 @@ function assertCarouselSlot(payload, contentType) {
 
 function gitCommit() {
   if (process.env.GIT_COMMIT) return process.env.GIT_COMMIT;
-  try {
-    return childProcess.execSync("git rev-parse --short HEAD", { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
-  } catch {
-    return "unknown";
+  const candidates = [...new Set([process.env.GIT_BIN, "/usr/bin/git", "git"].filter(Boolean))];
+  for (const executable of candidates) {
+    try {
+      return childProcess.execFileSync(executable, ["rev-parse", "--short", "HEAD"], {
+        cwd: root,
+        encoding: "utf8",
+        stdio: ["ignore", "pipe", "ignore"]
+      }).trim();
+    } catch {
+      // Try the next known Git executable.
+    }
   }
+  return "unknown";
 }
 
 function writable(target) {

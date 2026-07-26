@@ -4,9 +4,9 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/opt/LarkixMaker
+WorkingDirectory=/opt/GokottaMaker
 EnvironmentFile=/etc/gokottamaker.env
-ExecStart=/opt/node22/bin/node --experimental-sqlite /opt/LarkixMaker/server.js
+ExecStart=/opt/node22/bin/node --experimental-sqlite /opt/GokottaMaker/server.js
 Restart=always
 RestartSec=5
 

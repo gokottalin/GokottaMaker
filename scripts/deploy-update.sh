@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-APP_DIR="${APP_DIR:-/opt/LarkixMaker}"
+APP_DIR="${APP_DIR:-/opt/GokottaMaker}"
 SERVICE_NAME="${SERVICE_NAME:-gokottamaker}"
 HEALTH_URL="${HEALTH_URL:-http://127.0.0.1:4173/healthz}"
+NODE_BIN="${NODE_BIN:-/opt/node22/bin/node}"
 BACKUP_SCRIPT="${BACKUP_SCRIPT:-scripts/backup-linux.sh}"
 ROLLBACK_SCRIPT="${ROLLBACK_SCRIPT:-scripts/rollback.sh}"
 STATE_DIR="${STATE_DIR:-.deploy}"
@@ -13,12 +14,27 @@ POST_DEPLOY_COMMIT=""
 LATEST_BACKUP_DIR=""
 
 version_from_file() {
-  node -e '
+  "$NODE_BIN" -e '
 const fs = require("node:fs");
 const text = fs.readFileSync("server.js", "utf8");
 const version = text.match(/const\s+siteVersion\s*=\s*["\x27]([^"\x27]+)["\x27]/)?.[1] || "unknown";
 const build = text.match(/const\s+siteBuild\s*=\s*["\x27]([^"\x27]+)["\x27]/)?.[1] || "unknown";
 console.log(`${version}+${build}`);
+' 2>/dev/null || echo "unknown"
+}
+
+health_commit() {
+  printf '%s' "$1" | "$NODE_BIN" -e '
+let body = "";
+process.stdin.setEncoding("utf8");
+process.stdin.on("data", (chunk) => { body += chunk; });
+process.stdin.on("end", () => {
+  try {
+    console.log(JSON.parse(body).gitCommit || "unknown");
+  } catch {
+    console.log("unknown");
+  }
+});
 ' 2>/dev/null || echo "unknown"
 }
 
@@ -115,6 +131,12 @@ sleep 2
 POST_HEALTH="$(curl -fsS "$HEALTH_URL")"
 echo "$POST_HEALTH"
 echo
+EXPECTED_HEALTH_COMMIT="$(git rev-parse --short HEAD)"
+ACTUAL_HEALTH_COMMIT="$(health_commit "$POST_HEALTH")"
+if [ "$ACTUAL_HEALTH_COMMIT" != "$EXPECTED_HEALTH_COMMIT" ]; then
+  echo "ERROR: Health commit mismatch. Expected ${EXPECTED_HEALTH_COMMIT}, got ${ACTUAL_HEALTH_COMMIT}."
+  exit 3
+fi
 
 cat >> "$STATE_FILE" <<EOF
 POST_DEPLOY_COMMIT=${POST_DEPLOY_COMMIT}

@@ -168,6 +168,9 @@ try {
     }
   }
   if (-not $ready) { throw "API verify failed: server did not become ready on $base" }
+  if (-not $health.gitCommit -or $health.gitCommit -eq "unknown") {
+    throw "API verify failed: health endpoint did not resolve gitCommit"
+  }
 
   $publicContent = Invoke-Json -Uri "$base/api/content"
   if ($publicContent.posts.Count -lt 1) { throw "API verify failed: public posts are empty" }
@@ -523,6 +526,7 @@ $zhParagraph
     ok = $true
     baseUrl = $base
     versionLabel = $health.versionLabel
+    gitCommit = $health.gitCommit
     publicPosts = $publicContent.posts.Count
     publicProjects = $publicContent.projects.Count
     publicKnowledgeNodes = $publicNodes.nodes.Count

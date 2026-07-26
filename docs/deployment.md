@@ -97,7 +97,7 @@ sudo systemctl enable --now gokottamaker
 更新线上代码推荐执行：
 
 ```bash
-cd /opt/LarkixMaker
+cd /opt/GokottaMaker
 bash scripts/deploy-update.sh
 ```
 
@@ -138,14 +138,14 @@ http://服务器地址:4173/api/admin/health
 回滚到上一次部署前记录的 commit：
 
 ```bash
-cd /opt/LarkixMaker
+cd /opt/GokottaMaker
 bash scripts/rollback.sh
 ```
 
 回滚到指定 commit：
 
 ```bash
-cd /opt/LarkixMaker
+cd /opt/GokottaMaker
 bash scripts/rollback.sh 9263f08
 ```
 
@@ -231,7 +231,7 @@ curl -fsS http://127.0.0.1:4173/healthz
 如果确认需要回滚，使用脚本输出的推荐命令，例如：
 
 ```bash
-cd /opt/LarkixMaker
+cd /opt/GokottaMaker
 bash scripts/rollback.sh <Pre-deploy commit>
 ```
 

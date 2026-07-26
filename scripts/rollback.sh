@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-APP_DIR="${APP_DIR:-/opt/LarkixMaker}"
-SERVICE_NAME="${SERVICE_NAME:-larkixmaker}"
+APP_DIR="${APP_DIR:-/opt/GokottaMaker}"
+SERVICE_NAME="${SERVICE_NAME:-gokottamaker}"
 HEALTH_URL="${HEALTH_URL:-http://127.0.0.1:4173/healthz}"
+NODE_BIN="${NODE_BIN:-/opt/node22/bin/node}"
 BACKUP_SCRIPT="${BACKUP_SCRIPT:-scripts/backup-linux.sh}"
 STATE_DIR="${STATE_DIR:-.deploy}"
 TARGET_REF="${1:-}"
@@ -21,7 +22,7 @@ short_ref() {
 }
 
 version_from_file() {
-  node -e '
+  "$NODE_BIN" -e '
 const fs = require("node:fs");
 const text = fs.readFileSync("server.js", "utf8");
 const version = text.match(/const\s+siteVersion\s*=\s*["\x27]([^"\x27]+)["\x27]/)?.[1] || "unknown";
