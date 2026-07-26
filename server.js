@@ -858,8 +858,42 @@ function assertCarouselSlot(payload, contentType) {
   }
 }
 
+function gitCommitFromMetadata() {
+  try {
+    let gitDir = path.join(root, ".git");
+    if (fs.statSync(gitDir).isFile()) {
+      const pointer = fs.readFileSync(gitDir, "utf8").trim().match(/^gitdir:\s*(.+)$/i);
+      if (!pointer) return "";
+      gitDir = path.resolve(root, pointer[1]);
+    }
+
+    const head = fs.readFileSync(path.join(gitDir, "HEAD"), "utf8").trim();
+    if (/^[0-9a-f]{7,40}$/i.test(head)) return head.slice(0, 7);
+
+    const ref = head.match(/^ref:\s*(.+)$/i)?.[1];
+    if (!ref) return "";
+
+    try {
+      const commit = fs.readFileSync(path.join(gitDir, ...ref.split("/")), "utf8").trim();
+      if (/^[0-9a-f]{7,40}$/i.test(commit)) return commit.slice(0, 7);
+    } catch {
+      const packedRefs = fs.readFileSync(path.join(gitDir, "packed-refs"), "utf8");
+      const packedCommit = packedRefs
+        .split(/\r?\n/)
+        .map((line) => line.trim().split(/\s+/))
+        .find(([commit, name]) => name === ref && /^[0-9a-f]{40}$/i.test(commit))?.[0];
+      if (packedCommit) return packedCommit.slice(0, 7);
+    }
+  } catch {
+    // The runtime may be installed from an archive without Git metadata.
+  }
+  return "";
+}
+
 function gitCommit() {
   if (process.env.GIT_COMMIT) return process.env.GIT_COMMIT;
+  const metadataCommit = gitCommitFromMetadata();
+  if (metadataCommit) return metadataCommit;
   const candidates = [...new Set([process.env.GIT_BIN, "/usr/bin/git", "git"].filter(Boolean))];
   for (const executable of candidates) {
     try {
