@@ -65,9 +65,18 @@ function unwrapValue(value) {
 
 function projectWindowValue(text, label) {
   const prefix = `- ${label}:`;
-  const line = text.split(/\r?\n/).find((item) => item.startsWith(prefix));
-  if (!line) return "";
-  return unwrapValue(line.slice(prefix.length));
+  const lines = text.split(/\r?\n/);
+  const index = lines.findIndex((item) => item.startsWith(prefix));
+  if (index < 0) return "";
+
+  const parts = [lines[index].slice(prefix.length).trim()];
+  for (let cursor = index + 1; cursor < lines.length; cursor += 1) {
+    const line = lines[cursor];
+    if (!line.trim() || /^[-#]/.test(line.trimStart())) break;
+    if (!/^\s+/.test(line)) break;
+    parts.push(line.trim());
+  }
+  return unwrapValue(parts.filter(Boolean).join(" "));
 }
 
 function listItems(label, values) {
@@ -115,11 +124,29 @@ function agentRoleNote(governance, agentId) {
   return governance.workline?.agentRoleNotes?.[agentId] || "";
 }
 
+function taskForbidden(entry) {
+  try {
+    const workline = readJson("docs/codex-workline/implementation_slices.json");
+    const slice = (workline.slices || []).find((item) => item.agent === entry.id);
+    if (Array.isArray(slice?.forbidden) && slice.forbidden.length > 0) {
+      return slice.forbidden;
+    }
+  } catch {
+    // The task registry remains sufficient when implementation slices are absent.
+  }
+
+  return [
+    "files outside the declared allowed outputs",
+    "current or production data mutation",
+    "cloud writes, deployment, or Git staging/commit/push"
+  ];
+}
+
 function shortPrompt(governance, agentId, promptRoot) {
   const title = formatAgentTitle(agentId);
   const note = agentRoleNote(governance, agentId);
   const noteText = note ? `（${note}）` : "";
-  return `${title}${noteText}：请进入 ${promptRoot}，运行 npm.cmd run codex:handoff，然后按输出的 Next Agent brief 执行当前任务；使用中文交接，遵守 AGENTS.md 门禁。`;
+  return `${title}${noteText}：请进入 ${promptRoot}，运行 npm.cmd run codex:handoff，然后按输出的 Next Agent brief 执行当前任务；使用中文交接，遵守 AGENTS.md 门禁；直接交给对应职能 Agent，若不存在则由 A00 创建并注册后继续；不等待用户发送“继续”。`;
 }
 
 function main() {
@@ -162,10 +189,7 @@ function main() {
     console.log("");
     listItems("Done when:", entry.doneWhen);
     console.log("");
-    console.log("Forbidden unless governance explicitly opens scope:");
-    console.log("- business code changes");
-    console.log("- database/runtime data mutation");
-    console.log("- migrations, deployment, Git staging, commit, or push");
+    listItems("Forbidden:", taskForbidden(entry));
   } catch (error) {
     console.error(error.message);
     process.exitCode = 1;

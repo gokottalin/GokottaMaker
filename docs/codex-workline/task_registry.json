@@ -4,7 +4,7 @@
   "operatingModel": "project_director_plus_short_task_agents",
   "legacyAgentDocsMode": "historical_reference_only",
   "currentGate": {
-    "batch1": "s09_formula_catalog_management_open",
+    "batch1": "automatic_queue_complete",
     "businessImplementationAllowed": false,
     "databaseMutationAllowed": false,
     "migrationFileImplementationAllowed": false,
@@ -17,8 +17,16 @@
     "publicDerivationAndFocusModeAllowed": false,
     "cmsFormulaAuthoringExamplesAllowed": false,
     "calculationBookEngineeringAllowed": false,
-    "formulaCatalogManagementAllowed": true,
-    "contentCloudSyncAllowed": false
+    "formulaCatalogManagementAllowed": false,
+    "formulaCatalogMigrationFileAllowed": false,
+    "articleFormulaAuthoringAllowed": false,
+    "formulaReferenceVersioningAllowed": false,
+    "linearDerivationGraphAllowed": false,
+    "focusModeScopeGateAllowed": false,
+    "carouselFocusBufferAllowed": false,
+    "contentCloudSyncAllowed": false,
+    "regressionEvidenceMatrixAllowed": false,
+    "releaseGitGatePlanningAllowed": false
   },
   "longLivedRoles": [
     {
@@ -46,14 +54,21 @@
         "docs/prompts/next_agents.md",
         "docs/codex-workline/task_registry.json",
         "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/requirements/dispatch/*.json",
+        "docs/codex-workline/A00_ProjectDirector_handoff.md",
         "agents/*/brief.md",
         ".codex/agents/*.toml",
         ".codex/larkix-governance.json"
       ],
       "doneWhen": [
-        "S08_calculation_book_engineering is accepted as the latest handoff",
+        "REQ-20260726-001 through REQ-20260726-005 are digest-verified and mapped by DISPATCH-20260726-001",
         "the next user-facing handoff is short and starts with Agent number, English role, and Chinese note",
-        "A14_FormulaCatalogManagement is the only next task and remains strict-identity, complete-jump, CMS-management, and isolated-backup scoped"
+        "A22_FocusModeScopeGate is accepted with default-enabled persistence, server scope enforcement, direct-route denial, state preservation, API, SEO, CMS, and responsive browser evidence",
+        "A23_CarouselFocusBuffer is accepted with transactional selective buffering, stable identity, explicit-slot restore, CMS, API, responsive browser, and regression evidence",
+        "A15_ContentCloudSync is accepted with zero-network dry-run, backup/checksum gates, stable-slug idempotency, failure rollback guidance, and contract evidence",
+        "A16_RegressionEvidenceMatrix is accepted with 17 passing commands, 9 passing browser scenarios, cleanup, limitations, and protected-boundary evidence",
+        "A17_ReleaseGitGate is accepted with a complete 191-path partition and planning-only release decision",
+        "the automatic functional-Agent queue is complete with no next task; all mutation gates remain closed until new authority"
       ]
     }
   ],
@@ -498,14 +513,16 @@
     },
     {
       "id": "A14_FormulaCatalogManagement",
-      "status": "next",
-      "scope": "implement stable formula identity, strict hierarchical tags, complete L1/L2/L3 child-formula jumps, focused CMS management, and isolated local backup/export",
+      "status": "completed",
+      "scope": "implement the formula-card data, API, CMS catalog, revision, archive, export, and isolated-backup foundation for REQ-20260726-003",
       "reads": [
         "AGENTS.md",
         "PROJECT_WINDOW.md",
         "docs/PROJECT_CHARTER.md",
         "docs/codex-workline/task_registry.json",
         "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/requirements/active/REQ-20260726-003.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json",
         "docs/codex-workline/slices/S05_cms_knowledge_node_workflow_handoff.md",
         "docs/codex-workline/slices/S07_cms_formula_authoring_examples_handoff.md",
         "docs/codex-workline/slices/S08_calculation_book_engineering_handoff.md",
@@ -513,28 +530,29 @@
         "schemas/calculation-book-master.schema.json",
         "content/calculation-books/**/calculation-book.json",
         "tools/calculation-book/**",
+        "server.js",
         "admin/index.html",
         "admin/admin.js",
         "admin/admin.css",
         "lib/content.js",
         "lib/validators.js",
         "data/markdown-renderer.js",
-        "post.js",
-        "main.js",
         "scripts/test-calculation-book.js"
       ],
       "mayEdit": [
-        "schemas/calculation-book-master.schema.json",
-        "content/calculation-books/**",
-        "tools/calculation-book/**",
+        "migrations/014_formula_catalog.js",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
         "admin/index.html",
         "admin/admin.js",
         "admin/admin.css",
-        "lib/content.js",
-        "lib/validators.js",
         "data/markdown-renderer.js",
         "post.js",
-        "main.js",
+        "derive.html",
+        "schemas/calculation-book-master.schema.json",
+        "content/calculation-books/**",
+        "tools/calculation-book/**",
         "scripts/test-calculation-book.js",
         "scripts/test-formula-catalog.js",
         "package.json",
@@ -542,17 +560,313 @@
         "docs/codex-workline/slices/S09_formula_catalog_management_handoff.md"
       ],
       "doneWhen": [
-        "every formula has a stable globally namespaced canonical identity and duplicate identities or route slugs fail validation",
-        "every generated node has exactly one domain, topology, book, depth, and formula tag plus a validated optional hierarchy path and parent identity",
-        "every visible L1 formula and every dependent L2/L3 subformula has a superscript jump to a real target with no dangling link or unsupported filler",
-        "CMS can search and filter by formula identity, book, topology, depth, hierarchy, and publication state while preserving create/edit/revision/soft-delete/restore behavior",
-        "formula catalog export is deterministic and bulk import validates the whole package and creates a non-overwriting pre-change snapshot",
-        "both accepted calculation books pass identity, tag, complete-jump, route, backup, restore, Chinese rendering, and isolated DATA_DIR tests",
-        "npm.cmd run test:formula-catalog, test:calculation-book, test:markdown, and codex:contract pass",
-        "handoff records coverage counts, backup/restore evidence, local test URLs, risks, and next handoff back to A00"
+        "each formula card has immutable identity, unique slug, required module and extensible custom category, optional purpose/tags, and immutable LaTeX revisions",
+        "CMS provides category tree, search, tag filters, pagination, CRUD, archive/restore, revision history, and visitor preview without listing all formulas by default",
+        "both accepted calculation books import without duplicate identities or unsupported filler",
+        "deterministic export/import and non-overwrite snapshots pass in a new isolated DATA_DIR",
+        "article bindings, per-article decisions, derivation edges, focus mode, and carousel behavior remain untouched",
+        "formula catalog, calculation-book, Markdown, API, browser, and contract checks pass",
+        "handoff returns to A00 with migration, catalog, pagination, revision, archive, backup, and route evidence"
       ],
       "brief": "agents/A14_FormulaCatalogManagement/brief.md",
       "handoff": "docs/codex-workline/slices/S09_formula_catalog_management_handoff.md"
+    },
+    {
+      "id": "A19_ArticleFormulaAuthoring",
+      "status": "completed",
+      "scope": "implement the article-editor existing-card insertion and selection-to-new-card half of REQ-20260726-003",
+      "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260726-003.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json",
+        "docs/codex-workline/slices/S09_formula_catalog_management_handoff.md",
+        "agents/A19_ArticleFormulaAuthoring/brief.md"
+      ],
+      "mayEdit": [
+        "migrations/015_article_formula_bindings.js",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "data/markdown-renderer.js",
+        "post.js",
+        "scripts/test-article-formula-authoring.js",
+        "package.json",
+        "docs/calculation-book-authoring-guide.md",
+        "docs/codex-workline/slices/S13_article_formula_authoring_handoff.md"
+      ],
+      "doneWhen": [
+        "ordinary inline and display LaTeX remains valid and unbound",
+        "CMS context menu finds and inserts existing cards by category, tag, or keyword",
+        "one complete selected LaTeX expression can create a card with required name, module, and category and atomically become a bound reference",
+        "binding retains stable card and immutable version identity",
+        "isolated authoring, renderer, API, responsive CMS, and contract checks pass"
+      ],
+      "brief": "agents/A19_ArticleFormulaAuthoring/brief.md",
+      "handoff": "docs/codex-workline/slices/S13_article_formula_authoring_handoff.md"
+    },
+    {
+      "id": "A20_FormulaReferenceVersioning",
+      "status": "completed",
+      "scope": "implement immutable formula revisions and per-article keep, upgrade, or clone decisions for REQ-20260726-004",
+      "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260726-004.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json",
+        "docs/codex-workline/slices/S09_formula_catalog_management_handoff.md",
+        "docs/codex-workline/slices/S13_article_formula_authoring_handoff.md",
+        "agents/A20_FormulaReferenceVersioning/brief.md"
+      ],
+      "mayEdit": [
+        "migrations/016_formula_reference_decisions.js",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "data/markdown-renderer.js",
+        "post.js",
+        "scripts/test-formula-reference-versioning.js",
+        "package.json",
+        "docs/calculation-book-authoring-guide.md",
+        "docs/codex-workline/slices/S14_formula_reference_versioning_handoff.md"
+      ],
+      "doneWhen": [
+        "LaTeX update or archive creates one CMS-only decision per referencing article while visitors keep the old bound revision",
+        "metadata-only edits synchronize without decisions",
+        "each article independently supports keep old, adopt newest, or create and bind a new card",
+        "archive preserves history and readable article references",
+        "isolated version, decision, renderer, API, CMS, and contract checks pass"
+      ],
+      "brief": "agents/A20_FormulaReferenceVersioning/brief.md",
+      "handoff": "docs/codex-workline/slices/S14_formula_reference_versioning_handoff.md"
+    },
+    {
+      "id": "A21_LinearDerivationGraph",
+      "status": "completed",
+      "scope": "implement manual many-incoming, one-outgoing, cycle-free formula-card derivation relations for REQ-20260726-005",
+      "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260726-005.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json",
+        "docs/codex-workline/slices/S09_formula_catalog_management_handoff.md",
+        "docs/codex-workline/slices/S13_article_formula_authoring_handoff.md",
+        "docs/codex-workline/slices/S14_formula_reference_versioning_handoff.md",
+        "agents/A21_LinearDerivationGraph/brief.md"
+      ],
+      "mayEdit": [
+        "migrations/017_linear_derivation_graph.js",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "data/markdown-renderer.js",
+        "post.js",
+        "derive.html",
+        "scripts/test-linear-derivation-graph.js",
+        "scripts/test-calculation-book.js",
+        "package.json",
+        "docs/calculation-book-authoring-guide.md",
+        "docs/codex-workline/slices/S15_linear_derivation_graph_handoff.md"
+      ],
+      "doneWhen": [
+        "each derivation level is an independent formula card",
+        "many sources may converge but each source has at most one next target",
+        "self-links, cycles, dangling targets, and silent branching are rejected",
+        "CMS and visitor detail show all incoming sources and the unique next target",
+        "isolated convergence, rejection, archived-chain, route, and contract checks pass"
+      ],
+      "brief": "agents/A21_LinearDerivationGraph/brief.md",
+      "handoff": "docs/codex-workline/slices/S15_linear_derivation_graph_handoff.md"
+    },
+    {
+      "id": "A22_FocusModeScopeGate",
+      "status": "completed",
+      "scope": "implement the default-enabled server-authoritative visitor and CMS focus gate for REQ-20260726-001",
+      "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260726-001.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json",
+        "docs/codex-workline/slices/S06_public_derivation_and_focus_mode_handoff.md",
+        "docs/codex-workline/slices/S15_linear_derivation_graph_handoff.md",
+        "agents/A22_FocusModeScopeGate/brief.md"
+      ],
+      "mayEdit": [
+        "migrations/018_focus_mode_scope_gate.js",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "data/content-store.js",
+        "main.js",
+        "post.js",
+        "category-page.js",
+        "maker.html",
+        "post.html",
+        "project.html",
+        "derive.html",
+        "scripts/verify-api.ps1",
+        "scripts/test-focus-mode.js",
+        "package.json",
+        "docs/codex-workline/slices/S16_focus_mode_scope_gate_handoff.md"
+      ],
+      "doneWhen": [
+        "one persistent global switch defaults enabled in fresh data and survives restart",
+        "electronics-basics, derivations, and projects are the only focused modules and power-electronics remains a compatibility alias",
+        "public payloads, navigation, homepage, lists, search, sitemap, and direct routes enforce the same focus scope",
+        "CMS hides and rejects out-of-scope authoring while focused",
+        "disabling restores published content and CMS drafts without changing status, and re-enabling deletes nothing",
+        "isolated state transition, direct route, responsive CMS, API, SEO, and contract checks pass"
+      ],
+      "brief": "agents/A22_FocusModeScopeGate/brief.md",
+      "handoff": "docs/codex-workline/slices/S16_focus_mode_scope_gate_handoff.md"
+    },
+    {
+      "id": "A23_CarouselFocusBuffer",
+      "status": "completed",
+      "scope": "implement selective persistent carousel buffering and Owner-only manual restore for REQ-20260726-002",
+      "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260726-002.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json",
+        "docs/codex-workline/slices/S16_focus_mode_scope_gate_handoff.md",
+        "agents/A23_CarouselFocusBuffer/brief.md"
+      ],
+      "mayEdit": [
+        "migrations/019_carousel_focus_buffer.js",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "main.js",
+        "scripts/test-carousel-focus-buffer.js",
+        "scripts/check-carousel-db.js",
+        "scripts/check-carousel-cloud.sh",
+        "package.json",
+        "docs/codex-workline/slices/S17_carousel_focus_buffer_handoff.md"
+      ],
+      "doneWhen": [
+        "focus enablement selectively and idempotently buffers only out-of-scope featured entries",
+        "buffer preserves identity, image reference, original slot, reason, and publication state",
+        "focus disablement never auto-restores",
+        "CMS blocks ineligible restore while focused and supports explicit-slot manual restore when eligible",
+        "isolated buffering, reason-code, restore, responsive CMS, data-preservation, and contract checks pass"
+      ],
+      "brief": "agents/A23_CarouselFocusBuffer/brief.md",
+      "handoff": "docs/codex-workline/slices/S17_carousel_focus_buffer_handoff.md"
+    },
+    {
+      "id": "A15_ContentCloudSync",
+      "status": "completed",
+      "scope": "prepare dry-run-first, backup-gated, checksum-verified and idempotent content-package cloud-sync integration without remote writes",
+      "reads": [
+        "docs/codex-workline/slices/S08_calculation_book_engineering_handoff.md",
+        "docs/codex-workline/slices/S09_formula_catalog_management_handoff.md",
+        "docs/codex-workline/slices/S17_carousel_focus_buffer_handoff.md",
+        "docs/calculation-book-authoring-guide.md",
+        "tools/calculation-book",
+        "scripts/deploy-update.sh",
+        "scripts/backup-linux.sh",
+        "scripts/restore-linux.sh",
+        "docs/deployment.md",
+        "agents/A15_ContentCloudSync/brief.md"
+      ],
+      "mayEdit": [
+        "scripts/content-sync-cloud.sh",
+        "scripts/deploy-update.sh",
+        "scripts/gokottamaker.env.example",
+        "docs/deployment.md",
+        "docs/codex-workline/slices/S10_content_cloud_sync_handoff.md"
+      ],
+      "doneWhen": [
+        "default dry-run proves no remote or current-data write",
+        "apply path requires explicit operator intent, successful backup evidence, and matching checksum",
+        "stable-slug repeated import is idempotent and partial failure stops with rollback instructions",
+        "shell syntax, isolated local rehearsal, calculation-book regression, diff, and contract checks pass"
+      ],
+      "brief": "agents/A15_ContentCloudSync/brief.md",
+      "handoff": "docs/codex-workline/slices/S10_content_cloud_sync_handoff.md"
+    },
+    {
+      "id": "A16_RegressionEvidenceMatrix",
+      "status": "completed",
+      "scope": "run and record the complete isolated API, CMS, visitor, Markdown, formula, calculation-book, content-sync, version, and governance regression matrix",
+      "reads": [
+        "docs/codex-workline/slices",
+        "docs/codex-workline/slices/S10_content_cloud_sync_handoff.md",
+        "scripts/verify-api.ps1",
+        "scripts/test-markdown-renderer.js",
+        "docs/Agent20+体验测试与问题上报",
+        "agents/A16_RegressionEvidenceMatrix/brief.md"
+      ],
+      "mayEdit": [
+        "docs/codex-workline/slices/S11_regression_evidence_matrix_handoff.md",
+        "docs/codex-workline/regression_results.json"
+      ],
+      "doneWhen": [
+        "every command records its exact invocation, exit code, duration, isolation mode, and concise result",
+        "all accepted feature, API, Markdown, calculation-book, content-sync, version, governance, and diff checks are executed",
+        "isolated desktop, half-width, and mobile CMS/visitor browser smoke is recorded with console, overflow, state, and cleanup evidence",
+        "failures and browser/tool limitations are reported honestly without changing business code or tests"
+      ],
+      "brief": "agents/A16_RegressionEvidenceMatrix/brief.md",
+      "handoff": "docs/codex-workline/slices/S11_regression_evidence_matrix_handoff.md"
+    },
+    {
+      "id": "A17_ReleaseGitGate",
+      "status": "completed",
+      "scope": "classify the live worktree into explicit future staging, protected exclusion, and review-required lists and issue a backup/rollback/health-gated release-readiness decision",
+      "reads": [
+        "git status --short --branch",
+        "git diff --stat",
+        "docs/codex-workline/regression_results.json",
+        "docs/codex-workline/slices/S11_regression_evidence_matrix_handoff.md",
+        "docs/deployment.md",
+        "scripts/deploy-update.sh",
+        "scripts/rollback.sh",
+        "scripts/backup-linux.sh",
+        "scripts/restore-linux.sh",
+        "docs/Agent101-Git",
+        "docs/Agent1+运维与发布稳定性",
+        "agents/A17_ReleaseGitGate/brief.md"
+      ],
+      "mayEdit": [
+        "docs/codex-workline/release_gate_plan.md",
+        "docs/codex-workline/git_staging_plan.md"
+      ],
+      "doneWhen": [
+        "every changed and untracked path is classified as future include, protected exclusion, or review-required",
+        "future staging uses an explicit path allowlist and never git add dot",
+        "backup, rollback, deployment health, regression, version, whitespace, and remaining production limitations are checked",
+        "release readiness is advisory and clearly states staging, commit, push, deployment, restore, and rollback remain unauthorized"
+      ],
+      "brief": "agents/A17_ReleaseGitGate/brief.md",
+      "handoff": "docs/codex-workline/release_gate_plan.md"
+    }
+  ],
+  "onDemandWorkbenches": [
+    {
+      "id": "A18_RequirementClarifier",
+      "status": "available_on_demand",
+      "scope": "interview the Owner, remove requirement ambiguity, obtain explicit confirmation, and send a compact machine-readable requirement pointer to A00",
+      "brief": "agents/A18_RequirementClarifier/brief.md",
+      "schema": "schemas/requirement-brief.schema.json",
+      "protocol": "docs/codex-workline/requirements/README.md",
+      "mayEdit": [
+        "docs/codex-workline/requirements/active/*.json"
+      ],
+      "doesNotDo": [
+        "business implementation",
+        "project sequencing",
+        "implementation Agent assignment",
+        "acceptance of implementation",
+        "database or cloud data mutation",
+        "Git staging, commit, push, or deployment"
+      ]
     }
   ]
 }

@@ -192,7 +192,102 @@ node tools/calculation-book/preview.js `
 
 命令会打印三个隔离预览 URL。按 `Ctrl+C` 后服务退出并删除临时 `DATA_DIR`。不得把预览节点写入当前、生产或云端数据。
 
-## 9. 修订规则
+## 9. 公式库管理
+
+公式库把每条 L1 设计公式保存为一张唯一公式卡。公式卡使用稳定 `formulaId` 与 ASCII 路由 `slug`；二者建立后不可修改。显示名称、模块、自定义分类路径、用途与 `namespace:value` 标签可以修订。LaTeX 发生变化时生成新的不可变修订，旧修订只读保留；仅修改元数据不会制造重复修订。
+
+管理端“公式库”按“模块 / 自定义分类”加载，未选择分类时不返回整库列表。选定分类后可搜索名称、用途、标识或 LaTeX，并可按标签与归档状态筛选、分页浏览。归档会隐藏访客公式卡，但保留公式标识、标签和全部修订；恢复后原路由继续有效。访客单卡地址为：
+
+```text
+derive.html?formula=<formula-slug>
+```
+
+已验收的两册参考计算书可确定性映射为 60 张公式卡：CCM 反激 21 张、四开关 BUCK-BOOST 39 张。映射只读取 `equations`，不把输入、结果、推导页或占位内容当作公式卡。可先输出导入包进行审核：
+
+```powershell
+node --experimental-sqlite tools/calculation-book/formula-catalog.js package-books
+```
+
+向数据库导入前必须使用全新的隔离 `DATA_DIR`，并把导入前快照写到源码树外。命令拒绝已有数据库、源码树内数据目录和同名快照覆盖：
+
+```powershell
+node --experimental-sqlite tools/calculation-book/formula-catalog.js import-books `
+  --data-dir E:/Temp/larkix-formula-catalog-data `
+  --snapshot E:/Backups/formula-catalog-before-import.json
+```
+
+对既有隔离数据库只生成确定性快照时使用：
+
+```powershell
+node --experimental-sqlite tools/calculation-book/formula-catalog.js snapshot `
+  --data-dir E:/Temp/larkix-formula-catalog-data `
+  --output E:/Backups/formula-catalog-snapshot.json
+```
+
+管理端 JSON 导入同样先写本地非覆盖快照，再执行整包预检和事务导入。当前公式库基础不包含文章绑定、文章级版本选择或公式推导图；这些关系不得借用标签或用途字段编码。
+
+公式库回归命令：
+
+```powershell
+npm.cmd run test:formula-catalog
+```
+
+## 10. 文章公式创作
+
+文章 Markdown 中的普通 `$...$`、`$$...$$`、`\(...\)` 与 `\[...\]` LaTeX 可以保持未绑定状态，保存和访客渲染不会自动把它们转换为公式卡。
+
+需要复用公式库时，在 Markdown 编辑区右键，或使用“文章公式卡”区域的“打开公式卡”键盘入口。弹窗可按模块、自定义分类、`namespace:value` 标签和关键词搜索，并以行内或块级方式插入。插入后正文保存稳定的公式卡身份与不可变修订身份；后续修改公式卡不会静默改变文章引用的修订。
+
+需要把正文公式建立为新公式卡时，必须先精确选中一个完整的行内或块级 LaTeX 表达式。选区不能混入正文、缺少定界符或同时包含多个公式。建卡时必须人工填写公式名称、模块和自定义分类；用途与标签可选，系统不从上下文猜测这些字段。成功后，公式卡、初始修订、文章绑定和选区替换在同一事务内完成；失败时原 LaTeX 与本地草稿保持不变。
+
+文章引用的内部表示为：
+
+```text
+{{formula:<bindingId>|<formulaId>|<revisionId>|inline}}
+{{formula:<bindingId>|<formulaId>|<revisionId>|display}}
+```
+
+作者不应手工改写其中的标识。删除整段引用表示显式解除该文章绑定；复制引用时应通过公式弹窗重新插入，以获得新的文章内绑定标识。
+
+文章公式创作回归命令：
+
+```powershell
+npm.cmd run test:article-formula-authoring
+```
+
+## 11. 文章公式版本决策
+
+公式卡只修改名称、模块、自定义分类、用途或标签时，文章不产生版本待决事项。公式卡 LaTeX 生成新修订，或公式卡被归档时，每一篇仍绑定该公式卡的文章会各自产生一项黄色 CMS 待决事项；待决状态、处理人和处理时间均不进入访客 API 或公开正文。
+
+待决期间，CMS 预览与访客文章继续按正文中保存的不可变 `revisionId` 渲染旧公式，不会自动跟随公式卡的当前修订。作者必须逐篇选择：
+
+1. **保留旧修订**：正文和绑定均保持不变，只关闭该篇文章的待决事项。
+2. **采用最新修订**：保留原 `bindingId`，把该篇文章的公式卡与 `revisionId` 显式更新到目标修订。
+3. **另建公式卡**：以旧修订 LaTeX 为初值，人工填写新名称、模块和自定义分类，可选填写用途与标签；系统生成新的技术标识，并保留原 `bindingId` 重新绑定。
+
+每项决定只作用于当前文章，不提供批量处理。若同一待决事项尚未处理时公式卡又产生新修订，旧待决记录保留为已取代历史，只把最新目标保留为待处理。归档是软状态：既有不可变修订和文章内渲染仍然保留，归档卡的独立访客页继续隐藏；重复归档不会重复创建待决事项。作者显式删除完整公式短码时，该绑定的待决事项随绑定解除而结束。
+
+文章公式版本回归命令：
+
+```powershell
+npm.cmd run test:formula-reference-versioning
+```
+
+## 12. 公式卡线性推导关系
+
+推导链的每一阶必须是独立公式卡，不能把多阶推导压进同一张卡。关系由作者手工维护，不根据名称、分类、标签或 LaTeX 自动推断。多张上一阶公式卡可以汇入同一张卡，但每张卡最多只有一个下一阶，因此推导网络允许汇聚、不允许分叉。
+
+设置关系时，来源卡与目标卡必须存在且不能相同；系统拒绝悬空引用、自环和循环路径。来源卡已有下一阶时，普通保存会被拒绝，作者必须在 CMS 中查看旧目标、新目标及受影响的上游路径数量，再确认一次显式替换。替换采用单个事务完成，校验失败会保留原关系。
+
+归档公式卡不会删除推导边或历史。CMS 继续显示上下阶、影响范围和归档断链告警；访客页把归档节点显示为不可点击的明确中断状态。恢复公式卡后，原链路自动重新可访问。
+
+线性推导关系回归命令：
+
+```powershell
+npm.cmd run test:linear-derivation-graph
+```
+
+## 13. 修订规则
 
 修订计算书时：
 
@@ -203,7 +298,7 @@ node tools/calculation-book/preview.js `
 5. 必填缺口解决后更新 `unresolvedItems`、coverage、margin、validation 和 signoff；不得只删除警告文字。
 6. 重新生成两类输出并比较哨兵结果。
 
-## 10. 发布前审核清单
+## 14. 发布前审核清单
 
 - JSON Schema 与语义校验为零错误。
 - 确认值和公式的来源覆盖率为 100%，无未声明假设。
@@ -214,4 +309,4 @@ node tools/calculation-book/preview.js `
 - Mathcad XML/规则通过，并在可用的 Mathcad 15 中完成打开检查。
 - Larkix 包无本机绝对路径、用户名、私有 handoff 或乱码。
 - 隔离 `DATA_DIR` 路由与公式跳转通过；当前/生产数据未被写入。
-- 正式内容导入、云同步和发布必须等待 A00 验收；A14 先完成公式目录、全量跳转、严格标签和本地备份，A15 才负责后续内容云同步。A13/A14 不部署、不写云端、不执行 Git staging/commit/push。
+- 正式内容导入、云同步和发布必须经过总控验收；验证阶段不写当前/生产数据，不部署、不写云端，也不执行 Git staging、commit 或 push。

@@ -106,11 +106,124 @@ bash scripts/deploy-update.sh
 - `git fetch origin`
 - 检查工作区是否干净
 - 备份 `/srv/gokottamaker-data`
-- `git pull --ff-only origin main`
+- `git merge --ff-only origin/main`
+- 当显式提供内容包时，先通过同一门禁执行 dry-run；只有一次性 apply 意图、备份证据和校验和全部匹配时才导入
 - 重启 `gokottamaker`
 - 请求 `/healthz` 验证版本
 - 输出部署前后 commit、版本号、健康检查和备份目录对比
 - 失败时输出诊断命令、最近备份目录和推荐回滚命令
+
+### 计算书内容包同步
+
+`scripts/content-sync-cloud.sh` 只接受规范的
+`larkix.calculation-book-package.v1`，并拒绝 `preview=true` 的预览包。每个
+节点必须使用稳定 ASCII slug，且 `id` 必须与 `slug` 相同。同步按包内
+明确列出的 slug 逐项比较：
+
+- 相同 slug 与相同载荷重复导入时跳过，不新增修订；
+- 载荷变化时只更新本包列出的节点，不扫描、删除或改写其他内容；
+- 软删除状态不会被同步脚本自动恢复；
+- 整包写入使用单一 SQLite 事务，部分失败不会留下已提交的前半包；
+- 成功后在 `DATA_DIR/.content-sync/<bookId>.json` 写入包 SHA-256、来源摘要、
+  稳定 slug 与本次 created / updated / unchanged 回执。
+
+校验和应在内容包传输或发布前由验收方锁定，并从独立的验收记录带到目标
+主机。不要在正式 apply 命令中临时计算一个新的期望值来绕过比对。Linux
+可使用：
+
+```bash
+sha256sum content/calculation-books/<book>/generated/larkix-package.json
+```
+
+缺少 `sha256sum` 的校验环境可使用 Node 22 得到同一 SHA-256：
+
+```bash
+node -e 'const c=require("node:crypto"),f=require("node:fs");process.stdout.write(c.createHash("sha256").update(f.readFileSync(process.argv[1])).digest("hex")+"\n")' \
+  content/calculation-books/<book>/generated/larkix-package.json
+```
+
+默认命令是 dry-run。它只读取并校验包，不创建或打开 `DATA_DIR`，不运行
+SSH、上传或云端写入：
+
+```bash
+bash scripts/content-sync-cloud.sh \
+  --package content/calculation-books/<book>/generated/larkix-package.json \
+  --checksum '<已验收的 64 位 SHA-256>' \
+  --data-dir /srv/gokottamaker-data
+```
+
+正式 apply 必须同时满足以下全部门禁：
+
+1. 显式 `--apply`；
+2. 显式 `--confirm APPLY_CONTENT_SYNC`；
+3. `--checksum` 与包字节完全匹配；
+4. `--backup-evidence` 指向本次 `backup-linux.sh` 生成的 `manifest.txt`；
+5. 备份的 `source_dir` 与目标 `DATA_DIR` 完全相同；
+6. 备份时间未超过 `CONTENT_SYNC_MAX_BACKUP_AGE_HOURS`，默认 2 小时；
+7. 备份的 `manifest.sha256` 存在且每一项校验通过。
+
+手工维护时先取得 `backup-linux.sh` 输出的 `Manifest:` 路径，再执行：
+
+```bash
+sudo env \
+  APP_DIR=/opt/GokottaMaker \
+  NODE_BIN=/opt/node22/bin/node \
+  DATA_DIR=/srv/gokottamaker-data \
+  CONTENT_SYNC_MAX_BACKUP_AGE_HOURS=2 \
+  bash /opt/GokottaMaker/scripts/content-sync-cloud.sh \
+    --apply \
+    --confirm APPLY_CONTENT_SYNC \
+    --package /opt/GokottaMaker/content/calculation-books/<book>/generated/larkix-package.json \
+    --checksum '<已验收的 64 位 SHA-256>' \
+    --backup-evidence /srv/gokottamaker-backups/<本次时间戳>/manifest.txt \
+    --data-dir /srv/gokottamaker-data
+```
+
+`deploy-update.sh` 复用同一门禁。只提供包与校验和时，部署流程仅做内容包
+dry-run：
+
+```bash
+CONTENT_SYNC_PACKAGE='content/calculation-books/<book>/generated/larkix-package.json' \
+CONTENT_SYNC_CHECKSUM='<已验收的 64 位 SHA-256>' \
+bash scripts/deploy-update.sh
+```
+
+只有维护窗口内的一次性命令才同时传入 apply 意图。不要把
+`CONTENT_SYNC_CONFIRM=APPLY_CONTENT_SYNC` 长期写入 `/etc/gokottamaker.env`：
+
+```bash
+CONTENT_SYNC_PACKAGE='content/calculation-books/<book>/generated/larkix-package.json' \
+CONTENT_SYNC_CHECKSUM='<已验收的 64 位 SHA-256>' \
+CONTENT_SYNC_APPLY=true \
+CONTENT_SYNC_CONFIRM=APPLY_CONTENT_SYNC \
+bash scripts/deploy-update.sh
+```
+
+部署脚本仍先备份，再 fast-forward 代码，然后执行内容包 dry-run/apply，
+最后重启服务并检查 `/healthz`；内容同步不能绕过既有备份或健康检查。
+
+本地无网络回归使用操作系统临时目录，结束后自动清理：
+
+```bash
+bash scripts/content-sync-cloud.sh --self-test
+```
+
+矩阵覆盖 dry-run 零写、校验和不匹配、缺少备份证据、首次导入、相同包重复
+导入、单节点载荷更新、事务中途失败与 rollback 提示。测试在 `PATH` 前置
+网络命令守卫；若调用 `curl`、`wget`、`ssh`、`scp`、`rsync` 或 `rclone`
+即失败。
+
+内容同步失败时脚本会打印最后安全检查点、已验证备份与以下两阶段恢复命令，
+但不会自动替换数据：
+
+```bash
+bash scripts/restore-linux.sh --dry-run <backup-dir> <DATA_DIR>
+sudo bash scripts/restore-linux.sh <backup-dir> <DATA_DIR>
+```
+
+内容事务失败时前半包会回滚。需要注意，打开 SQLite 时可能先运行当前代码
+中的加法迁移；若要求数据库整体回到导入前状态，必须在确认停机与恢复范围后
+使用已校验备份。
 
 ### 健康检查
 

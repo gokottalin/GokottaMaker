@@ -1,0 +1,133 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260726-005",
+  "title": "可汇入且不分叉的多阶公式推导链",
+  "status": "dispatched",
+  "priority": "normal",
+  "createdAt": "2026-07-26T17:43:18.208+08:00",
+  "updatedAt": "2026-07-26T17:55:40.587+08:00",
+  "intent": {
+    "problem": "公式推导缺少清晰的多阶跳转和关系管理，无法表达不同选型或拓扑来源最终汇入同一个通用公式的过程。",
+    "desiredOutcome": "把每一阶推导保存为独立公式卡，由 Owner 手动建立可多源汇入、但每张卡最多只有一个下一阶的线性推导关系，并允许用户逐阶跳转。",
+    "targetUsers": [
+      "Owner/幕后作者",
+      "游客"
+    ]
+  },
+  "scope": {
+    "in": [
+      "每一阶推导都是独立公式卡",
+      "Owner 在 CMS 中手动设置公式卡的上一阶和下一阶关系",
+      "每张公式卡最多只能指定一个下一阶",
+      "同一张通用公式卡可以接收多个不同来源或拓扑的上一阶",
+      "多条来源路径可以汇入同一个通用公式，但同一节点不能向多个下一阶分叉",
+      "游客可沿公式卡关系逐阶跳转到二阶、三阶及后续推导",
+      "CMS 和游客端清楚展示可用的上一阶来源及唯一下一阶"
+    ],
+    "out": [
+      "同一公式卡分叉到多个下一阶",
+      "把全部推导步骤塞入一张公式卡",
+      "自动推断或自动创建推导关系",
+      "把不同拓扑的来源公式强制合并为同一张来源卡"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "多阶公式之间缺少满足多来源汇入场景的明确跳转关系。"
+    ],
+    "expected": [
+      "每个推导步骤具有独立公式卡和可访问目标。",
+      "Owner 可让多个来源公式分别指向同一个通用纹波公式。",
+      "从任一来源沿下一阶前进时，路径始终是单线的。",
+      "通用公式详情可列出多个上一阶来源，便于回看不同拓扑。",
+      "游客可连续跳转并到达更深层推导。"
+    ],
+    "edgeCases": [
+      "建立关系时不得形成循环推导。",
+      "下一阶目标归档或不可访问时不得生成无说明的失效跳转。",
+      "已有下一阶的公式卡再次选择另一个下一阶时，必须要求明确替换而不是静默形成分叉。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.independent-cards",
+      "statement": "一阶、二阶、三阶等每个推导步骤均为独立且可访问的公式卡。",
+      "verification": "建立至少三阶示例，逐一检查公式卡身份、详情地址和内容。"
+    },
+    {
+      "id": "ac.single-next",
+      "statement": "每张公式卡最多只有一个下一阶，系统拒绝或要求替换第二个下一阶关系。",
+      "verification": "为已有下一阶的公式卡再指定另一目标，确认不会同时保留两个下一阶。"
+    },
+    {
+      "id": "ac.multiple-previous",
+      "statement": "同一个通用公式卡可以接收多个不同来源公式卡作为上一阶。",
+      "verification": "创建至少两个拓扑来源并让它们汇入同一纹波公式，确认通用公式列出全部来源。"
+    },
+    {
+      "id": "ac.multilevel-navigation",
+      "statement": "游客可以从任一来源沿唯一下一阶连续跳转到二阶、三阶及后续公式。",
+      "verification": "从每条来源路径执行完整逐阶跳转，确认目标真实存在且路径不分叉。"
+    },
+    {
+      "id": "ac.no-cycle",
+      "statement": "系统不允许创建会导致循环的推导关系。",
+      "verification": "尝试把后阶公式指回前阶，确认保存被阻止并显示原因。"
+    }
+  ],
+  "constraints": {
+    "languages": [
+      "zh-CN",
+      "LaTeX"
+    ],
+    "platforms": [
+      "Larkix 公式详情页",
+      "Larkix CMS"
+    ],
+    "compatibility": [
+      "每张公式卡保持独立身份和访问地址"
+    ],
+    "data": [
+      "下一阶关系最大数量为一",
+      "上一阶关系允许多个",
+      "关系图不得形成循环"
+    ],
+    "security": [],
+    "operations": [
+      "推导关系由 Owner 手动维护"
+    ],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.shared-target-change",
+      "severity": "medium",
+      "statement": "多个来源共用下一阶时，对通用公式关系的修改会影响多条推导路径。",
+      "mitigation": "CMS 保存关系变更前清楚列出受影响的来源路径。"
+    },
+    {
+      "id": "risk.broken-chain",
+      "severity": "medium",
+      "statement": "归档或改变中间公式卡可能造成推导链中断。",
+      "mitigation": "关系保存和公式归档时校验链路，并在 CMS 显示受影响路径。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-26T17:54:17.256+08:00",
+    "confirmationText": "确认这5个需求包。",
+    "digest": "sha256:023d2848b9eba7b3f71a4baaf55572b55cb8b4d6b5afa9ee17a32ecbbf5511c0"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [
+      "REQ-20260726-003"
+    ],
+    "dispatchedAt": "2026-07-26T17:55:40.587+08:00"
+  }
+}

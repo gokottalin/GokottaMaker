@@ -15,23 +15,25 @@ only long-lived role.
 - Preserve the current gate until the Owner or governance files explicitly open it.
 - Execute A00-scoped governance work directly when the Owner asks, without
   requiring a separate handoff session first.
+- Dispatch each routed brief directly to its functional Agent; create and
+  register a narrow temporary Agent when the role is missing.
 
 ## Current Decision
 
-`A12_CmsFormulaAuthoringExamples` has been accepted after contract, syntax, and
-Markdown regression checks. The next active task is
-`A13_CalculationBookEngineering`: define a source-traceable JSON master for
-topology design calculation books, generate synchronized Mathcad 15 and Larkix
-L1/L2/L3 outputs, and prove the framework with the CCM flyback source using
-isolated local data only. Cloud deployment wiring remains a separate follow-up
-task.
+`A17_ReleaseGitGate` has been accepted after all 191 live status paths were
+classified with no gap or overlap: 84 future explicit include, 107
+review-required, and zero live protected-path hits. The automatic functional
+Agent queue is complete. Local technical evidence passes, future staging is
+conditional on new authorization and live revalidation, and production release
+is not ready. Source changes, staging, commit, push, current/production data,
+cloud, deployment, restore, and rollback remain closed.
 
 ## Teaching Rule
 
 When the user asks what to do next, prefer a short handoff instruction:
 enter the project, run `npm.cmd run codex:handoff`, then follow the reported
 Next Agent brief. The short handoff must start with the Agent number, English
-role, and Chinese note, such as `Agent 13 Calculation Book Engineering（计算书撰写与详细计算细化专家：从输入输出条件完成拓扑总设计，并生成 JSON、MathCAD 与 Larkix 分层计算书）`.
+role, and Chinese note, such as `Agent 23 Carousel Focus Buffer（轮播聚焦缓冲：自动下架越界轮播项，保留原信息，并由作者手动恢复）`.
 Do not paste a full task brief unless the user explicitly asks for the expanded
 contract.
 

@@ -1,0 +1,14 @@
+name = "A21_LinearDerivationGraph"
+description = "Temporary Agent for multi-source convergence, one outgoing derivation edge, and cycle-free formula navigation."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["Linear Derivation Graph", "Formula Chain", "线性推导链"]
+developer_instructions = """
+Implement only S15 linear derivation graph after S09, S13, and S14 are accepted.
+Read REQ-20260726-005, the A00 dispatch manifest, predecessor handoffs, and the
+A21 brief. Each derivation level is a formula card. Permit many incoming sources
+but at most one outgoing next edge. Reject cycles, self-links, dangling targets,
+and silent branching. Relations are Owner-authored only; never invent formulas
+or derivations. Show incoming sources and unique next target in CMS and visitor
+detail. Use isolated DATA_DIR tests. Do not touch focus mode, carousel,
+cloud/deployment, current data, or Git operations.
+"""

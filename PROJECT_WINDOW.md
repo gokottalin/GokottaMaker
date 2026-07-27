@@ -5,19 +5,23 @@ short, pointer-only, and current.
 
 ## Active Window
 
-- Current phase: `A14_FormulaCatalogManagement`
+- Current phase: `A00_QueueComplete`
 - Current controller: `agents/A00_ProjectDirector/brief.md`
-- Next agent: `agents/A14_FormulaCatalogManagement/brief.md`
-- Core governance contract: `.codex/larkix-governance.json`
+- Next agent: `agents/A00_ProjectDirector/brief.md`
+- Confirmed requirement dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json`
 - Active task registry: `docs/codex-workline/task_registry.json`
 
 ## Status Slots
 
 - Product target: LarkixMaker website and local content/CMS runtime.
-- Current work target: make every L1/L2/L3 formula uniquely addressable, fully jumpable, strictly tagged, easy to manage in CMS, and protected by local export/snapshot recovery.
-- Current gate: S09 formula catalog identity, hierarchical tags, complete derivation jumps, CMS management, and isolated backup verification are open; migrations, current/production data, cloud writes, deployment, and Git staging are closed.
-- Last accepted handoff: `docs/codex-workline/slices/S08_calculation_book_engineering_handoff.md`
-- Last updated: 2026-07-22
+- Current work target: queue complete; A00 preserves accepted evidence and
+  awaits any separately authorized Git, production, or new requirement scope.
+- Current gate: no functional Agent is pending. Source changes, staging,
+  commit, push, current/production data, cloud, deployment, restore, and
+  rollback are closed.
+- Confirmed queue: no implementation slice remains.
+- Last accepted handoff: `docs/codex-workline/release_gate_plan.md`
+- Last updated: 2026-07-27
 
 ## Do Not Put Here
 

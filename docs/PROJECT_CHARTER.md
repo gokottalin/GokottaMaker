@@ -29,7 +29,12 @@ The project should always be able to answer:
    `scripts/codex-governance.js`.
 4. Keep one-Agent-at-a-time briefs under `agents/<agent_id>/brief.md`.
 5. Require every task Agent to write a handoff.
-6. Open business implementation only after the Owner or active governance files
+6. Continue automatically from task handoff to A00 acceptance and the next
+   routed Agent; do not require the Owner to relay prompts or type "继续".
+7. Dispatch each handoff directly to the matching functional Agent. If it does
+   not exist, A00 creates and registers a narrow temporary Agent, then dispatches
+   the work without stopping.
+8. Open business implementation only after the Owner or active governance files
    explicitly open the gate.
 
 ## Non-Goals For The Current Phase
@@ -50,4 +55,6 @@ The governance layer is acceptable when a new session can read:
 - `docs/codex-workline/task_registry.json`
 - the next Agent brief under `agents/`
 
-Then it can complete one narrow task and verify it with the declared command.
+Then it can complete one narrow task, verify it with the declared command, and
+automatically continue through A00 acceptance to the next authorized task until
+the queue completes or a declared stop condition requires Owner input.

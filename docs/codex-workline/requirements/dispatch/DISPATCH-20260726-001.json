@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "larkix.requirement-dispatch.v1",
+  "dispatchId": "DISPATCH-20260726-001",
+  "status": "accepted_by_a00",
+  "acceptedAt": "2026-07-26T18:00:00+08:00",
+  "controller": "A00_ProjectDirector",
+  "sourceRequirements": [
+    {
+      "requirementId": "REQ-20260726-001",
+      "digest": "sha256:9def62eb61e9ae828a3c81c9bdececbfefc325e645eae062a0d75c35ff2e75f9"
+    },
+    {
+      "requirementId": "REQ-20260726-002",
+      "digest": "sha256:a71fea19cc623e712a570a9ff270448aadba861832cba761566c7a14adde3df3"
+    },
+    {
+      "requirementId": "REQ-20260726-003",
+      "digest": "sha256:9cabfc2858139253e57f32cde639657e052cea3346aeab73490d6fb1cb0a6aa4"
+    },
+    {
+      "requirementId": "REQ-20260726-004",
+      "digest": "sha256:3692698ef10c3b07c522d63ee5d8f6a1c86bb6b1bf250f60a42edd0aa5f9ef25"
+    },
+    {
+      "requirementId": "REQ-20260726-005",
+      "digest": "sha256:023d2848b9eba7b3f71a4baaf55572b55cb8b4d6b5afa9ee17a32ecbbf5511c0"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "decision.keep-a14-next",
+      "statement": "A14 remains the only next task and is narrowed to formula catalog foundation; complete derivation chains move to A21."
+    },
+    {
+      "id": "decision.split-req003",
+      "statement": "REQ-20260726-003 is split between S09 catalog foundation and S13 article formula authoring so data/API and editor behavior are independently testable."
+    },
+    {
+      "id": "decision.serialize-shared-files",
+      "statement": "S09, S13, S14, S15, S16, and S17 execute serially because they share server.js, admin/admin.js, and persistence boundaries."
+    },
+    {
+      "id": "decision.focus-scope-alias",
+      "statement": "The canonical focus module is electronics-basics; existing power-electronics routes and metadata are accepted aliases. This does not create or delete a business category."
+    },
+    {
+      "id": "decision.server-enforced-focus",
+      "statement": "Focus visibility is enforced by server public payloads and direct-detail lookup, not by navigation hiding alone."
+    },
+    {
+      "id": "decision.preserve-state",
+      "statement": "Focus and carousel transitions must not delete content or alter draft/published state; formula history and article-bound versions remain immutable and readable."
+    }
+  ],
+  "executionOrder": [
+    {
+      "slice": "S09_formula_catalog_management",
+      "agent": "A14_FormulaCatalogManagement",
+      "status": "next",
+      "requirements": ["REQ-20260726-003"]
+    },
+    {
+      "slice": "S13_article_formula_authoring",
+      "agent": "A19_ArticleFormulaAuthoring",
+      "status": "planned_not_open",
+      "requirements": ["REQ-20260726-003"]
+    },
+    {
+      "slice": "S14_formula_reference_versioning",
+      "agent": "A20_FormulaReferenceVersioning",
+      "status": "planned_not_open",
+      "requirements": ["REQ-20260726-004"]
+    },
+    {
+      "slice": "S15_linear_derivation_graph",
+      "agent": "A21_LinearDerivationGraph",
+      "status": "planned_not_open",
+      "requirements": ["REQ-20260726-005"]
+    },
+    {
+      "slice": "S16_focus_mode_scope_gate",
+      "agent": "A22_FocusModeScopeGate",
+      "status": "planned_not_open",
+      "requirements": ["REQ-20260726-001"]
+    },
+    {
+      "slice": "S17_carousel_focus_buffer",
+      "agent": "A23_CarouselFocusBuffer",
+      "status": "planned_not_open",
+      "requirements": ["REQ-20260726-002"]
+    }
+  ],
+  "postImplementationOrder": [
+    "S10_content_cloud_sync",
+    "S11_regression_evidence_matrix",
+    "S12_release_git_gate"
+  ],
+  "gates": {
+    "currentOrProductionDataMutationAllowed": false,
+    "isolatedDataDirVerificationAllowed": true,
+    "productionDeploymentAllowed": false,
+    "gitStagingCommitPushAllowed": false,
+    "oneNextTaskOnly": true
+  },
+  "nextHandoff": {
+    "agent": "A14_FormulaCatalogManagement",
+    "brief": "agents/A14_FormulaCatalogManagement/brief.md"
+  }
+}

@@ -1,0 +1,15 @@
+name = "A22_FocusModeScopeGate"
+description = "Temporary Agent for one persistent, default-enabled focus state enforced across visitor routes and CMS authoring."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["Focus Mode Gate", "Scope Gate", "全站聚焦门禁"]
+developer_instructions = """
+Implement only S16 focus mode scope gate after the formula workline is accepted.
+Read REQ-20260726-001, the A00 dispatch manifest, predecessor handoffs, and the
+A22 brief. Use one server-authoritative persistent setting. Fresh data defaults
+enabled. Allow electronics-basics, derivations, and projects, treating existing
+power-electronics as an alias. Enforce visibility in public payloads and direct
+detail lookup, not only navigation. Enforce CMS list and write boundaries.
+Disabling restores published content but never publishes drafts; re-enabling
+never deletes or rewrites status. Do not implement carousel buffering. Use only
+isolated DATA_DIR tests and do not touch cloud/deployment, current data, or Git.
+"""

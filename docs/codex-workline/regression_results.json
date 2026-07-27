@@ -1,0 +1,352 @@
+{
+  "schemaVersion": "larkix.regression-evidence.v1",
+  "slice": "S11",
+  "generatedBy": "A16_RegressionEvidenceMatrix",
+  "generatedAt": "2026-07-27T12:39:05.2110802+08:00",
+  "workspace": "E:/Project/2607-LarkixWeb",
+  "overallStatus": "pass",
+  "summary": {
+    "commands": {
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "timedOut": 0,
+      "durationMs": 33153
+    },
+    "browserScenarios": {
+      "total": 9,
+      "passed": 9,
+      "failed": 0,
+      "timedOut": 0
+    },
+    "releaseBlockingFailures": 0,
+    "documentedLimitations": 5
+  },
+  "environment": {
+    "nodeVersion": "v24.15.0",
+    "npmVersion": "11.12.1",
+    "packageVersion": "2.5.1",
+    "siteVersionLabel": "V2.5.1+20260726-1650",
+    "gitCommit": "7d6200c",
+    "branch": "main",
+    "themeObserved": "dark",
+    "themeEvidence": "主题按钮的可访问名称为“切换日间模式”，说明当前页面处于暗色主题。",
+    "currentOrProductionDataTouched": false,
+    "cloudAccessed": false,
+    "deploymentPerformed": false,
+    "gitMutationPerformed": false
+  },
+  "commandMatrix": [
+    {
+      "id": "formula-catalog",
+      "command": "npm.cmd run test:formula-catalog",
+      "exitCode": 0,
+      "durationMs": 1864,
+      "isolationMode": "测试脚本在操作系统 TEMP 下创建 larkix-formula-catalog-*，使用隔离 DATA_DIR 并在结束时清理。",
+      "status": "pass",
+      "result": "60 张公式卡、9 个分类、CRUD/不可变修订、归档恢复、分页、快照、API 与访客预览通过。"
+    },
+    {
+      "id": "article-formula-authoring",
+      "command": "npm.cmd run test:article-formula-authoring",
+      "exitCode": 0,
+      "durationMs": 1474,
+      "isolationMode": "测试脚本在操作系统 TEMP 下创建 larkix-article-formula-*，使用隔离 DATA_DIR 并在结束时清理。",
+      "status": "pass",
+      "result": "未绑定 LaTeX、既有卡绑定、原子建卡、失败回滚、不可变身份、渲染与 API 通过。"
+    },
+    {
+      "id": "formula-reference-versioning",
+      "command": "npm.cmd run test:formula-reference-versioning",
+      "exitCode": 0,
+      "durationMs": 1406,
+      "isolationMode": "测试脚本在操作系统 TEMP 下创建 larkix-formula-version-*，使用隔离 DATA_DIR 并在结束时清理。",
+      "status": "pass",
+      "result": "元数据零待决、逐文章决策、旧修订渲染、保留/采用/另建、归档、API 与 CMS 契约通过。"
+    },
+    {
+      "id": "linear-derivation-graph",
+      "command": "npm.cmd run test:linear-derivation-graph",
+      "exitCode": 0,
+      "durationMs": 1579,
+      "isolationMode": "测试脚本在操作系统 TEMP 下创建 larkix-linear-graph-*，使用隔离 DATA_DIR 并在结束时清理。",
+      "status": "pass",
+      "result": "独立公式卡、双来源汇聚、唯一下一阶、显式替换、循环拒绝、归档状态、API 与 UI 契约通过。"
+    },
+    {
+      "id": "focus-mode",
+      "command": "npm.cmd run test:focus-mode",
+      "exitCode": 0,
+      "durationMs": 4403,
+      "isolationMode": "测试脚本在操作系统 TEMP 下创建 larkix-focus-mode-*，使用隔离 DATA_DIR、隔离端口并在结束时清理。",
+      "status": "pass",
+      "result": "默认开启、唯一开关、公共/CMS 范围、写拒绝、直接路由 404、关闭恢复、重新开启保留、重启持久化与 SEO 通过。"
+    },
+    {
+      "id": "carousel-focus-buffer",
+      "command": "npm.cmd run test:carousel-focus-buffer",
+      "exitCode": 0,
+      "durationMs": 3789,
+      "isolationMode": "测试脚本在操作系统 TEMP 下创建 larkix-carousel-buffer-*，使用隔离 DATA_DIR、隔离端口并在结束时清理。",
+      "status": "pass",
+      "result": "选择性/幂等缓冲、关闭不自动恢复、聚焦阻止、显式槽位恢复、冲突、失效引用、移除、唯一性与发布状态保留通过。"
+    },
+    {
+      "id": "calculation-book",
+      "command": "npm.cmd run test:calculation-book",
+      "exitCode": 0,
+      "durationMs": 2331,
+      "isolationMode": "测试脚本在操作系统 TEMP 下创建 larkix-calculation-book-*，隔离预览服务与 DATA_DIR 在结束时清理；生成物一致性在仓库已验收路径只读核对。",
+      "status": "pass",
+      "result": "Schema、来源追溯、Mathcad、Larkix、隔离 DATA_DIR 与跨输出一致性通过。"
+    },
+    {
+      "id": "markdown-docx",
+      "command": "npm.cmd run test:markdown",
+      "exitCode": 0,
+      "durationMs": 632,
+      "isolationMode": "纯进程内 renderer 与 DOCX buffer 回归，不启动服务、不访问数据目录。",
+      "status": "pass",
+      "result": "Markdown renderer 与 MD2File DOCX，包括公式、derive 短码、安全降级和标题层级通过。"
+    },
+    {
+      "id": "api",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-api.ps1",
+      "exitCode": 0,
+      "durationMs": 2179,
+      "isolationMode": "固定隔离 DATA_DIR=E:/Project/2607-LarkixWeb/.verify-api-data，端口 5497；脚本结束后目录不存在。",
+      "status": "pass",
+      "result": "登录、CSRF、默认聚焦、Owner 关闭且轮播不自动恢复、活跃/缓冲 API、上传、知识节点、MD2File、文章/项目 CRUD、导出、sitemap、RSS、退出通过；publicPosts=1、publicProjects=2、publicKnowledgeNodes=1、featuredSlots=3、bufferedCarouselItems=3。"
+    },
+    {
+      "id": "content-sync-syntax",
+      "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" -n scripts/content-sync-cloud.sh scripts/deploy-update.sh scripts/backup-linux.sh scripts/restore-linux.sh",
+      "exitCode": 0,
+      "durationMs": 83,
+      "isolationMode": "Git Bash 只解析四个脚本语法，不执行网络、数据库、部署或恢复。",
+      "status": "pass",
+      "result": "四个 shell 脚本语法通过。"
+    },
+    {
+      "id": "content-sync-self-test",
+      "command": "\"C:\\Program Files\\Git\\bin\\bash.exe\" scripts/content-sync-cloud.sh --self-test",
+      "exitCode": 0,
+      "durationMs": 10515,
+      "isolationMode": "脚本用 mktemp -d 创建临时包、备份、数据库、uploads、回执与网络失败守卫，退出时统一清理。",
+      "status": "pass",
+      "result": "dry-run writes=0、checksum/缺备份阻断、首次创建2、重复 unchanged=2、变更 update=1、部分失败事务回滚、network attempts=0。"
+    },
+    {
+      "id": "version",
+      "command": "npm.cmd run check:version",
+      "exitCode": 0,
+      "durationMs": 728,
+      "isolationMode": "只读版本一致性检查。",
+      "status": "pass",
+      "result": "Version check passed: V2.5.1+20260726-1650。"
+    },
+    {
+      "id": "governance",
+      "command": "npm.cmd run codex:check",
+      "exitCode": 0,
+      "durationMs": 953,
+      "isolationMode": "只读治理契约与资源清单检查。",
+      "status": "pass",
+      "result": "治理契约 590 passed、0 warnings、0 failures；资源清单 27 passed、12 warnings、0 failures。12 项均为既有 1.4–2.0 MB 源码/证据图片的大文件提示，不是契约或回归失败。"
+    },
+    {
+      "id": "whitespace",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "durationMs": 123,
+      "isolationMode": "只读工作区差异空白检查，不暂存、不提交、不改写文件。",
+      "status": "pass",
+      "result": "无 whitespace error；仅有 Windows 工作区 LF 将在 Git 触碰时转换为 CRLF 的提示。"
+    },
+    {
+      "id": "results-json-validation",
+      "command": "node -e JSON/UTF-8 validation for regression_results.json",
+      "exitCode": 0,
+      "durationMs": 115,
+      "isolationMode": "只读读取新建结果文件，拒绝 BOM、JSON 解析错误及命令/浏览器矩阵计数错误。",
+      "status": "pass",
+      "result": "valid UTF-8 JSON: commands=14, browserScenarios=9；此时的 14 是主回归矩阵，不含随后执行的 3 项 closeout 检查。"
+    },
+    {
+      "id": "allowed-output-whitespace",
+      "command": "git diff --check -- docs/codex-workline/regression_results.json docs/codex-workline/slices/S11_regression_evidence_matrix_handoff.md",
+      "exitCode": 0,
+      "durationMs": 55,
+      "isolationMode": "只读检查 A16 两个允许输出，不改写工作区或 Git 状态。",
+      "status": "pass",
+      "result": "两个允许输出无 whitespace error。"
+    },
+    {
+      "id": "closeout-contract",
+      "command": "npm.cmd run codex:contract",
+      "exitCode": 0,
+      "durationMs": 924,
+      "isolationMode": "写入 A16 两个允许输出后的只读治理契约检查。",
+      "status": "pass",
+      "result": "590 passed、0 warnings、0 failures。"
+    }
+  ],
+  "browserMatrix": {
+    "tool": "Browser skill",
+    "browser": "Chrome",
+    "baseUrl": "http://127.0.0.1:5733",
+    "dataDir": "C:/Users/10731/AppData/Local/Temp/larkix-a16-browser-a70c5bb91b79491b961c822b84c1c6df",
+    "serverPid": 28376,
+    "adminAuthentication": "使用本轮生成的隔离测试账号配置；密码未写入证据。",
+    "scenarios": [
+      {
+        "id": "visitor-maker-desktop",
+        "viewport": "1280x900",
+        "url": "http://127.0.0.1:5733/maker.html",
+        "status": "pass",
+        "state": "H1 为“电子基础学习路径”；导航顺序为首页、电子基础、公式推导、开源项目；焦点入口顺序为电子基础、公式推导、开源项目；管理端链接 display=none。",
+        "overflow": "scrollWidth=1265, clientWidth=1265",
+        "consoleErrors": 0,
+        "consoleWarnings": 0
+      },
+      {
+        "id": "visitor-derive-desktop",
+        "viewport": "1280x900",
+        "url": "http://127.0.0.1:5733/derive.html",
+        "status": "pass",
+        "state": "新隔离数据无公开推导节点时显示安全空状态“还没有公开推导节点”，页面未白屏。",
+        "overflow": "scrollWidth=1265, clientWidth=1265",
+        "consoleErrors": 0,
+        "consoleWarnings": 0
+      },
+      {
+        "id": "cms-focus-desktop",
+        "viewport": "1280x900",
+        "url": "http://127.0.0.1:5733/admin/index.html",
+        "status": "pass",
+        "state": "隔离 CMS 登录成功；唯一聚焦开关 checked=true；文章 1/4、项目 4/4；聚焦面板两列 846.2px/299px。",
+        "overflow": "scrollWidth=1265, clientWidth=1265",
+        "consoleErrors": 0,
+        "consoleWarnings": 0
+      },
+      {
+        "id": "cms-carousel-desktop",
+        "viewport": "1280x900",
+        "url": "http://127.0.0.1:5733/admin/index.html#carousel",
+        "status": "pass",
+        "state": "活跃槽位 1/4、聚焦缓冲 3 项；三个缓冲项均显示稳定 reason code，聚焦开启时三个恢复按钮全部禁用。",
+        "overflow": "scrollWidth=1265, clientWidth=1265",
+        "consoleErrors": 0,
+        "consoleWarnings": 0
+      },
+      {
+        "id": "visitor-maker-half",
+        "viewport": "720x900",
+        "url": "http://127.0.0.1:5733/maker.html",
+        "status": "pass",
+        "state": "三个焦点入口均为 681px 单列，H1 仍为“电子基础学习路径”。",
+        "overflow": "scrollWidth=705, clientWidth=705",
+        "consoleErrors": 0,
+        "consoleWarnings": 0
+      },
+      {
+        "id": "cms-carousel-half",
+        "viewport": "720x900",
+        "url": "http://127.0.0.1:5733/admin/index.html#carousel",
+        "status": "pass",
+        "state": "活跃与缓冲卡均为单列；缓冲卡约 574px，内部列约 544px，操作区未越界；活跃 1/4、缓冲 3。",
+        "overflow": "scrollWidth=705, clientWidth=705",
+        "consoleErrors": 0,
+        "consoleWarnings": 0
+      },
+      {
+        "id": "visitor-maker-mobile",
+        "viewport": "430x900",
+        "url": "http://127.0.0.1:5733/maker.html",
+        "status": "pass",
+        "state": "三个焦点入口均为 391px 单列；管理端链接不可见；H1 为“电子基础学习路径”。",
+        "overflow": "scrollWidth=415, clientWidth=415",
+        "consoleErrors": 0,
+        "consoleWarnings": 0
+      },
+      {
+        "id": "cms-carousel-mobile",
+        "viewport": "430x900",
+        "url": "http://127.0.0.1:5733/admin/index.html#carousel",
+        "status": "pass",
+        "state": "唯一聚焦开关 checked=true；聚焦面板 349.6px 单列；三张缓冲卡各 320px，内部列与槽位选择器约 290px，恢复按钮禁用；活跃 1/4、缓冲 3。",
+        "overflow": "scrollWidth=415, clientWidth=415",
+        "consoleErrors": 0,
+        "consoleWarnings": 0
+      },
+      {
+        "id": "cms-formula-catalog-mobile",
+        "viewport": "430x900",
+        "url": "http://127.0.0.1:5733/admin/index.html#formulas",
+        "status": "pass",
+        "state": "新隔离数据无公式卡时显示“尚无公式分类/请选择分类”安全空状态；搜索、标签、状态与备份导入控件均约 358px 单列。",
+        "overflow": "scrollWidth=415, clientWidth=415",
+        "consoleErrors": 0,
+        "consoleWarnings": 0
+      }
+    ],
+    "cleanup": {
+      "viewportReset": true,
+      "tabsFinalized": true,
+      "processStopped": true,
+      "portStillListening": false,
+      "dataDirRemoved": true,
+      "verifyApiDataDirRemoved": true
+    }
+  },
+  "limitations": [
+    {
+      "id": "browser-networkidle-unsupported",
+      "severity": "non_blocking",
+      "detail": "浏览器能力不支持 networkidle 等待；首次调用立即返回“不支持”，未发生工具连接超时。后续统一使用 domcontentloaded，并在动态内容后做定向 DOM/console 检查。"
+    },
+    {
+      "id": "isolated-empty-catalogs",
+      "severity": "non_blocking",
+      "detail": "新隔离浏览器数据中的公开推导列表和公式目录为空，因此浏览器只验证了安全空状态；填充后的公式/推导 CRUD、分页、版本与路由由对应隔离 package tests 和 API 回归覆盖。"
+    },
+    {
+      "id": "read-only-browser-smoke",
+      "severity": "non_blocking",
+      "detail": "浏览器在隔离 CMS 登录后只读取状态，没有提交聚焦切换、轮播恢复或公式导入；这些写路径由隔离集成测试覆盖，避免浏览器烟测制造额外数据。"
+    },
+    {
+      "id": "calculation-book-deterministic-report-rewrite",
+      "severity": "non_blocking",
+      "detail": "test:calculation-book 在执行时重写两册 generated/isolated-preview-report.json 的 mtime；随后针对两文件的 git status、diff 和 numstat 均为空，证明字节内容未变化。按门禁未回退或改写这些非允许输出。"
+    },
+    {
+      "id": "powershell-json-validator-invocation-error",
+      "severity": "tooling_only",
+      "detail": "一次额外 closeout 包装命令误用 Windows PowerShell 不支持的 ConvertFrom-Json -Depth，外层命令 exit 1，未修改文件，也未计入 17 项回归/closeout pass。随后使用 Node 完整验证 UTF-8 无 BOM、17 条 commandMatrix、9 条 browserMatrix，exit 0。"
+    }
+  ],
+  "toolingIncidents": [
+    {
+      "id": "powershell-convertfrom-json-depth",
+      "command": "PowerShell closeout wrapper using ConvertFrom-Json -Depth 100",
+      "exitCode": 1,
+      "durationMs": null,
+      "durationMeasured": false,
+      "classification": "invalid local validation invocation, not a product regression",
+      "result": "Windows PowerShell reported that ConvertFrom-Json has no parameter named Depth; no file was changed. Corrected Node validation passed."
+    }
+  ],
+  "protectedBoundaries": {
+    "currentDatabaseRead": false,
+    "currentDatabaseWrite": false,
+    "productionDataTouched": false,
+    "realCredentialsRead": false,
+    "cloudConnected": false,
+    "deploymentRun": false,
+    "restoreRun": false,
+    "gitStaged": false,
+    "gitCommitted": false,
+    "gitPushed": false
+  }
+}

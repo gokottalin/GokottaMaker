@@ -16,12 +16,19 @@
   const editorDockHandle = document.querySelector("#editorDockHandle");
   const editorDockState = document.querySelector("#editorDockState");
   const adminNotice = document.querySelector("#adminNotice");
+  const focusModeGate = document.querySelector("#focusModeGate");
+  const focusModeToggle = document.querySelector("#focusModeToggle");
+  const focusModeGateState = document.querySelector("#focusModeGateState");
+  const focusModeGateWarning = document.querySelector("#focusModeGateWarning");
+  const saveFocusModeButton = document.querySelector("#saveFocusModeButton");
   const logoutButton = document.querySelector("#logoutButton");
   const exportButton = document.querySelector("#exportButton");
   const contentForm = document.querySelector("#contentForm");
   const preview = document.querySelector("#markdownPreview");
   const markdownFile = document.querySelector("#markdownFile");
   const markdownHint = document.querySelector("#markdownHint");
+  const articleFormulaHelperPanel = document.querySelector("#articleFormulaHelperPanel");
+  const openFormulaAuthoringButton = document.querySelector("#openFormulaAuthoringButton");
   const formulaHelperPanel = document.querySelector("#formulaHelperPanel");
   const formulaSnippetSelect = document.querySelector("#formulaSnippetSelect");
   const insertInlineFormulaButton = document.querySelector("#insertInlineFormulaButton");
@@ -74,6 +81,8 @@
   const selectedCount = document.querySelector("#selectedCount");
   const recentContentList = document.querySelector("#recentContentList");
   const featuredSlots = document.querySelector("#featuredSlots");
+  const carouselManagerSummary = document.querySelector("#carouselManagerSummary");
+  const carouselBufferList = document.querySelector("#carouselBufferList");
   const adminViews = [...document.querySelectorAll("[data-admin-view]")];
   const adminNavLinks = [...document.querySelectorAll("[data-admin-nav]")];
   const bulkPublishButton = document.querySelector("#bulkPublishButton");
@@ -85,17 +94,77 @@
   const layoutPanel = document.querySelector("#layoutPanel");
   const knowledgeNodeList = document.querySelector("#knowledgeNodeList");
   const newKnowledgeNodeButton = document.querySelector("#newKnowledgeNodeButton");
+  const formulaCategoryTree = document.querySelector("#formulaCategoryTree");
+  const formulaCatalogSummary = document.querySelector("#formulaCatalogSummary");
+  const formulaCardList = document.querySelector("#formulaCardList");
+  const formulaSearchInput = document.querySelector("#formulaSearchInput");
+  const formulaTagFilter = document.querySelector("#formulaTagFilter");
+  const formulaArchiveFilter = document.querySelector("#formulaArchiveFilter");
+  const formulaImportFile = document.querySelector("#formulaImportFile");
+  const formulaImportButton = document.querySelector("#formulaImportButton");
+  const formulaExportButton = document.querySelector("#formulaExportButton");
+  const newFormulaButton = document.querySelector("#newFormulaButton");
+  const formulaPreviousPage = document.querySelector("#formulaPreviousPage");
+  const formulaNextPage = document.querySelector("#formulaNextPage");
+  const formulaPageStatus = document.querySelector("#formulaPageStatus");
+  const formulaCardEditor = document.querySelector("#formulaCardEditor");
+  const formulaEditorTitle = document.querySelector("#formulaEditorTitle");
+  const formulaEditorCancel = document.querySelector("#formulaEditorCancel");
+  const formulaEditorPreview = document.querySelector("#formulaEditorPreview");
+  const formulaVisitorPreview = document.querySelector("#formulaVisitorPreview");
+  const formulaRevisionList = document.querySelector("#formulaRevisionList");
+  const formulaDerivationPanel = document.querySelector("#formulaDerivationPanel");
+  const formulaDerivationImpact = document.querySelector("#formulaDerivationImpact");
+  const formulaDerivationWarning = document.querySelector("#formulaDerivationWarning");
+  const formulaIncomingList = document.querySelector("#formulaIncomingList");
+  const formulaIncomingSource = document.querySelector("#formulaIncomingSource");
+  const formulaIncomingAdd = document.querySelector("#formulaIncomingAdd");
+  const formulaNextRelation = document.querySelector("#formulaNextRelation");
+  const formulaNextTarget = document.querySelector("#formulaNextTarget");
+  const formulaNextSet = document.querySelector("#formulaNextSet");
+  const formulaNextRemove = document.querySelector("#formulaNextRemove");
+  const formulaDerivationCandidates = document.querySelector("#formulaDerivationCandidates");
+  const formulaAuthoringPopover = document.querySelector("#formulaAuthoringPopover");
+  const formulaAuthoringClose = document.querySelector("#formulaAuthoringClose");
+  const formulaSelectionStatus = document.querySelector("#formulaSelectionStatus");
+  const formulaExistingTab = document.querySelector("#formulaExistingTab");
+  const formulaCreateTab = document.querySelector("#formulaCreateTab");
+  const formulaExistingPane = document.querySelector("#formulaExistingPane");
+  const formulaCreatePane = document.querySelector("#formulaCreatePane");
+  const formulaAuthoringModule = document.querySelector("#formulaAuthoringModule");
+  const formulaAuthoringCategory = document.querySelector("#formulaAuthoringCategory");
+  const formulaAuthoringTag = document.querySelector("#formulaAuthoringTag");
+  const formulaAuthoringQuery = document.querySelector("#formulaAuthoringQuery");
+  const formulaAuthoringResults = document.querySelector("#formulaAuthoringResults");
+  const formulaAuthoringPrevious = document.querySelector("#formulaAuthoringPrevious");
+  const formulaAuthoringNext = document.querySelector("#formulaAuthoringNext");
+  const formulaAuthoringPageStatus = document.querySelector("#formulaAuthoringPageStatus");
+  const formulaSelectionPreview = document.querySelector("#formulaSelectionPreview");
+  const formulaCreateName = document.querySelector("#formulaCreateName");
+  const formulaCreateModule = document.querySelector("#formulaCreateModule");
+  const formulaCreateCategory = document.querySelector("#formulaCreateCategory");
+  const formulaCreatePurpose = document.querySelector("#formulaCreatePurpose");
+  const formulaCreateTags = document.querySelector("#formulaCreateTags");
+  const formulaCreateAndBindButton = document.querySelector("#formulaCreateAndBindButton");
+  const formulaDecisionPanel = document.querySelector("#formulaDecisionPanel");
+  const formulaDecisionCount = document.querySelector("#formulaDecisionCount");
+  const formulaDecisionList = document.querySelector("#formulaDecisionList");
 
   let editingType = null;
   let editingId = null;
+  let formulaEditingCard = null;
+  let formulaDerivationSearchTimer = null;
   let currentCover = "";
   let csrfToken = "";
   let serverContent = {
     posts: [],
     projects: [],
     knowledgeNodes: [],
+    formulaReferenceDecisions: [],
     siteLayout: { home: [] },
-    publicFocusMode: { enabled: false }
+    publicFocusMode: { enabled: true },
+    focusScopeCounts: {},
+    carousel: { activeItems: [], buffered: [], summary: { activeCount: 0, bufferedCount: 0, focusEnabled: true } }
   };
   let isDirty = false;
   let isRestoringForm = false;
@@ -103,10 +172,37 @@
   let lastDraftSavedAt = "";
   let cropState = null;
   let layoutDragState = null;
+  let formulaSearchTimer = 0;
+  let formulaAuthoringSearchTimer = 0;
+  let formulaDecisionCloneId = "";
   const selectedContent = new Set();
   const filters = { search: "", type: "all", status: "all" };
   const featuredLimit = 4;
   const knowledgeColorTokens = ["purple", "blue", "green", "amber", "red", "neutral"];
+  const formulaCatalogState = {
+    facets: { modules: [], tags: [] },
+    items: [],
+    selection: { moduleKey: "", categoryPath: "", query: "", tag: "", archiveState: "active" },
+    pagination: { page: 1, pageSize: 12, total: 0, pageCount: 0 },
+    loaded: false
+  };
+  const formulaAuthoringState = {
+    sourceMarkdown: "",
+    selectionStart: 0,
+    selectionEnd: 0,
+    selectionInfo: null,
+    facets: { modules: [], tags: [] },
+    items: [],
+    moduleKey: "",
+    categoryPath: "",
+    tag: "",
+    query: "",
+    page: 1,
+    pageSize: 6,
+    pageCount: 0,
+    total: 0,
+    loaded: false
+  };
   const formulaSnippets = [
     { key: "boost-duty-cycle", label: "BOOST 占空比 D", latex: "D = 1 - \\frac{V_{in}\\eta}{V_{out}}" },
     { key: "boost-inductor-ripple", label: "电感纹波 Delta I_L", latex: "\\Delta I_L = \\frac{V_{in}D}{L f_s}" },
@@ -582,9 +678,99 @@ $$
       posts: payload.posts || [],
       projects: payload.projects || [],
       knowledgeNodes: payload.knowledgeNodes || [],
+      formulaReferenceDecisions: payload.formulaReferenceDecisions || [],
       siteLayout: payload.siteLayout || { home: [] },
-      publicFocusMode: payload.publicFocusMode || { enabled: false }
+      publicFocusMode: payload.publicFocusMode || { enabled: true },
+      focusScopeCounts: payload.focusScopeCounts || {},
+      carousel: payload.carousel || {
+        activeItems: [],
+        buffered: [],
+        summary: { activeCount: 0, bufferedCount: 0, focusEnabled: true }
+      }
     };
+    renderFocusModeGate();
+  }
+
+  function focusModeEnabled() {
+    return serverContent.publicFocusMode?.enabled === true;
+  }
+
+  function focusCategoryAllowed(category) {
+    return ["电子基础", "电力电子", "开源项目"].includes(String(category || ""));
+  }
+
+  function syncFocusAuthoringControls() {
+    const enabled = focusModeEnabled();
+    const categorySelect = contentForm?.category;
+    if (!categorySelect) return;
+    [...categorySelect.options].forEach((option) => {
+      const allowed = focusCategoryAllowed(option.value);
+      option.hidden = enabled && !allowed;
+      option.disabled = enabled && !allowed;
+    });
+    if (enabled && getType() === "post" && !focusCategoryAllowed(categorySelect.value)) {
+      categorySelect.value = "电子基础";
+    }
+  }
+
+  function renderFocusModeGate() {
+    if (!focusModeGate || !focusModeToggle) return;
+    const enabled = focusModeEnabled();
+    focusModeToggle.checked = enabled;
+    focusModeToggle.dataset.savedValue = String(enabled);
+    focusModeToggle.setAttribute("aria-checked", String(enabled));
+    if (saveFocusModeButton) saveFocusModeButton.disabled = true;
+    const counts = serverContent.focusScopeCounts || {};
+    const postCounts = counts.posts || {};
+    const projectCounts = counts.projects || {};
+    focusModeGateState.textContent = enabled
+      ? `当前已开启：CMS 与游客端仅保留电子基础、公式推导、开源项目。文章 ${postCounts.visible ?? 0}/${postCounts.stored ?? 0}，项目 ${projectCounts.visible ?? 0}/${projectCounts.stored ?? 0}。`
+      : `当前已关闭：CMS 恢复全部内容；游客端恢复所有原本已发布的内容。文章 ${postCounts.visible ?? 0}/${postCounts.stored ?? 0}。`;
+    focusModeGateWarning.textContent = enabled
+      ? "关闭后，非聚焦正文会恢复原可见性，但轮播缓冲项不会自动恢复；草稿仍保持草稿。"
+      : "重新开启会把活跃的越界轮播项移入持久缓冲区，不会删除正文或改变发布状态。";
+    focusModeGate.classList.toggle("is-enabled", enabled);
+    syncFocusAuthoringControls();
+  }
+
+  async function saveFocusMode() {
+    const enabled = focusModeToggle.checked;
+    if (!enabled) {
+      const confirmed = window.confirm(
+        "确认关闭全站聚焦模式吗？非聚焦正文会恢复原可见性，草稿仍保持草稿；轮播缓冲项不会自动恢复，仍需由 Owner 明确选择槽位。"
+      );
+      if (!confirmed) {
+        focusModeToggle.checked = true;
+        renderFocusModeGate();
+        return;
+      }
+    }
+    focusModeToggle.disabled = true;
+    try {
+      const result = await request("/api/admin/focus-mode", {
+        method: "POST",
+        body: JSON.stringify({ enabled })
+      });
+      serverContent.publicFocusMode = result.publicFocusMode;
+      serverContent.focusScopeCounts = result.focusScopeCounts || {};
+      serverContent.carousel = result.carousel || serverContent.carousel;
+      const bufferedNow = Number(result.carouselReconciliation?.bufferedNow || 0);
+      await loadServerContent();
+      renderList();
+      renderRecentContent();
+      renderKnowledgeNodeList();
+      renderFeaturedSlots();
+      renderFormulaDecisions();
+      setNotice(
+        enabled
+          ? `全站聚焦模式已开启；本次有 ${bufferedNow} 个越界轮播项进入缓冲区，原正文与发布状态保持不变。`
+          : "全站聚焦模式已关闭；正文恢复原可见性，轮播缓冲项不会自动恢复，草稿仍保持草稿。",
+        enabled ? "success" : "warning"
+      );
+    } finally {
+      focusModeToggle.disabled = false;
+      renderFocusModeGate();
+    }
   }
 
   function setLoggedIn(value) {
@@ -645,7 +831,11 @@ $$
   }
 
   function renderMarkdown(markdown) {
-    if (window.LarkixMarkdown) return window.LarkixMarkdown.render(markdown).html;
+    const bindings =
+      editingType === "post" && editingId
+        ? serverContent.posts.find((item) => item.id === editingId)?.formulaBindings || []
+        : [];
+    if (window.LarkixMarkdown) return window.LarkixMarkdown.render(markdown, { formulaBindings: bindings }).html;
     return `<p>${escapeHtml(markdown || "Markdown 预览会显示在这里。")}</p>`;
   }
 
@@ -706,6 +896,388 @@ $$
     if (!snippet) return;
     insertMarkdownText(`公式：$${snippet.latex}$\n\n$$\n${snippet.latex}\n$$`, { block: true });
     setNotice(`已插入公式片段：${snippet.label}。`, "success");
+  }
+
+  function parseCompleteLatexSelection(value) {
+    const selectedText = String(value || "");
+    const trimmed = selectedText.trim();
+    if (/^\$\$[\s\S]+\$\$$/.test(trimmed) && !trimmed.slice(2, -2).includes("$$")) {
+      const latex = trimmed.slice(2, -2).trim();
+      return latex ? { selectedText, latex, displayMode: "display" } : null;
+    }
+    if (trimmed.startsWith("\\[") && trimmed.endsWith("\\]") && !trimmed.slice(2, -2).includes("\\]")) {
+      const latex = trimmed.slice(2, -2).trim();
+      return latex ? { selectedText, latex, displayMode: "display" } : null;
+    }
+    if (/^\$(?:\\.|[^$\n\\])+\$$/.test(trimmed)) {
+      const latex = trimmed.slice(1, -1).trim();
+      return latex ? { selectedText, latex, displayMode: "inline" } : null;
+    }
+    if (trimmed.startsWith("\\(") && trimmed.endsWith("\\)") && !trimmed.slice(2, -2).includes("\\)")) {
+      const latex = trimmed.slice(2, -2).trim();
+      return latex ? { selectedText, latex, displayMode: "inline" } : null;
+    }
+    return null;
+  }
+
+  function setFormulaAuthoringTab(tab) {
+    const create = tab === "create";
+    formulaExistingPane.hidden = create;
+    formulaCreatePane.hidden = !create;
+    formulaExistingTab.classList.toggle("is-active", !create);
+    formulaCreateTab.classList.toggle("is-active", create);
+    formulaExistingTab.setAttribute("aria-selected", String(!create));
+    formulaCreateTab.setAttribute("aria-selected", String(create));
+  }
+
+  function formulaAuthoringCategoryOptions() {
+    const modules = formulaAuthoringState.facets.modules || [];
+    const selectedModule = formulaAuthoringState.moduleKey;
+    return modules
+      .filter((module) => !selectedModule || module.moduleKey === selectedModule)
+      .flatMap((module) =>
+        (module.categories || []).map((category) => ({
+          moduleKey: module.moduleKey,
+          categoryPath: category.categoryPath
+        }))
+      );
+  }
+
+  function renderFormulaAuthoringFilters() {
+    const modules = formulaAuthoringState.facets.modules || [];
+    const moduleValue = formulaAuthoringState.moduleKey;
+    formulaAuthoringModule.innerHTML = `<option value="">全部模块</option>${modules
+      .map((module) => `<option value="${escapeHtml(module.moduleKey)}">${escapeHtml(module.moduleKey)}（${module.activeCount || 0}）</option>`)
+      .join("")}`;
+    formulaAuthoringModule.value = moduleValue;
+
+    const categories = formulaAuthoringCategoryOptions();
+    formulaAuthoringCategory.innerHTML = `<option value="">全部分类</option>${categories
+      .map(
+        (category) =>
+          `<option value="${escapeHtml(category.categoryPath)}" data-module="${escapeHtml(category.moduleKey)}">${escapeHtml(category.moduleKey)} / ${escapeHtml(category.categoryPath)}</option>`
+      )
+      .join("")}`;
+    formulaAuthoringCategory.value = formulaAuthoringState.categoryPath;
+
+    const tagValue = formulaAuthoringState.tag;
+    formulaAuthoringTag.innerHTML = `<option value="">全部标签</option>${(formulaAuthoringState.facets.tags || [])
+      .map((tag) => `<option value="${escapeHtml(tag.tagKey)}">${escapeHtml(tag.tagKey)}（${tag.activeCount || 0}）</option>`)
+      .join("")}`;
+    formulaAuthoringTag.value = tagValue;
+    formulaAuthoringQuery.value = formulaAuthoringState.query;
+  }
+
+  function renderFormulaAuthoringResults() {
+    const selectedFormula = formulaAuthoringState.selectionInfo;
+    formulaAuthoringResults.innerHTML =
+      formulaAuthoringState.items
+        .map((card) => {
+          const selectedMatches =
+            selectedFormula &&
+            selectedFormula.latex.replace(/\s+/g, "") === String(card.latex || "").trim().replace(/\s+/g, "");
+          const actions = selectedFormula
+            ? `<button class="button primary" type="button" data-formula-bind="${escapeHtml(card.formulaId)}" data-bind-mode="selection" ${
+                selectedMatches ? "" : "disabled"
+              }>${selectedMatches ? "绑定所选公式" : "所选 LaTeX 与此卡不同"}</button>`
+            : `<button class="button secondary" type="button" data-formula-bind="${escapeHtml(card.formulaId)}" data-bind-mode="inline">行内插入</button>
+               <button class="button primary" type="button" data-formula-bind="${escapeHtml(card.formulaId)}" data-bind-mode="display">块级插入</button>`;
+          return `
+            <article class="formula-authoring-result">
+              <div>
+                <strong>${escapeHtml(card.displayName)}</strong>
+                <span>${escapeHtml(card.moduleKey)} / ${escapeHtml(card.categoryPath)}</span>
+                <code>${escapeHtml(card.formulaId)}</code>
+              </div>
+              <div class="formula-authoring-latex">${formulaLatexHtml(card.latex)}</div>
+              <div class="formula-authoring-result-actions">${actions}</div>
+            </article>`;
+        })
+        .join("") ||
+      `<div class="empty-state">${
+        formulaAuthoringState.moduleKey || formulaAuthoringState.categoryPath || formulaAuthoringState.query || formulaAuthoringState.tag
+          ? "当前条件下没有可用公式卡。"
+          : "请选择分类，或输入关键词/标签搜索公式卡。"
+      }</div>`;
+    formulaAuthoringPageStatus.textContent = formulaAuthoringState.pageCount
+      ? `第 ${formulaAuthoringState.page} / ${formulaAuthoringState.pageCount} 页，共 ${formulaAuthoringState.total} 条`
+      : "暂无结果";
+    formulaAuthoringPrevious.disabled = formulaAuthoringState.page <= 1;
+    formulaAuthoringNext.disabled = !formulaAuthoringState.pageCount || formulaAuthoringState.page >= formulaAuthoringState.pageCount;
+  }
+
+  async function loadFormulaAuthoringCatalog(options = {}) {
+    const params = new URLSearchParams({
+      authoring: "1",
+      module: formulaAuthoringState.moduleKey,
+      category: formulaAuthoringState.categoryPath,
+      tag: formulaAuthoringState.tag,
+      q: formulaAuthoringState.query,
+      archiveState: "active",
+      page: String(formulaAuthoringState.page),
+      pageSize: String(formulaAuthoringState.pageSize)
+    });
+    const result = await request(`/api/admin/formulas?${params.toString()}`);
+    formulaAuthoringState.facets = result.facets || { modules: [], tags: [] };
+    formulaAuthoringState.items = result.items || [];
+    formulaAuthoringState.page = result.pagination?.page || 1;
+    formulaAuthoringState.pageCount = result.pagination?.pageCount || 0;
+    formulaAuthoringState.total = result.pagination?.total || 0;
+    formulaAuthoringState.loaded = true;
+
+    if (options.selectDefault && !formulaAuthoringState.moduleKey && !formulaAuthoringState.categoryPath && !formulaAuthoringState.query && !formulaAuthoringState.tag) {
+      const firstModule = formulaAuthoringState.facets.modules?.[0];
+      const firstCategory = firstModule?.categories?.[0];
+      if (firstModule && firstCategory) {
+        formulaAuthoringState.moduleKey = firstModule.moduleKey;
+        formulaAuthoringState.categoryPath = firstCategory.categoryPath;
+        formulaAuthoringState.page = 1;
+        return loadFormulaAuthoringCatalog({ selectDefault: false });
+      }
+    }
+    renderFormulaAuthoringFilters();
+    renderFormulaAuthoringResults();
+  }
+
+  function positionFormulaAuthoringPopover(event) {
+    const margin = 12;
+    const width = formulaAuthoringPopover.offsetWidth || Math.min(860, window.innerWidth - margin * 2);
+    const height = formulaAuthoringPopover.offsetHeight || Math.min(720, window.innerHeight - margin * 2);
+    const preferredLeft = Number.isFinite(event?.clientX) ? event.clientX : window.innerWidth - width - 24;
+    const preferredTop = Number.isFinite(event?.clientY) ? event.clientY : 96;
+    formulaAuthoringPopover.style.left = `${Math.max(margin, Math.min(preferredLeft, window.innerWidth - width - margin))}px`;
+    formulaAuthoringPopover.style.top = `${Math.max(margin, Math.min(preferredTop, window.innerHeight - height - margin))}px`;
+  }
+
+  function openFormulaAuthoring(event) {
+    if (getType() !== "post") {
+      setNotice("公式卡引用仅用于文章编辑；推导节点继续使用现有公式与跳转工具。", "warning");
+      return;
+    }
+    const field = contentForm.markdown;
+    formulaAuthoringState.sourceMarkdown = field.value;
+    formulaAuthoringState.selectionStart = field.selectionStart || 0;
+    formulaAuthoringState.selectionEnd = field.selectionEnd || 0;
+    const selected = field.value.slice(formulaAuthoringState.selectionStart, formulaAuthoringState.selectionEnd);
+    formulaAuthoringState.selectionInfo = parseCompleteLatexSelection(selected);
+    const hasSelection = formulaAuthoringState.selectionEnd > formulaAuthoringState.selectionStart;
+    if (formulaAuthoringState.selectionInfo) {
+      formulaSelectionStatus.textContent = `已识别一个完整${formulaAuthoringState.selectionInfo.displayMode === "display" ? "块级" : "行内"}公式。可创建新卡，或绑定 LaTeX 完全一致的已有卡。`;
+      formulaSelectionPreview.innerHTML = formulaLatexHtml(formulaAuthoringState.selectionInfo.latex);
+    } else if (hasSelection) {
+      formulaSelectionStatus.textContent = "当前选区不是一个完整公式；不会替换正文。请重新框选一个完整的 $...$、$$...$$、\\(...\\) 或 \\[...\\] 公式。";
+      formulaSelectionPreview.textContent = "选区包含正文、残缺定界符或多个公式，不能创建公式卡。";
+    } else {
+      formulaSelectionStatus.textContent = "未框选公式：可在当前光标处插入已有公式卡。Shift + 右键仍打开浏览器原生菜单。";
+      formulaSelectionPreview.textContent = "请先在 Markdown 正文中框选一个完整公式。";
+    }
+    formulaCreateTab.disabled = !formulaAuthoringState.selectionInfo;
+    formulaCreateAndBindButton.disabled = !formulaAuthoringState.selectionInfo;
+    formulaAuthoringPopover.hidden = false;
+    setFormulaAuthoringTab(formulaAuthoringState.selectionInfo ? "create" : "existing");
+    positionFormulaAuthoringPopover(event);
+    loadFormulaAuthoringCatalog({ selectDefault: !formulaAuthoringState.loaded }).catch((error) => setNotice(error.message, "error"));
+  }
+
+  function closeFormulaAuthoring() {
+    formulaAuthoringPopover.hidden = true;
+  }
+
+  function newFormulaBindingId() {
+    if (window.crypto?.randomUUID) return `bind.${window.crypto.randomUUID()}`;
+    return `bind.${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+  }
+
+  function insertExistingFormulaBinding(card, requestedMode) {
+    const field = contentForm.markdown;
+    if (field.value !== formulaAuthoringState.sourceMarkdown) {
+      throw new Error("打开公式浮窗后正文已变化，请关闭浮窗并重新操作");
+    }
+    const hasSelection = formulaAuthoringState.selectionEnd > formulaAuthoringState.selectionStart;
+    if (hasSelection && !formulaAuthoringState.selectionInfo) {
+      throw new Error("当前选区不是一个完整公式，已保留原文");
+    }
+    let mode = requestedMode;
+    if (formulaAuthoringState.selectionInfo) {
+      const sameLatex =
+        formulaAuthoringState.selectionInfo.latex.replace(/\s+/g, "") === String(card.latex || "").trim().replace(/\s+/g, "");
+      if (!sameLatex) throw new Error("所选 LaTeX 与目标公式卡不同，已保留原文");
+      mode = formulaAuthoringState.selectionInfo.displayMode;
+    }
+    const shortcode = `{{formula:${newFormulaBindingId()}|${card.formulaId}|${card.currentRevisionId}|${mode}}}`;
+    const start = formulaAuthoringState.selectionStart;
+    const end = formulaAuthoringState.selectionEnd;
+    let inserted = shortcode;
+    if (!hasSelection && mode === "display") {
+      const before = field.value.slice(0, start);
+      const after = field.value.slice(end);
+      inserted = `${before && !before.endsWith("\n") ? "\n\n" : ""}${shortcode}${after && !after.startsWith("\n") ? "\n\n" : ""}`;
+    }
+    field.value = `${field.value.slice(0, start)}${inserted}${field.value.slice(end)}`;
+    const cursor = start + inserted.length;
+    field.focus();
+    field.setSelectionRange(cursor, cursor);
+    updatePreview();
+    markDirty();
+    closeFormulaAuthoring();
+    setNotice(`已插入公式卡引用：${card.displayName}。保存文章后建立稳定绑定。`, "success");
+  }
+
+  async function createFormulaCardFromSelection() {
+    if (!formulaAuthoringState.selectionInfo) throw new Error("请先框选一个完整的 LaTeX 公式");
+    if (contentForm.markdown.value !== formulaAuthoringState.sourceMarkdown) {
+      throw new Error("打开公式浮窗后正文已变化，请关闭浮窗并重新框选");
+    }
+    const displayName = formulaCreateName.value.trim();
+    const moduleKey = formulaCreateModule.value.trim();
+    const categoryPath = formulaCreateCategory.value.trim();
+    if (!displayName || !moduleKey || !categoryPath) {
+      throw new Error("请填写公式名称、所属模块和自定义分类");
+    }
+    const built = buildPayload();
+    if (built.collectionKey !== "posts") throw new Error("选中公式建卡仅支持文章");
+    validateFeaturedPayload(built.payload);
+    saveDraft();
+    const result = await request("/api/admin/formulas/from-selection", {
+      method: "POST",
+      body: JSON.stringify({
+        post: built.payload,
+        selectionStart: formulaAuthoringState.selectionStart,
+        selectionEnd: formulaAuthoringState.selectionEnd,
+        formula: {
+          displayName,
+          moduleKey,
+          categoryPath,
+          purpose: formulaCreatePurpose.value.trim(),
+          tags: formulaCreateTags.value
+            .split(/[\n,，、]/)
+            .map((tag) => tag.trim())
+            .filter(Boolean)
+        }
+      })
+    });
+    serverContent = { ...serverContent, posts: result.posts || [] };
+    applyItemToForm("post", result.post, { confirm: false });
+    contentForm.markdown.focus();
+    contentForm.markdown.setSelectionRange(result.selection.end, result.selection.end);
+    clearDraft();
+    markClean();
+    renderList();
+    renderRecentContent();
+    renderFeaturedSlots();
+    formulaAuthoringState.loaded = false;
+    closeFormulaAuthoring();
+    setNotice(`已创建公式卡“${result.card.displayName}”，文章已原子保存并建立修订绑定。`, "success");
+  }
+
+  function pendingFormulaDecisions(postId = editingId) {
+    return (serverContent.formulaReferenceDecisions || []).filter(
+      (decision) => decision.status === "pending" && decision.postId === postId
+    );
+  }
+
+  function formulaDecisionEventLabel(decision) {
+    return decision.eventType === "card_archive" ? "公式卡已归档" : "公式正文已有新修订";
+  }
+
+  function formulaDecisionCloneForm(decision) {
+    if (formulaDecisionCloneId !== decision.decisionId) return "";
+    return `
+      <div class="formula-decision-clone" data-formula-decision-clone-form="${escapeHtml(decision.decisionId)}">
+        <strong>另建并只绑定当前文章</strong>
+        <p>新卡不会替换其他文章。名称、模块和分类必须由作者明确填写。</p>
+        <div class="formula-decision-clone-fields">
+          <label>
+            新公式名称 *
+            <input name="displayName" maxlength="160" required />
+          </label>
+          <label>
+            所属模块 *
+            <input name="moduleKey" pattern="[a-z0-9-]+" placeholder="electronics-basics" required />
+          </label>
+          <label>
+            自定义分类 *
+            <input name="categoryPath" maxlength="240" placeholder="基础电路/电压关系" required />
+          </label>
+          <label>
+            用途说明
+            <input name="purpose" maxlength="500" />
+          </label>
+          <label class="formula-decision-wide">
+            标签
+            <textarea name="tags" rows="2" placeholder="module:electronics-basics&#10;unit:V"></textarea>
+          </label>
+          <label class="formula-decision-wide">
+            新卡 LaTeX *
+            <textarea name="latex" rows="4" required>${escapeHtml(decision.boundLatex || "")}</textarea>
+          </label>
+        </div>
+        <div class="formula-decision-actions">
+          <button class="button secondary" type="button" data-formula-decision-cancel-clone="${escapeHtml(decision.decisionId)}">取消</button>
+          <button class="button primary" type="button" data-formula-decision-submit-clone="${escapeHtml(decision.decisionId)}">创建新卡并绑定本文章</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderFormulaDecisions() {
+    if (!formulaDecisionPanel || !formulaDecisionList) return;
+    const decisions = editingType === "post" && editingId ? pendingFormulaDecisions(editingId) : [];
+    formulaDecisionPanel.hidden = decisions.length === 0;
+    if (formulaDecisionCount) formulaDecisionCount.textContent = `${decisions.length} 项`;
+    formulaDecisionList.innerHTML = decisions
+      .map(
+        (decision) => `
+          <article class="formula-decision-card" data-formula-decision-id="${escapeHtml(decision.decisionId)}">
+            <div class="formula-decision-heading">
+              <div>
+                <span class="formula-decision-badge">${escapeHtml(formulaDecisionEventLabel(decision))}</span>
+                <strong>${escapeHtml(decision.formulaDisplayName || decision.formulaId)}</strong>
+              </div>
+              <code>${escapeHtml(decision.bindingId)}</code>
+            </div>
+            <p>当前文章继续显示修订 #${Number(decision.boundRevisionSequence || 0)}；${decision.archiveState === "archived" ? "公式卡当前为已归档状态。" : `可逐篇决定是否采用修订 #${Number(decision.targetRevisionSequence || 0)}。`}</p>
+            <div class="formula-decision-comparison">
+              <div class="formula-decision-version">
+                <strong>文章当前版本</strong>
+                ${formulaLatexHtml(decision.boundLatex)}
+              </div>
+              <div class="formula-decision-version">
+                <strong>${decision.archiveState === "archived" ? "归档时版本" : "待采用版本"}</strong>
+                ${formulaLatexHtml(decision.targetLatex)}
+              </div>
+            </div>
+            <div class="formula-decision-actions">
+              <button class="button secondary" type="button" data-formula-decision-action="keep" data-decision-id="${escapeHtml(decision.decisionId)}">保留文章原公式</button>
+              <button class="button secondary" type="button" data-formula-decision-action="adopt" data-decision-id="${escapeHtml(decision.decisionId)}">采用最新版</button>
+              <button class="button primary" type="button" data-formula-decision-action="clone" data-decision-id="${escapeHtml(decision.decisionId)}">另建公式卡</button>
+            </div>
+            ${formulaDecisionCloneForm(decision)}
+          </article>
+        `
+      )
+      .join("");
+  }
+
+  async function resolveFormulaDecision(decisionId, action, formula = null) {
+    if (isDirty) throw new Error("当前文章有未保存修改，请先保存或撤销后再处理公式版本");
+    const result = await request(`/api/admin/formula-decisions/${encodeURIComponent(decisionId)}/resolve`, {
+      method: "POST",
+      body: JSON.stringify({ action, ...(formula ? { formula } : {}) })
+    });
+    serverContent = {
+      ...serverContent,
+      posts: result.posts || serverContent.posts,
+      formulaReferenceDecisions: result.decisions || []
+    };
+    formulaDecisionCloneId = "";
+    const current = editingId ? serverContent.posts.find((post) => post.id === editingId) : null;
+    if (current) applyItemToForm("post", current, { confirm: false });
+    renderFormulaDecisions();
+    renderList();
+    renderRecentContent();
+    const actionLabel = action === "keep" ? "保留文章原公式" : action === "adopt" ? "采用最新版" : "另建公式卡并重新绑定";
+    setNotice(`公式版本事项已逐篇处理：${actionLabel}。`, "success");
   }
 
   function cleanShortcodeLabel(value) {
@@ -793,7 +1365,14 @@ $$
   }
 
   function categoryKey(category) {
-    return { 模拟电子: "analog", STM32: "stm32", ESP32: "esp32", 开源项目: "projects" }[category] || "analog";
+    return {
+      电子基础: "electronics-basics",
+      电力电子: "power-electronics",
+      模拟电子: "analog",
+      STM32: "stm32",
+      ESP32: "esp32",
+      开源项目: "projects"
+    }[category] || "analog";
   }
 
   function statusText(statusKey) {
@@ -945,20 +1524,15 @@ $$
   }
 
   function matchesVisitorFocus(item) {
-    const corpus = visitorFocusCorpus(item);
-    return [
-      "power-electronics",
-      "电力电子",
-      "开关电源",
-      "boost",
-      "buck",
-      "flyback",
-      "占空比",
-      "纹波",
-      "电感",
-      "mosfet",
-      "power supply"
-    ].some((token) => corpus.includes(token));
+    if (item.contentType === "project" || item.type === "project") return true;
+    if (item.contentType === "knowledge_node" || item.nodeType === "derivation") return true;
+    const categoryKey = String(item.categoryKey || "").toLowerCase();
+    const tags = String(item.tags || "").toLowerCase();
+    if (["electronics-basics", "power-electronics", "projects", "derivations"].includes(categoryKey)) return true;
+    if (["电子基础", "电力电子", "开源项目"].includes(String(item.category || ""))) return true;
+    if (/(?:^|[\s,，、])module:(?:electronics-basics|power-electronics|projects|derivations)(?:$|[\s,，、])/.test(tags)) return true;
+    if (String(item.tags || "").split(/[,，、]/).some((tag) => tag.trim().startsWith("公式"))) return true;
+    return /\{\{(?:formula|derive):/.test(String(item.markdown || ""));
   }
 
   function visitorPublicState(item) {
@@ -1101,6 +1675,7 @@ $$
     setFieldVisible(knowledgeAccentField, isKnowledge);
     setFieldVisible(knowledgeVisibilityField, isKnowledge);
     setFieldVisible(featuredField, !isKnowledge);
+    setFieldVisible(articleFormulaHelperPanel, type === "post");
     setFieldVisible(formulaHelperPanel, isKnowledge);
     if (isKnowledge) {
       if (!knowledgeColorTokens.includes(contentForm.accentColor?.value)) contentForm.accentColor.value = "purple";
@@ -1117,6 +1692,8 @@ $$
       setKnowledgeWarnings([]);
       renderKnowledgeRevisions([], null);
     }
+    renderFormulaDecisions();
+    syncFocusAuthoringControls();
     updateVisibilityHint();
   }
 
@@ -1524,6 +2101,7 @@ $$
         .map((item) => {
           const kind = kindLabel(item.contentType);
           const publish = publishLabel(publishValue(item));
+          const decisionCount = item.contentType === "post" ? pendingFormulaDecisions(item.id).length : 0;
           const meta = item.contentType === "project" ? item.status || "项目" : item.contentType === "knowledge_node" ? item.symbol || item.nodeType || "推导节点" : item.category || "文章";
           const cover = fallbackCover(item);
           return `
@@ -1531,7 +2109,7 @@ $$
               <img src="${adminSrc(cover)}" alt="${escapeHtml(item.title || "未命名内容")}封面" />
               <div class="admin-recommendation-body">
                 <span>${kind} / ${escapeHtml(publish)} / ${escapeHtml(meta)}</span>
-                <strong>${escapeHtml(item.title || "未命名内容")}</strong>
+                <strong>${escapeHtml(item.title || "未命名内容")}${decisionCount ? ` <span class="content-formula-decision">公式待决 ${decisionCount}</span>` : ""}</strong>
                 <p>${escapeHtml(item.date || "暂无日期")}</p>
                 <button class="button secondary" data-action="edit" data-type="${item.contentType}" data-id="${item.id}" type="button">编辑</button>
               </div>
@@ -1593,6 +2171,75 @@ $$
         </article>
       `;
     }).join("");
+    renderCarouselBuffer();
+  }
+
+  function carouselReferenceLabel(status) {
+    return {
+      available: "关联正常",
+      missing: "关联缺失",
+      archived: "已归档 / 回收站"
+    }[status] || "关联状态未知";
+  }
+
+  function renderCarouselBuffer() {
+    if (!carouselBufferList) return;
+    const buffered = serverContent.carousel?.buffered || [];
+    const activeCount = featuredItems().length;
+    if (carouselManagerSummary) {
+      carouselManagerSummary.textContent =
+        `活跃槽位 ${activeCount}/${featuredLimit}，聚焦缓冲 ${buffered.length} 项。` +
+        (focusModeEnabled() ? " 聚焦已开启。" : " 聚焦已关闭，缓冲项仍需手动恢复。");
+    }
+    carouselBufferList.innerHTML =
+      buffered
+        .map((item) => {
+          const broken = item.referenceStatus === "missing" || item.referenceStatus === "archived";
+          const originalSlot = featuredOrderValue(item.originalSlot);
+          const cover = item.displayImage || item.imageReference || "./assets/covers/analog-cover.png";
+          const referenceLabel = carouselReferenceLabel(item.referenceStatus);
+          return `
+            <article class="carousel-buffer-card ${broken ? "is-broken" : ""}" data-buffer-id="${escapeHtml(item.bufferId)}">
+              <img src="${adminSrc(cover)}" alt="${escapeHtml(item.displayTitle || item.contentTitle || "缓冲内容")}封面" />
+              <div class="carousel-buffer-copy">
+                <div class="carousel-buffer-meta">
+                  <span>${item.contentType === "project" ? "项目" : "文章"}</span>
+                  <span>原槽位 ${originalSlot}</span>
+                  <span class="${broken ? "is-broken" : ""}">${escapeHtml(referenceLabel)}</span>
+                  <span>${escapeHtml(publishLabel(item.currentPublishStatus || "draft"))}</span>
+                </div>
+                <strong>${escapeHtml(item.displayTitle || item.contentTitle || item.contentId)}</strong>
+                <p>${escapeHtml(item.restoreMessage || "请选择空槽位后手动恢复。")}</p>
+                <div class="carousel-buffer-codes">
+                  <code>${escapeHtml(item.bufferedReason || "CAROUSEL_FOCUS_SCOPE_OUTSIDE")}</code>
+                  <code>${escapeHtml(item.restoreReasonCode || "CAROUSEL_RESTORE_ALLOWED")}</code>
+                </div>
+                <small>身份 ${escapeHtml(`${item.contentType}:${item.contentId}`)} · 缓冲于 ${escapeHtml(item.bufferedAt || "未知时间")}</small>
+              </div>
+              <div class="carousel-buffer-actions">
+                <label>
+                  恢复槽位
+                  <select data-carousel-restore-slot ${item.restoreAllowed ? "" : "disabled"}>
+                    ${Array.from(
+                      { length: featuredLimit },
+                      (_, slot) => `<option value="${slot}" ${slot === originalSlot ? "selected" : ""}>槽位 ${slot}</option>`
+                    ).join("")}
+                  </select>
+                </label>
+                <button class="button primary" data-action="restore-carousel-buffer" type="button" ${
+                  item.restoreAllowed ? "" : "disabled"
+                }>手动恢复</button>
+                ${
+                  broken
+                    ? `<button class="button secondary danger" data-action="remove-carousel-buffer" type="button">移除缓冲记录</button>`
+                    : ""
+                }
+              </div>
+            </article>
+          `;
+        })
+        .join("") ||
+      `<div class="empty-state">当前没有缓冲项。符合聚焦范围的轮播内容仍保留在上方活跃槽位。</div>`;
   }
 
   function currentSiteLayout() {
@@ -1778,6 +2425,7 @@ $$
         .map((item) => {
           const kind = kindLabel(item.contentType);
           const publish = publishValue(item);
+          const decisionCount = item.contentType === "post" ? pendingFormulaDecisions(item.id).length : 0;
           const meta =
             item.contentType === "project"
               ? `${item.status || ""} / ${item.license || ""}`
@@ -1805,6 +2453,7 @@ $$
                 <strong>
                   <span class="content-kind">${kind}</span>${escapeHtml(item.title)}
                   <span class="content-status">${deleted ? "回收站" : publishLabel(publish)}</span>
+                  ${decisionCount ? `<span class="content-formula-decision">公式待决 ${decisionCount}</span>` : ""}
                 </strong>
                 <p>${escapeHtml(meta)}${escapeHtml(tags)} / ${escapeHtml(item.date || "暂无日期")}${escapeHtml(slot)}</p>
                 <p>${escapeHtml(item.excerpt || item.summary)}</p>
@@ -1945,6 +2594,7 @@ $$
     isRestoringForm = true;
     editingType = snapshot.editingType || null;
     editingId = snapshot.editingId || null;
+    formulaDecisionCloneId = "";
     contentForm.type.value = snapshot.type || "post";
     if (contentForm.nodeType) contentForm.nodeType.value = snapshot.nodeType || "derivation";
     if (contentForm.slug) contentForm.slug.value = snapshot.slug || "";
@@ -2254,9 +2904,473 @@ $$
     });
     updateBulkState();
   }
+
+  function formulaLatexHtml(latex) {
+    return renderMarkdown(`$$\n${String(latex || "")}\n$$`);
+  }
+
+  function formulaCategoryCount(category) {
+    if (formulaCatalogState.selection.archiveState === "archived") return category.archivedCount || 0;
+    if (formulaCatalogState.selection.archiveState === "all") return (category.activeCount || 0) + (category.archivedCount || 0);
+    return category.activeCount || 0;
+  }
+
+  function renderFormulaCategories() {
+    if (!formulaCategoryTree) return;
+    const modules = formulaCatalogState.facets.modules || [];
+    formulaCategoryTree.innerHTML =
+      modules
+        .map(
+          (module) => `
+            <div class="formula-category-module">${escapeHtml(module.moduleKey)}</div>
+            ${(module.categories || [])
+              .map((category) => {
+                const selected =
+                  formulaCatalogState.selection.moduleKey === module.moduleKey &&
+                  formulaCatalogState.selection.categoryPath === category.categoryPath;
+                return `
+                  <button class="formula-category-button ${selected ? "is-active" : ""}" type="button"
+                    data-module="${escapeHtml(module.moduleKey)}" data-category="${escapeHtml(category.categoryPath)}">
+                    ${escapeHtml(category.categoryPath)} <strong>${formulaCategoryCount(category)}</strong>
+                  </button>`;
+              })
+              .join("")}`
+        )
+        .join("") || `<div class="empty-state">尚无公式分类。</div>`;
+  }
+
+  function renderFormulaTagOptions() {
+    if (!formulaTagFilter) return;
+    const selected = formulaCatalogState.selection.tag || "";
+    formulaTagFilter.innerHTML = `<option value="">全部标签</option>${(formulaCatalogState.facets.tags || [])
+      .map((tag) => `<option value="${escapeHtml(tag.tagKey)}">${escapeHtml(tag.tagKey)}</option>`)
+      .join("")}`;
+    formulaTagFilter.value = selected;
+  }
+
+  function renderFormulaCards() {
+    if (!formulaCardList || !formulaCatalogSummary) return;
+    const { items, selection, pagination } = formulaCatalogState;
+    formulaCatalogSummary.textContent = selection.categoryPath
+      ? `${selection.moduleKey} / ${selection.categoryPath} · ${pagination.total} 条`
+      : "请选择分类。";
+    formulaCardList.innerHTML =
+      items
+        .map(
+          (card) => `
+            <article class="formula-card-row ${card.archiveState === "archived" ? "is-archived" : ""}">
+              <div>
+                <h3>${escapeHtml(card.displayName)}</h3>
+                <div class="formula-card-meta">
+                  <code>${escapeHtml(card.formulaId)}</code>
+                  <span>${escapeHtml(card.archiveState === "archived" ? "已归档" : "使用中")}</span>
+                  <span>修订 ${escapeHtml(card.currentRevisionSequence || 1)}</span>
+                </div>
+                ${card.purpose ? `<p>${escapeHtml(card.purpose)}</p>` : ""}
+                <div class="formula-card-tags">${(card.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
+                <div class="formula-card-latex">${formulaLatexHtml(card.latex)}</div>
+              </div>
+              <div class="row-actions">
+                <button class="button secondary" type="button" data-formula-action="edit" data-formula-id="${escapeHtml(card.formulaId)}">编辑</button>
+                ${
+                  card.archiveState === "archived"
+                    ? `<button class="button secondary" type="button" data-formula-action="restore" data-formula-id="${escapeHtml(card.formulaId)}">恢复</button>`
+                    : `<button class="button secondary" type="button" data-formula-action="archive" data-formula-id="${escapeHtml(card.formulaId)}">归档</button>`
+                }
+              </div>
+            </article>`
+        )
+        .join("") || `<div class="empty-state">${selection.categoryPath ? "当前条件下没有公式卡。" : "选择左侧分类后加载公式卡。"}</div>`;
+    if (formulaPageStatus) {
+      formulaPageStatus.textContent = pagination.pageCount
+        ? `第 ${pagination.page} / ${pagination.pageCount} 页`
+        : "第 0 页";
+    }
+    if (formulaPreviousPage) formulaPreviousPage.disabled = pagination.page <= 1;
+    if (formulaNextPage) formulaNextPage.disabled = !pagination.pageCount || pagination.page >= pagination.pageCount;
+  }
+
+  function renderFormulaCatalog() {
+    if (formulaSearchInput) formulaSearchInput.value = formulaCatalogState.selection.query || "";
+    if (formulaArchiveFilter) formulaArchiveFilter.value = formulaCatalogState.selection.archiveState || "active";
+    renderFormulaCategories();
+    renderFormulaTagOptions();
+    renderFormulaCards();
+  }
+
+  async function loadFormulaCatalog(options = {}) {
+    if (!formulaCategoryTree) return;
+    const params = new URLSearchParams({
+      module: formulaCatalogState.selection.moduleKey || "",
+      category: formulaCatalogState.selection.categoryPath || "",
+      q: formulaCatalogState.selection.query || "",
+      tag: formulaCatalogState.selection.tag || "",
+      archiveState: formulaCatalogState.selection.archiveState || "active",
+      page: String(formulaCatalogState.pagination.page || 1),
+      pageSize: String(formulaCatalogState.pagination.pageSize || 12)
+    });
+    const result = await request(`/api/admin/formulas?${params.toString()}`);
+    formulaCatalogState.facets = result.facets || { modules: [], tags: [] };
+    formulaCatalogState.items = result.items || [];
+    formulaCatalogState.selection = { ...formulaCatalogState.selection, ...(result.selection || {}) };
+    formulaCatalogState.pagination = { ...formulaCatalogState.pagination, ...(result.pagination || {}) };
+    formulaCatalogState.loaded = true;
+
+    if (result.requiresCategory && options.selectDefault !== false) {
+      const firstModule = formulaCatalogState.facets.modules?.[0];
+      const firstCategory = firstModule?.categories?.[0];
+      if (firstModule && firstCategory) {
+        formulaCatalogState.selection.moduleKey = firstModule.moduleKey;
+        formulaCatalogState.selection.categoryPath = firstCategory.categoryPath;
+        formulaCatalogState.pagination.page = 1;
+        return loadFormulaCatalog({ selectDefault: false });
+      }
+    }
+    renderFormulaCatalog();
+  }
+
+  function formulaFormField(name) {
+    return formulaCardEditor?.elements?.namedItem(name);
+  }
+
+  function renderFormulaRevisions(revisions = []) {
+    if (!formulaRevisionList) return;
+    formulaRevisionList.innerHTML =
+      revisions
+        .map(
+          (revision) => `
+            <div class="formula-revision-row">
+              <strong>#${escapeHtml(revision.sequence)} · ${escapeHtml(revision.revisionReason || "save")}</strong>
+              <code>${escapeHtml(revision.revisionId)}</code>
+              <span>${escapeHtml(revision.createdAt || "")}${revision.sourceBookId ? ` · ${escapeHtml(revision.sourceBookId)}` : ""}</span>
+              <div>${formulaLatexHtml(revision.latex)}</div>
+            </div>`
+        )
+        .join("") || `<div class="empty-state">保存后会生成第一条不可变修订。</div>`;
+  }
+
+  function formulaRelationCardHtml(card, options = {}) {
+    if (!card) return `<div class="empty-state">尚未设置。</div>`;
+    const archived = card.archiveState === "archived" || card.available === false;
+    return `
+      <article class="formula-relation-row ${archived ? "is-broken" : ""}">
+        <div>
+          <strong>${escapeHtml(card.displayName || card.formulaId)}</strong>
+          <code>${escapeHtml(card.formulaId)}</code>
+          <span>${archived ? "已归档 · 链路中断" : `${escapeHtml(card.moduleKey || "")} / ${escapeHtml(card.categoryPath || "")}`}</span>
+        </div>
+        <div class="row-actions">
+          ${
+            !archived && card.slug
+              ? `<a class="button secondary" href="../derive.html?formula=${encodeURIComponent(card.slug)}" target="_blank" rel="noopener">访客页</a>`
+              : ""
+          }
+          ${
+            options.removable
+              ? `<button class="button secondary" type="button" data-formula-derivation-action="remove-incoming" data-source-formula-id="${escapeHtml(card.formulaId)}">移除</button>`
+              : ""
+          }
+        </div>
+      </article>`;
+  }
+
+  function renderFormulaDerivation(card) {
+    formulaEditingCard = card || null;
+    if (!formulaDerivationPanel) return;
+    formulaDerivationPanel.hidden = !card;
+    if (!card) return;
+    const derivation = card.derivation || { incoming: [], next: null, affectedSources: [], brokenCount: 0 };
+    const incoming = derivation.incoming || [];
+    const affectedSources = derivation.affectedSources || [card];
+    if (formulaDerivationImpact) {
+      formulaDerivationImpact.textContent = `变更本卡下一阶会影响 ${affectedSources.length} 张来源卡的路径（含本卡）。`;
+    }
+    if (formulaDerivationWarning) {
+      const broken = Number(derivation.brokenCount || 0);
+      formulaDerivationWarning.hidden = !broken;
+      formulaDerivationWarning.textContent = broken
+        ? `检测到 ${broken} 处归档节点：关系历史仍保留，但访客链路会显示明确中断状态。`
+        : "";
+    }
+    if (formulaIncomingList) {
+      formulaIncomingList.innerHTML =
+        incoming.map((source) => formulaRelationCardHtml(source, { removable: true })).join("") ||
+        `<div class="empty-state">尚无上一阶来源；可以有多个来源汇入本卡。</div>`;
+    }
+    if (formulaNextRelation) formulaNextRelation.innerHTML = formulaRelationCardHtml(derivation.next);
+    if (formulaNextRemove) formulaNextRemove.disabled = !derivation.next;
+    if (formulaIncomingSource) formulaIncomingSource.value = "";
+    if (formulaNextTarget) formulaNextTarget.value = derivation.next?.formulaId || "";
+  }
+
+  async function loadFormulaDerivationCandidates(query) {
+    if (!formulaDerivationCandidates) return;
+    const value = String(query || "").trim();
+    if (value.length < 2) {
+      formulaDerivationCandidates.innerHTML = "";
+      return;
+    }
+    const params = new URLSearchParams({
+      authoring: "1",
+      q: value,
+      archiveState: "all",
+      page: "1",
+      pageSize: "20"
+    });
+    const result = await request(`/api/admin/formulas?${params.toString()}`);
+    formulaDerivationCandidates.innerHTML = (result.items || [])
+      .filter((card) => card.formulaId !== formulaEditingCard?.formulaId)
+      .map(
+        (card) =>
+          `<option value="${escapeHtml(card.formulaId)}">${escapeHtml(card.displayName)} · ${
+            card.archiveState === "archived" ? "已归档" : "使用中"
+          }</option>`
+      )
+      .join("");
+  }
+
+  function scheduleFormulaDerivationCandidates(value) {
+    window.clearTimeout(formulaDerivationSearchTimer);
+    formulaDerivationSearchTimer = window.setTimeout(() => {
+      loadFormulaDerivationCandidates(value).catch((error) => setNotice(error.message, "error"));
+    }, 180);
+  }
+
+  async function refreshFormulaEditor(id, options = {}) {
+    const result = await request(`/api/admin/formulas/${encodeURIComponent(id)}`);
+    populateFormulaEditor(result.card, { scroll: options.scroll === true });
+    return result.card;
+  }
+
+  async function saveFormulaDerivationRelation(sourceId, payload, successMessage) {
+    const currentId = formulaEditingCard?.formulaId;
+    if (!currentId) throw new Error("请先保存公式卡，再维护推导关系。");
+    const result = await request(`/api/admin/formulas/${encodeURIComponent(sourceId)}/derivation`, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+    await refreshFormulaEditor(currentId);
+    await loadFormulaCatalog({ selectDefault: false });
+    setNotice(
+      `${successMessage}${result.relation?.affectedSources?.length ? `；影响 ${result.relation.affectedSources.length} 张来源卡路径。` : "。"}`,
+      "success"
+    );
+  }
+
+  async function setFormulaNextRelation() {
+    const source = formulaEditingCard;
+    const targetFormulaId = String(formulaNextTarget?.value || "").trim();
+    if (!source || !targetFormulaId) throw new Error("请输入下一阶公式卡的 formulaId。");
+    const existing = source.derivation?.next;
+    const replacing = Boolean(existing && existing.formulaId !== targetFormulaId);
+    if (
+      replacing &&
+      !window.confirm(
+        `《${source.displayName}》当前下一阶是《${existing.displayName}》。明确替换为 ${targetFormulaId} 吗？这会改变 ${
+          source.derivation?.affectedSources?.length || 1
+        } 张来源卡的后续路径。`
+      )
+    ) {
+      return;
+    }
+    await saveFormulaDerivationRelation(
+      source.formulaId,
+      { action: "set", targetFormulaId, replace: replacing },
+      replacing ? "已明确替换唯一下一阶" : "已设置唯一下一阶"
+    );
+  }
+
+  async function addFormulaIncomingRelation() {
+    const target = formulaEditingCard;
+    const sourceKey = String(formulaIncomingSource?.value || "").trim();
+    if (!target || !sourceKey) throw new Error("请输入上一阶来源公式卡的 formulaId。");
+    const sourceResult = await request(`/api/admin/formulas/${encodeURIComponent(sourceKey)}`);
+    const source = sourceResult.card;
+    if (source.formulaId === target.formulaId) throw new Error("公式卡不能把自身设为上一阶来源。");
+    const existing = source.derivation?.next;
+    const replacing = Boolean(existing && existing.formulaId !== target.formulaId);
+    if (
+      replacing &&
+      !window.confirm(
+        `来源《${source.displayName}》当前指向《${existing.displayName}》。明确改为汇入《${target.displayName}》吗？这会改变 ${
+          source.derivation?.affectedSources?.length || 1
+        } 张来源卡的后续路径。`
+      )
+    ) {
+      return;
+    }
+    await saveFormulaDerivationRelation(
+      source.formulaId,
+      { action: "set", targetFormulaId: target.formulaId, replace: replacing },
+      replacing ? "已明确替换来源卡的下一阶并汇入本卡" : "已添加上一阶来源"
+    );
+  }
+
+  async function removeFormulaNextRelation(sourceId, label) {
+    const sourceResult = await request(`/api/admin/formulas/${encodeURIComponent(sourceId)}`);
+    const source = sourceResult.card;
+    if (!source.derivation?.next) {
+      setNotice("该公式卡当前没有下一阶关系。", "warning");
+      return;
+    }
+    if (
+      !window.confirm(
+        `确认移除《${label || source.displayName}》到《${source.derivation.next.displayName}》的关系吗？关系将从 ${
+          source.derivation?.affectedSources?.length || 1
+        } 张来源卡路径中消失。`
+      )
+    ) {
+      return;
+    }
+    await saveFormulaDerivationRelation(source.formulaId, { action: "remove" }, "已移除推导关系");
+  }
+
+  function updateFormulaEditorPreview() {
+    if (!formulaEditorPreview) return;
+    formulaEditorPreview.innerHTML = formulaLatexHtml(formulaFormField("latex")?.value || "");
+  }
+
+  function populateFormulaEditor(card = null, options = {}) {
+    if (!formulaCardEditor) return;
+    formulaCardEditor.hidden = false;
+    formulaCardEditor.reset();
+    const editing = Boolean(card);
+    formulaEditorTitle.textContent = editing ? `编辑：${card.displayName}` : "新建公式卡";
+    formulaFormField("formulaId").value = card?.formulaId || "";
+    formulaFormField("slug").value = card?.slug || "";
+    formulaFormField("displayName").value = card?.displayName || "";
+    formulaFormField("moduleKey").value = card?.moduleKey || formulaCatalogState.selection.moduleKey || "";
+    formulaFormField("categoryPath").value = card?.categoryPath || formulaCatalogState.selection.categoryPath || "";
+    formulaFormField("purpose").value = card?.purpose || "";
+    formulaFormField("tags").value = (card?.tags || []).join("\n");
+    formulaFormField("latex").value = card?.latex || "";
+    formulaFormField("revisionReason").value = "manual-save";
+    formulaFormField("formulaId").readOnly = editing;
+    formulaFormField("slug").readOnly = editing;
+    formulaVisitorPreview.hidden = !editing || card.archiveState === "archived";
+    formulaVisitorPreview.href = editing ? `../derive.html?formula=${encodeURIComponent(card.slug)}` : "../derive.html";
+    renderFormulaRevisions(card?.revisions || []);
+    renderFormulaDerivation(card);
+    updateFormulaEditorPreview();
+    if (options.scroll !== false) formulaCardEditor.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  async function editFormulaCard(id) {
+    const result = await request(`/api/admin/formulas/${encodeURIComponent(id)}`);
+    populateFormulaEditor(result.card);
+  }
+
+  function closeFormulaEditor() {
+    if (formulaCardEditor) formulaCardEditor.hidden = true;
+    formulaEditingCard = null;
+  }
+
+  async function saveFormulaEditor() {
+    const tags = String(formulaFormField("tags")?.value || "")
+      .split(/[\n,，、]/)
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+    const payload = {
+      formulaId: formulaFormField("formulaId")?.value,
+      slug: formulaFormField("slug")?.value,
+      displayName: formulaFormField("displayName")?.value,
+      moduleKey: formulaFormField("moduleKey")?.value,
+      categoryPath: formulaFormField("categoryPath")?.value,
+      purpose: formulaFormField("purpose")?.value,
+      tags,
+      latex: formulaFormField("latex")?.value,
+      revisionReason: formulaFormField("revisionReason")?.value || "manual-save"
+    };
+    const result = await request("/api/admin/formulas", { method: "POST", body: JSON.stringify(payload) });
+    formulaCatalogState.selection.moduleKey = result.card.moduleKey;
+    formulaCatalogState.selection.categoryPath = result.card.categoryPath;
+    formulaCatalogState.pagination.page = 1;
+    populateFormulaEditor(result.card);
+    await loadFormulaCatalog({ selectDefault: false });
+    await loadServerContent();
+    renderFormulaDecisions();
+    renderList();
+    setNotice(
+      result.decisionCount
+        ? `公式卡已保存，并为 ${result.decisionCount} 篇引用文章生成黄色待决策事项。`
+        : result.revisionCreated
+          ? "公式卡已保存，并生成新的不可变修订。"
+          : "公式卡元数据已保存，LaTeX 未变更；未生成文章待决策事项。",
+      result.decisionCount ? "warning" : "success"
+    );
+  }
+
+  async function mutateFormulaCard(id, action) {
+    const result = await request(`/api/admin/formulas/${encodeURIComponent(id)}/${action}`, { method: "POST", body: "{}" });
+    closeFormulaEditor();
+    await loadFormulaCatalog({ selectDefault: false });
+    await loadServerContent();
+    renderFormulaDecisions();
+    renderList();
+    const decisionCount = Number(result.card?.decisionCount || 0);
+    setNotice(
+      action === "archive"
+        ? decisionCount
+          ? `公式卡已归档；${decisionCount} 篇引用文章继续显示原修订，并出现黄色待决策事项。`
+          : "公式卡已归档，修订历史已保留。"
+        : "公式卡已恢复。",
+      decisionCount ? "warning" : "success"
+    );
+  }
+
+  async function archiveFormulaCardWithImpact(id) {
+    const detail = await request(`/api/admin/formulas/${encodeURIComponent(id)}`);
+    const card = detail.card;
+    const incomingCount = card.derivation?.incoming?.length || 0;
+    const hasNext = Boolean(card.derivation?.next);
+    const relationText =
+      incomingCount || hasNext
+        ? `此卡位于推导链中：有 ${incomingCount} 个上一阶来源${hasNext ? "，并有 1 个下一阶" : ""}。归档后关系历史保留，访客会看到明确的链路中断。`
+        : "此卡当前没有推导关系。";
+    if (!window.confirm(`确认归档《${card.displayName}》吗？${relationText} 修订记录仍保留。`)) return;
+    await mutateFormulaCard(card.formulaId, "archive");
+  }
+
+  function formulaSnapshotName() {
+    return `formula-catalog-before-import-${new Date().toISOString().replace(/\D/g, "").slice(0, 14)}.json`;
+  }
+
+  async function importFormulaCatalogFile() {
+    const file = formulaImportFile?.files?.[0];
+    if (!file) throw new Error("请先选择公式目录 JSON 文件");
+    const catalog = JSON.parse(await file.text());
+    const result = await request("/api/admin/formulas/import", {
+      method: "POST",
+      body: JSON.stringify({ catalog, snapshotName: formulaSnapshotName() })
+    });
+    formulaCatalogState.selection.moduleKey = "";
+    formulaCatalogState.selection.categoryPath = "";
+    formulaCatalogState.pagination.page = 1;
+    await loadFormulaCatalog();
+    await loadServerContent();
+    renderFormulaDecisions();
+    renderList();
+    setNotice(
+      `已先生成本地快照 ${result.snapshotName}，再导入 ${result.importedCards} 张公式卡；新增 ${result.decisionsCreated || 0} 项文章版本决策。`,
+      result.decisionsCreated ? "warning" : "success"
+    );
+  }
+
+  async function exportFormulaCatalogFile() {
+    const data = await request("/api/admin/formulas/export");
+    const blob = new Blob([`${JSON.stringify(data, null, 2)}\n`], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "larkix-formula-catalog.json";
+    link.click();
+    URL.revokeObjectURL(url);
+    setNotice(`已导出 ${data.cards?.length || 0} 张公式卡。`, "success");
+  }
+
   function currentAdminView() {
     const view = (window.location.hash || "#editor").replace("#", "");
-    return ["editor", "library", "knowledge", "carousel", "layout", "health"].includes(view) ? view : "editor";
+    return ["editor", "library", "knowledge", "formulas", "carousel", "layout", "health"].includes(view) ? view : "editor";
   }
 
   function setAdminView(view = currentAdminView()) {
@@ -2269,6 +3383,9 @@ $$
     if (view === "health") loadHealth().catch(() => renderHealth(null));
     if (view === "editor") renderRecentContent();
     if (view === "knowledge") renderKnowledgeNodeList();
+    if (view === "formulas" && !formulaCatalogState.loaded) {
+      loadFormulaCatalog().catch((error) => setNotice(error.message, "error"));
+    }
     if (view === "carousel") renderFeaturedSlots();
     if (view === "layout") renderLayoutPanel();
   }
@@ -2318,6 +3435,28 @@ $$
 
   editorDockHandle.addEventListener("click", () => {
     setEditorDockCollapsed(!editorDock.classList.contains("is-collapsed"));
+  });
+
+  focusModeToggle?.addEventListener("change", () => {
+    const enabled = focusModeToggle.checked;
+    focusModeToggle.setAttribute("aria-checked", String(enabled));
+    if (focusModeGateState) {
+      focusModeGateState.textContent = enabled
+        ? "待保存：将只显示电子基础、公式推导和开源项目。"
+        : "待保存：正文恢复原可见性；轮播缓冲项不会自动恢复。";
+    }
+    if (focusModeGateWarning) {
+      focusModeGateWarning.textContent = enabled
+        ? "重新开启会把活跃越界轮播项移入持久缓冲区，不会删除内容或改变发布状态。"
+        : "高影响操作：非聚焦正文会恢复公开；轮播缓冲仍需由 Owner 明确选择槽位恢复。";
+    }
+    if (saveFocusModeButton) {
+      saveFocusModeButton.disabled = focusModeToggle.dataset.savedValue === String(enabled);
+    }
+  });
+
+  saveFocusModeButton?.addEventListener("click", () => {
+    withBusy(saveFocusModeButton, "保存中...", saveFocusMode).catch((error) => setNotice(error.message, "error"));
   });
 
   logoutButton.addEventListener("click", () => {
@@ -2526,6 +3665,54 @@ $$
     }
   });
 
+  carouselBufferList?.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-action]");
+    if (!button) return;
+    const card = button.closest("[data-buffer-id]");
+    const bufferId = card?.dataset.bufferId;
+    const item = (serverContent.carousel?.buffered || []).find((entry) => entry.bufferId === bufferId);
+    if (!item) {
+      setNotice("轮播缓冲项已变化，请刷新后重试。", "error");
+      return;
+    }
+    if (button.dataset.action === "restore-carousel-buffer") {
+      const slot = Number(card.querySelector("[data-carousel-restore-slot]")?.value);
+      if (!Number.isInteger(slot) || slot < 0 || slot >= featuredLimit) {
+        setNotice("请明确选择 0-3 的恢复槽位。", "error");
+        return;
+      }
+      if (!window.confirm(`确认把《${item.displayTitle || item.contentTitle || item.contentId}》恢复到轮播槽位 ${slot} 吗？槽位冲突时不会自动重排。`)) {
+        return;
+      }
+      withBusy(button, "恢复中...", async () => {
+        const result = await request(
+          `/api/admin/carousel-buffer/${encodeURIComponent(bufferId)}/restore`,
+          { method: "POST", body: JSON.stringify({ slot }) }
+        );
+        serverContent.carousel = result.carousel || serverContent.carousel;
+        await loadServerContent();
+        renderList();
+        renderRecentContent();
+        renderFeaturedSlots();
+        setNotice(`已手动恢复到轮播槽位 ${slot}；正文与发布状态保持不变。`, "success");
+      }).catch((error) => setNotice(error.message, "error"));
+      return;
+    }
+    if (button.dataset.action === "remove-carousel-buffer") {
+      if (!window.confirm(`确认移除《${item.displayTitle || item.contentTitle || item.contentId}》的缓冲记录吗？本操作不会删除关联正文。`)) {
+        return;
+      }
+      withBusy(button, "移除中...", async () => {
+        const result = await request(`/api/admin/carousel-buffer/${encodeURIComponent(bufferId)}`, {
+          method: "DELETE"
+        });
+        serverContent.carousel = result.carousel || serverContent.carousel;
+        renderCarouselBuffer();
+        setNotice("已移除失效缓冲记录；未删除任何正文。", "success");
+      }).catch((error) => setNotice(error.message, "error"));
+    }
+  });
+
   layoutPanel?.addEventListener("click", (event) => {
     const resizeButton = event.target.closest("[data-layout-resize]");
     if (resizeButton) {
@@ -2604,9 +3791,228 @@ $$
     layoutPanel.querySelectorAll(".is-dragging, .is-drag-over").forEach((item) => item.classList.remove("is-dragging", "is-drag-over"));
   });
 
+  formulaCategoryTree?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-module][data-category]");
+    if (!button) return;
+    formulaCatalogState.selection.moduleKey = button.dataset.module;
+    formulaCatalogState.selection.categoryPath = button.dataset.category;
+    formulaCatalogState.pagination.page = 1;
+    loadFormulaCatalog({ selectDefault: false }).catch((error) => setNotice(error.message, "error"));
+  });
+
+  formulaSearchInput?.addEventListener("input", () => {
+    window.clearTimeout(formulaSearchTimer);
+    formulaSearchTimer = window.setTimeout(() => {
+      formulaCatalogState.selection.query = formulaSearchInput.value.trim();
+      formulaCatalogState.pagination.page = 1;
+      loadFormulaCatalog({ selectDefault: false }).catch((error) => setNotice(error.message, "error"));
+    }, 260);
+  });
+
+  formulaTagFilter?.addEventListener("change", () => {
+    formulaCatalogState.selection.tag = formulaTagFilter.value;
+    formulaCatalogState.pagination.page = 1;
+    loadFormulaCatalog({ selectDefault: false }).catch((error) => setNotice(error.message, "error"));
+  });
+
+  formulaArchiveFilter?.addEventListener("change", () => {
+    formulaCatalogState.selection.archiveState = formulaArchiveFilter.value;
+    formulaCatalogState.pagination.page = 1;
+    loadFormulaCatalog({ selectDefault: false }).catch((error) => setNotice(error.message, "error"));
+  });
+
+  formulaPreviousPage?.addEventListener("click", () => {
+    formulaCatalogState.pagination.page = Math.max(1, formulaCatalogState.pagination.page - 1);
+    loadFormulaCatalog({ selectDefault: false }).catch((error) => setNotice(error.message, "error"));
+  });
+
+  formulaNextPage?.addEventListener("click", () => {
+    formulaCatalogState.pagination.page += 1;
+    loadFormulaCatalog({ selectDefault: false }).catch((error) => setNotice(error.message, "error"));
+  });
+
+  formulaCardList?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-formula-action]");
+    if (!button) return;
+    const action = button.dataset.formulaAction;
+    const id = button.dataset.formulaId;
+    if (action === "edit") {
+      withBusy(button, "加载中...", () => editFormulaCard(id)).catch((error) => setNotice(error.message, "error"));
+      return;
+    }
+    if (action === "archive") {
+      withBusy(button, "检查链路...", () => archiveFormulaCardWithImpact(id)).catch((error) => setNotice(error.message, "error"));
+      return;
+    }
+    withBusy(button, "处理中...", () => mutateFormulaCard(id, action)).catch((error) => setNotice(error.message, "error"));
+  });
+
+  newFormulaButton?.addEventListener("click", () => populateFormulaEditor());
+  formulaEditorCancel?.addEventListener("click", closeFormulaEditor);
+  formulaNextTarget?.addEventListener("input", () => scheduleFormulaDerivationCandidates(formulaNextTarget.value));
+  formulaIncomingSource?.addEventListener("input", () => scheduleFormulaDerivationCandidates(formulaIncomingSource.value));
+  formulaNextSet?.addEventListener("click", () => {
+    withBusy(formulaNextSet, "保存中...", setFormulaNextRelation).catch((error) => setNotice(error.message, "error"));
+  });
+  formulaNextRemove?.addEventListener("click", () => {
+    const source = formulaEditingCard;
+    if (!source) return;
+    withBusy(formulaNextRemove, "移除中...", () => removeFormulaNextRelation(source.formulaId, source.displayName)).catch((error) =>
+      setNotice(error.message, "error")
+    );
+  });
+  formulaIncomingAdd?.addEventListener("click", () => {
+    withBusy(formulaIncomingAdd, "添加中...", addFormulaIncomingRelation).catch((error) => setNotice(error.message, "error"));
+  });
+  formulaIncomingList?.addEventListener("click", (event) => {
+    const button = event.target.closest('[data-formula-derivation-action="remove-incoming"]');
+    if (!button) return;
+    const sourceId = button.dataset.sourceFormulaId;
+    const label = button.closest(".formula-relation-row")?.querySelector("strong")?.textContent || sourceId;
+    withBusy(button, "移除中...", () => removeFormulaNextRelation(sourceId, label)).catch((error) =>
+      setNotice(error.message, "error")
+    );
+  });
+  formulaCardEditor?.addEventListener("input", (event) => {
+    if (event.target.name === "latex") updateFormulaEditorPreview();
+  });
+  formulaCardEditor?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const submitButton = formulaCardEditor.querySelector("button[type='submit']");
+    withBusy(submitButton, "保存中...", saveFormulaEditor).catch((error) => setNotice(error.message, "error"));
+  });
+  formulaImportButton?.addEventListener("click", () => {
+    withBusy(formulaImportButton, "导入中...", importFormulaCatalogFile).catch((error) => setNotice(error.message, "error"));
+  });
+  formulaExportButton?.addEventListener("click", () => {
+    withBusy(formulaExportButton, "导出中...", exportFormulaCatalogFile).catch((error) => setNotice(error.message, "error"));
+  });
+
+  openFormulaAuthoringButton?.addEventListener("click", () => openFormulaAuthoring());
+  contentForm.markdown?.addEventListener("contextmenu", (event) => {
+    if (event.shiftKey || getType() !== "post") return;
+    event.preventDefault();
+    openFormulaAuthoring(event);
+  });
+  formulaAuthoringClose?.addEventListener("click", closeFormulaAuthoring);
+  formulaExistingTab?.addEventListener("click", () => setFormulaAuthoringTab("existing"));
+  formulaCreateTab?.addEventListener("click", () => {
+    if (formulaAuthoringState.selectionInfo) setFormulaAuthoringTab("create");
+  });
+  formulaAuthoringModule?.addEventListener("change", () => {
+    formulaAuthoringState.moduleKey = formulaAuthoringModule.value;
+    formulaAuthoringState.categoryPath = "";
+    formulaAuthoringState.page = 1;
+    loadFormulaAuthoringCatalog().catch((error) => setNotice(error.message, "error"));
+  });
+  formulaAuthoringCategory?.addEventListener("change", () => {
+    formulaAuthoringState.categoryPath = formulaAuthoringCategory.value;
+    const selectedOption = formulaAuthoringCategory.selectedOptions?.[0];
+    if (formulaAuthoringState.categoryPath && selectedOption?.dataset.module) {
+      formulaAuthoringState.moduleKey = selectedOption.dataset.module;
+    }
+    formulaAuthoringState.page = 1;
+    loadFormulaAuthoringCatalog().catch((error) => setNotice(error.message, "error"));
+  });
+  formulaAuthoringTag?.addEventListener("change", () => {
+    formulaAuthoringState.tag = formulaAuthoringTag.value;
+    formulaAuthoringState.page = 1;
+    loadFormulaAuthoringCatalog().catch((error) => setNotice(error.message, "error"));
+  });
+  formulaAuthoringQuery?.addEventListener("input", () => {
+    window.clearTimeout(formulaAuthoringSearchTimer);
+    formulaAuthoringSearchTimer = window.setTimeout(() => {
+      formulaAuthoringState.query = formulaAuthoringQuery.value.trim();
+      formulaAuthoringState.page = 1;
+      loadFormulaAuthoringCatalog().catch((error) => setNotice(error.message, "error"));
+    }, 260);
+  });
+  formulaAuthoringPrevious?.addEventListener("click", () => {
+    formulaAuthoringState.page = Math.max(1, formulaAuthoringState.page - 1);
+    loadFormulaAuthoringCatalog().catch((error) => setNotice(error.message, "error"));
+  });
+  formulaAuthoringNext?.addEventListener("click", () => {
+    formulaAuthoringState.page += 1;
+    loadFormulaAuthoringCatalog().catch((error) => setNotice(error.message, "error"));
+  });
+  formulaAuthoringResults?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-formula-bind]");
+    if (!button || button.disabled) return;
+    const card = formulaAuthoringState.items.find((item) => item.formulaId === button.dataset.formulaBind);
+    if (!card) return;
+    try {
+      insertExistingFormulaBinding(card, button.dataset.bindMode);
+    } catch (error) {
+      setNotice(error.message, "error");
+    }
+  });
+  formulaCreateAndBindButton?.addEventListener("click", () => {
+    withBusy(formulaCreateAndBindButton, "创建并保存中...", createFormulaCardFromSelection).catch((error) => {
+      saveDraft();
+      setNotice(`${error.message}。公式未创建，文章原始 LaTeX 已保留。`, "error");
+    });
+  });
+  formulaDecisionList?.addEventListener("click", (event) => {
+    const cancel = event.target.closest("[data-formula-decision-cancel-clone]");
+    if (cancel) {
+      formulaDecisionCloneId = "";
+      renderFormulaDecisions();
+      return;
+    }
+    const submitClone = event.target.closest("[data-formula-decision-submit-clone]");
+    if (submitClone) {
+      const decisionId = submitClone.dataset.formulaDecisionSubmitClone;
+      const container = formulaDecisionList.querySelector(`[data-formula-decision-clone-form="${CSS.escape(decisionId)}"]`);
+      const displayName = container?.querySelector("[name='displayName']")?.value.trim();
+      const moduleKey = container?.querySelector("[name='moduleKey']")?.value.trim();
+      const categoryPath = container?.querySelector("[name='categoryPath']")?.value.trim();
+      const latex = container?.querySelector("[name='latex']")?.value.trim();
+      if (!displayName || !moduleKey || !categoryPath || !latex) {
+        setNotice("另建公式卡必须填写名称、所属模块、自定义分类和 LaTeX。", "error");
+        return;
+      }
+      const formula = {
+        displayName,
+        moduleKey,
+        categoryPath,
+        purpose: container.querySelector("[name='purpose']")?.value.trim() || "",
+        tags: String(container.querySelector("[name='tags']")?.value || "")
+          .split(/[\n,，、]/)
+          .map((tag) => tag.trim())
+          .filter(Boolean),
+        latex
+      };
+      withBusy(submitClone, "创建并绑定中...", () => resolveFormulaDecision(decisionId, "clone", formula)).catch((error) =>
+        setNotice(error.message, "error")
+      );
+      return;
+    }
+    const actionButton = event.target.closest("[data-formula-decision-action]");
+    if (!actionButton) return;
+    const action = actionButton.dataset.formulaDecisionAction;
+    const decisionId = actionButton.dataset.decisionId;
+    if (action === "clone") {
+      formulaDecisionCloneId = decisionId;
+      renderFormulaDecisions();
+      return;
+    }
+    const prompt =
+      action === "keep"
+        ? "确认仅为当前文章保留原公式版本吗？其他文章不会受影响。"
+        : "确认仅让当前文章采用公式卡最新版吗？其他文章不会受影响。";
+    if (!window.confirm(prompt)) return;
+    withBusy(actionButton, "处理中...", () => resolveFormulaDecision(decisionId, action)).catch((error) =>
+      setNotice(error.message, "error")
+    );
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !formulaAuthoringPopover.hidden) closeFormulaAuthoring();
+  });
+
   window.addEventListener("hashchange", () => setAdminView());
 
-  contentForm.addEventListener("input", () => {
+  contentForm.addEventListener("input", (event) => {
+    if (event.target.closest("#formulaDecisionPanel")) return;
     markDirty();
     updatePreview();
     updateVisibilityHint();
@@ -2614,6 +4020,7 @@ $$
   });
 
   contentForm.addEventListener("change", (event) => {
+    if (event.target.closest("#formulaDecisionPanel")) return;
     if (event.target.name === "type") updateTypeFields();
     if (event.target.name === "featuredOrder") {
       event.target.value = String(featuredOrderValue(event.target.value));
@@ -2701,6 +4108,7 @@ $$
         validateFeaturedPayload(payload);
         const result = await request(endpoint, { method: "POST", body: JSON.stringify(payload) });
         serverContent = { ...serverContent, [collectionKey]: resultCollection(result, collectionKey) };
+        if (collectionKey === "posts") await loadServerContent();
         clearDraft();
         if (collectionKey === "knowledgeNodes") {
           applyItemToForm("knowledge_node", result.node, { confirm: false });

@@ -54,7 +54,7 @@
 
   function normalizePublicFocusMode(value) {
     const fallback = {
-      enabled: false,
+      enabled: true,
       hideMiniappsFromPrimaryNav: true,
       hideAdminFromPublicNav: true
     };
@@ -80,16 +80,21 @@
       nav.classList.add("focus-mode-nav");
       const links = [
         { href: "./maker.html", label: "首页" },
-        { href: "./category.html?category=power-electronics", label: "电力电子" },
-        { href: "./derive.html", label: "公式推导" }
+        { href: "./category.html?category=electronics-basics", label: "电子基础" },
+        { href: "./derive.html", label: "公式推导" },
+        { href: "./projects.html", label: "开源项目" }
       ];
       nav.innerHTML = links
         .map((link) => `<a href="${link.href}"${isCurrentHref(link.href) ? ' aria-current="page"' : ""}>${link.label}</a>`)
         .join("");
     });
     if (focusMode.hideAdminFromPublicNav) {
-      document.querySelectorAll('.site-header .admin-link[href="./admin/index.html"], .site-header .admin-link[href$="/admin/index.html"]').forEach((link) => {
+      document.querySelectorAll(
+        '.site-header .admin-link[href="./admin/index.html"], .site-header .admin-link[href$="/admin/index.html"], .hero-actions a[href="./admin/index.html"], .hero-actions a[href$="/admin/index.html"]'
+      ).forEach((link) => {
         link.hidden = true;
+        link.setAttribute("aria-hidden", "true");
+        link.style.display = "none";
       });
     }
   }
@@ -102,20 +107,14 @@
   }
 
   function isPowerElectronicsItem(item) {
-    const corpus = focusCorpus(item);
-    return [
-      "power-electronics",
-      "电力电子",
-      "开关电源",
-      "boost",
-      "buck",
-      "flyback",
-      "占空比",
-      "纹波",
-      "电感",
-      "mosfet",
-      "power supply"
-    ].some((token) => corpus.includes(String(token).toLowerCase()));
+    if (item.type === "project" || item.statusKey || item.license) return true;
+    const categoryKey = String(item.categoryKey || "").toLowerCase();
+    const tags = String(item.tags || "").toLowerCase();
+    if (["electronics-basics", "power-electronics", "projects", "derivations"].includes(categoryKey)) return true;
+    if (["电子基础", "电力电子", "开源项目"].includes(String(item.category || ""))) return true;
+    if (/(?:^|[\s,，、])module:(?:electronics-basics|power-electronics|projects|derivations)(?:$|[\s,，、])/.test(tags)) return true;
+    if (String(item.tags || "").split(/[,，、]/).some((tag) => tag.trim().startsWith("公式"))) return true;
+    return /\{\{(?:formula|derive):/.test(String(item.markdown || ""));
   }
 
   function focusRouteItem(id, title, summary, href, label) {
@@ -130,8 +129,8 @@
       cover: "./assets/covers/analog-cover.png",
       href,
       featured: true,
-      featuredOrder: id === "power-electronics" ? 1 : 2,
-      recommendationPriority: id === "power-electronics" ? 1 : 2
+      featuredOrder: id === "electronics-basics" ? 0 : id === "derivations" ? 1 : 2,
+      recommendationPriority: id === "electronics-basics" ? 1 : id === "derivations" ? 2 : 3
     };
   }
 
@@ -512,23 +511,29 @@
     section.innerHTML = `
       <div class="section-heading">
         <div class="section-title-block split-title">
-          <h2>电力电子</h2>
-          <span>Power Electronics</span>
+          <h2>电子基础</h2>
+          <span>Electronics Basics</span>
         </div>
-        <a href="./category.html?category=power-electronics">进入聚焦路径</a>
+        <a href="./category.html?category=electronics-basics">进入聚焦路径</a>
       </div>
       <div class="focus-entry-grid">
         <article class="focus-entry-card focus-entry-primary">
           <span class="category-pill">Focused Track</span>
-          <h3><a href="./category.html?category=power-electronics">电力电子学习路径</a></h3>
-          <p>从 Boost、Buck、占空比、电感纹波和开关频率等变量开始整理公开内容。</p>
-          <a class="card-link" href="./category.html?category=power-electronics">打开路径</a>
+          <h3><a href="./category.html?category=electronics-basics">电子基础学习路径</a></h3>
+          <p>从电路变量、基础公式和可复现工程验证开始整理公开内容。</p>
+          <a class="card-link" href="./category.html?category=electronics-basics">打开路径</a>
         </article>
         <article class="focus-entry-card">
           <span class="category-pill">Derivations</span>
           <h3><a href="./derive.html">公式推导节点</a></h3>
           <p>文章中的公式变量会打开对应推导页，节点内容可继续串联到更多变量。</p>
           <a class="card-link" href="./derive.html">查看节点</a>
+        </article>
+        <article class="focus-entry-card">
+          <span class="category-pill">Projects</span>
+          <h3><a href="./projects.html">开源项目</a></h3>
+          <p>查看原理图、PCB、BOM、固件与调试记录，按项目复现完整工程过程。</p>
+          <a class="card-link" href="./projects.html">查看项目</a>
         </article>
       </div>
       <div class="derive-node-list focus-derive-list" id="focusDerivationList" aria-label="公开推导节点"></div>
@@ -658,11 +663,11 @@
   const focusProjects = focusModeEnabled() ? sortByRecommendation(publicProjects.filter(isPowerElectronicsItem)) : publicProjects;
   const focusHeroFallback = [
     focusRouteItem(
-      "power-electronics",
-      "电力电子学习路径",
-      "从 Boost、Buck、占空比、电感纹波和开关频率等变量开始整理公开内容。",
-      "./category.html?category=power-electronics",
-      "电力电子"
+      "electronics-basics",
+      "电子基础学习路径",
+      "从电路变量、基础公式和可复现工程验证开始整理公开内容。",
+      "./category.html?category=electronics-basics",
+      "电子基础"
     ),
     focusRouteItem(
       "derivations",
@@ -670,16 +675,23 @@
       "文章中的公式变量会打开对应推导页，节点内容可继续串联到更多变量。",
       "./derive.html",
       "公式推导"
+    ),
+    focusRouteItem(
+      "projects",
+      "开源项目",
+      "从原理图、PCB、BOM、固件与调试记录进入可复现工程项目。",
+      "./projects.html",
+      "开源项目"
     )
   ];
 
-  featuredItems = [...(focusModeEnabled() ? focusPosts : posts), ...(focusModeEnabled() ? focusProjects : publicProjects)]
+  const eligibleFeaturedItems = [...(focusModeEnabled() ? focusPosts : posts), ...(focusModeEnabled() ? focusProjects : publicProjects)]
     .filter((item) => item.featured)
     .sort((a, b) => Number(a.featuredOrder || 0) - Number(b.featuredOrder || 0))
     .slice(0, 4);
-  if (!featuredItems.length && focusModeEnabled()) {
-    featuredItems = focusHeroFallback;
-  }
+  featuredItems = focusModeEnabled()
+    ? [focusHeroFallback[0], ...eligibleFeaturedItems].slice(0, 4)
+    : eligibleFeaturedItems;
   if (!featuredItems.length) {
     featuredItems = [
       posts.find((post) => post.id === "stm32-adc-dma-precision") || posts[0],

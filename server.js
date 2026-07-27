@@ -2,16 +2,30 @@ const crypto = require("node:crypto");
 const childProcess = require("node:child_process");
 const fs = require("node:fs");
 const http = require("node:http");
+const os = require("node:os");
 const path = require("node:path");
 const vm = require("node:vm");
 const { logAudit } = require("./lib/audit");
 const { createAuth } = require("./lib/auth");
-const { createContentStore } = require("./lib/content");
+const { createContentStore, focusScopeForContent, isContentInFocusScope } = require("./lib/content");
 const { createDatabase } = require("./lib/db");
 const { createSeo } = require("./lib/seo");
 const { createUploadStore } = require("./lib/uploads");
 const { markdownToDocx } = require("./lib/md2doc");
-const { validatePostPayload, validateProjectPayload, validateKnowledgeNodePayload, validateUploadPayload } = require("./lib/validators");
+const {
+  validatePostPayload,
+  validateProjectPayload,
+  validateKnowledgeNodePayload,
+  validateFormulaCardPayload,
+  validateFormulaDecisionPayload,
+  validateFormulaDerivationPayload,
+  validateFocusModePayload,
+  validateCarouselBufferRestorePayload,
+  validateFormulaCatalogPackage,
+  validateLatexSelection,
+  validateUploadPayload
+} = require("./lib/validators");
+const { writeSnapshotFile } = require("./tools/calculation-book/formula-catalog");
 
 const root = __dirname;
 const dataDir = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : root;
@@ -19,6 +33,7 @@ const dbDir = path.resolve(process.env.DB_DIR || path.join(dataDir, "database"))
 const dbPath = path.resolve(process.env.DB_PATH || path.join(dbDir, "gokottamaker.sqlite"));
 const uploadDir = path.resolve(process.env.UPLOAD_DIR || path.join(dataDir, "uploads"));
 const backupRoot = path.resolve(process.env.BACKUP_ROOT || "/srv/gokottamaker-backups");
+const formulaBackupDir = path.resolve(process.env.FORMULA_BACKUP_DIR || path.join(os.homedir(), "LarkixFormulaBackups"));
 const port = Number(process.env.PORT || 4173);
 const host = process.env.HOST || "";
 const adminUsername = process.env.ADMIN_USERNAME || "Larkix";
@@ -282,9 +297,28 @@ function cookieHeader(token, req) {
 
 const {
   withTransaction,
-  allPosts,
-  allProjects,
+  allPosts: allStoredPosts,
+  allProjects: allStoredProjects,
+  listCarouselFocusBuffer,
+  carouselFocusBufferById,
+  reconcileCarouselFocusBuffer,
+  restoreCarouselFocusBuffer,
+  removeCarouselFocusBuffer,
   allKnowledgeNodes,
+  listFormulaCards,
+  publicFormulaCardBySlug,
+  adminFormulaCard,
+  listFormulaReferenceDecisions: listStoredFormulaReferenceDecisions,
+  saveFormulaDerivation,
+  saveFormulaCard,
+  archiveFormulaCard,
+  restoreFormulaCard,
+  exportFormulaCatalog,
+  importFormulaCatalog,
+  createFormulaFromSelection,
+  resolveFormulaReferenceDecision,
+  postById,
+  projectById,
   publicKnowledgeNodeBySlug,
   adminKnowledgeNode,
   listRevisions,
@@ -304,7 +338,185 @@ const {
   softDeleteKnowledgeNode
 } = contentStore;
 const { saveUpload, uploads } = uploadStore;
+
+function focusModeEnabled() {
+  return publicFocusMode().enabled === true;
+}
+
+function focusAccessDecision(item, contentType = item?.type || "") {
+  if (!focusModeEnabled()) {
+    return { allowed: true, reasonCode: "FOCUS_MODE_DISABLED", scope: focusScopeForContent(item, contentType) };
+  }
+  const scope = focusScopeForContent(item, contentType);
+  return {
+    allowed: isContentInFocusScope(item, contentType),
+    reasonCode: isContentInFocusScope(item, contentType) ? "FOCUS_SCOPE_ALLOWED" : "FOCUS_SCOPE_OUTSIDE",
+    scope
+  };
+}
+
+function allPosts(admin = false) {
+  const items = allStoredPosts(admin);
+  return focusModeEnabled() ? items.filter((item) => focusAccessDecision(item, "post").allowed) : items;
+}
+
+function allProjects(admin = false) {
+  const items = allStoredProjects(admin);
+  return focusModeEnabled() ? items.filter((item) => focusAccessDecision(item, "project").allowed) : items;
+}
+
+function listFormulaReferenceDecisions(filters = {}) {
+  const decisions = listStoredFormulaReferenceDecisions(filters);
+  if (!focusModeEnabled()) return decisions;
+  const visiblePostIds = new Set(allPosts(true).map((post) => post.id));
+  return decisions.filter((decision) => visiblePostIds.has(decision.postId));
+}
+
+function assertFocusWriteAllowed(contentType, payload, options = {}) {
+  if (!focusModeEnabled()) return;
+  const existing =
+    contentType === "post"
+      ? postById(payload.id)
+      : contentType === "project"
+        ? projectById(payload.id)
+        : null;
+  if (existing && !focusAccessDecision(existing, contentType).allowed) {
+    throw apiError(404, "content not found");
+  }
+  const decision = focusAccessDecision(payload, contentType);
+  if (!decision.allowed) {
+    const error = apiError(409, "聚焦模式已开启，只能写入电子基础、公式推导或开源项目范围");
+    error.reasonCode = decision.reasonCode;
+    throw error;
+  }
+  if (options.requireExisting && !existing) throw apiError(404, "content not found");
+}
+
+function focusScopeCounts() {
+  const rawPosts = allStoredPosts(true);
+  const rawProjects = allStoredProjects(true);
+  return {
+    posts: { visible: allPosts(true).length, stored: rawPosts.length },
+    projects: { visible: allProjects(true).length, stored: rawProjects.length },
+    knowledgeNodes: { visible: allKnowledgeNodes(true).length, stored: allKnowledgeNodes(true).length }
+  };
+}
+
+function carouselBufferPayload() {
+  const focusEnabled = focusModeEnabled();
+  return listCarouselFocusBuffer().map((buffer) => {
+    const linked = buffer.linkedContent;
+    const eligible =
+      buffer.referenceStatus === "available" &&
+      isContentInFocusScope(linked, buffer.contentType);
+    let restoreReasonCode = "CAROUSEL_RESTORE_ALLOWED";
+    let restoreMessage = "请选择一个空槽位后手动恢复。";
+    if (buffer.referenceStatus === "missing") {
+      restoreReasonCode = "CAROUSEL_REFERENCE_MISSING";
+      restoreMessage = "关联内容已缺失，只能从缓冲区移除记录。";
+    } else if (buffer.referenceStatus === "archived") {
+      restoreReasonCode = "CAROUSEL_REFERENCE_ARCHIVED";
+      restoreMessage = "关联内容已归档或在回收站，不能恢复到轮播。";
+    } else if (focusEnabled && !eligible) {
+      restoreReasonCode = "CAROUSEL_RESTORE_BLOCKED_FOCUS_SCOPE_OUTSIDE";
+      restoreMessage = "聚焦模式已开启，当前内容不属于电子基础、公式推导或开源项目，不能恢复。";
+    }
+    return {
+      bufferId: buffer.bufferId,
+      contentType: buffer.contentType,
+      contentId: buffer.contentId,
+      contentSlug: buffer.contentSlug,
+      contentTitle: buffer.contentTitle,
+      imageReference: buffer.imageReference,
+      originalSlot: buffer.originalSlot,
+      bufferedReason: buffer.bufferedReason,
+      status: buffer.status,
+      bufferedAt: buffer.bufferedAt,
+      updatedAt: buffer.updatedAt,
+      restoredAt: buffer.restoredAt,
+      removedAt: buffer.removedAt,
+      referenceStatus: buffer.referenceStatus,
+      displayTitle: buffer.displayTitle,
+      displayImage: buffer.displayImage,
+      currentPublishStatus: linked
+        ? buffer.contentType === "project"
+          ? linked.visibilityStatus
+          : linked.publishStatus
+        : "",
+      focusEligible: eligible,
+      restoreAllowed: buffer.referenceStatus === "available" && (!focusEnabled || eligible),
+      restoreReasonCode,
+      restoreMessage
+    };
+  });
+}
+
+function carouselAdminPayload() {
+  const activeItems = carouselItems();
+  const buffered = carouselBufferPayload();
+  return {
+    activeItems,
+    buffered,
+    summary: {
+      activeCount: activeItems.length,
+      bufferedCount: buffered.length,
+      focusEnabled: focusModeEnabled()
+    }
+  };
+}
+
+function publicPostByIdentity(identity) {
+  return allPosts(false).find((post) => post.id === identity || post.slug === identity) || null;
+}
+
+function publicProjectByIdentity(identity) {
+  return allProjects(false).find((project) => project.id === identity || project.slug === identity) || null;
+}
+
 const seo = createSeo({ siteUrl, allPosts, allProjects, text });
+
+function focusXmlEscape(value) {
+  return String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function focusedSitemap(res) {
+  const pages = [
+    { loc: `${siteUrl}/`, priority: "1.0" },
+    { loc: `${siteUrl}/maker.html`, priority: "0.95" },
+    { loc: `${siteUrl}/category.html?category=electronics-basics`, priority: "0.9" },
+    { loc: `${siteUrl}/derive.html`, priority: "0.85" },
+    { loc: `${siteUrl}/projects.html`, priority: "0.8" },
+    ...allPosts(false).map((post) => ({
+      loc: `${siteUrl}/post.html?id=${encodeURIComponent(post.id)}`,
+      priority: "0.7",
+      lastmod: post.publishedAt || post.date
+    })),
+    ...allProjects(false).map((project) => ({
+      loc: `${siteUrl}/project.html?id=${encodeURIComponent(project.id)}`,
+      priority: "0.7",
+      lastmod: project.publishedAt || project.date
+    }))
+  ];
+  const urls = pages
+    .map(
+      (page) => `  <url>
+    <loc>${focusXmlEscape(page.loc)}</loc>
+    ${page.lastmod ? `<lastmod>${focusXmlEscape(String(page.lastmod).slice(0, 10))}</lastmod>` : ""}
+    <priority>${page.priority}</priority>
+  </url>`
+    )
+    .join("\n");
+  return text(
+    res,
+    200,
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`,
+    "application/xml; charset=utf-8"
+  );
+}
 
 function contentScript(res) {
   const body = `window.LARKIX_SERVER_CONTENT = ${JSON.stringify(publicContentPayload())};`;
@@ -322,8 +534,8 @@ function exportContent() {
       versionLabel: siteVersionLabel
     },
     exportedAt: new Date().toISOString(),
-    posts: allPosts(true),
-    projects: allProjects(true),
+    posts: allStoredPosts(true),
+    projects: allStoredProjects(true),
     knowledgeNodes: allKnowledgeNodes(true),
     siteLayout: siteLayout(),
     publicFocusMode: publicFocusMode(),
@@ -335,6 +547,24 @@ function apiError(status, message) {
   const error = new Error(message);
   error.status = status;
   return error;
+}
+
+function formulaSnapshotPath(filename) {
+  const value = String(filename || "").trim();
+  if (!/^[a-z0-9][a-z0-9._-]{0,94}\.json$/i.test(value)) {
+    throw apiError(400, "公式库快照文件名必须是安全的 .json 文件名");
+  }
+  const target = path.resolve(formulaBackupDir, value);
+  if (path.dirname(target) !== formulaBackupDir) throw apiError(400, "公式库快照路径不合法");
+  return target;
+}
+
+function generatedFormulaIdentity() {
+  const token = crypto.randomUUID();
+  return {
+    formulaId: `formula.user.${token}`,
+    slug: `user-formula-${token}`
+  };
 }
 
 function elecDiagnostic(level, code, message, extra = {}) {
@@ -627,16 +857,19 @@ const defaultSiteLayout = {
 };
 
 const defaultPublicFocusMode = {
-  enabled: false,
-  primaryScope: "power-electronics",
-  visibleScopes: ["home", "power-electronics", "derivations"],
-  hiddenScopes: ["analog", "stm32", "esp32", "projects"],
+  enabled: true,
+  ownerConfigured: false,
+  primaryScope: "electronics-basics",
+  visibleScopes: ["electronics-basics", "derivations", "projects"],
+  scopeAliases: { "power-electronics": "electronics-basics" },
+  homepageOrder: ["electronics-basics", "derivations", "projects"],
   hideMiniappsFromPrimaryNav: true,
   hideAdminFromPublicNav: true,
   noindexHiddenLandingPages: true,
-  noindexHiddenDetailPages: false,
+  noindexHiddenDetailPages: true,
   homepageMode: "focused",
-  bannerCopy: ""
+  bannerCopy: "",
+  schemaVersion: 2
 };
 
 function siteSetting(key, fallback) {
@@ -679,7 +912,27 @@ function siteLayout() {
 }
 
 function publicFocusMode() {
-  return siteSetting("public_focus_mode", defaultPublicFocusMode);
+  const stored = siteSetting("public_focus_mode", defaultPublicFocusMode);
+  return {
+    ...defaultPublicFocusMode,
+    enabled: stored.enabled !== false,
+    ownerConfigured: stored.ownerConfigured === true
+  };
+}
+
+function savePublicFocusMode(payload) {
+  const previous = publicFocusMode();
+  const next = {
+    ...defaultPublicFocusMode,
+    enabled: payload.enabled === true,
+    ownerConfigured: true
+  };
+  db.prepare(
+    `INSERT INTO site_settings (key, value_json, updated_at)
+     VALUES ('public_focus_mode', ?, CURRENT_TIMESTAMP)
+     ON CONFLICT(key) DO UPDATE SET value_json = excluded.value_json, updated_at = CURRENT_TIMESTAMP`
+  ).run(JSON.stringify(next));
+  return { previous, current: publicFocusMode() };
 }
 
 function saveSiteLayout(payload) {
@@ -693,12 +946,16 @@ function saveSiteLayout(payload) {
 }
 
 function publicContentPayload() {
+  const focusMode = publicFocusMode();
   return {
     posts: allPosts(false),
     projects: allProjects(false),
     projectDirectory: publicProjectDirectory(),
     siteLayout: siteLayout(),
-    publicFocusMode: publicFocusMode()
+    publicFocusMode: {
+      ...focusMode,
+      reasonCode: focusMode.enabled ? "FOCUS_MODE_ENABLED" : "FOCUS_MODE_DISABLED"
+    }
   };
 }
 
@@ -859,13 +1116,21 @@ function md2docConvert(res, body) {
 
 function carouselItems() {
   return [
-    ...allPosts(true).map((item) => ({ ...item, contentType: "post" })),
-    ...allProjects(true).map((item) => ({ ...item, contentType: "project" }))
+    ...allStoredPosts(true).map((item) => ({ ...item, contentType: "post" })),
+    ...allStoredProjects(true).map((item) => ({ ...item, contentType: "project" }))
   ].filter((item) => item.featured && !item.deletedAt);
 }
 
 function assertCarouselSlot(payload, contentType) {
   if (!payload.featured) return;
+  const buffered = listCarouselFocusBuffer().find(
+    (item) => item.contentType === contentType && item.contentId === payload.id
+  );
+  if (buffered) {
+    const error = apiError(409, "该内容仍在轮播缓冲区，请从缓冲区明确选择槽位恢复");
+    error.reasonCode = "CAROUSEL_BUFFER_RESTORE_REQUIRED";
+    throw error;
+  }
   const order = Number(payload.featuredOrder || 0);
   const existing = carouselItems().filter((item) => !(item.contentType === contentType && item.id === payload.id));
   if (existing.length >= 4) {
@@ -1129,6 +1394,18 @@ function knowledgeNodeAuditMetadata(result) {
 async function api(req, res, pathname) {
   if (pathname === "/api/content.js" && req.method === "GET") return contentScript(res);
   if (pathname === "/api/content" && req.method === "GET") return json(res, 200, publicContentPayload());
+  const publicPost = pathname.match(/^\/api\/public\/posts\/([^/]+)$/);
+  if (publicPost && req.method === "GET") {
+    const post = publicPostByIdentity(decodeURIComponent(publicPost[1]));
+    if (!post) return json(res, 404, { error: "not found", reasonCode: "FOCUS_HIDDEN_OR_NOT_PUBLIC" });
+    return json(res, 200, { post });
+  }
+  const publicProject = pathname.match(/^\/api\/public\/projects\/([^/]+)$/);
+  if (publicProject && req.method === "GET") {
+    const project = publicProjectByIdentity(decodeURIComponent(publicProject[1]));
+    if (!project) return json(res, 404, { error: "not found", reasonCode: "FOCUS_HIDDEN_OR_NOT_PUBLIC" });
+    return json(res, 200, { project });
+  }
   if (pathname === "/api/knowledge-nodes" && req.method === "GET") return json(res, 200, { nodes: allKnowledgeNodes(false) });
   const publicKnowledgeNode = pathname.match(/^\/api\/knowledge-nodes\/([^/]+)$/);
   if (publicKnowledgeNode && req.method === "GET") {
@@ -1136,6 +1413,13 @@ async function api(req, res, pathname) {
     const node = publicKnowledgeNodeBySlug(slug);
     if (!node) return json(res, 404, { error: "not found" });
     return json(res, 200, { node });
+  }
+  const publicFormulaCard = pathname.match(/^\/api\/formulas\/([^/]+)$/);
+  if (publicFormulaCard && req.method === "GET") {
+    const slug = decodeURIComponent(publicFormulaCard[1]);
+    const card = publicFormulaCardBySlug(slug);
+    if (!card) return json(res, 404, { error: "not found" });
+    return json(res, 200, { card });
   }
   if (pathname === "/api/elec/samples" && req.method === "GET") return elecResponse(res, 200, elecSamples());
   if (pathname === "/api/elec/llm-handoff" && req.method === "GET") return elecHandoff(req, res);
@@ -1189,8 +1473,11 @@ async function api(req, res, pathname) {
       posts: allPosts(true),
       projects: allProjects(true),
       knowledgeNodes: allKnowledgeNodes(true),
+      formulaReferenceDecisions: listFormulaReferenceDecisions(),
       siteLayout: siteLayout(),
-      publicFocusMode: publicFocusMode()
+      publicFocusMode: publicFocusMode(),
+      focusScopeCounts: focusScopeCounts(),
+      carousel: carouselAdminPayload()
     });
   }
   if (pathname === "/api/admin/health" && req.method === "GET") return json(res, 200, healthPayload({ detailed: true }));
@@ -1205,7 +1492,308 @@ async function api(req, res, pathname) {
     logAudit(db, req, user, "site_layout_save", "site_layout", "home");
     return json(res, 200, { siteLayout: nextLayout });
   }
+  if (pathname === "/api/admin/focus-mode" && req.method === "GET") {
+    return json(res, 200, {
+      publicFocusMode: publicFocusMode(),
+      focusScopeCounts: focusScopeCounts(),
+      carousel: carouselAdminPayload()
+    });
+  }
+  if (pathname === "/api/admin/focus-mode" && req.method === "POST") {
+    const input = validateFocusModePayload(await readBody(req));
+    let changed;
+    let reconciliation = { bufferedNow: 0, reasonCode: "CAROUSEL_BUFFER_UNCHANGED" };
+    withTransaction(() => {
+      changed = savePublicFocusMode(input);
+      if (changed.current.enabled) {
+        reconciliation = reconcileCarouselFocusBuffer((item, contentType) =>
+          isContentInFocusScope(item, contentType)
+        );
+      }
+      logAudit(
+        db,
+        req,
+        user,
+        changed.current.enabled ? "focus_mode_enable" : "focus_mode_disable",
+        "site_setting",
+        "public_focus_mode",
+        {
+          previousEnabled: changed.previous.enabled,
+          enabled: changed.current.enabled,
+          bufferedNow: reconciliation.bufferedNow,
+          reasonCode: changed.current.enabled ? "FOCUS_MODE_ENABLED_BY_OWNER" : "FOCUS_MODE_DISABLED_BY_OWNER"
+        }
+      );
+    });
+    return json(res, 200, {
+      publicFocusMode: changed.current,
+      focusScopeCounts: focusScopeCounts(),
+      carousel: carouselAdminPayload(),
+      carouselReconciliation: reconciliation,
+      reasonCode: changed.current.enabled ? "FOCUS_MODE_ENABLED_BY_OWNER" : "FOCUS_MODE_DISABLED_BY_OWNER"
+    });
+  }
+  if (pathname === "/api/admin/carousel-buffer" && req.method === "GET") {
+    return json(res, 200, { carousel: carouselAdminPayload() });
+  }
+
+  const carouselBufferRestore = pathname.match(/^\/api\/admin\/carousel-buffer\/([^/]+)\/restore$/);
+  if (carouselBufferRestore && req.method === "POST") {
+    const bufferId = decodeURIComponent(carouselBufferRestore[1]);
+    const input = validateCarouselBufferRestorePayload(await readBody(req));
+    const buffer = carouselFocusBufferById(bufferId);
+    if (!buffer || buffer.status !== "buffered") {
+      const error = apiError(404, "轮播缓冲项不存在或已处理");
+      error.reasonCode = "CAROUSEL_BUFFER_NOT_FOUND";
+      throw error;
+    }
+    if (
+      focusModeEnabled() &&
+      buffer.referenceStatus === "available" &&
+      !isContentInFocusScope(buffer.linkedContent, buffer.contentType)
+    ) {
+      const error = apiError(
+        409,
+        "聚焦模式已开启，当前内容不属于电子基础、公式推导或开源项目，不能恢复"
+      );
+      error.reasonCode = "CAROUSEL_RESTORE_BLOCKED_FOCUS_SCOPE_OUTSIDE";
+      throw error;
+    }
+    let restored;
+    withTransaction(() => {
+      restored = restoreCarouselFocusBuffer(bufferId, input.slot);
+      logAudit(db, req, user, "carousel_buffer_restore", buffer.contentType, buffer.contentId, {
+        bufferId,
+        slot: input.slot,
+        reasonCode: "CAROUSEL_BUFFER_RESTORED"
+      });
+    });
+    return json(res, 200, {
+      restored: restored.item,
+      carousel: carouselAdminPayload(),
+      reasonCode: "CAROUSEL_BUFFER_RESTORED"
+    });
+  }
+
+  const carouselBufferRemove = pathname.match(/^\/api\/admin\/carousel-buffer\/([^/]+)$/);
+  if (carouselBufferRemove && req.method === "DELETE") {
+    const bufferId = decodeURIComponent(carouselBufferRemove[1]);
+    let removed;
+    withTransaction(() => {
+      removed = removeCarouselFocusBuffer(bufferId);
+      logAudit(db, req, user, "carousel_buffer_remove", removed.contentType, removed.contentId, {
+        bufferId,
+        reasonCode: "CAROUSEL_BUFFER_REMOVED"
+      });
+    });
+    return json(res, 200, {
+      removed: {
+        bufferId: removed.bufferId,
+        contentType: removed.contentType,
+        contentId: removed.contentId,
+        status: removed.status
+      },
+      carousel: carouselAdminPayload(),
+      reasonCode: "CAROUSEL_BUFFER_REMOVED"
+    });
+  }
   if (pathname === "/api/uploads" && req.method === "GET") return json(res, 200, { uploads: uploads() });
+
+  if (pathname === "/api/admin/formulas" && req.method === "GET") {
+    const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+    return json(
+      res,
+      200,
+      listFormulaCards({
+        moduleKey: url.searchParams.get("module") || "",
+        categoryPath: url.searchParams.get("category") || "",
+        query: url.searchParams.get("q") || "",
+        tag: url.searchParams.get("tag") || "",
+        archiveState: url.searchParams.get("archiveState") || "active",
+        page: url.searchParams.get("page") || 1,
+        pageSize: url.searchParams.get("pageSize") || 12,
+        allowGlobalSearch: url.searchParams.get("authoring") === "1"
+      })
+    );
+  }
+
+  if (pathname === "/api/admin/formula-decisions" && req.method === "GET") {
+    const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+    return json(
+      res,
+      200,
+      {
+        decisions: listFormulaReferenceDecisions({
+          status: url.searchParams.get("status") || "pending",
+          postId: url.searchParams.get("postId") || "",
+          formulaId: url.searchParams.get("formulaId") || ""
+        })
+      }
+    );
+  }
+
+  const formulaDecisionResolve = pathname.match(/^\/api\/admin\/formula-decisions\/([^/]+)\/resolve$/);
+  if (formulaDecisionResolve && req.method === "POST") {
+    const decisionId = decodeURIComponent(formulaDecisionResolve[1]);
+    if (focusModeEnabled() && !listFormulaReferenceDecisions({ status: "all" }).some((item) => item.decisionId === decisionId)) {
+      return json(res, 404, { error: "not found", reasonCode: "FOCUS_SCOPE_OUTSIDE" });
+    }
+    const input = validateFormulaDecisionPayload(await readBody(req));
+    let payload = input;
+    if (input.action === "clone") {
+      payload = {
+        ...input,
+        formula: validateFormulaCardPayload({
+          ...input.formula,
+          ...generatedFormulaIdentity(),
+          revisionReason: "article-decision-clone"
+        })
+      };
+    }
+    let resolved;
+    withTransaction(() => {
+      resolved = resolveFormulaReferenceDecision(decisionId, payload, user);
+      logAudit(db, req, user, "formula_reference_decision_resolve", "formula_reference_decision", decisionId, {
+        action: input.action,
+        postId: resolved.post.id,
+        formulaId: resolved.decision.formulaId,
+        resolvedFormulaId: resolved.decision.resolvedFormulaId,
+        resolvedRevisionId: resolved.decision.resolvedRevisionId
+      });
+    });
+    return json(res, 200, {
+      ...resolved,
+      decisions: listFormulaReferenceDecisions(),
+      posts: allPosts(true)
+    });
+  }
+
+  if (pathname === "/api/admin/formulas/export" && req.method === "GET") {
+    logAudit(db, req, user, "formula_catalog_export", "formula_catalog", "all");
+    res.setHeader("Content-Disposition", 'attachment; filename="larkix-formula-catalog.json"');
+    return json(res, 200, exportFormulaCatalog());
+  }
+
+  if (pathname === "/api/admin/formulas/import" && req.method === "POST") {
+    const body = await readBody(req, 8 * 1024 * 1024);
+    if (!body.catalog || !body.snapshotName) {
+      throw apiError(400, "公式库导入必须同时提供 catalog 与 snapshotName");
+    }
+    const catalog = validateFormulaCatalogPackage(body.catalog);
+    const snapshotPath = formulaSnapshotPath(body.snapshotName);
+    writeSnapshotFile(exportFormulaCatalog(), snapshotPath, { root });
+    const result = importFormulaCatalog(catalog, { actor: user });
+    logAudit(db, req, user, "formula_catalog_import", "formula_catalog", "all", {
+      importedCards: result.importedCards,
+      revisionsCreated: result.revisionsCreated,
+      decisionsCreated: result.decisionsCreated || 0,
+      snapshotName: path.basename(snapshotPath)
+    });
+    return json(res, 200, {
+      ...result,
+      snapshotName: path.basename(snapshotPath),
+      catalog: listFormulaCards({})
+    });
+  }
+
+  if (pathname === "/api/admin/formulas/from-selection" && req.method === "POST") {
+    const body = await readBody(req);
+    const post = validatePostPayload(body.post || {});
+    assertFocusWriteAllowed("post", post);
+    const selection = validateLatexSelection(post.markdown, body.selectionStart, body.selectionEnd);
+    const identity = generatedFormulaIdentity();
+    const formula = validateFormulaCardPayload({
+      ...(body.formula || {}),
+      ...identity,
+      latex: selection.latex,
+      revisionReason: "article-selection-create"
+    });
+    assertCarouselSlot(post, "post");
+    let created;
+    withTransaction(() => {
+      created = createFormulaFromSelection({ post, formula, selection }, user);
+      logAudit(db, req, user, "formula_card_create_from_article", "formula_card", created.card.formulaId, {
+        postId: created.post.id,
+        revisionId: created.binding.revisionId,
+        bindingId: created.binding.bindingId
+      });
+      logAudit(db, req, user, "post_formula_binding_save", "post", created.post.id, {
+        formulaId: created.card.formulaId,
+        revisionId: created.binding.revisionId,
+        bindingId: created.binding.bindingId
+      });
+    });
+    return json(res, 200, { ...created, posts: allPosts(true) });
+  }
+
+  if (pathname === "/api/admin/formulas" && req.method === "POST") {
+    const body = validateFormulaCardPayload(await readBody(req));
+    let saved;
+    withTransaction(() => {
+      saved = saveFormulaCard({ ...body, actor: user });
+      logAudit(db, req, user, "formula_card_save", "formula_card", saved.card.formulaId, {
+        slug: saved.card.slug,
+        revisionCreated: saved.revisionCreated,
+        decisionCount: saved.decisionCount || 0
+      });
+    });
+    return json(res, 200, saved);
+  }
+
+  const formulaDerivation = pathname.match(/^\/api\/admin\/formulas\/([^/]+)\/derivation$/);
+  if (formulaDerivation && req.method === "POST") {
+    const sourceId = decodeURIComponent(formulaDerivation[1]);
+    const input = validateFormulaDerivationPayload(await readBody(req));
+    let saved;
+    withTransaction(() => {
+      saved = saveFormulaDerivation(sourceId, input, user);
+      const auditAction =
+        input.action === "remove"
+          ? "formula_derivation_remove"
+          : saved.replaced
+            ? "formula_derivation_replace"
+            : "formula_derivation_set";
+      logAudit(db, req, user, auditAction, "formula_derivation", saved.source.formulaId, {
+        previousTargetId: saved.previousTargetId,
+        targetFormulaId: saved.target?.formulaId || null,
+        affectedSourceIds: saved.affectedSources.map((card) => card.formulaId)
+      });
+    });
+    return json(res, 200, { relation: saved, card: saved.source });
+  }
+
+  const formulaCardRestore = pathname.match(/^\/api\/admin\/formulas\/([^/]+)\/restore$/);
+  if (formulaCardRestore && req.method === "POST") {
+    const id = decodeURIComponent(formulaCardRestore[1]);
+    let card;
+    withTransaction(() => {
+      card = restoreFormulaCard(id);
+      logAudit(db, req, user, "formula_card_restore", "formula_card", card.formulaId, { slug: card.slug });
+    });
+    return json(res, 200, { card });
+  }
+
+  const formulaCardArchive = pathname.match(/^\/api\/admin\/formulas\/([^/]+)\/archive$/);
+  if (formulaCardArchive && req.method === "POST") {
+    const id = decodeURIComponent(formulaCardArchive[1]);
+    let card;
+    withTransaction(() => {
+      card = archiveFormulaCard(id, user);
+      logAudit(db, req, user, "formula_card_archive", "formula_card", card.formulaId, {
+        slug: card.slug,
+        decisionCount: card.decisionCount || 0
+      });
+    });
+    return json(res, 200, { card });
+  }
+
+  const formulaCardDetail = pathname.match(/^\/api\/admin\/formulas\/([^/]+)$/);
+  if (formulaCardDetail && req.method === "GET") {
+    const id = decodeURIComponent(formulaCardDetail[1]);
+    const card = adminFormulaCard(id);
+    if (!card) return json(res, 404, { error: "not found" });
+    return json(res, 200, { card });
+  }
 
   if (pathname === "/api/admin/knowledge-nodes" && req.method === "GET") {
     return json(res, 200, { nodes: allKnowledgeNodes(true) });
@@ -1281,6 +1869,7 @@ async function api(req, res, pathname) {
 
   if (pathname === "/api/posts" && req.method === "POST") {
     const body = validatePostPayload(await readBody(req));
+    assertFocusWriteAllowed("post", body);
     assertCarouselSlot(body, "post");
     withTransaction(() => {
       savePost({ ...body, actor: user });
@@ -1291,6 +1880,7 @@ async function api(req, res, pathname) {
 
   if (pathname === "/api/projects" && req.method === "POST") {
     const body = validateProjectPayload(await readBody(req));
+    assertFocusWriteAllowed("project", body);
     assertCarouselSlot(body, "project");
     withTransaction(() => {
       saveProject({ ...body, actor: user });
@@ -1321,6 +1911,7 @@ async function api(req, res, pathname) {
   const postRevisionRestore = pathname.match(/^\/api\/posts\/([^/]+)\/revisions\/(\d+)\/restore$/);
   if (postRevisionRestore && req.method === "POST") {
     const id = decodeURIComponent(postRevisionRestore[1]);
+    assertFocusWriteAllowed("post", { ...(postById(id) || {}), id }, { requireExisting: true });
     const revisionId = Number(postRevisionRestore[2]);
     withTransaction(() => {
       restoreRevision("post", id, revisionId, { actor: user });
@@ -1343,6 +1934,7 @@ async function api(req, res, pathname) {
   const postRestore = pathname.match(/^\/api\/posts\/([^/]+)\/restore$/);
   if (postRestore && req.method === "POST") {
     const id = decodeURIComponent(postRestore[1]);
+    assertFocusWriteAllowed("post", { ...(postById(id) || {}), id }, { requireExisting: true });
     withTransaction(() => {
       restorePost(id, { actor: user });
       logAudit(db, req, user, "post_restore", "post", id);
@@ -1363,6 +1955,7 @@ async function api(req, res, pathname) {
   const hardDeletePostMatch = pathname.match(/^\/api\/posts\/([^/]+)\/hard$/);
   if (hardDeletePostMatch && req.method === "DELETE") {
     const id = decodeURIComponent(hardDeletePostMatch[1]);
+    assertFocusWriteAllowed("post", { ...(postById(id) || {}), id }, { requireExisting: true });
     if (!allowHardDelete) {
       logAudit(db, req, user, "post_hard_delete_blocked", "post", id);
       return json(res, 403, { error: "hard delete is disabled; use soft delete and revisions" });
@@ -1391,6 +1984,7 @@ async function api(req, res, pathname) {
   const deletePost = pathname.match(/^\/api\/posts\/([^/]+)$/);
   if (deletePost && req.method === "DELETE") {
     const id = decodeURIComponent(deletePost[1]);
+    assertFocusWriteAllowed("post", { ...(postById(id) || {}), id }, { requireExisting: true });
     withTransaction(() => {
       softDeletePost(id, { actor: user });
       logAudit(db, req, user, "post_soft_delete", "post", id);
@@ -1458,6 +2052,23 @@ function isPublicStaticRequest(requested) {
   return publicStaticPrefixes.some((prefix) => normalized.startsWith(prefix));
 }
 
+function serveNotFound(res) {
+  const notFound = path.join(root, "404.html");
+  if (fs.existsSync(notFound)) {
+    res.writeHead(404, {
+      "Content-Type": mime[".html"],
+      "Cache-Control": "no-cache",
+      "X-Content-Type-Options": "nosniff",
+      "Referrer-Policy": "strict-origin-when-cross-origin",
+      "Permissions-Policy": "camera=(), microphone=(), geolocation=()"
+    });
+    fs.createReadStream(notFound).pipe(res);
+    return;
+  }
+  res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+  res.end("Not found");
+}
+
 function serveStatic(res, pathname) {
   let requested = decodeURIComponent(pathname === "/" ? "/index.html" : pathname);
   if (requested.endsWith("/")) requested += "index.html";
@@ -1483,21 +2094,7 @@ function serveStatic(res, pathname) {
     target = path.join(target, "index.html");
   }
   if (!fs.existsSync(target) || !fs.statSync(target).isFile()) {
-    const notFound = path.join(root, "404.html");
-    if (fs.existsSync(notFound)) {
-      res.writeHead(404, {
-        "Content-Type": mime[".html"],
-        "Cache-Control": "no-cache",
-        "X-Content-Type-Options": "nosniff",
-        "Referrer-Policy": "strict-origin-when-cross-origin",
-        "Permissions-Policy": "camera=(), microphone=(), geolocation=()"
-      });
-      fs.createReadStream(notFound).pipe(res);
-      return;
-    }
-    res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
-    res.end("Not found");
-    return;
+    return serveNotFound(res);
   }
   const ext = path.extname(target).toLowerCase();
   const isImage = /\.(png|jpe?g|webp|gif|svg)$/i.test(target);
@@ -1513,18 +2110,38 @@ function serveStatic(res, pathname) {
   fs.createReadStream(target).pipe(res);
 }
 
+if (focusModeEnabled()) {
+  reconcileCarouselFocusBuffer((item, contentType) => isContentInFocusScope(item, contentType));
+}
+
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, `http://${req.headers.host}`);
     if (url.pathname.startsWith("/api/")) return await api(req, res, url.pathname);
     if (url.pathname === "/healthz") return json(res, 200, healthPayload());
-    if (url.pathname === "/sitemap.xml") return seo.sitemap(res);
+    if (url.pathname === "/sitemap.xml") return focusModeEnabled() ? focusedSitemap(res) : seo.sitemap(res);
     if (url.pathname === "/robots.txt") return seo.robots(res);
     if (url.pathname === "/rss.xml") return seo.rss(res);
+    if (focusModeEnabled()) {
+      if (url.pathname === "/post.html" && url.searchParams.get("id") && !publicPostByIdentity(url.searchParams.get("id"))) {
+        return serveNotFound(res);
+      }
+      if (url.pathname === "/project.html" && url.searchParams.get("id") && !publicProjectByIdentity(url.searchParams.get("id"))) {
+        return serveNotFound(res);
+      }
+      if (url.pathname === "/category.html") {
+        const category = String(url.searchParams.get("category") || "").toLowerCase();
+        if (!["electronics-basics", "power-electronics", "projects"].includes(category)) return serveNotFound(res);
+      }
+      if (url.pathname === "/miniapps.html" || url.pathname.startsWith("/tools/")) return serveNotFound(res);
+    }
     serveStatic(res, url.pathname);
   } catch (error) {
     console.error(error);
-    json(res, error.status || 500, { error: error.status ? error.message : "server error" });
+    json(res, error.status || 500, {
+      error: error.status ? error.message : "server error",
+      ...(error.reasonCode ? { reasonCode: error.reasonCode } : {})
+    });
   }
 });
 

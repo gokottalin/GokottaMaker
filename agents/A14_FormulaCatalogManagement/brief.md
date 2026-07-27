@@ -2,20 +2,20 @@
 
 ## Role
 
-Temporary formula-catalog and CMS management workbench.
+Temporary formula catalog foundation and CMS management workbench.
 
-Chinese role note: `公式目录与管理：确保全部子公式可跳转、公式唯一、多级标签、修订与备份`.
+Chinese role note: `公式库基础：建立唯一公式卡、分类标签、搜索分页、修订归档与本地备份`.
 
 Use Chinese for the handoff and administrator-facing copy. Keep IDs, slugs,
-tag keys, filenames, and machine-readable fields in ASCII.
+enum values, tag keys, filenames, and machine-readable fields in ASCII.
 
 ## Objective
 
-Turn the accepted A13 calculation-book output into a formula catalog that is
-safe to author and maintain locally. Every visible formula and subformula in a
-generated L1/L2/L3 chain must have a stable identity and a working superscript
-jump to a real derivation target. The CMS must make these records easy to find,
-edit, archive, restore, export, and back up without writing production data.
+Implement the formula-catalog foundation required by `REQ-20260726-003` while
+preserving the previously accepted stable-identity, revision, archive, export,
+and local-backup requirements. This slice creates the data/API/CMS foundation;
+article-editor insertion belongs to A19 and derivation-chain relations belong
+to A21.
 
 ## Read First
 
@@ -24,132 +24,107 @@ edit, archive, restore, export, and back up without writing production data.
 - `docs/PROJECT_CHARTER.md`
 - `docs/codex-workline/task_registry.json`
 - `docs/codex-workline/implementation_slices.json`
+- `docs/codex-workline/requirements/active/REQ-20260726-003.json`
+- `docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json`
 - `docs/codex-workline/slices/S05_cms_knowledge_node_workflow_handoff.md`
 - `docs/codex-workline/slices/S07_cms_formula_authoring_examples_handoff.md`
 - `docs/codex-workline/slices/S08_calculation_book_engineering_handoff.md`
 - `docs/calculation-book-authoring-guide.md`
 - `schemas/calculation-book-master.schema.json`
 - `content/calculation-books/**/calculation-book.json`
-- `tools/calculation-book/**`
 - `admin/index.html`
 - `admin/admin.js`
 - `admin/admin.css`
+- `server.js`
 - `lib/content.js`
 - `lib/validators.js`
 - `data/markdown-renderer.js`
-- `post.js`
-- `main.js`
-- `scripts/test-calculation-book.js`
 
 ## Allowed Outputs
 
-- `schemas/calculation-book-master.schema.json`
-- `content/calculation-books/**`
-- `tools/calculation-book/**`
+- `migrations/014_formula_catalog.js`
+- `server.js`
+- `lib/content.js`
+- `lib/validators.js`
 - `admin/index.html`
 - `admin/admin.js`
 - `admin/admin.css`
-- `lib/content.js`
-- `lib/validators.js`
 - `data/markdown-renderer.js`
 - `post.js`
-- `main.js`
-- `scripts/test-calculation-book.js`
+- `derive.html`
+- `schemas/calculation-book-master.schema.json`
+- `content/calculation-books/**`
+- `tools/calculation-book/**`
 - `scripts/test-formula-catalog.js`
+- `scripts/test-calculation-book.js`
 - `package.json`
 - `docs/calculation-book-authoring-guide.md`
 - `docs/codex-workline/slices/S09_formula_catalog_management_handoff.md`
 
-Do not edit migrations, deployment scripts, cloud data, the current project
-database, the persistent Owner test database, or Git state. Use a new isolated
-`DATA_DIR` for automated tests.
+Migration `014` may be created and run only against a new isolated `DATA_DIR`.
+Do not edit prior migrations, mutate current/production data, implement article
+formula bindings, version decision queues, derivation graph edges, focus mode,
+carousel behavior, cloud/deployment files, or Git state.
 
-## Formula Identity Contract
+## Formula Card Contract
 
-- Every formula has one canonical ASCII `formulaId` that is stable across title,
-  wording, tag, and publication changes.
-- Formula identity is globally namespaced by the stable book ID. A recommended
-  address is `<bookId>/<formulaId>`; the generated route slug must also remain
-  globally unique.
-- The CMS must display the canonical identity and must not silently change it
-  during an ordinary edit. A deliberate clone creates a new identity.
-- Duplicate canonical identities, duplicate route slugs, missing parent
-  identities, cycles, and dangling derivation targets fail validation.
+- Every formula card has one immutable globally unique ASCII `formulaId` and
+  one unique route slug.
+- The card stores a Chinese display name, required module, required custom
+  category path, optional purpose, optional tags, archive state, and current
+  immutable LaTeX revision.
+- Module and custom category are independent. Custom categories remain
+  extensible; do not hard-code a closed category list.
+- LaTeX revisions are immutable and addressable. Metadata edits do not rewrite
+  historical LaTeX.
+- Duplicate identity/slug, malformed category path, and malformed namespaced
+  tags fail with formula-specific messages.
+- Archive is soft. Restore and revision history preserve stable identity.
+- Existing accepted calculation-book formula identities map deterministically
+  into the catalog without unsupported filler or duplicate cards.
 
-## Strict Tag Contract
+## CMS Contract
 
-Each generated formula node must have exactly one value for every required
-dimension:
-
-- `domain:<id>`
-- `topology:<id>`
-- `book:<id>`
-- `depth:l1|l2|l3`
-- `formula:<canonical-id>`
-
-Optional hierarchy uses stable path labels such as
-`path:power-electronics/flyback/current/rms` and an optional
-`parent:<canonical-id>`. Reject malformed namespaced tags and conflicting
-values. Preserve ordinary Chinese display tags separately or derive them from
-the strict catalog tags; do not use a display label as the unique identity.
-
-## Complete Jump Contract
-
-- Every visible L1 formula gets a formula-level superscript jump to an existing
-  L2 or L3 derivation node.
-- Every formula used inside an L2 or L3 derivation step is either expanded in
-  that step or has its own jump to the next real dependency.
-- Generated links come from the JSON master, not handwritten Markdown.
-- A missing derivation is a validation error. Do not generate unsupported filler
-  text merely to satisfy link coverage.
-- Hover and keyboard-focus text names the target, for example
-  `纹波公式详细推导` or `纯数学推导 - 二倍角公式`.
-- The visitor can return to the parent formula and calculation book.
-
-## CMS Management Contract
-
-- Keep existing create, edit, publish/draft, soft-delete, restore, and revision
-  history behavior working.
-- Add focused search and filters for book, topology, depth, strict tag path,
-  publication state, and canonical formula identity.
-- Show parent/child relationships and a direct visitor-preview command without
-  turning the CMS into a decorative dashboard.
-- Make validation errors specific enough to identify the conflicting formula or
-  tag dimension.
+- Formula management uses a left module/custom-category tree, top keyword
+  search and tag filters, and a paginated formula-card list.
+- Default view shows only the selected category, never every formula at once.
+- Cards expose stable identity, name, module, category, purpose, tags, current
+  revision, archive state, edit, archive, restore, and visitor preview.
+- CRUD and validation remain usable at desktop, mobile, and half-width browser
+  sizes with Chinese copy and no mojibake.
+- Do not add article editor context-menu insertion in this slice.
 
 ## Backup Contract
 
-- Provide a deterministic formula-catalog JSON export that includes identity,
-  hierarchy, tags, content, publication state, and source-book revision.
-- Provide a local backup/snapshot command that writes outside the source tree,
-  never includes credentials, and refuses to overwrite an existing snapshot.
-- Import or bulk update must validate the complete package before saving any
-  node and must create a pre-change snapshot.
-- Existing per-node revisions, soft delete, and restore remain part of the
-  recovery path and must be covered by tests.
+- Provide deterministic catalog JSON export including identity, metadata,
+  immutable revisions, archive state, and source calculation-book revision.
+- Provide a local snapshot command that writes outside the source tree, excludes
+  credentials, and refuses overwrite.
+- Bulk import validates the entire package and creates a pre-change snapshot
+  before any isolated-data mutation.
 
 ## Verification
 
-- Run `node --check` on changed JavaScript files.
-- Run `npm.cmd run test:formula-catalog`.
-- Run `npm.cmd run test:calculation-book` and `npm.cmd run test:markdown`.
-- In a fresh isolated `DATA_DIR`, import both accepted calculation books and
-  verify admin login, formula filters, CRUD/revision/restore, export, and backup.
-- Verify every generated L1/L2/L3 formula jump resolves to HTTP 200 and no
-  formula or strict identity is duplicated.
-- Confirm Chinese copy and formulas render without mojibake on desktop and
-  mobile widths.
-- Run `npm.cmd run codex:contract`.
+- Run `node --check` on changed JavaScript.
+- Run a fresh isolated `DATA_DIR` migration and integrity check.
+- Test CRUD, search, tag filtering, category tree, pagination, revision,
+  archive/restore, export/import, backup refusal, and duplicate validation.
+- Import both accepted calculation books and prove stable identity with no
+  duplicate cards or slugs.
+- Run `npm.cmd run test:formula-catalog`,
+  `npm.cmd run test:calculation-book`, `npm.cmd run test:markdown`, API
+  regression, browser smoke, and `npm.cmd run codex:contract`.
 
 ## Stop Conditions
 
-Stop and return to A00 before a database migration, production/current data
-write, cloud synchronization, deployment, Git staging/commit/push, or any
-derivation that would require inventing an unsupported engineering fact.
+Stop and return to A00 before current/production data writes, article binding
+implementation, formula update decision logic, derivation graph work, focus or
+carousel work, cloud synchronization, deployment, or any Git operation.
 
 ## Handoff
 
 Write `docs/codex-workline/slices/S09_formula_catalog_management_handoff.md`
 with `status`, `scope_completed`, `files_created_or_changed`, `decisions`,
-`risks`, `tests_or_checks`, formula/tag coverage counts, backup/restore evidence,
-admin and visitor test URLs, and `next_handoff` back to A00.
+`risks`, `tests_or_checks`, migration evidence, formula/category/tag counts,
+pagination evidence, backup/restore evidence, admin and visitor test URLs, and
+`next_handoff` back to A00.

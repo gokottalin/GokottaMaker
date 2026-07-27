@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260726-003",
+  "title": "公式库分类管理与文章内公式卡创建",
+  "status": "dispatched",
+  "priority": "normal",
+  "createdAt": "2026-07-26T17:43:18.208+08:00",
+  "updatedAt": "2026-07-26T17:55:40.587+08:00",
+  "intent": {
+    "problem": "CMS 公式页面一次展示大量公式且缺少清晰分类，后续公式体量增长后难以查找；文章作者也无法按自然写作流程把临时公式沉淀为可复用公式卡。",
+    "desiredOutcome": "建立按模块和自定义分类组织、可搜索筛选的公式库，并支持作者在文章中使用 LaTeX 输入、复用已有公式卡或把选中公式立即转为新公式卡。",
+    "targetUsers": [
+      "Owner/幕后作者"
+    ]
+  },
+  "scope": {
+    "in": [
+      "公式库采用所属模块、自定义分类、标签的组织结构",
+      "公式管理页使用左侧分类树、顶部搜索和标签筛选、右侧分页公式卡列表",
+      "默认只显示当前分类的公式卡，避免一次铺满全部公式",
+      "文章编辑器使用 LaTeX 文本输入公式",
+      "作者可以保留普通未绑定公式",
+      "作者可通过右键添加公式打开浮窗，按分类、标签或关键词选择已有公式卡",
+      "作者可先输入并框选完整公式，再执行加入公式库",
+      "新建公式卡必填公式名称、所属模块、自定义分类，用途说明和标签选填",
+      "基本信息提交后，当前选中公式立即转为新公式卡的绑定引用",
+      "公式卡创建后允许后续多轮补充和管理元数据"
+    ],
+    "out": [
+      "自动推断公式名称或分类",
+      "要求所有文章公式必须进入公式库",
+      "公式正文修改后的文章版本决策",
+      "多阶公式推导关系",
+      "预先固定不可扩展的全部分类清单"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "公式管理页杂乱并缺乏特定分类。",
+      "文章写作与通用公式库之间缺少符合作者习惯的创建和复用流程。"
+    ],
+    "expected": [
+      "作者先定位模块和自定义分类，再查看分页公式卡，也可用关键词或标签搜索。",
+      "文章内可直接输入 LaTeX 普通公式，不强制绑定。",
+      "右键添加公式可选择已有公式卡并插入文章。",
+      "选中一个完整 LaTeX 公式后可填写最少三项基本信息，将其加入公式库并立即绑定当前文章。",
+      "用途说明和标签可以创建时填写，也可以以后补充。"
+    ],
+    "edgeCases": [
+      "未选中完整公式时不得误把普通正文加入公式库。",
+      "必填信息缺失时不得创建半成品公式卡或改变文章内容。",
+      "创建失败时应保留作者已经输入的 LaTeX 文本。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.catalog-layout",
+      "statement": "公式管理页按模块和自定义分类组织，支持搜索、标签筛选及分页，默认不一次显示全部公式。",
+      "verification": "准备跨模块、跨分类和多标签公式数据，分别验证分类定位、关键词搜索、标签筛选与分页。"
+    },
+    {
+      "id": "ac.unbound-latex",
+      "statement": "作者可以在文章中输入并保留未绑定的 LaTeX 公式。",
+      "verification": "新建文章、输入 LaTeX 公式但不加入公式库，保存并重新打开，确认内容保持未绑定且正常显示。"
+    },
+    {
+      "id": "ac.insert-existing",
+      "statement": "作者可通过右键浮窗搜索并插入已有公式卡。",
+      "verification": "在文章编辑器打开浮窗，使用分类、标签和关键词找到目标卡，插入后确认建立绑定。"
+    },
+    {
+      "id": "ac.create-from-selection",
+      "statement": "作者框选完整 LaTeX 公式，填写名称、所属模块和自定义分类后，可创建公式卡并立即把当前公式转为绑定引用。",
+      "verification": "完成一次从输入、框选、填写最少字段到保存的完整流程，检查公式库新卡和文章绑定。"
+    },
+    {
+      "id": "ac.optional-metadata",
+      "statement": "用途说明和标签均为选填，创建后仍可多次补充或调整。",
+      "verification": "不填选填项创建公式卡，再编辑补充用途和标签，确认文章绑定不受影响。"
+    }
+  ],
+  "constraints": {
+    "languages": [
+      "zh-CN",
+      "LaTeX"
+    ],
+    "platforms": [
+      "Larkix CMS 公式管理页",
+      "Larkix CMS 文章编辑器"
+    ],
+    "compatibility": [
+      "保留现有公式卡和文章内容",
+      "不强制迁移普通未绑定公式"
+    ],
+    "data": [
+      "公式卡至少保存名称、所属模块、自定义分类和 LaTeX 正文",
+      "创建失败不得丢失文章原始 LaTeX 文本"
+    ],
+    "security": [],
+    "operations": [
+      "公式分类和元数据允许后续持续整理"
+    ],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.duplicate-formulas",
+      "severity": "medium",
+      "statement": "自由创建公式卡可能形成内容相同但分类不同的重复公式。",
+      "mitigation": "创建浮窗应提示可能的相似公式，但不得在未获作者选择时自动合并。"
+    },
+    {
+      "id": "risk.selection-boundary",
+      "severity": "medium",
+      "statement": "框选范围识别错误可能把非公式正文带入公式卡。",
+      "mitigation": "创建前在浮窗中明确预览待保存的 LaTeX 正文。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-26T17:54:17.256+08:00",
+    "confirmationText": "确认这5个需求包。",
+    "digest": "sha256:9cabfc2858139253e57f32cde639657e052cea3346aeab73490d6fb1cb0a6aa4"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-07-26T17:55:40.587+08:00"
+  }
+}

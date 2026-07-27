@@ -33,13 +33,55 @@ const bySlot = rows.reduce((map, item) => {
 }, new Map());
 const duplicateSlots = [...bySlot.entries()].filter(([, items]) => items.length > 1).map(([slot]) => slot);
 const outOfRange = rows.filter((item) => Number(item.featuredOrder) < 0 || Number(item.featuredOrder) > 3);
+const bufferTablePresent = Boolean(
+  db
+    .prepare("SELECT 1 AS present FROM sqlite_master WHERE type = 'table' AND name = 'carousel_focus_buffer'")
+    .get()
+);
+const buffered = bufferTablePresent
+  ? db
+      .prepare(
+        `SELECT buffer_id AS bufferId, content_type AS contentType, content_id AS contentId,
+                original_slot AS originalSlot, buffered_reason AS bufferedReason,
+                buffered_at AS bufferedAt, updated_at AS updatedAt
+         FROM carousel_focus_buffer
+         WHERE status = 'buffered'
+         ORDER BY original_slot ASC, buffered_at ASC, buffer_id ASC`
+      )
+      .all()
+  : [];
+const activeKeys = new Set(rows.map((item) => `${item.type}:${item.id}`));
+const activeBufferCollisions = buffered
+  .filter((item) => activeKeys.has(`${item.contentType}:${item.contentId}`))
+  .map((item) => `${item.contentType}:${item.contentId}`);
+const invalidBufferRows = buffered
+  .filter(
+    (item) =>
+      Number(item.originalSlot) < 0 ||
+      Number(item.originalSlot) > 3 ||
+      !item.bufferedReason ||
+      !item.bufferedAt ||
+      !item.updatedAt
+  )
+  .map((item) => item.bufferId);
 const result = {
-  ok: rows.length <= 4 && duplicateSlots.length === 0 && outOfRange.length === 0,
+  ok:
+    bufferTablePresent &&
+    rows.length <= 4 &&
+    duplicateSlots.length === 0 &&
+    outOfRange.length === 0 &&
+    activeBufferCollisions.length === 0 &&
+    invalidBufferRows.length === 0,
   dbPath,
   featuredCount: rows.length,
+  bufferedCount: buffered.length,
+  bufferTablePresent,
   duplicateSlots,
   outOfRange: outOfRange.map((item) => `${item.type}:${item.id}:${item.featuredOrder}`),
-  items: rows
+  activeBufferCollisions,
+  invalidBufferRows,
+  items: rows,
+  buffered
 };
 
 console.log(JSON.stringify(result, null, 2));

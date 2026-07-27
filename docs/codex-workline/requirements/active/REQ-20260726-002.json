@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260726-002",
+  "title": "聚焦模式轮播内容缓冲与手动恢复",
+  "status": "dispatched",
+  "priority": "normal",
+  "createdAt": "2026-07-26T17:43:18.208+08:00",
+  "updatedAt": "2026-07-26T17:55:40.587+08:00",
+  "intent": {
+    "problem": "首页轮播图可能继续展示不符合当前聚焦范围的文章，造成展示异常或绕过聚焦规则。",
+    "desiredOutcome": "开启聚焦模式时自动下架不符合规则的轮播内容并保存到可恢复缓冲区，由 Owner 在规则允许时从 CMS 手动恢复。",
+    "targetUsers": [
+      "Owner/幕后作者",
+      "游客"
+    ]
+  },
+  "scope": {
+    "in": [
+      "聚焦模式开启时自动识别轮播图中不属于电子基础、公式推导、开源项目的文章",
+      "仅下架不符合聚焦规则的轮播项，不关闭整个轮播区域",
+      "下架项进入 CMS 可管理的缓冲区，保留文章关联、图片及原排序信息",
+      "缓冲区内容不会因关闭聚焦模式而自动恢复",
+      "Owner 只能在 CMS 中手动恢复轮播项",
+      "聚焦模式开启且轮播项仍不符合规则时，CMS 禁止恢复并说明原因",
+      "关闭聚焦模式后，Owner 可以手动恢复缓冲区内容"
+    ],
+    "out": [
+      "自动恢复缓冲区内容",
+      "删除轮播项或关联文章",
+      "修复轮播图的其他视觉布局异常",
+      "替 Owner 自动决定恢复后的最终轮播排序"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "首页存在与聚焦范围不一致的异常轮播文章。"
+    ],
+    "expected": [
+      "开启聚焦模式会自动把不符合规则的轮播项移入缓冲区。",
+      "符合聚焦规则的轮播项继续正常展示。",
+      "缓冲区数据可在 CMS 查看并由 Owner 手动恢复。",
+      "聚焦规则不允许恢复时，CMS 阻止操作并给出明确原因。",
+      "关闭聚焦模式只解除恢复限制，不自动改变轮播。"
+    ],
+    "edgeCases": [
+      "同一轮播中同时存在符合和不符合聚焦规则的文章。",
+      "下架后多次切换聚焦模式不得产生重复缓冲项。",
+      "缓冲文章或图片缺失时，CMS 不得静默恢复失效轮播项。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.auto-buffer",
+      "statement": "开启聚焦模式后，只有不符合聚焦范围的轮播项自动移入缓冲区。",
+      "verification": "在隔离数据中建立符合与不符合规则的轮播项，开启聚焦模式并检查游客轮播和 CMS 缓冲区。"
+    },
+    {
+      "id": "ac.no-auto-restore",
+      "statement": "关闭聚焦模式后，缓冲区内容不自动恢复到轮播。",
+      "verification": "先触发自动下架，再关闭聚焦模式并刷新游客端，确认原下架项仍在缓冲区。"
+    },
+    {
+      "id": "ac.block-invalid-restore",
+      "statement": "聚焦模式开启时，CMS 禁止恢复不符合规则的轮播项并显示原因。",
+      "verification": "在聚焦模式开启时尝试恢复非聚焦文章，确认操作被阻止且出现可理解的说明。"
+    },
+    {
+      "id": "ac.manual-restore",
+      "statement": "关闭聚焦模式后，Owner 可以从 CMS 手动恢复缓冲区轮播项。",
+      "verification": "关闭聚焦模式，执行一次手动恢复并确认轮播项重新出现、关联数据仍正确。"
+    }
+  ],
+  "constraints": {
+    "languages": [
+      "zh-CN"
+    ],
+    "platforms": [
+      "Larkix 首页轮播",
+      "Larkix CMS"
+    ],
+    "compatibility": [
+      "保留现有轮播文章关联和图片资源"
+    ],
+    "data": [
+      "缓冲是可恢复状态，不是删除",
+      "不得产生重复缓冲记录"
+    ],
+    "security": [],
+    "operations": [
+      "自动下架只发生在聚焦规则不匹配时",
+      "恢复必须由 Owner 在 CMS 主动执行"
+    ],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.stale-buffer",
+      "severity": "medium",
+      "statement": "缓冲区内容长期未处理可能积累并失去有效文章或图片关联。",
+      "mitigation": "CMS 缓冲区显示关联状态，恢复前重新校验目标文章和图片。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-26T17:54:17.256+08:00",
+    "confirmationText": "确认这5个需求包。",
+    "digest": "sha256:a71fea19cc623e712a570a9ff270448aadba861832cba761566c7a14adde3df3"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [
+      "REQ-20260726-001"
+    ],
+    "dispatchedAt": "2026-07-26T17:55:40.587+08:00"
+  }
+}

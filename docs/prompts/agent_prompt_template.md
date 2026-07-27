@@ -27,6 +27,17 @@ You must produce:
 - tests_or_checks
 - next_handoff
 
+After completing this brief:
+- Continue automatically to A00 acceptance and the next routed Agent in the
+  same task.
+- Dispatch the handoff directly to the matching functional Agent. If none
+  exists, A00 must create and register a narrow temporary Agent before
+  continuing; do not stop or ask the Owner to relay it.
+- Run `npm.cmd run codex:handoff` after A00 updates the routing state.
+- Do not wait for the Owner to type "继续" or relay the next prompt.
+- Stop only for a closed gate, required Owner decision/new authority, or an
+  unrecoverable declared-check failure.
+
 Do not:
 - Modify business code unless the active gate explicitly allows it.
 - Touch database, runtime-data, uploads, .env, or .codex-logs except to inventory them.

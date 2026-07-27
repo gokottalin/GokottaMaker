@@ -68,7 +68,34 @@
       ".codex/agents/a13-calculation-book-engineering.toml",
       "docs/codex-workline/slices/S08_calculation_book_engineering_handoff.md",
       "agents/A14_FormulaCatalogManagement/brief.md",
-      ".codex/agents/a14-formula-catalog-management.toml"
+      ".codex/agents/a14-formula-catalog-management.toml",
+      "schemas/requirement-brief.schema.json",
+      "scripts/requirement-handoff.js",
+      "docs/codex-workline/requirements/README.md",
+      "docs/codex-workline/requirements/active/REQ-20260726-001.json",
+      "docs/codex-workline/requirements/active/REQ-20260726-002.json",
+      "docs/codex-workline/requirements/active/REQ-20260726-003.json",
+      "docs/codex-workline/requirements/active/REQ-20260726-004.json",
+      "docs/codex-workline/requirements/active/REQ-20260726-005.json",
+      "docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json",
+      "agents/A18_RequirementClarifier/brief.md",
+      ".codex/agents/a18-requirement-clarifier.toml",
+      "agents/A19_ArticleFormulaAuthoring/brief.md",
+      ".codex/agents/a19-article-formula-authoring.toml",
+      "agents/A20_FormulaReferenceVersioning/brief.md",
+      ".codex/agents/a20-formula-reference-versioning.toml",
+      "agents/A21_LinearDerivationGraph/brief.md",
+      ".codex/agents/a21-linear-derivation-graph.toml",
+      "agents/A22_FocusModeScopeGate/brief.md",
+      ".codex/agents/a22-focus-mode-scope-gate.toml",
+      "agents/A23_CarouselFocusBuffer/brief.md",
+      ".codex/agents/a23-carousel-focus-buffer.toml",
+      "agents/A15_ContentCloudSync/brief.md",
+      ".codex/agents/a15-content-cloud-sync.toml",
+      "agents/A16_RegressionEvidenceMatrix/brief.md",
+      ".codex/agents/a16-regression-evidence-matrix.toml",
+      "agents/A17_ReleaseGitGate/brief.md",
+      ".codex/agents/a17-release-git-gate.toml"
     ],
     "pausedBooleanFields": {
       "batch1ReadyForOpenDecision": true,
@@ -81,17 +108,20 @@
     },
     "packageScripts": {
       "codex:handoff": "node scripts/codex-handoff.js",
+      "codex:requirement": "node scripts/requirement-handoff.js",
       "codex:contract": "node scripts/codex-governance.js contract",
       "codex:resources": "node scripts/codex-governance.js resources",
       "codex:check": "node scripts/codex-governance.js all"
     },
     "projectWindowRequiredText": [
       "# Project Window",
-      "Current phase: `A14_FormulaCatalogManagement`",
+      "Current phase: `A00_QueueComplete`",
       "Current controller: `agents/A00_ProjectDirector/brief.md`",
-      "Next agent: `agents/A14_FormulaCatalogManagement/brief.md`",
-      "S09 formula catalog identity, hierarchical tags, complete derivation jumps, CMS management, and isolated backup verification are open",
-      "Last accepted handoff: `docs/codex-workline/slices/S08_calculation_book_engineering_handoff.md`"
+      "Next agent: `agents/A00_ProjectDirector/brief.md`",
+      "Confirmed requirement dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json`",
+      "Current work target: queue complete",
+      "no functional Agent is pending",
+      "Confirmed queue: no implementation slice remains"
     ],
     "agentsGuideRequiredText": [
       "Recommended handoff and coordination language: Chinese",
@@ -101,19 +131,22 @@
       "verify it does not become mojibake",
       "Prefer ASCII for code identifiers",
       "A00 Direct Execution Rule",
+      "Automatic Handoff Continuation Rule",
+      "Handoffs are continuous by default",
+      "dispatch the brief directly to that Agent",
+      "A missing Agent is not a stop condition",
+      "without waiting for the Owner to type",
       "npm.cmd run codex:handoff",
       "Agent 00 Project Director",
       "项目导演：",
       "run `npm.cmd run codex:contract`"
     ],
     "nextAgentsRequiredText": [
-      "Agent 14 Formula Catalog Management",
-      "公式目录与管理",
-      "全部子公式可跳转",
-      "公式唯一",
-      "多级标签",
-      "L1/L2/L3",
-      "A15_ContentCloudSync",
+      "Agent 00 Project Director",
+      "项目导演",
+      "automatic functional-Agent queue is complete",
+      "no pending functional Agent",
+      "A00_ProjectDirector",
       "npm.cmd run codex:handoff"
     ],
     "a01Completion": {
@@ -466,8 +499,19 @@
     "onlyLongLivedRole": "A00_ProjectDirector",
     "nextController": "A00_ProjectDirector",
     "nextControllerBrief": "agents/A00_ProjectDirector/brief.md",
-    "onlyNextTask": "A14_FormulaCatalogManagement",
-    "expectedNextTaskCount": 1,
+    "automaticHandoffContinuation": {
+      "enabled": true,
+      "waitForOwnerContinueMessage": false,
+      "requireA00AcceptanceBetweenTaskAgents": true,
+      "runHandoffCommandAfterRouting": true,
+      "continueAcrossContextWindows": true,
+      "directDispatchToResponsibleAgent": true,
+      "createMissingAgentThroughA00": true,
+      "missingAgentIsStopCondition": false,
+      "continueUntilQueueComplete": true,
+      "stopOnClosedGateOrNewAuthority": true
+    },
+    "expectedNextTaskCount": 0,
     "agentRoleNotes": {
       "A00_ProjectDirector": "项目导演：负责顺序、门禁和下一步裁决",
       "A01_ProjectStateRetriever": "项目状态检索器：只读取资料并建立来源索引",
@@ -483,10 +527,16 @@
       "A11_PublicDerivationAndFocusMode": "访客端：推导页、点击跳转和聚焦模式",
       "A12_CmsFormulaAuthoringExamples": "管理端公式编辑与计算书示例：用 CMS 插入公式上角标跳转，并做中文 BOOST 电感选型计算书",
       "A13_CalculationBookEngineering": "计算书撰写与详细计算细化专家：从输入输出条件完成拓扑总设计，并生成 JSON、MathCAD 与 Larkix 分层计算书",
-      "A14_FormulaCatalogManagement": "公式目录与管理：确保全部子公式可跳转、公式唯一、多级标签、修订与备份",
+      "A14_FormulaCatalogManagement": "公式库基础：建立唯一公式卡、分类标签、搜索分页、修订归档与本地备份",
       "A15_ContentCloudSync": "内容云端同步：把已验收内容包安全接入云端部署与幂等更新",
       "A16_RegressionEvidenceMatrix": "质量回归：API、CMS、页面、Markdown 和内容同步证据",
-      "A17_ReleaseGitGate": "发布与 Git 门禁：显式清单、备份、回滚和发布判断"
+      "A17_ReleaseGitGate": "发布与 Git 门禁：显式清单、备份、回滚和发布判断",
+      "A18_RequirementClarifier": "需求确认专家：逐轮盘问、用户确认和机器交接",
+      "A19_ArticleFormulaAuthoring": "文章公式创作：输入普通 LaTeX、复用公式卡，或把选中公式创建为新卡",
+      "A20_FormulaReferenceVersioning": "公式引用版本：保留文章原公式，并让作者逐篇决定保留、升级或另建",
+      "A21_LinearDerivationGraph": "线性推导链：允许多来源汇入，但每张卡最多一个下一阶且禁止成环",
+      "A22_FocusModeScopeGate": "全站聚焦门禁：用唯一开关同时限制游客展示和 CMS 写作范围",
+      "A23_CarouselFocusBuffer": "轮播聚焦缓冲：自动下架越界轮播项，保留原信息，并由作者手动恢复"
     },
     "expectedTaskStatuses": {
       "A01_ProjectStateRetriever": "completed",
@@ -502,7 +552,15 @@
       "A11_PublicDerivationAndFocusMode": "completed",
       "A12_CmsFormulaAuthoringExamples": "completed",
       "A13_CalculationBookEngineering": "completed",
-      "A14_FormulaCatalogManagement": "next"
+      "A14_FormulaCatalogManagement": "completed",
+      "A19_ArticleFormulaAuthoring": "completed",
+      "A20_FormulaReferenceVersioning": "completed",
+      "A21_LinearDerivationGraph": "completed",
+      "A22_FocusModeScopeGate": "completed",
+      "A23_CarouselFocusBuffer": "completed",
+      "A15_ContentCloudSync": "completed",
+      "A16_RegressionEvidenceMatrix": "completed",
+      "A17_ReleaseGitGate": "completed"
     }
   },
   "temporaryExperts": [
@@ -579,6 +637,51 @@
     {
       "id": "A14_FormulaCatalogManagement",
       "file": ".codex/agents/a14-formula-catalog-management.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A18_RequirementClarifier",
+      "file": ".codex/agents/a18-requirement-clarifier.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A19_ArticleFormulaAuthoring",
+      "file": ".codex/agents/a19-article-formula-authoring.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A20_FormulaReferenceVersioning",
+      "file": ".codex/agents/a20-formula-reference-versioning.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A21_LinearDerivationGraph",
+      "file": ".codex/agents/a21-linear-derivation-graph.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A22_FocusModeScopeGate",
+      "file": ".codex/agents/a22-focus-mode-scope-gate.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A23_CarouselFocusBuffer",
+      "file": ".codex/agents/a23-carousel-focus-buffer.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A15_ContentCloudSync",
+      "file": ".codex/agents/a15-content-cloud-sync.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A16_RegressionEvidenceMatrix",
+      "file": ".codex/agents/a16-regression-evidence-matrix.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A17_ReleaseGitGate",
+      "file": ".codex/agents/a17-release-git-gate.toml",
       "mode": "workspace-write"
     }
   ]

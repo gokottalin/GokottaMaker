@@ -1,0 +1,15 @@
+name = "A23_CarouselFocusBuffer"
+description = "Temporary Agent for selective focus-mode carousel buffering and Owner-controlled restore."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["Carousel Focus Buffer", "Carousel Recovery", "轮播聚焦缓冲"]
+developer_instructions = """
+Implement only S17 carousel focus buffer after A22/S16 is accepted. Read
+REQ-20260726-002, the A00 dispatch manifest, S16 handoff, and the A23 brief.
+Atomically and idempotently buffer only out-of-scope featured entries, retaining
+content identity, image reference, original slot, and reason. Never disable the
+whole carousel and never auto-restore when focus is disabled. Permit only
+Owner-controlled restore, block ineligible restore while focused, and require an
+explicit slot on conflict. Preserve content and publication state. Use isolated
+DATA_DIR tests. Do not touch unrelated carousel layout, formula behavior,
+cloud/production data, deployment, or Git operations.
+"""

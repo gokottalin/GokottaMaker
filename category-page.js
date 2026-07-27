@@ -1,6 +1,7 @@
 (() => {
   const CATEGORY_MAP = {
     all: "全部教程",
+    "electronics-basics": "电子基础",
     analog: "模拟电子",
     stm32: "STM32",
     esp32: "ESP32",
@@ -9,6 +10,7 @@
 
   const ENGLISH_MAP = {
     all: "All Tutorials",
+    "electronics-basics": "Electronics Basics",
     analog: "Analog Electronics",
     stm32: "STM32 Lab",
     esp32: "ESP32 Systems",
@@ -17,6 +19,7 @@
 
   const DESCRIPTION_MAP = {
     all: "集中浏览 LarkixMaker 当前已发布的全部内容，覆盖模拟电子、STM32、ESP32 与开源项目。",
+    "electronics-basics": "从电路变量、基础公式、测量方法和可复现验证进入电子工程基础。",
     analog: "整理运放、滤波器、ADC 前端、电源噪声、输入保护和测量调试相关内容，关注从电路指标到真实验证的工程过程。",
     stm32: "整理 STM32 ADC、DMA、定时器、通信接口、Bootloader 和调试实践，关注可复用的嵌入式工程方法。",
     esp32: "整理 ESP32 低功耗、Wi-Fi、MQTT、OTA、传感器节点和电池供电设计，关注联网设备的长期稳定运行。",
@@ -30,12 +33,25 @@
   };
 
   const params = new URLSearchParams(location.search);
-  const key = params.get("category") || "analog";
+  const requestedKey = params.get("category") || "analog";
+  const key = requestedKey === "power-electronics" ? "electronics-basics" : requestedKey;
   const initialKeyword = params.get("q") || "";
   const category = CATEGORY_MAP[key] || CATEGORY_MAP.analog;
   const description = DESCRIPTION_MAP[key] || DESCRIPTION_MAP.analog;
   const courseMeta = window.LarkixCourseMeta || {};
-  const meta = courseMeta[key] || courseMeta.all || {};
+  const meta =
+    key === "electronics-basics"
+      ? {
+          english: "Electronics Basics",
+          summary: DESCRIPTION_MAP["electronics-basics"],
+          stages: ["电路变量", "基础公式", "工程验证"],
+          resources: ["公式推导", "开源项目"],
+          resourcesSummary: "先理解变量和公式，再进入可复现的项目验证。",
+          keywords: ["电路", "公式", "测量", "验证"],
+          recommendedPosts: [],
+          relatedProjects: []
+        }
+      : courseMeta[key] || courseMeta.all || {};
   const contentApi = window.LarkixContent;
   const allPosts = contentApi.getPosts();
   const allProjects = contentApi.getProjectDirectory();
@@ -54,7 +70,14 @@
   const searchLabelNode = document.querySelector(".category-search-box span");
   const returnLinkNode = document.querySelector(".category-heading-actions .return-link");
 
-  const items = sortByRecommendation(key === "all" ? allPosts : allPosts.filter((post) => post.categoryKey === key || post.category === category));
+  const items = sortByRecommendation(
+    key === "all"
+      ? allPosts
+      : allPosts.filter((post) => {
+          const postKey = post.categoryKey === "power-electronics" ? "electronics-basics" : post.categoryKey;
+          return postKey === key || post.category === category || (key === "electronics-basics" && post.category === "电力电子");
+        })
+  );
   const routeProjects = buildRouteProjects();
   const recommended = buildRecommendedItems();
 
@@ -435,7 +458,7 @@
     renderPanel(state);
   }
 
-  document.body.dataset.pageTheme = CATEGORY_MAP[key] ? key : "analog";
+  document.body.dataset.pageTheme = key === "electronics-basics" ? "analog" : CATEGORY_MAP[key] ? key : "analog";
   document.title = `${category} | LarkixMaker`;
   document.querySelector('meta[name="description"]').setAttribute("content", description);
   titleNode.textContent = category;
@@ -463,4 +486,21 @@
     searchNode.value = nextValue;
     renderPage(nextValue);
   });
+
+  if (requestedKey === "power-electronics") {
+    window.addEventListener("DOMContentLoaded", () => {
+      document.body.dataset.pageTheme = "analog";
+      document.title = `${category} | LarkixMaker`;
+      document.querySelector('meta[name="description"]').setAttribute("content", description);
+      titleNode.textContent = category;
+      titleEnNode.textContent = ENGLISH_MAP[key];
+      summaryNode.textContent = `${description} 当前共 ${items.length} 篇内容。`;
+      if (searchNode) {
+        searchNode.disabled = false;
+        searchNode.placeholder = "搜索课程、项目、关键词...";
+      }
+      if (searchLabelNode) searchLabelNode.textContent = "搜索本分类";
+      renderPage(searchNode?.value.trim() || initialKeyword);
+    });
+  }
 })();

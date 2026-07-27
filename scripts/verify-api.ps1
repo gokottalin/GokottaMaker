@@ -175,7 +175,11 @@ try {
   $publicContent = Invoke-Json -Uri "$base/api/content"
   if ($publicContent.posts.Count -lt 1) { throw "API verify failed: public posts are empty" }
   if ($null -eq $publicContent.publicFocusMode) { throw "API verify failed: public content missing publicFocusMode" }
-  if ($publicContent.publicFocusMode.enabled -ne $false) { throw "API verify failed: public focus mode must be disabled by default" }
+  if ($publicContent.publicFocusMode.enabled -ne $true) { throw "API verify failed: public focus mode must be enabled by default" }
+  if ($publicContent.publicFocusMode.ownerConfigured -ne $false) { throw "API verify failed: fresh focus mode must not be marked owner-configured" }
+  if ((@($publicContent.publicFocusMode.visibleScopes) -join ",") -ne "electronics-basics,derivations,projects") {
+    throw "API verify failed: public focus mode scopes are not canonical"
+  }
 
   $contentResponse = Invoke-WebRequest -Uri "$base/api/content" -TimeoutSec 10
   if ("$($contentResponse.Headers['Content-Type'])" -notmatch "charset=utf-8") {
@@ -200,11 +204,42 @@ try {
   if ($adminContent.publicFocusMode.enabled -ne $publicContent.publicFocusMode.enabled) {
     throw "API verify failed: public/admin focus mode values differ"
   }
-  $featuredItems = @($adminContent.posts + $adminContent.projects) | Where-Object { $_.featured -eq $true -and -not $_.deletedAt }
-  if ($featuredItems.Count -ne 4) { throw "API verify failed: expected 4 featured items in seed data, got $($featuredItems.Count)" }
+
+  $focusDisabled = Invoke-Json -Uri "$base/api/admin/focus-mode" -Method "POST" -Session $session -Headers $csrfHeaders -Body @{
+    enabled = $false
+  }
+  if ($focusDisabled.publicFocusMode.enabled -ne $false -or $focusDisabled.publicFocusMode.ownerConfigured -ne $true) {
+    throw "API verify failed: owner focus-mode disable did not persist canonical state"
+  }
+  if ($focusDisabled.reasonCode -ne "FOCUS_MODE_DISABLED_BY_OWNER") {
+    throw "API verify failed: focus-mode disable missing stable reason code"
+  }
+  $session.Headers.Remove("X-CSRF-Token") | Out-Null
+  $publicContentAfterFocusDisable = Invoke-Json -Uri "$base/api/content"
+  if ($publicContentAfterFocusDisable.publicFocusMode.enabled -ne $false) {
+    throw "API verify failed: public focus-mode state did not update after owner disable"
+  }
+
+  $adminContent = Invoke-Json -Uri "$base/api/admin/content" -Session $session
+  if ($null -eq $adminContent.carousel) { throw "API verify failed: admin content missing carousel buffer state" }
+  $featuredItems = @(@($adminContent.posts + $adminContent.projects) | Where-Object { $_.featured -eq $true -and -not $_.deletedAt })
+  $bufferedItems = @($adminContent.carousel.buffered)
+  if ($featuredItems.Count -ne 1) {
+    throw "API verify failed: focus disable must not auto-restore seed carousel items; expected 1 active, got $($featuredItems.Count)"
+  }
+  if ($bufferedItems.Count -ne 3) {
+    throw "API verify failed: expected 3 persistent seed carousel buffer items, got $($bufferedItems.Count)"
+  }
+  if (@($bufferedItems | Where-Object { $_.bufferedReason -ne "CAROUSEL_FOCUS_SCOPE_OUTSIDE" }).Count -ne 0) {
+    throw "API verify failed: seed carousel buffer reason codes are not stable"
+  }
+  $carouselBufferView = Invoke-Json -Uri "$base/api/admin/carousel-buffer" -Session $session
+  if ($carouselBufferView.carousel.summary.activeCount -ne 1 -or $carouselBufferView.carousel.summary.bufferedCount -ne 3) {
+    throw "API verify failed: carousel buffer list API did not preserve active=1/buffered=3 after focus disable"
+  }
   $featuredOrders = $featuredItems | ForEach-Object { [int]$_.featuredOrder } | Sort-Object
-  if ((@($featuredOrders) -join ",") -ne "0,1,2,3") {
-    throw "API verify failed: expected featured slots 0,1,2,3 but got $((@($featuredOrders) -join ','))"
+  if ((@($featuredOrders) -join ",") -ne "3") {
+    throw "API verify failed: expected only preserved eligible featured slot 3 but got $((@($featuredOrders) -join ','))"
   }
 
   $csrfBlocked = $false
@@ -538,14 +573,16 @@ $zhParagraph
     publicProjects = $publicContent.projects.Count
     publicKnowledgeNodes = $publicNodes.nodes.Count
     publicFocusMode = $publicContent.publicFocusMode.enabled
+    publicFocusModeOwnerDisabled = $publicContentAfterFocusDisable.publicFocusMode.enabled
     featuredSlots = (@($featuredOrders) -join ",")
+    bufferedCarouselItems = $bufferedItems.Count
     uploadUrl = $upload.url
     csrfBlocked = $csrfBlocked
     carouselOrderBlocked = $featuredOrderBlocked
     knowledgeNodeId = $nodeId
     md2fileChecks = "success, empty blocked, format blocked, size blocked"
     utf8Checked = $true
-    verified = "login, csrf, public focus mode, carousel slots, upload, knowledge node public/admin boundary, md2file, post CRUD, project CRUD, export, sitemap, rss, logout"
+    verified = "login, csrf, default-enabled public focus mode, owner disable without carousel auto-restore, carousel active/buffer list, upload, knowledge node public/admin boundary, md2file, post CRUD, project CRUD, export, sitemap, rss, logout"
   } | Format-List
 } finally {
   if ($serverProcess -and -not $serverProcess.HasExited) {

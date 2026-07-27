@@ -5,9 +5,12 @@
   "status": "complete",
   "workspaceRoot": "E:/Project/2607-LarkixWeb",
   "generatedAt": "2026-07-09 22:20 +08:00",
-  "mainline": "Formula-variable derivation knowledge network plus focused power-electronics public mode.",
+  "mainline": "Confirmed formula-card authoring/version/derivation workline followed by global focus scope and carousel buffering.",
+  "lastReplannedAt": "2026-07-27T00:00:00+08:00",
+  "lastReplannedBy": "A00_ProjectDirector",
+  "requirementDispatch": "docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json",
   "currentGate": {
-    "batch1": "s09_formula_catalog_management_open",
+    "batch1": "automatic_queue_complete",
     "businessImplementationAllowed": false,
     "databaseMutationAllowed": false,
     "migrationFileImplementationAllowed": false,
@@ -20,8 +23,16 @@
     "publicDerivationAndFocusModeAllowed": false,
     "cmsFormulaAuthoringExamplesAllowed": false,
     "calculationBookEngineeringAllowed": false,
-    "formulaCatalogManagementAllowed": true,
-    "contentCloudSyncAllowed": false
+    "formulaCatalogManagementAllowed": false,
+    "formulaCatalogMigrationFileAllowed": false,
+    "articleFormulaAuthoringAllowed": false,
+    "formulaReferenceVersioningAllowed": false,
+    "linearDerivationGraphAllowed": false,
+    "focusModeScopeGateAllowed": false,
+    "carouselFocusBufferAllowed": false,
+    "contentCloudSyncAllowed": false,
+    "regressionEvidenceMatrixAllowed": false,
+    "releaseGitGatePlanningAllowed": false
   },
   "repairFinding": {
     "problem": "A05 was declared in task_registry.json but remained blocked and had no active brief, implementation_slices.json, or handoff in the current workspace.",
@@ -323,7 +334,7 @@
       "id": "S11_regression_evidence_matrix",
       "agent": "A16_RegressionEvidenceMatrix",
       "roleNote": "质量回归：API、CMS、页面、Markdown 和迁移证据",
-      "status": "planned_not_open",
+      "status": "completed",
       "purpose": "Run and collect regression evidence after implementation slices are complete, using isolated data where needed.",
       "reads": [
         "scripts/verify-api.ps1",
@@ -357,6 +368,11 @@
         "S07_cms_formula_authoring_examples",
         "S08_calculation_book_engineering",
         "S09_formula_catalog_management",
+        "S13_article_formula_authoring",
+        "S14_formula_reference_versioning",
+        "S15_linear_derivation_graph",
+        "S16_focus_mode_scope_gate",
+        "S17_carousel_focus_buffer",
         "S10_content_cloud_sync"
       ],
       "forbidden": [
@@ -368,7 +384,7 @@
       "id": "S12_release_git_gate",
       "agent": "A17_ReleaseGitGate",
       "roleNote": "发布与 Git 门禁：显式清单、备份、回滚和发布判断",
-      "status": "planned_not_open",
+      "status": "completed",
       "purpose": "Prepare explicit staging, backup, rollback, and release readiness only after regression passes.",
       "reads": [
         "git status --short --branch",
@@ -530,10 +546,12 @@
     {
       "id": "S09_formula_catalog_management",
       "agent": "A14_FormulaCatalogManagement",
-      "roleNote": "公式目录与管理：确保全部子公式可跳转、公式唯一、多级标签、修订与备份",
-      "status": "next",
-      "purpose": "Make every accepted calculation-book formula uniquely addressable, strictly tagged, fully jumpable, manageable in CMS, and recoverable through deterministic export and local snapshots.",
+      "roleNote": "公式库基础：建立唯一公式卡、分类标签、搜索分页、修订归档与本地备份",
+      "status": "completed",
+      "purpose": "Build the formula-card data, API, CMS catalog, immutable revision, archive, export/import, and isolated-backup foundation for REQ-20260726-003.",
       "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260726-003.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json",
         "docs/codex-workline/slices/S05_cms_knowledge_node_workflow_handoff.md",
         "docs/codex-workline/slices/S07_cms_formula_authoring_examples_handoff.md",
         "docs/codex-workline/slices/S08_calculation_book_engineering_handoff.md",
@@ -541,6 +559,7 @@
         "schemas/calculation-book-master.schema.json",
         "content/calculation-books/**/calculation-book.json",
         "tools/calculation-book",
+        "server.js",
         "admin/index.html",
         "admin/admin.js",
         "admin/admin.css",
@@ -548,21 +567,22 @@
         "lib/validators.js",
         "data/markdown-renderer.js",
         "post.js",
-        "main.js",
         "scripts/test-calculation-book.js"
       ],
       "mayEdit": [
-        "schemas/calculation-book-master.schema.json",
-        "content/calculation-books/**",
-        "tools/calculation-book/**",
+        "migrations/014_formula_catalog.js",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
         "admin/index.html",
         "admin/admin.js",
         "admin/admin.css",
-        "lib/content.js",
-        "lib/validators.js",
         "data/markdown-renderer.js",
         "post.js",
-        "main.js",
+        "derive.html",
+        "schemas/calculation-book-master.schema.json",
+        "content/calculation-books/**",
+        "tools/calculation-book/**",
         "scripts/test-calculation-book.js",
         "scripts/test-formula-catalog.js",
         "package.json",
@@ -570,12 +590,10 @@
         "docs/codex-workline/slices/S09_formula_catalog_management_handoff.md"
       ],
       "outputs": [
-        "stable globally namespaced formula identity and parent-child catalog",
-        "required namespaced tags and optional validated hierarchy paths",
-        "complete L1/L2/L3 subformula jump coverage with no dangling targets",
-        "CMS formula search, filters, relationships, direct preview, and precise validation",
+        "stable formula-card identity, unique route, required module/custom category, optional purpose/tags, and immutable LaTeX revisions",
+        "CMS module/category tree, search, tag filters, pagination, CRUD, revision, archive/restore, and preview",
         "deterministic catalog export plus non-overwriting pre-change local snapshots",
-        "isolated CRUD, revision, soft-delete, restore, backup, and visitor-route evidence"
+        "isolated migration, import, duplicate rejection, backup, and visitor-route evidence"
       ],
       "verification": [
         "node --check on changed JavaScript files",
@@ -589,10 +607,13 @@
         "S05_cms_knowledge_node_workflow",
         "S07_cms_formula_authoring_examples",
         "S08_calculation_book_engineering",
+        "DISPATCH-20260726-001",
         "A00 acceptance of A13 handoff"
       ],
       "forbidden": [
-        "database migrations or current/production data mutation",
+        "migration other than 014 or any current/production data mutation",
+        "article formula binding, version decisions, or derivation graph edges",
+        "focus mode or carousel behavior",
         "unsupported derivation filler",
         "cloud synchronization or deployment",
         "Git staging, commit, or push"
@@ -602,7 +623,7 @@
       "id": "S10_content_cloud_sync",
       "agent": "A15_ContentCloudSync",
       "roleNote": "内容云端同步：把已验收内容包安全接入云端部署与幂等更新",
-      "status": "planned_not_open",
+      "status": "completed",
       "purpose": "Wire accepted calculation-book packages into the cloud deployment flow with dry-run, backup, checksum, idempotent import, and rollback-aware failure behavior.",
       "reads": [
         "docs/codex-workline/slices/S08_calculation_book_engineering_handoff.md",
@@ -635,18 +656,276 @@
       "dependencies": [
         "S08_calculation_book_engineering",
         "S09_formula_catalog_management",
-        "A00 acceptance of A14 handoff"
+        "S17_carousel_focus_buffer",
+        "A00 acceptance of A23 handoff"
       ],
       "forbidden": [
         "production deployment or cloud data mutation",
         "Git staging, commit, or push",
         "schema changes"
       ]
+    },
+    {
+      "id": "S13_article_formula_authoring",
+      "agent": "A19_ArticleFormulaAuthoring",
+      "roleNote": "文章公式创作：输入普通 LaTeX、复用公式卡，或把选中公式创建为新卡",
+      "status": "completed",
+      "purpose": "Complete the article-editor authoring portion of REQ-20260726-003 after the formula catalog foundation is accepted.",
+      "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260726-003.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json",
+        "docs/codex-workline/slices/S09_formula_catalog_management_handoff.md",
+        "agents/A19_ArticleFormulaAuthoring/brief.md"
+      ],
+      "mayEdit": [
+        "migrations/015_article_formula_bindings.js",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "data/markdown-renderer.js",
+        "post.js",
+        "scripts/test-article-formula-authoring.js",
+        "package.json",
+        "docs/calculation-book-authoring-guide.md",
+        "docs/codex-workline/slices/S13_article_formula_authoring_handoff.md"
+      ],
+      "outputs": [
+        "ordinary unbound LaTeX preservation",
+        "existing formula-card search and insertion",
+        "complete-selection validation and create-card flow",
+        "stable card/version article binding"
+      ],
+      "verification": [
+        "node --check on changed JavaScript files",
+        "isolated DATA_DIR migration and authoring test",
+        "desktop, mobile, and half-width CMS browser smoke",
+        "formula catalog, Markdown, API, and contract regressions"
+      ],
+      "dependencies": [
+        "S09_formula_catalog_management",
+        "A00 acceptance of A14 handoff"
+      ],
+      "forbidden": [
+        "version decision queues or derivation graph edges",
+        "focus mode or carousel behavior",
+        "current/production data, cloud, deployment, or Git operations"
+      ]
+    },
+    {
+      "id": "S14_formula_reference_versioning",
+      "agent": "A20_FormulaReferenceVersioning",
+      "roleNote": "公式引用版本：保留文章原公式，并让作者逐篇决定保留、升级或另建",
+      "status": "completed",
+      "purpose": "Implement immutable formula revisions and per-article decisions for REQ-20260726-004.",
+      "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260726-004.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json",
+        "docs/codex-workline/slices/S09_formula_catalog_management_handoff.md",
+        "docs/codex-workline/slices/S13_article_formula_authoring_handoff.md",
+        "agents/A20_FormulaReferenceVersioning/brief.md"
+      ],
+      "mayEdit": [
+        "migrations/016_formula_reference_decisions.js",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "data/markdown-renderer.js",
+        "post.js",
+        "scripts/test-formula-reference-versioning.js",
+        "package.json",
+        "docs/calculation-book-authoring-guide.md",
+        "docs/codex-workline/slices/S14_formula_reference_versioning_handoff.md"
+      ],
+      "outputs": [
+        "immutable LaTeX revisions and old-version rendering",
+        "CMS-only per-article pending decisions",
+        "keep, upgrade, and clone-and-rebind actions",
+        "metadata-only no-decision and archive preservation behavior"
+      ],
+      "verification": [
+        "isolated two-article revision and archive matrix",
+        "old/new visitor renderer evidence",
+        "metadata-only decision count evidence",
+        "catalog, authoring, Markdown, API, CMS, and contract regressions"
+      ],
+      "dependencies": [
+        "S13_article_formula_authoring",
+        "A00 acceptance of A19 handoff"
+      ],
+      "forbidden": [
+        "automatic bulk article replacement",
+        "derivation graph, focus mode, or carousel behavior",
+        "current/production data, cloud, deployment, or Git operations"
+      ]
+    },
+    {
+      "id": "S15_linear_derivation_graph",
+      "agent": "A21_LinearDerivationGraph",
+      "roleNote": "线性推导链：允许多来源汇入，但每张卡最多一个下一阶且禁止成环",
+      "status": "completed",
+      "purpose": "Implement manual convergent and non-branching formula-card derivation relations for REQ-20260726-005.",
+      "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260726-005.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json",
+        "docs/codex-workline/slices/S09_formula_catalog_management_handoff.md",
+        "docs/codex-workline/slices/S13_article_formula_authoring_handoff.md",
+        "docs/codex-workline/slices/S14_formula_reference_versioning_handoff.md",
+        "agents/A21_LinearDerivationGraph/brief.md"
+      ],
+      "mayEdit": [
+        "migrations/017_linear_derivation_graph.js",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "data/markdown-renderer.js",
+        "post.js",
+        "derive.html",
+        "scripts/test-linear-derivation-graph.js",
+        "scripts/test-calculation-book.js",
+        "package.json",
+        "docs/calculation-book-authoring-guide.md",
+        "docs/codex-workline/slices/S15_linear_derivation_graph_handoff.md"
+      ],
+      "outputs": [
+        "many-incoming and unique-next graph model",
+        "cycle, self-link, dangling, and second-next validation",
+        "CMS relationship editor and visitor chain navigation",
+        "accepted calculation-book jump coverage"
+      ],
+      "verification": [
+        "isolated convergent three-level graph",
+        "second-next, self-link, cycle, and dangling rejection",
+        "CMS and visitor previous/next browser evidence",
+        "formula and calculation-book regression suite"
+      ],
+      "dependencies": [
+        "S14_formula_reference_versioning",
+        "A00 acceptance of A20 handoff"
+      ],
+      "forbidden": [
+        "automatic relation inference or unsupported derivations",
+        "focus mode or carousel behavior",
+        "current/production data, cloud, deployment, or Git operations"
+      ]
+    },
+    {
+      "id": "S16_focus_mode_scope_gate",
+      "agent": "A22_FocusModeScopeGate",
+      "roleNote": "全站聚焦门禁：用唯一开关同时限制游客展示和 CMS 写作范围",
+      "status": "completed",
+      "purpose": "Implement one default-enabled, persistent, server-authoritative focus state for REQ-20260726-001.",
+      "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260726-001.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json",
+        "docs/codex-workline/slices/S06_public_derivation_and_focus_mode_handoff.md",
+        "docs/codex-workline/slices/S15_linear_derivation_graph_handoff.md",
+        "agents/A22_FocusModeScopeGate/brief.md"
+      ],
+      "mayEdit": [
+        "migrations/018_focus_mode_scope_gate.js",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "data/content-store.js",
+        "main.js",
+        "post.js",
+        "category-page.js",
+        "maker.html",
+        "post.html",
+        "project.html",
+        "derive.html",
+        "scripts/verify-api.ps1",
+        "scripts/test-focus-mode.js",
+        "package.json",
+        "docs/codex-workline/slices/S16_focus_mode_scope_gate_handoff.md"
+      ],
+      "outputs": [
+        "one default-enabled persistent focus setting and CMS switch",
+        "server-enforced public and direct-route visibility",
+        "CMS list, selector, and write scope gate",
+        "state-preserving disable and re-enable behavior"
+      ],
+      "verification": [
+        "fresh default and restart persistence",
+        "focused and unfocused public/CMS state matrix",
+        "direct hidden route 404 and API write rejection",
+        "responsive CMS, SEO, API, formula, and contract regressions"
+      ],
+      "dependencies": [
+        "S15_linear_derivation_graph",
+        "A00 acceptance of A21 handoff"
+      ],
+      "forbidden": [
+        "carousel buffering",
+        "content deletion or publication-state rewrite",
+        "current/production data, cloud, deployment, or Git operations"
+      ]
+    },
+    {
+      "id": "S17_carousel_focus_buffer",
+      "agent": "A23_CarouselFocusBuffer",
+      "roleNote": "轮播聚焦缓冲：自动下架越界轮播项，保留原信息，并由作者手动恢复",
+      "status": "completed",
+      "purpose": "Implement selective persistent buffering and Owner-controlled carousel restore for REQ-20260726-002.",
+      "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260726-002.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json",
+        "docs/codex-workline/slices/S16_focus_mode_scope_gate_handoff.md",
+        "agents/A23_CarouselFocusBuffer/brief.md"
+      ],
+      "mayEdit": [
+        "migrations/019_carousel_focus_buffer.js",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "main.js",
+        "scripts/test-carousel-focus-buffer.js",
+        "scripts/check-carousel-db.js",
+        "scripts/check-carousel-cloud.sh",
+        "package.json",
+        "docs/codex-workline/slices/S17_carousel_focus_buffer_handoff.md"
+      ],
+      "outputs": [
+        "selective idempotent carousel buffering",
+        "buffer identity, image, slot, reason, and timestamp preservation",
+        "CMS active and buffered views with restore reason codes",
+        "no-auto-restore and explicit-slot manual restore"
+      ],
+      "verification": [
+        "mixed-scope isolated carousel transition matrix",
+        "idempotent buffer and data-preservation evidence",
+        "blocked focused restore and successful unfocused restore",
+        "responsive CMS, API, focus, carousel, and contract regressions"
+      ],
+      "dependencies": [
+        "S16_focus_mode_scope_gate",
+        "A00 acceptance of A22 handoff"
+      ],
+      "forbidden": [
+        "automatic restore or silent slot reorder",
+        "unrelated carousel layout work",
+        "current/production data, cloud, deployment, or Git operations"
+      ]
     }
   ],
   "nextDecision": {
-    "agent": "A14_FormulaCatalogManagement",
-    "decision": "Run S09 strict formula identity, hierarchical tags, complete L1/L2/L3 child-formula jumps, CMS management, deterministic export, and isolated local backup verification. Migrations, current/production data, cloud writes, deployment, and Git remain closed.",
-    "shortPrompt": "Agent 14 Formula Catalog Management（公式目录与管理：确保全部子公式可跳转、公式唯一、多级标签、修订与备份）：请进入 E:\\Project\\2607-LarkixWeb，运行 npm.cmd run codex:handoff，然后按输出的 Next Agent brief 执行当前任务；使用中文交接，遵守 AGENTS.md 门禁。"
+    "agent": "A00_ProjectDirector",
+    "decision": "S12 release and Git planning gate is accepted. The automatic functional-Agent queue is complete. Local technical evidence passes, future staging remains conditional on new explicit authorization and live revalidation, and production release is not ready. All mutation gates remain closed.",
+    "shortPrompt": "Agent 00 Project Director（项目导演：负责顺序、门禁和下一步裁决）：请进入 E:\\Project\\2607-LarkixWeb，运行 npm.cmd run codex:handoff，然后按输出的 controller brief 核对当前状态；当前无待派发职能 Agent；若收到新需求，直接交给对应职能 Agent，若不存在则由 A00 创建并注册后继续；使用中文交接，遵守 AGENTS.md 门禁。"
   }
 }

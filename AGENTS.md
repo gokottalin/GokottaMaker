@@ -57,6 +57,53 @@ This rule does not open business implementation, database mutation, production
 release, deployment, Git staging, commit, or push. Those scopes still require
 explicit Owner/A00 governance opening in the project files.
 
+## Automatic Handoff Continuation Rule
+
+Handoffs are continuous by default. After an Agent completes its brief, writes
+the required handoff, and passes the declared checks, Codex must continue in
+the same task without waiting for the Owner to type "continue", "继续", or paste
+the next launch prompt.
+
+The continuation loop is:
+
+1. Resolve the task to the matching functional Agent in the active registry and
+   dispatch the brief directly to that Agent in the same task. Do not leave the
+   handoff as text for the Owner to forward.
+2. If no matching functional Agent or brief exists, immediately act as
+   `A00_ProjectDirector`, create one narrow temporary workbench with an allowed
+   file list and acceptance checks, register it, and dispatch the task to it.
+   A missing Agent is not a stop condition.
+3. If the completed Agent returns to `A00_ProjectDirector`, immediately act as
+   A00 in the same task and perform acceptance, gate checks, registry updates,
+   and next-task routing.
+4. Run `npm.cmd run codex:handoff` after the routing state is updated.
+5. Read the reported Next Agent brief and dispatch it directly to the named
+   functional Agent.
+6. Repeat the handoff, A00 acceptance, routing, dispatch, and execution cycle one Agent at
+   a time until the active queue is complete or a stop condition is reached.
+
+Do not ask the Owner to relay handoff text between Agents, start a new chat, or
+send a routine continuation message. Do not stop merely because the named Agent
+does not yet exist; A00 must create the missing temporary Agent and continue.
+Provide concise Chinese progress updates at Agent boundaries while continuing
+the work.
+
+Automatic continuation does not bypass gates or expand authority. Stop and
+report the exact blocker when:
+
+- the next gate is closed and the current governance state does not authorize
+  A00 to open it;
+- the next step needs a material Owner decision, requirement confirmation,
+  credential, external approval, or new scope;
+- the next step would perform production/current-data mutation, cloud writes,
+  deployment, destructive rollback, or Git staging/commit/push without the
+  explicit authorization required by the active governance files;
+- a required check fails and cannot be repaired safely within the active
+  Agent's file and scope contract.
+
+Context-window limits are not a stop condition. Preserve the current handoff
+and continue from the active governance pointers in the next automatic turn.
+
 ## Agent Protocol
 
 Every task Agent must read:
@@ -79,6 +126,30 @@ Every task handoff must include:
 
 Recommended handoff and coordination language: Chinese. Use English only when
 an existing file contract, command output, or third-party API term requires it.
+
+## Requirement Confirmation Gate
+
+`A18_RequirementClarifier` is an on-demand requirement-intake workbench, not a
+second manager and not an implementation Agent. It interviews the Owner in
+Chinese, records one requirement per structured package, and sends only a
+compact machine-readable pointer to `A00_ProjectDirector`.
+
+- Ask one to three high-impact questions per round and distinguish confirmed
+  facts, assumptions, and unresolved questions.
+- Do not invent product decisions merely to close the interview.
+- Do not dispatch a requirement until the Owner explicitly confirms the final
+  requirement summary.
+- Any material change after confirmation invalidates the old digest and returns
+  the package to `awaiting_user_confirmation`.
+- Only `A00_ProjectDirector` may turn a confirmed requirement into sequence,
+  file boundaries, acceptance gates, and implementation Agent assignments.
+- Internal requirement IDs, interview notes, confirmation records, and handoff
+  metadata must not appear in visitor-facing content.
+
+The package contract is `schemas/requirement-brief.schema.json`. The operating
+protocol is `docs/codex-workline/requirements/README.md`. Use
+`npm.cmd run codex:requirement -- emit <package.json>` to produce the compact
+handoff envelope after confirmation.
 
 For fresh handoff sessions, the user should not need to paste a long task
 brief. Prefer the short prompt "enter the project and run

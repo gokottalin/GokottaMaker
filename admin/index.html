@@ -80,6 +80,7 @@
               <a href="#editor" data-admin-nav="editor" data-short="编">内容编辑</a>
               <a href="#library" data-admin-nav="library" data-short="列">内容列表</a>
               <a href="#knowledge" data-admin-nav="knowledge" data-short="导">推导节点</a>
+              <a href="#formulas" data-admin-nav="formulas" data-short="式">公式库</a>
               <a href="#carousel" data-admin-nav="carousel" data-short="轮">首页轮播管理</a>
               <a href="./course-paths.html" data-short="路">课程路径</a>
               <a href="#layout" data-admin-nav="layout" data-short="排">页面排布</a>
@@ -101,6 +102,25 @@
             </div>
           </header>
           <p class="notice admin-notice" id="adminNotice" role="status" aria-live="polite"></p>
+
+          <section class="focus-mode-gate" id="focusModeGate" aria-labelledby="focusModeGateTitle">
+            <div class="focus-mode-gate-copy">
+              <p class="poster-kicker poster-kicker-small"><span>全站范围</span><em>Global Focus</em></p>
+              <h2 id="focusModeGateTitle">聚焦模式</h2>
+              <p id="focusModeGateState" role="status" aria-live="polite">正在读取全站状态。</p>
+              <p class="focus-mode-gate-warning" id="focusModeGateWarning">
+                关闭后，所有原本已发布的非聚焦内容会立即重新公开；轮播缓冲项除外且不会自动恢复，草稿仍保持草稿。
+              </p>
+            </div>
+            <div class="focus-mode-gate-control">
+              <label class="focus-mode-switch">
+                <input id="focusModeToggle" type="checkbox" role="switch" aria-describedby="focusModeGateWarning" />
+                <span aria-hidden="true"></span>
+                <strong>启用全站聚焦</strong>
+              </label>
+              <button class="button primary" id="saveFocusModeButton" type="button">保存全站状态</button>
+            </div>
+          </section>
 
           <section class="editor-dock admin-view" id="editor" data-admin-view="editor">
             <button class="editor-dock-handle" id="editorDockHandle" type="button" aria-expanded="true">
@@ -148,6 +168,8 @@
                   <label id="categoryField">
                     分类
                     <select name="category">
+                      <option>电子基础</option>
+                      <option>电力电子</option>
                       <option>模拟电子</option>
                       <option>STM32</option>
                       <option>ESP32</option>
@@ -320,6 +342,27 @@
                       </span>
                     </label>
 
+                    <section class="formula-helper-panel article-formula-helper" id="articleFormulaHelperPanel" aria-labelledby="articleFormulaHelperTitle">
+                      <div class="section-heading compact">
+                        <div>
+                          <p class="poster-kicker poster-kicker-small"><span>公式卡</span><em>Formula Reference</em></p>
+                          <h3 id="articleFormulaHelperTitle">文章公式创作</h3>
+                        </div>
+                        <button class="button primary" id="openFormulaAuthoringButton" type="button">打开公式卡</button>
+                      </div>
+                      <p class="library-note">可保留普通 LaTeX；也可在正文中右键搜索已有公式卡，或框选一个完整公式后创建新卡。键盘用户可使用上方按钮。</p>
+                      <section class="formula-decision-panel" id="formulaDecisionPanel" aria-labelledby="formulaDecisionTitle" aria-live="polite" hidden>
+                        <div class="formula-decision-heading">
+                          <div>
+                            <strong id="formulaDecisionTitle">公式版本待决策</strong>
+                            <p>黄色事项只在 CMS 显示；游客与当前预览继续使用文章已绑定的旧修订。</p>
+                          </div>
+                          <span id="formulaDecisionCount">0 项</span>
+                        </div>
+                        <div class="formula-decision-list" id="formulaDecisionList"></div>
+                      </section>
+                    </section>
+
                     <section class="formula-helper-panel" id="formulaHelperPanel" aria-labelledby="formulaHelperTitle">
                       <div class="section-heading compact">
                         <div>
@@ -447,13 +490,161 @@
             <div id="knowledgeNodeList" class="admin-article-list"></div>
           </section>
 
+          <section id="formulas" class="library-panel formula-catalog-panel admin-view" data-admin-view="formulas" hidden>
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Formula Catalog</p>
+                <h2>公式库</h2>
+              </div>
+              <div class="formula-catalog-actions">
+                <button class="button secondary" id="formulaExportButton" type="button">导出目录</button>
+                <button class="button primary" id="newFormulaButton" type="button">新建公式卡</button>
+              </div>
+            </div>
+            <p class="library-note">按模块和自定义分类查看公式卡；默认不一次列出全部公式。formulaId 与路由 slug 建立后保持不变。</p>
+            <div class="formula-catalog-toolbar">
+              <label>
+                搜索
+                <input id="formulaSearchInput" type="search" placeholder="名称、用途、LaTeX 或标识" />
+              </label>
+              <label>
+                标签
+                <select id="formulaTagFilter">
+                  <option value="">全部标签</option>
+                </select>
+              </label>
+              <label>
+                状态
+                <select id="formulaArchiveFilter">
+                  <option value="active">使用中</option>
+                  <option value="archived">已归档</option>
+                  <option value="all">全部</option>
+                </select>
+              </label>
+              <label class="formula-import-field">
+                导入 JSON
+                <input id="formulaImportFile" type="file" accept="application/json,.json" />
+              </label>
+              <button class="button secondary" id="formulaImportButton" type="button">备份并导入</button>
+            </div>
+            <div class="formula-catalog-layout">
+              <aside class="formula-category-tree" id="formulaCategoryTree" aria-label="公式分类"></aside>
+              <div class="formula-catalog-results">
+                <div class="formula-catalog-summary" id="formulaCatalogSummary">请选择分类。</div>
+                <div class="formula-card-list" id="formulaCardList"></div>
+                <div class="formula-pagination" aria-label="公式目录分页">
+                  <button class="button secondary" id="formulaPreviousPage" type="button">上一页</button>
+                  <span id="formulaPageStatus">第 1 页</span>
+                  <button class="button secondary" id="formulaNextPage" type="button">下一页</button>
+                </div>
+              </div>
+            </div>
+            <form class="formula-card-editor" id="formulaCardEditor" hidden>
+              <div class="section-heading compact">
+                <div>
+                  <p class="eyebrow">Formula Card</p>
+                  <h3 id="formulaEditorTitle">新建公式卡</h3>
+                </div>
+                <button class="button secondary" id="formulaEditorCancel" type="button">关闭</button>
+              </div>
+              <div class="formula-card-fields">
+                <label>
+                  formulaId
+                  <input name="formulaId" required maxlength="128" placeholder="formula.module.name" />
+                </label>
+                <label>
+                  路由 slug
+                  <input name="slug" required maxlength="80" placeholder="module-name" />
+                </label>
+                <label>
+                  显示名称
+                  <input name="displayName" required maxlength="160" />
+                </label>
+                <label>
+                  模块
+                  <input name="moduleKey" required maxlength="64" placeholder="power-electronics" />
+                </label>
+                <label class="formula-field-wide">
+                  自定义分类路径
+                  <input name="categoryPath" required maxlength="240" placeholder="计算书/章节" />
+                </label>
+                <label class="formula-field-wide">
+                  用途
+                  <textarea name="purpose" rows="2" maxlength="500"></textarea>
+                </label>
+                <label class="formula-field-wide">
+                  标签（namespace:value，每行或逗号分隔）
+                  <textarea name="tags" rows="3" placeholder="module:power-electronics&#10;unit:V"></textarea>
+                </label>
+                <label class="formula-field-wide">
+                  LaTeX
+                  <textarea name="latex" rows="5" required></textarea>
+                </label>
+                <label class="formula-field-wide">
+                  修订说明
+                  <input name="revisionReason" maxlength="64" value="manual-save" />
+                </label>
+              </div>
+              <div class="formula-editor-preview" id="formulaEditorPreview"></div>
+              <div class="formula-editor-footer">
+                <a class="button secondary" id="formulaVisitorPreview" href="../derive.html" target="_blank" rel="noopener" hidden>访客预览</a>
+                <button class="button primary" type="submit">保存公式卡</button>
+              </div>
+              <section class="formula-derivation-panel" id="formulaDerivationPanel" hidden>
+                <div class="section-heading compact">
+                  <div>
+                    <p class="eyebrow">Linear Derivation</p>
+                    <h4>线性推导关系</h4>
+                  </div>
+                  <span id="formulaDerivationImpact">保存公式卡后可手工维护关系。</span>
+                </div>
+                <p class="formula-derivation-help">
+                  多张来源卡可以汇入本卡；本卡最多只有一个下一阶。关系不会自动推断，替换既有下一阶前必须明确确认。
+                </p>
+                <div class="formula-derivation-warning" id="formulaDerivationWarning" hidden></div>
+                <div class="formula-derivation-grid">
+                  <section aria-labelledby="formulaIncomingTitle">
+                    <h5 id="formulaIncomingTitle">上一阶来源</h5>
+                    <div class="formula-relation-list" id="formulaIncomingList"></div>
+                    <div class="formula-relation-control">
+                      <label>
+                        添加来源公式卡
+                        <input id="formulaIncomingSource" list="formulaDerivationCandidates" placeholder="输入 formulaId 搜索" autocomplete="off" />
+                      </label>
+                      <button class="button secondary" id="formulaIncomingAdd" type="button">添加上一阶</button>
+                    </div>
+                  </section>
+                  <section aria-labelledby="formulaNextTitle">
+                    <h5 id="formulaNextTitle">唯一下一阶</h5>
+                    <div class="formula-relation-list" id="formulaNextRelation"></div>
+                    <div class="formula-relation-control">
+                      <label>
+                        设置目标公式卡
+                        <input id="formulaNextTarget" list="formulaDerivationCandidates" placeholder="输入 formulaId 搜索" autocomplete="off" />
+                      </label>
+                      <div class="row-actions">
+                        <button class="button secondary" id="formulaNextSet" type="button">设置下一阶</button>
+                        <button class="button secondary" id="formulaNextRemove" type="button">移除关系</button>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+                <datalist id="formulaDerivationCandidates"></datalist>
+              </section>
+              <section class="formula-revisions">
+                <h4>不可变修订记录</h4>
+                <div id="formulaRevisionList"></div>
+              </section>
+            </form>
+          </section>
+
           <section id="carousel" class="library-panel carousel-panel admin-view" data-admin-view="carousel" hidden>
             <div class="section-heading">
               <div>
                 <p class="eyebrow">首页轮播</p>
                 <h2>首页轮播管理</h2>
               </div>
-              <span class="library-note">4 个固定槽位，同时显示每项在游客端的实际可见性。</span>
+              <span class="library-note" id="carouselManagerSummary">正在读取活跃槽位与聚焦缓冲区。</span>
             </div>
             <section class="featured-manager meta-featured-manager" aria-labelledby="featuredManagerTitle">
               <div class="section-heading compact">
@@ -464,6 +655,19 @@
                 <span>取消轮播只释放槽位，不会删除文章或项目正文。</span>
               </div>
               <div id="featuredSlots" class="featured-slot-grid"></div>
+            </section>
+            <section class="carousel-buffer-manager" aria-labelledby="carouselBufferTitle">
+              <div class="section-heading compact">
+                <div>
+                  <p class="eyebrow">Focus Buffer</p>
+                  <h3 id="carouselBufferTitle">聚焦缓冲区</h3>
+                </div>
+                <span>关闭聚焦不会自动恢复；Owner 必须明确选择空槽位。</span>
+              </div>
+              <p class="carousel-buffer-help">
+                缓冲记录保留内容身份、图片、原槽位、原因与时间。缺失或已归档引用仍会显示，可安全移除缓冲记录而不删除正文。
+              </p>
+              <div id="carouselBufferList" class="carousel-buffer-list" aria-live="polite"></div>
             </section>
           </section>
 
@@ -493,6 +697,75 @@
         </div>
       </section>
     </main>
+
+    <section class="formula-authoring-popover" id="formulaAuthoringPopover" role="dialog" aria-modal="false" aria-labelledby="formulaAuthoringTitle" hidden>
+      <div class="section-heading compact">
+        <div>
+          <p class="eyebrow">Article Formula</p>
+          <h3 id="formulaAuthoringTitle">添加公式卡引用</h3>
+        </div>
+        <button class="button secondary" id="formulaAuthoringClose" type="button">关闭</button>
+      </div>
+      <p class="formula-selection-status" id="formulaSelectionStatus" role="status"></p>
+      <div class="formula-authoring-tabs" role="tablist" aria-label="公式卡操作">
+        <button class="button secondary is-active" id="formulaExistingTab" type="button" role="tab" aria-selected="true">复用已有公式卡</button>
+        <button class="button secondary" id="formulaCreateTab" type="button" role="tab" aria-selected="false">选中公式建卡</button>
+      </div>
+
+      <section class="formula-authoring-pane" id="formulaExistingPane">
+        <div class="formula-authoring-filters">
+          <label>
+            模块
+            <select id="formulaAuthoringModule"><option value="">全部模块</option></select>
+          </label>
+          <label>
+            自定义分类
+            <select id="formulaAuthoringCategory"><option value="">全部分类</option></select>
+          </label>
+          <label>
+            标签
+            <select id="formulaAuthoringTag"><option value="">全部标签</option></select>
+          </label>
+          <label>
+            关键词
+            <input id="formulaAuthoringQuery" type="search" placeholder="名称、用途、formulaId 或 LaTeX" />
+          </label>
+        </div>
+        <div class="formula-authoring-results" id="formulaAuthoringResults"></div>
+        <div class="formula-pagination">
+          <button class="button secondary" id="formulaAuthoringPrevious" type="button">上一页</button>
+          <span id="formulaAuthoringPageStatus">第 1 页</span>
+          <button class="button secondary" id="formulaAuthoringNext" type="button">下一页</button>
+        </div>
+      </section>
+
+      <section class="formula-authoring-pane" id="formulaCreatePane" hidden>
+        <div class="formula-selection-preview" id="formulaSelectionPreview">请先在 Markdown 正文中框选一个完整公式。</div>
+        <div class="formula-authoring-create-fields">
+          <label>
+            公式名称
+            <input id="formulaCreateName" maxlength="160" required />
+          </label>
+          <label>
+            所属模块
+            <input id="formulaCreateModule" maxlength="64" placeholder="power-electronics" required />
+          </label>
+          <label>
+            自定义分类
+            <input id="formulaCreateCategory" maxlength="240" placeholder="文章公式/主题" required />
+          </label>
+          <label>
+            用途说明（选填）
+            <textarea id="formulaCreatePurpose" rows="2" maxlength="500"></textarea>
+          </label>
+          <label class="formula-create-wide">
+            标签（选填，namespace:value）
+            <textarea id="formulaCreateTags" rows="2" placeholder="module:power-electronics&#10;unit:V"></textarea>
+          </label>
+        </div>
+        <button class="button primary" id="formulaCreateAndBindButton" type="button">创建公式卡并保存文章</button>
+      </section>
+    </section>
 
     <div class="crop-modal" id="coverCropModal" hidden>
       <section class="crop-dialog" role="dialog" aria-modal="true" aria-labelledby="coverCropTitle">

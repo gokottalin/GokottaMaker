@@ -5,39 +5,36 @@
 Use this short handoff in a fresh Codex session:
 
 ```text
-Agent 14 Formula Catalog Management（公式目录与管理：确保全部子公式可跳转、公式唯一、多级标签、修订与备份）：请进入 E:\Project\2607-LarkixWeb，运行 npm.cmd run codex:handoff，然后按输出的 Next Agent brief 执行当前任务；使用中文交接，遵守 AGENTS.md 门禁。
+Agent 00 Project Director（项目导演：负责顺序、门禁和下一步裁决）：请进入 E:\Project\2607-LarkixWeb，运行 npm.cmd run codex:handoff，然后按输出的 controller brief 核对当前状态；当前无待派发职能 Agent；若收到新需求，直接交给对应职能 Agent，若不存在则由 A00 创建并注册后继续；使用中文交接，遵守 AGENTS.md 门禁。
 ```
 
-Current next task: `A14_FormulaCatalogManagement`.
+Current controller: `A00_ProjectDirector`.
 
-S09 is open for strict formula identity, required namespaced and optional
-hierarchical tags, complete L1/L2/L3 child-formula jumps, focused CMS
-search/filter/relationships, deterministic catalog export, and pre-change local
-snapshots. Migrations, current or production data, cloud writes, deployment,
-and Git staging remain closed.
+S12 has been accepted. The automatic functional-Agent queue is complete.
+There is no pending functional Agent.
+
+Source/test changes, current/production data, cloud, deployment, restore,
+rollback, staging, commit, and push remain closed until separately authorized.
 
 The detailed task contract lives in:
 
 - `PROJECT_WINDOW.md`
 - `docs/codex-workline/task_registry.json`
 - `docs/codex-workline/implementation_slices.json`
-- `agents/A14_FormulaCatalogManagement/brief.md`
-- `docs/codex-workline/slices/S08_calculation_book_engineering_handoff.md`
+- `docs/codex-workline/release_gate_plan.md`
+- `docs/codex-workline/git_staging_plan.md`
+- `agents/A00_ProjectDirector/brief.md`
 
-## Agent After That
+## Confirmed Queue
 
-After A14 completes and A00 accepts formula identity, full jump coverage,
-hierarchical tags, CMS management, and local backup evidence, A00 may open
-`A15_ContentCloudSync`. A15 will synchronize accepted generated content to the
-cloud with backup and idempotent-update gates. A14 must not deploy.
+After each handoff is accepted by A00, open exactly one next workbench:
 
-Teacher instruction:
+No implementation Agent follows A17. A00 has accepted the final handoff.
 
-```text
-Use the accepted JSON masters as the source of formula identity and hierarchy.
-Every visible formula and subformula must have one stable canonical identity,
-one valid route, required strict tags, and a real derivation target. Reject
-duplicates and dangling links. Preserve existing revisions and soft-delete
-recovery, add deterministic catalog export and pre-change snapshots, and prove
-the workflow only with isolated local data.
-```
+A00 must not execute staging or release without a new explicit authorization.
+The Owner does not need to relay any completed handoff or type "继续".
+
+Each routed brief must be dispatched directly to its matching functional Agent.
+If the functional Agent does not exist, A00 creates and registers a narrow
+temporary Agent and dispatches the brief immediately. Missing Agent definitions
+must never be used as a reason to stop or return relay text to the Owner.

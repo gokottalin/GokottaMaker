@@ -5,8 +5,15 @@ APP_DIR="${APP_DIR:-/opt/GokottaMaker}"
 SERVICE_NAME="${SERVICE_NAME:-gokottamaker}"
 HEALTH_URL="${HEALTH_URL:-http://127.0.0.1:4173/healthz}"
 NODE_BIN="${NODE_BIN:-/opt/node22/bin/node}"
+DATA_DIR="${DATA_DIR:-/srv/gokottamaker-data}"
 BACKUP_SCRIPT="${BACKUP_SCRIPT:-scripts/backup-linux.sh}"
 ROLLBACK_SCRIPT="${ROLLBACK_SCRIPT:-scripts/rollback.sh}"
+CONTENT_SYNC_SCRIPT="${CONTENT_SYNC_SCRIPT:-scripts/content-sync-cloud.sh}"
+CONTENT_SYNC_PACKAGE="${CONTENT_SYNC_PACKAGE:-}"
+CONTENT_SYNC_CHECKSUM="${CONTENT_SYNC_CHECKSUM:-}"
+CONTENT_SYNC_APPLY="${CONTENT_SYNC_APPLY:-false}"
+CONTENT_SYNC_CONFIRM="${CONTENT_SYNC_CONFIRM:-}"
+CONTENT_SYNC_MAX_BACKUP_AGE_HOURS="${CONTENT_SYNC_MAX_BACKUP_AGE_HOURS:-2}"
 STATE_DIR="${STATE_DIR:-.deploy}"
 STATE_FILE="${STATE_DIR}/last-deploy.env"
 PRE_DEPLOY_COMMIT=""
@@ -44,6 +51,49 @@ service_state() {
 
 health_snapshot() {
   curl -fsS "$HEALTH_URL" 2>/dev/null || echo "unavailable"
+}
+
+run_content_sync() {
+  if [ -z "$CONTENT_SYNC_PACKAGE" ]; then
+    echo "Content package sync skipped: CONTENT_SYNC_PACKAGE is not configured"
+    return 0
+  fi
+
+  case "$CONTENT_SYNC_APPLY" in
+    true|false) ;;
+    *)
+      echo "ERROR: CONTENT_SYNC_APPLY must be exactly true or false." >&2
+      return 4
+      ;;
+  esac
+
+  echo "Package:  $CONTENT_SYNC_PACKAGE"
+  echo "Checksum: ${CONTENT_SYNC_CHECKSUM:-missing}"
+  echo "Mode:     $([ "$CONTENT_SYNC_APPLY" = "true" ] && echo apply || echo dry-run)"
+  APP_DIR="$APP_DIR" NODE_BIN="$NODE_BIN" DATA_DIR="$DATA_DIR" \
+    bash "$CONTENT_SYNC_SCRIPT" \
+      --dry-run \
+      --package "$CONTENT_SYNC_PACKAGE" \
+      --checksum "$CONTENT_SYNC_CHECKSUM" \
+      --data-dir "$DATA_DIR"
+
+  if [ "$CONTENT_SYNC_APPLY" != "true" ]; then
+    echo "Content package validated only; no content data changed."
+    return 0
+  fi
+
+  sudo env \
+    APP_DIR="$APP_DIR" \
+    NODE_BIN="$NODE_BIN" \
+    DATA_DIR="$DATA_DIR" \
+    CONTENT_SYNC_MAX_BACKUP_AGE_HOURS="$CONTENT_SYNC_MAX_BACKUP_AGE_HOURS" \
+    bash "$CONTENT_SYNC_SCRIPT" \
+      --apply \
+      --confirm "$CONTENT_SYNC_CONFIRM" \
+      --package "$CONTENT_SYNC_PACKAGE" \
+      --checksum "$CONTENT_SYNC_CHECKSUM" \
+      --backup-evidence "${LATEST_BACKUP_DIR}/manifest.txt" \
+      --data-dir "$DATA_DIR"
 }
 
 failure_help() {
@@ -120,6 +170,10 @@ echo "Now commit:   $(git rev-parse --short HEAD)"
 echo "File version: $(version_from_file)"
 
 echo
+echo "== Content package sync gate =="
+run_content_sync
+
+echo
 echo "== Restart service =="
 sudo systemctl daemon-reload
 sudo systemctl restart "$SERVICE_NAME"
@@ -141,6 +195,9 @@ fi
 cat >> "$STATE_FILE" <<EOF
 POST_DEPLOY_COMMIT=${POST_DEPLOY_COMMIT}
 POST_DEPLOY_VERSION=$(version_from_file)
+CONTENT_SYNC_PACKAGE=${CONTENT_SYNC_PACKAGE}
+CONTENT_SYNC_CHECKSUM=${CONTENT_SYNC_CHECKSUM}
+CONTENT_SYNC_APPLY=${CONTENT_SYNC_APPLY}
 DEPLOY_FINISHED_AT=$(date -Iseconds)
 EOF
 

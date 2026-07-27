@@ -694,6 +694,11 @@
 
   const deriveSlugPattern = /^[a-z0-9][a-z0-9-]{1,79}$/;
   const deriveColorTokens = new Set(["purple", "blue", "green", "amber", "red", "neutral"]);
+  const formulaReferencePattern =
+    /\{\{formula:([a-z0-9][a-z0-9._-]{1,95})\|([a-z0-9][a-z0-9._-]{1,127})\|([a-z0-9][a-z0-9._-]{1,95})\|(inline|display)\}\}/g;
+  const formulaReferenceOnlyPattern =
+    /^\s*\{\{formula:([a-z0-9][a-z0-9._-]{1,95})\|([a-z0-9][a-z0-9._-]{1,127})\|([a-z0-9][a-z0-9._-]{1,95})\|(inline|display)\}\}\s*$/;
+  let activeFormulaBindings = new Map();
 
   function normalizeDeriveColor(value) {
     const token = String(value || "purple").trim().toLowerCase();
@@ -710,10 +715,44 @@
     return `<a class="derivation-link derivation-link--${color} formula-jump-sup" href="./derive.html?slug=${encodeURIComponent(slug)}" data-derive-slug="${escapeHtml(slug)}" data-derive-label="${label}" data-derive-color="${color}" title="${title}" aria-label="查看 ${title}"><span class="derive-jump-icon" aria-hidden="true">↵</span><span class="derive-jump-label">${label}</span></a>`;
   }
 
+  function setFormulaBindings(bindings) {
+    activeFormulaBindings = new Map(
+      (Array.isArray(bindings) ? bindings : [])
+        .filter((binding) => binding && binding.bindingId)
+        .map((binding) => [String(binding.bindingId), binding])
+    );
+  }
+
+  function renderFormulaReference(shortcode, bindingId, formulaId, revisionId, displayMode, block = false) {
+    const binding = activeFormulaBindings.get(bindingId);
+    const resolved =
+      binding &&
+      binding.formulaId === formulaId &&
+      binding.revisionId === revisionId &&
+      binding.displayMode === displayMode &&
+      String(binding.latex || "").trim();
+    const slug = resolved ? String(binding.slug || "") : "";
+    const label = resolved ? String(binding.displayName || formulaId) : formulaId;
+    const link = slug
+      ? `<a class="formula-reference-link" href="./derive.html?formula=${encodeURIComponent(slug)}" title="查看公式卡：${escapeHtml(label)}" aria-label="查看公式卡：${escapeHtml(label)}">↗</a>`
+      : "";
+    const archive = resolved && binding.archiveState === "archived" ? '<span class="formula-reference-state">已归档修订</span>' : "";
+    const attributes = `data-formula-binding-id="${escapeHtml(bindingId)}" data-formula-id="${escapeHtml(formulaId)}" data-formula-revision-id="${escapeHtml(revisionId)}"`;
+    if (block) {
+      const body = resolved
+        ? renderDisplayMath(binding.latex)
+        : `<div class="formula-reference-unresolved">公式卡引用：<code>${escapeHtml(formulaId)}</code></div>`;
+      return `<section class="formula-reference formula-reference--display ${resolved ? "" : "is-unresolved"}" ${attributes}>${body}<span class="formula-reference-meta">${escapeHtml(label)}${archive}${link}</span></section>`;
+    }
+    const body = resolved ? renderInlineMath(binding.latex) : `<code>${escapeHtml(formulaId)}</code>`;
+    return `<span class="formula-reference formula-reference--inline ${resolved ? "" : "is-unresolved"}" ${attributes}>${body}${archive}${link}</span>`;
+  }
+
   function inline(value) {
     const codeSpans = [];
     const mathSpans = [];
     const deriveSpans = [];
+    const formulaSpans = [];
     let text = escapeHtml(value).replace(/`([^`]+)`/g, (_, code) => {
       const token = `@@LARKIXCODE${codeSpans.length}@@`;
       const decoded = decodeMathEntities(code);
@@ -738,6 +777,12 @@
       if (html === shortcode) return shortcode;
       const token = `@@LARKIXDERIVE${deriveSpans.length}@@`;
       deriveSpans.push(html);
+      return token;
+    });
+
+    text = text.replace(formulaReferencePattern, (shortcode, bindingId, formulaId, revisionId, displayMode) => {
+      const token = `@@LARKIXFORMULA${formulaSpans.length}@@`;
+      formulaSpans.push(renderFormulaReference(shortcode, bindingId, formulaId, revisionId, displayMode, false));
       return token;
     });
 
@@ -766,6 +811,9 @@
     });
     deriveSpans.forEach((html, index) => {
       text = text.replaceAll(`@@LARKIXDERIVE${index}@@`, html);
+    });
+    formulaSpans.forEach((html, index) => {
+      text = text.replaceAll(`@@LARKIXFORMULA${index}@@`, html);
     });
     return text;
   }
@@ -811,6 +859,7 @@
 
   function render(markdown, options = {}) {
     const includeH1 = Boolean(options && options.includeH1);
+    setFormulaBindings(options.formulaBindings);
     const headings = [];
     const blocks = [];
     const lines = String(markdown || "").split(/\r?\n/);
@@ -965,6 +1014,13 @@
       if (isDeriveShortcodeOnly(line) && !paragraph.length && !list.length && !quote.length) {
         const jumpHtml = inline(line.trim());
         if (attachFormulaJumpToLastDisplayMath(jumpHtml)) continue;
+      }
+
+      const formulaOnly = line.match(formulaReferenceOnlyPattern);
+      if (formulaOnly && formulaOnly[4] === "display") {
+        flushLooseBlocks();
+        blocks.push(renderFormulaReference(line, formulaOnly[1], formulaOnly[2], formulaOnly[3], formulaOnly[4], true));
+        continue;
       }
 
       const mathStart = readMathStart(line);

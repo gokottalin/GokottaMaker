@@ -3,11 +3,118 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>公式推导 | LarkixMaker</title>
-    <meta name="description" content="查看 LarkixMaker 的公开公式变量推导节点。" />
+    <title>公式与推导 | LarkixMaker</title>
+    <meta name="description" content="查看 LarkixMaker 的公开公式卡与变量推导节点。" />
     <link rel="manifest" href="./site.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="./assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524" />
     <link rel="stylesheet" href="./styles.css?v=20260726-1650" />
+    <style>
+      .formula-card-public-meta {
+        display: grid;
+        gap: 0;
+        margin: 18px 0 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .formula-card-public-meta > div {
+        display: grid;
+        grid-template-columns: minmax(120px, 0.35fr) minmax(0, 1fr);
+        gap: 16px;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .formula-card-public-meta > div:last-child {
+        border-bottom: 0;
+      }
+
+      .formula-card-public-meta dt {
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .formula-card-public-meta dd {
+        margin: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .formula-derivation-public {
+        margin-top: 28px;
+      }
+
+      .formula-derivation-public > p {
+        color: var(--muted);
+      }
+
+      .formula-derivation-public-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .formula-derivation-public-grid > section {
+        min-width: 0;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+
+      .formula-derivation-public-grid h3 {
+        margin-top: 0;
+      }
+
+      .formula-derivation-public-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .formula-derivation-link,
+      .formula-derivation-empty {
+        display: grid;
+        gap: 4px;
+        min-width: 0;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: var(--card);
+        overflow-wrap: anywhere;
+      }
+
+      .formula-derivation-link {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .formula-derivation-link:hover {
+        border-color: var(--accent);
+      }
+
+      .formula-derivation-link span,
+      .formula-derivation-link code,
+      .formula-derivation-empty {
+        color: var(--muted);
+        font-size: 0.84rem;
+      }
+
+      .formula-derivation-link.is-unavailable {
+        border-color: color-mix(in srgb, #d79b00 48%, var(--line));
+        background: color-mix(in srgb, #fff3c4 62%, var(--card));
+      }
+
+      @media (max-width: 560px) {
+        .formula-card-public-meta > div {
+          grid-template-columns: 1fr;
+          gap: 4px;
+        }
+
+        .formula-derivation-public-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
   </head>
   <body data-layout-page="derivePage">
     <a class="skip-link" href="#deriveContent">跳到正文</a>
@@ -17,10 +124,12 @@
           <img class="brand-symbol" src="./assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524" alt="" aria-hidden="true" /><span class="brand-wordmark">Larki<span>x</span></span>
           <span class="brand-product">Maker</span>
         </a>
-        <nav class="main-nav focus-mode-nav" aria-label="主导航">
-          <a href="./maker.html">首页</a>
-          <a href="./category.html?category=power-electronics">电力电子</a>
-          <a href="./derive.html" aria-current="page">公式推导</a>
+        <nav class="main-nav" aria-label="主导航">
+          <a href="./category.html?category=analog">模拟电子</a>
+          <a href="./category.html?category=stm32">STM32</a>
+          <a href="./category.html?category=esp32">ESP32</a>
+          <a href="./projects.html">开源项目</a>
+          <a href="./miniapps.html">小程序</a>
         </nav>
         <div class="header-actions">
           <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换夜间模式" title="切换夜间模式"><span class="theme-toggle-icon" aria-hidden="true"></span></button>
@@ -33,13 +142,14 @@
       <section class="site-shell post-hero derive-hero" id="deriveHero" data-layout-section="deriveHero"></section>
       <section class="post-layout derive-layout" data-layout-section="deriveBody">
         <aside class="toc-card">
-          <strong>推导目录</strong>
-          <nav id="tocList" aria-label="推导目录"></nav>
+          <strong>内容目录</strong>
+          <nav id="tocList" aria-label="内容目录"></nav>
         </aside>
         <article class="markdown-article derive-content" id="deriveContent"></article>
       </section>
     </main>
 
+    <script src="./api/content.js?v=20260726-1650"></script>
     <script src="./data/media.js?v=20260726-1650"></script>
     <script src="./data/markdown-renderer.js?v=20260726-1650"></script>
     <script src="./post.js?v=20260726-1650"></script>

@@ -1,4 +1,30 @@
 (function () {
+  function focusModeEnabled() {
+    return window.LARKIX_SERVER_CONTENT?.publicFocusMode?.enabled === true;
+  }
+
+  function isCurrentHref(href) {
+    const target = new URL(href, location.href);
+    return target.pathname === location.pathname && target.search === location.search;
+  }
+
+  function applyFocusedNavigation() {
+    if (!focusModeEnabled()) return;
+    document.body.classList.add("public-focus-mode");
+    const links = [
+      { href: "./maker.html", label: "首页" },
+      { href: "./category.html?category=electronics-basics", label: "电子基础" },
+      { href: "./derive.html", label: "公式推导" },
+      { href: "./projects.html", label: "开源项目" }
+    ];
+    document.querySelectorAll(".site-header .main-nav").forEach((nav) => {
+      nav.classList.add("focus-mode-nav");
+      nav.innerHTML = links
+        .map((link) => `<a href="${link.href}"${isCurrentHref(link.href) ? ' aria-current="page"' : ""}>${link.label}</a>`)
+        .join("");
+    });
+  }
+
   function escapeHtml(value) {
     return window.LarkixMarkdown.escapeHtml(value);
   }
@@ -32,9 +58,14 @@
     const description = item.excerpt || item.summary || "LarkixMaker 技术内容。";
     const canonical =
       item.canonicalPath ||
-      absoluteUrl(`${location.pathname}?${item.type === "knowledge_node" ? "slug" : "id"}=${encodeURIComponent(item.slug || item.id)}`);
+      absoluteUrl(
+        `${location.pathname}?${item.type === "formula_card" ? "formula" : item.type === "knowledge_node" ? "slug" : "id"}=${encodeURIComponent(
+          item.slug || item.id
+        )}`
+      );
     const image = absoluteUrl(item.cover || "./assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524");
-    const structuredType = item.type === "project" ? "CreativeWork" : item.type === "knowledge_node" ? "LearningResource" : "TechArticle";
+    const structuredType =
+      item.type === "project" ? "CreativeWork" : ["knowledge_node", "formula_card"].includes(item.type) ? "LearningResource" : "TechArticle";
 
     document.title = `${item.title} | LarkixMaker`;
     setHeadElement('meta[name="description"]', "meta", { name: "description", content: description });
@@ -73,10 +104,13 @@
   }
 
   function titleEnglish(item) {
+    if (item.type === "formula_card") return "Formula Card";
     if (item.type === "knowledge_node") return "Derivation Note";
     if (item.type === "knowledge_index") return "Derivation Index";
     if (item.type === "project") return "Open Hardware Project";
     const map = {
+      "电子基础": "Electronics Basics",
+      "电力电子": "Electronics Basics",
       "模拟电子": "Analog Electronics",
       STM32: "STM32 Lab",
       ESP32: "ESP32 Systems",
@@ -481,11 +515,167 @@
     }
   }
 
-  window.renderKnowledgeNodePage = async function renderKnowledgeNodePage(options) {
-    const slug = new URLSearchParams(location.search).get("slug");
+  function renderFormulaState(hero, content, toc, title, message) {
+    document.title = `${title} | LarkixMaker`;
+    if (hero) {
+      hero.innerHTML = `
+        ${window.LarkixMedia.image(fallbackDeriveCover, "电子实验台背景", { loading: "eager", sizes: "100vw", fetchPriority: "high" })}
+        <div class="post-hero-content derive-hero-content">
+          <span class="category-pill">公式卡</span>
+          <div class="section-title-block split-title post-title-block">
+            <h1>${escapeHtml(title)}</h1>
+            <span>Formula Card</span>
+          </div>
+          <p>${escapeHtml(message)}</p>
+        </div>`;
+    }
+    if (content) {
+      content.innerHTML = statePanelHtml(title, message, [
+        { href: "./category.html?category=power-electronics", label: "返回电力电子", primary: true }
+      ]);
+    }
+    if (toc) toc.innerHTML = "";
+  }
+
+  function renderFormulaRelationItem(card, label) {
+    if (!card) {
+      return `<div class="formula-derivation-empty">${escapeHtml(label)}</div>`;
+    }
+    const available = card.available !== false && card.archiveState !== "archived";
+    const inner = `
+      <span>${escapeHtml(available ? "可继续访问" : "已归档 · 链路中断")}</span>
+      <strong>${escapeHtml(card.displayName || card.formulaId)}</strong>
+      <code>${escapeHtml(card.formulaId)}</code>`;
+    return available
+      ? `<a class="formula-derivation-link" href="./derive.html?formula=${encodeURIComponent(card.slug)}">${inner}</a>`
+      : `<div class="formula-derivation-link is-unavailable" aria-label="${escapeHtml(
+          `${card.displayName || card.formulaId} 已归档，推导链路中断`
+        )}">${inner}</div>`;
+  }
+
+  function renderFormulaDerivationSection(card) {
+    const derivation = card.derivation || { incoming: [], next: null };
+    const incoming = derivation.incoming || [];
+    return `
+      <section class="formula-derivation-public" aria-labelledby="formulaDerivationTitle">
+        <h2 id="formulaDerivationTitle">推导关系</h2>
+        <p>每张公式卡最多只有一个下一阶；不同来源可以汇入同一张公式卡。</p>
+        <div class="formula-derivation-public-grid">
+          <section aria-labelledby="formulaPreviousTitle">
+            <h3 id="formulaPreviousTitle">上一阶来源</h3>
+            <div class="formula-derivation-public-list">
+              ${
+                incoming.length
+                  ? incoming.map((source) => renderFormulaRelationItem(source, "")).join("")
+                  : renderFormulaRelationItem(null, "这张公式卡暂无上一阶来源。")
+              }
+            </div>
+          </section>
+          <section aria-labelledby="formulaNextStepTitle">
+            <h3 id="formulaNextStepTitle">唯一下一阶</h3>
+            <div class="formula-derivation-public-list">
+              ${renderFormulaRelationItem(derivation.next, "这张公式卡暂无下一阶，是当前路径的终点。")}
+            </div>
+          </section>
+        </div>
+      </section>`;
+  }
+
+  async function renderFormulaCardPage(options, slug) {
     const hero = document.querySelector(`#${options.heroId}`);
     const content = document.querySelector(`#${options.contentId}`);
     const toc = document.querySelector(`#${options.tocId}`);
+    if (!knowledgeSlugPattern.test(slug)) {
+      renderFormulaState(hero, content, toc, "公式卡标识无效", "链接中的公式卡 slug 格式不正确。");
+      return;
+    }
+    renderFormulaState(hero, content, toc, "正在加载公式卡", "正在读取当前公式修订。");
+    try {
+      const response = await fetch(`./api/formulas/${encodeURIComponent(slug)}`, { cache: "no-store" });
+      if (response.status === 404) {
+        renderFormulaState(hero, content, toc, "公式卡不可用", "此公式卡不存在或已归档。");
+        return;
+      }
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload = await response.json();
+      const card = payload.card;
+      if (!card) {
+        renderFormulaState(hero, content, toc, "公式卡不可用", "此公式卡不存在或已归档。");
+        return;
+      }
+      const item = {
+        ...card,
+        id: card.formulaId,
+        type: "formula_card",
+        title: card.displayName,
+        excerpt: card.purpose || `${card.moduleKey} / ${card.categoryPath}`,
+        tags: card.tags || [],
+        cover: fallbackDeriveCover,
+        date: formatNodeDate(card)
+      };
+      syncSeo(item);
+      if (hero) {
+        hero.innerHTML = `
+          ${window.LarkixMedia.image(fallbackDeriveCover, `${escapeHtml(card.displayName)}封面`, {
+            loading: "eager",
+            sizes: "100vw",
+            fetchPriority: "high"
+          })}
+          <div class="post-hero-content derive-hero-content">
+            <span class="category-pill">公式卡</span>
+            <div class="section-title-block split-title post-title-block">
+              <h1>${escapeHtml(card.displayName)}</h1>
+              <span>Formula Card</span>
+            </div>
+            <p>${escapeHtml(card.purpose || "当前公式修订。")}</p>
+            <div class="meta-row derive-meta-row">
+              <span>${escapeHtml(card.moduleKey)}</span>
+              <span>${escapeHtml(card.categoryPath)}</span>
+              <span>修订 ${escapeHtml(card.currentRevisionSequence || 1)}</span>
+            </div>
+            ${renderTagChips(item)}
+          </div>`;
+      }
+      if (!content) return;
+      const formulaRendered = window.LarkixMarkdown.render(`## 公式\n\n$$\n${card.latex}\n$$`);
+      content.innerHTML = `
+        ${formulaRendered.html}
+        ${renderFormulaDerivationSection(card)}
+        <section aria-labelledby="formulaCardInfo">
+          <h2 id="formulaCardInfo">公式信息</h2>
+          <dl class="formula-card-public-meta">
+            <div><dt>formulaId</dt><dd><code>${escapeHtml(card.formulaId)}</code></dd></div>
+            <div><dt>模块</dt><dd>${escapeHtml(card.moduleKey)}</dd></div>
+            <div><dt>分类</dt><dd>${escapeHtml(card.categoryPath)}</dd></div>
+            ${card.sourceBookId ? `<div><dt>来源计算书</dt><dd>${escapeHtml(card.sourceBookId)}</dd></div>` : ""}
+            ${card.sourceFormulaId ? `<div><dt>来源公式</dt><dd>${escapeHtml(card.sourceFormulaId)}</dd></div>` : ""}
+          </dl>
+        </section>`;
+      if (toc) {
+        const formulaHeadingId = formulaRendered.headings?.[0]?.id || "formula";
+        toc.innerHTML = `
+          <a class="toc-level-2" data-level="2" href="#${escapeHtml(formulaHeadingId)}">公式</a>
+          <a class="toc-level-2" data-level="2" href="#formulaDerivationTitle">推导关系</a>
+          <a class="toc-level-2" data-level="2" href="#formulaCardInfo">公式信息</a>`;
+      }
+      enhanceReading(content, toc);
+    } catch {
+      renderFormulaState(hero, content, toc, "公式卡暂时不可用", "网络或服务暂时不可用，请稍后重试。");
+    }
+  }
+
+  window.renderKnowledgeNodePage = async function renderKnowledgeNodePage(options) {
+    const searchParams = new URLSearchParams(location.search);
+    const formulaSlug = searchParams.get("formula");
+    const slug = searchParams.get("slug");
+    const hero = document.querySelector(`#${options.heroId}`);
+    const content = document.querySelector(`#${options.contentId}`);
+    const toc = document.querySelector(`#${options.tocId}`);
+
+    if (formulaSlug) {
+      await renderFormulaCardPage(options, formulaSlug);
+      return;
+    }
 
     if (!slug) {
       await renderKnowledgeNodeIndex(options);
@@ -589,7 +779,7 @@
       return;
     }
 
-    const parsed = window.LarkixMarkdown.render(item.markdown);
+    const parsed = window.LarkixMarkdown.render(item.markdown, { formulaBindings: item.formulaBindings || [] });
     content.innerHTML = `${parsed.html}${renderRelated(item)}`;
     toc.innerHTML = parsed.headings
       .filter((heading) => heading.level > 1)
@@ -609,4 +799,5 @@
       tocId: "tocList"
     });
   }
+  window.addEventListener("DOMContentLoaded", applyFocusedNavigation);
 })();

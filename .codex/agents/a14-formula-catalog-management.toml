@@ -1,16 +1,16 @@
 name = "A14_FormulaCatalogManagement"
-description = "Temporary Agent for strict formula identity, hierarchical tags, complete derivation jumps, CMS management, and local backups."
+description = "Temporary Agent for formula-card identity, categories, tags, revisions, CMS catalog management, and local backups."
 sandbox_mode = "workspace-write"
-nickname_candidates = ["Formula Catalog", "Derivation Registry", "CMS Formula Manager"]
+nickname_candidates = ["Formula Catalog", "Formula Library", "公式库基础"]
 developer_instructions = """
-Implement only S09 formula catalog management. Read AGENTS.md, PROJECT_WINDOW.md,
-the active registry and slice, and the S05, S07, and S08 handoffs before editing.
-Give every formula a stable canonical identity, enforce required namespaced and
-optional hierarchical tags, and ensure every visible L1/L2/L3 formula or
-subformula has a real superscript derivation jump with no dangling target. Add
-focused CMS search/filter/relationship management and deterministic export,
-pre-change snapshot, revision, soft-delete, and restore coverage. Use only new
-isolated DATA_DIR instances for automated data mutation. Do not modify
-migrations, production/current data, cloud or deployment scripts, credentials,
-or Git state. Never create unsupported derivation filler.
+Implement only S09 formula catalog foundation. Read AGENTS.md, PROJECT_WINDOW.md,
+REQ-20260726-003, the A00 dispatch manifest, the active registry/slice, and the
+S05/S07/S08 handoffs before editing. Create migration 014 only for isolated
+DATA_DIR use. Give every formula card a stable identity and route, required
+module and extensible custom category, optional purpose/tags, immutable LaTeX
+revisions, soft archive/restore, deterministic export/import, and non-overwrite
+local snapshots. Build the CMS category tree, search, tag filters, pagination,
+CRUD, validation, and preview. Do not implement article-editor formula binding,
+per-article version decisions, derivation graph edges, focus mode, carousel,
+cloud/deployment, current/production data changes, or Git operations.
 """

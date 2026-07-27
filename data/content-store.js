@@ -35,9 +35,29 @@
     return [...additions, ...merged];
   }
 
+  function focusMode() {
+    const value = window.LARKIX_SERVER_CONTENT?.publicFocusMode;
+    return value && typeof value === "object" ? { enabled: true, ...value } : { enabled: true };
+  }
+
+  function focusModeEnabled() {
+    return focusMode().enabled === true;
+  }
+
+  function focusPostAllowed(post) {
+    const categoryKey = String(post?.categoryKey || "").toLowerCase();
+    const category = String(post?.category || "");
+    const tags = String(post?.tags || "").toLowerCase();
+    if (["electronics-basics", "power-electronics", "projects", "derivations"].includes(categoryKey)) return true;
+    if (["电子基础", "电力电子", "开源项目"].includes(category)) return true;
+    if (/(?:^|[\s,，、])module:(?:electronics-basics|power-electronics|projects|derivations)(?:$|[\s,，、])/.test(tags)) return true;
+    if (String(post?.tags || "").split(/[,，、]/).some((tag) => tag.trim().startsWith("公式"))) return true;
+    return /\{\{(?:formula|derive):/.test(String(post?.markdown || ""));
+  }
+
   function getPosts() {
-    if (window.LARKIX_SERVER_CONTENT?.posts) return window.LARKIX_SERVER_CONTENT.posts;
-    return mergeDefaults(window.LARKIX_POSTS || [], read(postStorageKey, []), deleted("posts"));
+    const posts = window.LARKIX_SERVER_CONTENT?.posts || mergeDefaults(window.LARKIX_POSTS || [], read(postStorageKey, []), deleted("posts"));
+    return focusModeEnabled() ? posts.filter(focusPostAllowed) : posts;
   }
 
   function getProjects() {
@@ -67,6 +87,33 @@
   function getProjectDirectory() {
     if (window.LARKIX_SERVER_CONTENT?.projectDirectory) return window.LARKIX_SERVER_CONTENT.projectDirectory;
     return mergeDefaults(window.LARKIX_PROJECTS || window.LARKIX_SEED?.projects || [], read(projectStorageKey, []), deleted("projects")).map(sanitizeProjectPreview);
+  }
+
+  function isCurrentHref(href) {
+    const target = new URL(href, location.href);
+    return target.pathname === location.pathname && target.search === location.search;
+  }
+
+  function applyFocusedNavigation() {
+    if (!focusModeEnabled()) return;
+    document.body.classList.add("public-focus-mode");
+    const links = [
+      { href: "./maker.html", label: "首页" },
+      { href: "./category.html?category=electronics-basics", label: "电子基础" },
+      { href: "./derive.html", label: "公式推导" },
+      { href: "./projects.html", label: "开源项目" }
+    ];
+    document.querySelectorAll(".site-header .main-nav").forEach((nav) => {
+      nav.classList.add("focus-mode-nav");
+      nav.innerHTML = links
+        .map((link) => `<a href="${link.href}"${isCurrentHref(link.href) ? ' aria-current="page"' : ""}>${link.label}</a>`)
+        .join("");
+    });
+    if (focusMode().hideAdminFromPublicNav !== false) {
+      document.querySelectorAll('.site-header .admin-link[href="./admin/index.html"], .site-header .admin-link[href$="/admin/index.html"]').forEach((link) => {
+        link.hidden = true;
+      });
+    }
   }
 
   function savePost(post) {
@@ -103,4 +150,6 @@
     saveProject,
     remove
   };
+
+  window.addEventListener("DOMContentLoaded", applyFocusedNavigation);
 })();
