@@ -17,6 +17,7 @@ const {
   validateProjectPayload,
   validateKnowledgeNodePayload,
   validateFormulaCardPayload,
+  validateFormulaClassificationPayload,
   validateFormulaDecisionPayload,
   validateFormulaDerivationPayload,
   validateFocusModePayload,
@@ -53,8 +54,8 @@ const contentStore = createContentStore(db);
 const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword });
 const uploadStore = createUploadStore(uploadDir);
 
-const siteVersion = "V2.5.1";
-const siteBuild = "20260726-1650";
+const siteVersion = "V2.5.2";
+const siteBuild = "20260730-0012";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "https://www.larkix.com").replace(/\/$/, "");
 const elecVersion = "V1.3";
@@ -306,11 +307,15 @@ const {
   removeCarouselFocusBuffer,
   allKnowledgeNodes,
   listFormulaCards,
+  listFormulaClassifications,
   publicFormulaCardBySlug,
+  resolveLegacyFormulaRedirect,
   adminFormulaCard,
   listFormulaReferenceDecisions: listStoredFormulaReferenceDecisions,
   saveFormulaDerivation,
+  saveFormulaClassification,
   saveFormulaCard,
+  publishFormulaCard,
   archiveFormulaCard,
   restoreFormulaCard,
   exportFormulaCatalog,
@@ -1391,6 +1396,58 @@ function knowledgeNodeAuditMetadata(result) {
   };
 }
 
+function publicFormulaCardPayload(card) {
+  if (!card) return null;
+  const publicReference = (reference) => {
+    if (!reference?.slug) return null;
+    return {
+      referenceKey: reference.slug,
+      slug: reference.slug,
+      displayName: reference.displayName || "",
+      latex: reference.latex || "",
+      available: true
+    };
+  };
+  const derivation = card.derivation || {};
+  const dependencies = (derivation.dependencies || []).map(publicReference).filter(Boolean);
+  const incoming = (derivation.incoming || []).map(publicReference).filter(Boolean);
+  const dependencySlugByFormulaId = new Map(
+    (derivation.dependencies || [])
+      .filter((reference) => reference?.formulaId && reference?.slug)
+      .map((reference) => [reference.formulaId, reference.slug])
+  );
+  const markdownDerivation = String(card.markdownDerivation || "").replace(
+    /\{\{formula-ref:([a-z0-9][a-z0-9._-]{1,127})\}\}/g,
+    (shortcode, formulaId) => {
+      const slug = dependencySlugByFormulaId.get(formulaId);
+      return slug ? `{{formula-ref:${slug}}}` : "{{formula-ref-unavailable}}";
+    }
+  );
+  return {
+    slug: card.slug,
+    displayName: card.displayName || "",
+    moduleKey: card.moduleKey || "",
+    categoryPath: card.categoryPath || "",
+    purpose: card.purpose || "",
+    tags: Array.isArray(card.tags) ? card.tags : [],
+    latex: card.latex || "",
+    markdownDerivation,
+    sourceBookId: card.sourceBookId || "",
+    sourceBookRevision: card.sourceBookRevision || "",
+    sourceFormulaId: card.sourceFormulaId || "",
+    publishedAt: card.publishedAt || "",
+    derivation: {
+      incoming,
+      dependencies,
+      next: publicReference(derivation.next),
+      dependencyCount: Number(derivation.dependencyCount || 0),
+      unavailableDependencyCount: Number(derivation.unavailableDependencyCount || 0),
+      brokenCount: Number(derivation.brokenCount || 0)
+    },
+    graph: card.graph || null
+  };
+}
+
 async function api(req, res, pathname) {
   if (pathname === "/api/content.js" && req.method === "GET") return contentScript(res);
   if (pathname === "/api/content" && req.method === "GET") return json(res, 200, publicContentPayload());
@@ -1419,7 +1476,7 @@ async function api(req, res, pathname) {
     const slug = decodeURIComponent(publicFormulaCard[1]);
     const card = publicFormulaCardBySlug(slug);
     if (!card) return json(res, 404, { error: "not found" });
-    return json(res, 200, { card });
+    return json(res, 200, { card: publicFormulaCardPayload(card) });
   }
   if (pathname === "/api/elec/samples" && req.method === "GET") return elecResponse(res, 200, elecSamples());
   if (pathname === "/api/elec/llm-handoff" && req.method === "GET") return elecHandoff(req, res);
@@ -1610,11 +1667,48 @@ async function api(req, res, pathname) {
         query: url.searchParams.get("q") || "",
         tag: url.searchParams.get("tag") || "",
         archiveState: url.searchParams.get("archiveState") || "active",
+        publishStatus: url.searchParams.get("publishStatus") || "all",
         page: url.searchParams.get("page") || 1,
         pageSize: url.searchParams.get("pageSize") || 12,
         allowGlobalSearch: url.searchParams.get("authoring") === "1"
       })
     );
+  }
+
+  if (pathname === "/api/admin/formula-classifications" && req.method === "GET") {
+    const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+    return json(res, 200, {
+      classifications: listFormulaClassifications({
+        kind: url.searchParams.get("kind") || "",
+        parentSlug: url.searchParams.get("parent") || "",
+        query: url.searchParams.get("q") || ""
+      })
+    });
+  }
+
+  if (pathname === "/api/admin/formula-classifications" && req.method === "POST") {
+    const input = validateFormulaClassificationPayload(await readBody(req));
+    let result;
+    withTransaction(() => {
+      result = saveFormulaClassification(input);
+      logAudit(
+        db,
+        req,
+        user,
+        result.reused ? "formula_classification_reuse" : "formula_classification_create",
+        "formula_classification",
+        result.classification.classificationId,
+        {
+          kind: result.classification.kind,
+          slug: result.classification.slug,
+          parentSlug: result.classification.parentSlug
+        }
+      );
+    });
+    return json(res, result.reused ? 200 : 201, {
+      ...result,
+      classifications: listFormulaClassifications()
+    });
   }
 
   if (pathname === "/api/admin/formula-decisions" && req.method === "GET") {
@@ -1771,6 +1865,22 @@ async function api(req, res, pathname) {
       logAudit(db, req, user, "formula_card_restore", "formula_card", card.formulaId, { slug: card.slug });
     });
     return json(res, 200, { card });
+  }
+
+  const formulaCardPublish = pathname.match(/^\/api\/admin\/formulas\/([^/]+)\/publish$/);
+  if (formulaCardPublish && req.method === "POST") {
+    const id = decodeURIComponent(formulaCardPublish[1]);
+    let result;
+    withTransaction(() => {
+      result = publishFormulaCard(id, user);
+      logAudit(db, req, user, "formula_card_publish", "formula_card", result.card.formulaId, {
+        slug: result.card.slug,
+        revisionId: result.card.publishedRevisionId,
+        publicationCreated: result.publicationCreated,
+        publicationChanged: result.publicationChanged
+      });
+    });
+    return json(res, 200, result);
   }
 
   const formulaCardArchive = pathname.match(/^\/api\/admin\/formulas\/([^/]+)\/archive$/);
@@ -2033,6 +2143,7 @@ const publicStaticFiles = new Set([
   "/projects.html",
   "/site.webmanifest",
   "/styles.css",
+  "/formula-graph.js",
   "/main.js",
   "/post.js"
 ]);
@@ -2067,6 +2178,18 @@ function serveNotFound(res) {
   }
   res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
   res.end("Not found");
+}
+
+function servePermanentRedirect(req, res, location) {
+  res.writeHead(308, {
+    Location: location,
+    "Cache-Control": "public, max-age=86400",
+    "Content-Type": "text/plain; charset=utf-8",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin"
+  });
+  if (req.method === "HEAD") return res.end();
+  res.end(`Permanent Redirect: ${location}`);
 }
 
 function serveStatic(res, pathname) {
@@ -2117,6 +2240,15 @@ if (focusModeEnabled()) {
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, `http://${req.headers.host}`);
+    if (
+      (req.method === "GET" || req.method === "HEAD") &&
+      url.pathname === "/derive.html" &&
+      url.searchParams.has("slug") &&
+      !url.searchParams.has("formula")
+    ) {
+      const redirect = resolveLegacyFormulaRedirect(url.searchParams.get("slug"));
+      if (redirect) return servePermanentRedirect(req, res, redirect.location);
+    }
     if (url.pathname.startsWith("/api/")) return await api(req, res, url.pathname);
     if (url.pathname === "/healthz") return json(res, 200, healthPayload());
     if (url.pathname === "/sitemap.xml") return focusModeEnabled() ? focusedSitemap(res) : seo.sitemap(res);

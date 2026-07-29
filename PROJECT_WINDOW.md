@@ -5,23 +5,25 @@ short, pointer-only, and current.
 
 ## Active Window
 
-- Current phase: `A00_QueueComplete`
+- Current phase: `S28_ReleaseGitGate_Accepted_OwnerGate`
 - Current controller: `agents/A00_ProjectDirector/brief.md`
 - Next agent: `agents/A00_ProjectDirector/brief.md`
-- Confirmed requirement dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json`
+- Confirmed requirement dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json`
 - Active task registry: `docs/codex-workline/task_registry.json`
 
 ## Status Slots
 
 - Product target: LarkixMaker website and local content/CMS runtime.
-- Current work target: queue complete; A00 preserves accepted evidence and
-  awaits any separately authorized Git, production, or new requirement scope.
-- Current gate: no functional Agent is pending. Source changes, staging,
-  commit, push, current/production data, cloud, deployment, restore, and
-  rollback are closed.
-- Confirmed queue: no implementation slice remains.
-- Last accepted handoff: `docs/codex-workline/release_gate_plan.md`
-- Last updated: 2026-07-27
+- Current work target: A00 holds the post-S28 Owner gate and waits for a new
+  confirmed requirement or explicit Git/production authorization.
+- Current gate: the automatic task queue is complete. All product files,
+  current/production data, physical legacy cleanup, cloud, deployment, restore,
+  rollback, staging, commit, push, and branch/remote changes are closed.
+- Confirmed queue: S28 is accepted; Owner authority is required for any Git,
+  production, or S29 action.
+- Last accepted handoff:
+  `docs/codex-workline/slices/S28_release_git_gate_handoff.md`
+- Last updated: 2026-07-29
 
 ## Do Not Put Here
 

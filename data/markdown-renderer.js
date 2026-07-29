@@ -634,9 +634,37 @@
     return output.replace(/[ \t]{2,}/g, " ");
   }
 
+  function inlineMathProfile(source, html) {
+    const structureCounts = {
+      fraction: (html.match(/class="math-frac"/g) || []).length,
+      integral: (html.match(/\bmath-limit-(?:i{0,2}int|oi?int)\b/g) || []).length,
+      root: (html.match(/class="math-root"/g) || []).length,
+      script: (html.match(/<(?:sub|sup)(?:\s|>)/g) || []).length
+    };
+    const structures = Object.entries(structureCounts)
+      .filter(([, count]) => count > 0)
+      .map(([name]) => name);
+    const complex =
+      structureCounts.fraction > 0 ||
+      structureCounts.integral > 0 ||
+      structureCounts.root > 0 ||
+      structureCounts.script > 1;
+    const scrollable = complex || Array.from(source).length > 36;
+    return {
+      classes: [
+        complex ? "is-complex" : "",
+        scrollable ? "is-scrollable" : ""
+      ].filter(Boolean),
+      structures: structures.length ? structures.join(" ") : "plain"
+    };
+  }
+
   function renderInlineMath(latex) {
     const source = decodeMathEntities(latex);
-    return `<span class="markdown-math markdown-math-inline" data-latex="${escapeHtml(source)}">${renderLatexHtml(source)}</span>`;
+    const body = renderLatexHtml(source);
+    const profile = inlineMathProfile(source, body);
+    const classes = ["markdown-math", "markdown-math-inline", ...profile.classes].join(" ");
+    return `<span class="${classes}" data-math-layout="inline-flow" data-math-structures="${profile.structures}" data-latex="${escapeHtml(source)}"><span class="math-inline-frame">${body}</span></span>`;
   }
 
   function renderDisplayMath(latex) {
@@ -698,7 +726,12 @@
     /\{\{formula:([a-z0-9][a-z0-9._-]{1,95})\|([a-z0-9][a-z0-9._-]{1,127})\|([a-z0-9][a-z0-9._-]{1,95})\|(inline|display)\}\}/g;
   const formulaReferenceOnlyPattern =
     /^\s*\{\{formula:([a-z0-9][a-z0-9._-]{1,95})\|([a-z0-9][a-z0-9._-]{1,127})\|([a-z0-9][a-z0-9._-]{1,95})\|(inline|display)\}\}\s*$/;
+  const formulaDependencyPattern =
+    /\{\{formula-ref:([a-z0-9][a-z0-9._-]{1,127})\}\}/g;
   let activeFormulaBindings = new Map();
+  let activeFormulaDependencies = new Map();
+  let formulaDependencyMode = "public";
+  let formulaDependencyHref = "./derive.html?formula=";
 
   function normalizeDeriveColor(value) {
     const token = String(value || "purple").trim().toLowerCase();
@@ -721,6 +754,41 @@
         .filter((binding) => binding && binding.bindingId)
         .map((binding) => [String(binding.bindingId), binding])
     );
+  }
+
+  function setFormulaDependencies(dependencies, options = {}) {
+    activeFormulaDependencies = new Map(
+      (Array.isArray(dependencies) ? dependencies : [])
+        .map((dependency) => ({
+          dependency,
+          referenceKey: dependency?.referenceKey || dependency?.formulaId || dependency?.slug
+        }))
+        .filter((entry) => entry.dependency && entry.referenceKey)
+        .map((entry) => [String(entry.referenceKey), entry.dependency])
+    );
+    formulaDependencyMode = options.formulaDependencyMode === "admin" ? "admin" : "public";
+    formulaDependencyHref =
+      String(options.formulaDependencyHref || "./derive.html?formula=");
+  }
+
+  function renderFormulaDependency(referenceKey) {
+    const dependency = activeFormulaDependencies.get(referenceKey);
+    if (!dependency || !dependency.slug || dependency.available === false) {
+      const label =
+        formulaDependencyMode === "admin"
+          ? `未解析的公式依赖：${referenceKey}`
+          : "依赖公式暂不可用";
+      return `<span class="formula-dependency-ref is-unavailable" role="note">${escapeHtml(label)}</span>`;
+    }
+    const label = String(dependency.displayName || "依赖公式");
+    const latex = String(dependency.latex || "").trim();
+    return `<a class="formula-dependency-ref" href="${escapeHtml(
+      `${formulaDependencyHref}${encodeURIComponent(dependency.slug)}`
+    )}" data-formula-dependency="${escapeHtml(referenceKey)}" title="查看依赖公式：${escapeHtml(
+      label
+    )}" aria-label="查看依赖公式：${escapeHtml(label)}"><span>${escapeHtml(
+      label
+    )}</span>${latex ? renderInlineMath(latex) : ""}</a>`;
   }
 
   function renderFormulaReference(shortcode, bindingId, formulaId, revisionId, displayMode, block = false) {
@@ -753,6 +821,7 @@
     const mathSpans = [];
     const deriveSpans = [];
     const formulaSpans = [];
+    const formulaDependencySpans = [];
     let text = escapeHtml(value).replace(/`([^`]+)`/g, (_, code) => {
       const token = `@@LARKIXCODE${codeSpans.length}@@`;
       const decoded = decodeMathEntities(code);
@@ -785,6 +854,18 @@
       formulaSpans.push(renderFormulaReference(shortcode, bindingId, formulaId, revisionId, displayMode, false));
       return token;
     });
+    text = text.replace(formulaDependencyPattern, (shortcode, formulaId) => {
+      const token = `@@LARKIXFORMULADEPENDENCY${formulaDependencySpans.length}@@`;
+      formulaDependencySpans.push(renderFormulaDependency(formulaId));
+      return token;
+    });
+    text = text.replaceAll("{{formula-ref-unavailable}}", () => {
+      const token = `@@LARKIXFORMULADEPENDENCY${formulaDependencySpans.length}@@`;
+      formulaDependencySpans.push(
+        '<span class="formula-dependency-ref is-unavailable" role="note">依赖公式暂不可用</span>'
+      );
+      return token;
+    });
 
     text = text
       .replace(/!\[([^\]]*)\]\(((?:\\.|[^()\\\n]|\([^()\n]*\))+?)\)/g, (_, alt, src) => renderImage(alt, src))
@@ -814,6 +895,9 @@
     });
     formulaSpans.forEach((html, index) => {
       text = text.replaceAll(`@@LARKIXFORMULA${index}@@`, html);
+    });
+    formulaDependencySpans.forEach((html, index) => {
+      text = text.replaceAll(`@@LARKIXFORMULADEPENDENCY${index}@@`, html);
     });
     return text;
   }
@@ -860,6 +944,7 @@
   function render(markdown, options = {}) {
     const includeH1 = Boolean(options && options.includeH1);
     setFormulaBindings(options.formulaBindings);
+    setFormulaDependencies(options.formulaDependencies, options);
     const headings = [];
     const blocks = [];
     const lines = String(markdown || "").split(/\r?\n/);
@@ -1108,5 +1193,45 @@
     return { html: blocks.join("\n"), headings };
   }
 
-  window.LarkixMarkdown = { render, escapeHtml, inline, mathToText, renderDisplayMath, dottedSubscriptMath };
+  function renderFormulaCard(card = {}) {
+    const derivation = render(card.markdownDerivation || "", {
+      formulaDependencies: card.derivation?.dependencies || [],
+      formulaDependencyMode: "public"
+    });
+    const purpose = String(card.purpose || "").trim();
+    const derivationBody = String(card.markdownDerivation || "").trim()
+      ? derivation.html
+      : '<p class="formula-card-empty">这条已发布修订暂未提供 Markdown 推导正文。</p>';
+    return {
+      html: `
+        <section class="formula-conclusion-public" aria-labelledby="formulaConclusionTitle">
+          <h2 id="formulaConclusionTitle">结论公式</h2>
+          ${renderDisplayMath(String(card.latex || ""))}
+        </section>
+        <section class="formula-purpose-public" aria-labelledby="formulaPurposeTitle">
+          <h2 id="formulaPurposeTitle">用途说明</h2>
+          <p>${escapeHtml(purpose || "暂未填写用途说明。")}</p>
+        </section>
+        <section class="formula-markdown-derivation" aria-labelledby="formulaMarkdownTitle">
+          <h2 id="formulaMarkdownTitle">推导正文</h2>
+          ${derivationBody}
+        </section>`,
+      headings: [
+        { id: "formulaConclusionTitle", text: "结论公式", level: 2 },
+        { id: "formulaPurposeTitle", text: "用途说明", level: 2 },
+        { id: "formulaMarkdownTitle", text: "推导正文", level: 2 },
+        ...derivation.headings
+      ]
+    };
+  }
+
+  window.LarkixMarkdown = {
+    render,
+    renderFormulaCard,
+    escapeHtml,
+    inline,
+    mathToText,
+    renderDisplayMath,
+    dottedSubscriptMath
+  };
 })();

@@ -164,7 +164,10 @@ async function apiChecks(tempRoot, catalog) {
 
     const publicCard = await request(`/api/formulas/${encodeURIComponent(first.slug)}`);
     assert.equal(publicCard.response.status, 200);
-    assert.equal(publicCard.payload.card.formulaId, first.formulaId);
+    assert.equal(publicCard.payload.card.slug, first.slug);
+    assert.equal(publicCard.payload.card.formulaId, undefined);
+    assert.equal(publicCard.payload.card.currentRevisionId, undefined);
+    assert.equal(publicCard.payload.card.publishedRevisionId, undefined);
     assert.equal(publicCard.payload.card.revisions, undefined);
 
     const archived = await request(`/api/admin/formulas/${encodeURIComponent(first.formulaId)}/archive`, {
@@ -228,7 +231,12 @@ async function main() {
       assert.ok(db.prepare("SELECT 1 AS ok FROM sqlite_master WHERE type = 'table' AND name = 'formula_cards'").get()?.ok);
 
       const imported = store.importFormulaCatalog(catalog, { actor: { username: "formula-test" } });
-      assert.deepEqual(imported, { importedCards: 60, revisionsCreated: 60, totalCards: 60 });
+      assert.deepEqual(imported, {
+        importedCards: 60,
+        revisionsCreated: 60,
+        publicationsCreated: 60,
+        totalCards: 60
+      });
       const unselected = store.listFormulaCards({});
       assert.equal(unselected.requiresCategory, true);
       assert.deepEqual(unselected.items, []);
@@ -293,8 +301,8 @@ async function main() {
         displayName: "测试输出电压（更新）",
         actor: { username: "formula-test" }
       });
-      assert.equal(metadataOnly.revisionCreated, false);
-      assert.equal(metadataOnly.card.revisions.length, 1);
+      assert.equal(metadataOnly.revisionCreated, true);
+      assert.equal(metadataOnly.card.revisions.length, 2);
       const revised = store.saveFormulaCard({
         ...manual,
         latex: "V_{out}=13\\,\\mathrm{V}",
@@ -302,7 +310,7 @@ async function main() {
         actor: { username: "formula-test" }
       });
       assert.equal(revised.revisionCreated, true);
-      assert.equal(revised.card.revisions.length, 2);
+      assert.equal(revised.card.revisions.length, 3);
       assert.throws(
         () => db.prepare("UPDATE formula_revisions SET latex = 'changed' WHERE revision_id = ?").run(revised.card.currentRevisionId),
         /immutable/i

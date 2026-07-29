@@ -7,7 +7,7 @@
     <meta name="description" content="查看 LarkixMaker 的公开公式卡与变量推导节点。" />
     <link rel="manifest" href="./site.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="./assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524" />
-    <link rel="stylesheet" href="./styles.css?v=20260726-1650" />
+    <link rel="stylesheet" href="./styles.css?v=20260730-0012" />
     <style>
       .formula-card-public-meta {
         display: grid;
@@ -16,6 +16,28 @@
         border: 1px solid var(--line);
         border-radius: 8px;
         overflow: hidden;
+      }
+
+      .formula-conclusion-public,
+      .formula-purpose-public,
+      .formula-markdown-derivation {
+        margin-top: 22px;
+      }
+
+      .formula-conclusion-public > h2,
+      .formula-purpose-public > h2,
+      .formula-markdown-derivation > h2 {
+        margin-bottom: 10px;
+      }
+
+      .formula-purpose-public > p,
+      .formula-card-empty {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .formula-markdown-derivation > :last-child {
+        margin-bottom: 0;
       }
 
       .formula-card-public-meta > div {
@@ -104,6 +126,105 @@
         background: color-mix(in srgb, #fff3c4 62%, var(--card));
       }
 
+      .formula-graph-public {
+        margin: 0 0 26px;
+        padding: 0 0 22px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .formula-graph-heading {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 10px;
+      }
+
+      .formula-graph-heading h2,
+      .formula-graph-heading p {
+        margin: 0;
+      }
+
+      .formula-graph-heading p,
+      .formula-graph-heading > span,
+      .formula-graph-status {
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .formula-graph-host {
+        min-width: 0;
+      }
+
+      .formula-graph-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 8px;
+      }
+
+      .formula-graph-toolbar button {
+        display: inline-grid;
+        width: 36px;
+        height: 36px;
+        place-items: center;
+        padding: 0;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        color: var(--ink);
+        background: var(--surface);
+        cursor: pointer;
+        font: inherit;
+        font-size: 1.15rem;
+      }
+
+      .formula-graph-toolbar button:hover,
+      .formula-graph-toolbar button:focus-visible {
+        border-color: var(--accent);
+        outline: 2px solid color-mix(in srgb, var(--accent) 28%, transparent);
+        outline-offset: 1px;
+      }
+
+      .formula-graph-canvas {
+        width: 100%;
+        height: clamp(340px, 48vh, 520px);
+        min-width: 0;
+        border-block: 1px solid var(--line);
+        background:
+          linear-gradient(var(--surface), var(--surface)) padding-box,
+          repeating-linear-gradient(0deg, transparent 0 23px, color-mix(in srgb, var(--line) 34%, transparent) 24px) border-box;
+        touch-action: none;
+      }
+
+      .formula-graph-status {
+        min-height: 1.35em;
+        margin: 8px 0 0;
+      }
+
+      .formula-dependency-ref {
+        display: inline-flex;
+        max-width: 100%;
+        align-items: center;
+        gap: 8px;
+        margin: 2px 0;
+        padding: 5px 8px;
+        border-left: 3px solid #0b6bcb;
+        color: var(--ink);
+        background: color-mix(in srgb, #eaf4ff 72%, var(--surface));
+        text-decoration: none;
+        overflow-wrap: anywhere;
+      }
+
+      .formula-dependency-ref:hover {
+        color: #0757a6;
+        background: color-mix(in srgb, #d9edff 78%, var(--surface));
+      }
+
+      .formula-dependency-ref.is-unavailable {
+        border-left-color: #a46b00;
+        color: var(--muted);
+      }
+
       @media (max-width: 560px) {
         .formula-card-public-meta > div {
           grid-template-columns: 1fr;
@@ -112,6 +233,16 @@
 
         .formula-derivation-public-grid {
           grid-template-columns: 1fr;
+        }
+
+        .formula-graph-heading {
+          align-items: start;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .formula-graph-canvas {
+          height: 360px;
         }
       }
     </style>
@@ -149,10 +280,12 @@
       </section>
     </main>
 
-    <script src="./api/content.js?v=20260726-1650"></script>
-    <script src="./data/media.js?v=20260726-1650"></script>
-    <script src="./data/markdown-renderer.js?v=20260726-1650"></script>
-    <script src="./post.js?v=20260726-1650"></script>
+    <script src="./api/content.js?v=20260730-0012"></script>
+    <script src="./data/media.js?v=20260730-0012"></script>
+    <script src="./data/markdown-renderer.js?v=20260728-s19"></script>
+    <script src="./assets/vendor/cytoscape.min.js?v=3.34.0"></script>
+    <script src="./formula-graph.js?v=20260728-s19"></script>
+    <script src="./post.js?v=20260728-s19"></script>
     <script>
       window.renderKnowledgeNodePage({
         heroId: "deriveHero",
@@ -160,8 +293,8 @@
         tocId: "tocList"
       });
     </script>
-    <script src="./site-layout.js?v=20260726-1650"></script>
-    <script src="./data/site-meta.js?v=20260726-1650"></script>
-    <script src="./data/footer.js?v=20260726-1650"></script>
+    <script src="./site-layout.js?v=20260730-0012"></script>
+    <script src="./data/site-meta.js?v=20260730-0012"></script>
+    <script src="./data/footer.js?v=20260730-0012"></script>
   </body>
 </html>

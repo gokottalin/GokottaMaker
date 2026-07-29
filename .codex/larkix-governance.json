@@ -95,7 +95,50 @@
       "agents/A16_RegressionEvidenceMatrix/brief.md",
       ".codex/agents/a16-regression-evidence-matrix.toml",
       "agents/A17_ReleaseGitGate/brief.md",
-      ".codex/agents/a17-release-git-gate.toml"
+      ".codex/agents/a17-release-git-gate.toml",
+      "docs/codex-workline/requirements/active/REQ-20260728-001.json",
+      "docs/codex-workline/requirements/active/REQ-20260728-002.json",
+      "docs/codex-workline/requirements/active/REQ-20260728-003.json",
+      "docs/codex-workline/requirements/active/REQ-20260728-004.json",
+      "docs/codex-workline/requirements/active/REQ-20260728-005.json",
+      "docs/codex-workline/requirements/active/REQ-20260728-006.json",
+      "docs/codex-workline/requirements/active/REQ-20260728-007.json",
+      "docs/codex-workline/requirements/active/REQ-20260728-008.json",
+      "docs/codex-workline/requirements/active/REQ-20260728-009.json",
+      "docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json",
+      "agents/A24_FormulaPublishingWorkflow/brief.md",
+      ".codex/agents/a24-formula-publishing-workflow.toml",
+      "docs/codex-workline/slices/S18_formula_publication_workflow_handoff.md",
+      "agents/A26_BranchingDerivationGraph/brief.md",
+      ".codex/agents/a26-branching-derivation-graph.toml",
+      "docs/codex-workline/slices/S19_branching_derivation_graph_handoff.md",
+      "agents/A27_FormulaAuthoringDrawer/brief.md",
+      ".codex/agents/a27-formula-authoring-drawer.toml",
+      "docs/codex-workline/slices/S20_formula_authoring_drawer_handoff.md",
+      "agents/A28_LegacyFormulaMigrationSafety/brief.md",
+      ".codex/agents/a28-legacy-formula-migration-safety.toml",
+      "docs/codex-workline/slices/S21_legacy_formula_migration_safety_handoff.md",
+      "agents/A29_PostCoverCoordinates/brief.md",
+      ".codex/agents/a29-post-cover-coordinates.toml",
+      "docs/codex-workline/slices/S22_post_cover_coordinates_handoff.md",
+      "agents/A30_PostReadingMinutes/brief.md",
+      ".codex/agents/a30-post-reading-minutes.toml",
+      "docs/codex-workline/slices/S23_post_reading_minutes_handoff.md",
+      "agents/A31_InlineMathLayout/brief.md",
+      ".codex/agents/a31-inline-math-layout.toml",
+      "docs/codex-workline/slices/S24_inline_math_layout_handoff.md",
+      "agents/A25_FocusedContentMedia/brief.md",
+      ".codex/agents/a25-focused-content-media.toml",
+      "docs/codex-workline/slices/S25_focused_content_media_handoff.md",
+      "agents/A32_FullSiteDarkTheme/brief.md",
+      ".codex/agents/a32-full-site-dark-theme.toml",
+      "agents/A33_BatchRegressionEvidence/brief.md",
+      ".codex/agents/a33-batch-regression-evidence.toml",
+      "scripts/run-batch-regression-evidence.js",
+      "docs/batch-regression-evidence.md",
+      "docs/codex-workline/slices/S27_batch_regression_evidence_handoff.md",
+      "agents/A34_ReleaseGitGate/brief.md",
+      ".codex/agents/a34-release-git-gate.toml"
     ],
     "pausedBooleanFields": {
       "batch1ReadyForOpenDecision": true,
@@ -115,13 +158,13 @@
     },
     "projectWindowRequiredText": [
       "# Project Window",
-      "Current phase: `A00_QueueComplete`",
+      "Current phase: `S28_ReleaseGitGate_Accepted_OwnerGate`",
       "Current controller: `agents/A00_ProjectDirector/brief.md`",
       "Next agent: `agents/A00_ProjectDirector/brief.md`",
-      "Confirmed requirement dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json`",
-      "Current work target: queue complete",
-      "no functional Agent is pending",
-      "Confirmed queue: no implementation slice remains"
+      "Confirmed requirement dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json`",
+      "Current work target: A00 holds the post-S28 Owner gate",
+      "Current gate: the automatic task queue is complete",
+      "Confirmed queue: S28 is accepted; Owner authority is required"
     ],
     "agentsGuideRequiredText": [
       "Recommended handoff and coordination language: Chinese",
@@ -136,6 +179,8 @@
       "dispatch the brief directly to that Agent",
       "A missing Agent is not a stop condition",
       "without waiting for the Owner to type",
+      "Cross-Session Dispatch and Scheduling Rule",
+      "One file has one active editing owner at a time",
       "npm.cmd run codex:handoff",
       "Agent 00 Project Director",
       "项目导演：",
@@ -144,8 +189,8 @@
     "nextAgentsRequiredText": [
       "Agent 00 Project Director",
       "项目导演",
-      "automatic functional-Agent queue is complete",
-      "no pending functional Agent",
+      "DISPATCH-20260728-001",
+      "S28",
       "A00_ProjectDirector",
       "npm.cmd run codex:handoff"
     ],
@@ -265,7 +310,7 @@
         "S12_release_git_gate"
       ],
       "requiredCurrentGate": {
-        "businessImplementationAllowed": false,
+        "businessImplementationAllowed": true,
         "databaseMutationAllowed": false,
         "productionReleaseAllowed": false,
         "gitStagingAllowed": false
@@ -536,7 +581,18 @@
       "A20_FormulaReferenceVersioning": "公式引用版本：保留文章原公式，并让作者逐篇决定保留、升级或另建",
       "A21_LinearDerivationGraph": "线性推导链：允许多来源汇入，但每张卡最多一个下一阶且禁止成环",
       "A22_FocusModeScopeGate": "全站聚焦门禁：用唯一开关同时限制游客展示和 CMS 写作范围",
-      "A23_CarouselFocusBuffer": "轮播聚焦缓冲：自动下架越界轮播项，保留原信息，并由作者手动恢复"
+      "A23_CarouselFocusBuffer": "轮播聚焦缓冲：自动下架越界轮播项，保留原信息，并由作者手动恢复",
+      "A24_FormulaPublishingWorkflow": "公式发布工作流：补齐 Markdown 推导、三态发布、待发布修订和文章发布门禁",
+      "A26_BranchingDerivationGraph": "分支推导图：把线性公式链升级为可管理、可验证的分支 DAG 与网络视图",
+      "A27_FormulaAuthoringDrawer": "公式创作抽屉：让长文章任意滚动位置都能安全调用公式搜索、插入、建卡和预览",
+      "A28_LegacyFormulaMigrationSafety": "旧公式迁移安全：先备份和逐项验证，再只在隔离副本证明迁移、重定向与物理清理",
+      "A29_PostCoverCoordinates": "文章封面坐标：用可拖动、四角等比缩放的 16:9 框保存可还原坐标，并在网页无失真回放",
+      "A30_PostReadingMinutes": "文章阅读时间：让作者选填正整数分钟，并在详情与各文章卡片中条件显示",
+      "A31_InlineMathLayout": "行内数学排版：统一复杂公式与中文基线、分数结构和响应式可读性",
+      "A25_FocusedContentMedia": "聚焦内容媒体：让文章图片按各自卡片容器自适应裁切，同时保持 Hero 独立",
+      "A32_FullSiteDarkTheme": "全站夜间主题：统一游客端与 CMS 的暗色表面、文字、状态和交互对比",
+      "A33_BatchRegressionEvidence": "批次回归证据：复测九项已确认需求，形成可重复、可追溯的发布前证据",
+      "A34_ReleaseGitGate": "发布与 Git 门禁：盘点工作树，形成精确文件清单并裁决是否具备后续发布条件"
     },
     "expectedTaskStatuses": {
       "A01_ProjectStateRetriever": "completed",
@@ -560,7 +616,18 @@
       "A23_CarouselFocusBuffer": "completed",
       "A15_ContentCloudSync": "completed",
       "A16_RegressionEvidenceMatrix": "completed",
-      "A17_ReleaseGitGate": "completed"
+      "A17_ReleaseGitGate": "completed",
+      "A24_FormulaPublishingWorkflow": "completed",
+      "A26_BranchingDerivationGraph": "completed",
+      "A27_FormulaAuthoringDrawer": "completed",
+      "A28_LegacyFormulaMigrationSafety": "completed",
+      "A29_PostCoverCoordinates": "completed",
+      "A30_PostReadingMinutes": "completed",
+      "A31_InlineMathLayout": "completed",
+      "A25_FocusedContentMedia": "completed",
+      "A32_FullSiteDarkTheme": "completed",
+      "A33_BatchRegressionEvidence": "completed",
+      "A34_ReleaseGitGate": "completed"
     }
   },
   "temporaryExperts": [
@@ -682,6 +749,61 @@
     {
       "id": "A17_ReleaseGitGate",
       "file": ".codex/agents/a17-release-git-gate.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A24_FormulaPublishingWorkflow",
+      "file": ".codex/agents/a24-formula-publishing-workflow.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A25_FocusedContentMedia",
+      "file": ".codex/agents/a25-focused-content-media.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A26_BranchingDerivationGraph",
+      "file": ".codex/agents/a26-branching-derivation-graph.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A27_FormulaAuthoringDrawer",
+      "file": ".codex/agents/a27-formula-authoring-drawer.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A28_LegacyFormulaMigrationSafety",
+      "file": ".codex/agents/a28-legacy-formula-migration-safety.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A29_PostCoverCoordinates",
+      "file": ".codex/agents/a29-post-cover-coordinates.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A30_PostReadingMinutes",
+      "file": ".codex/agents/a30-post-reading-minutes.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A31_InlineMathLayout",
+      "file": ".codex/agents/a31-inline-math-layout.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A32_FullSiteDarkTheme",
+      "file": ".codex/agents/a32-full-site-dark-theme.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A33_BatchRegressionEvidence",
+      "file": ".codex/agents/a33-batch-regression-evidence.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A34_ReleaseGitGate",
+      "file": ".codex/agents/a34-release-git-gate.toml",
       "mode": "workspace-write"
     }
   ]

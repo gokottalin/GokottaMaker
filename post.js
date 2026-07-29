@@ -29,6 +29,19 @@
     return window.LarkixMarkdown.escapeHtml(value);
   }
 
+  function readingMinutesLabel(value) {
+    const minutes = Number(value);
+    return Number.isInteger(minutes) && minutes >= 1 && minutes <= 9999 ? `${minutes} 分钟阅读` : "";
+  }
+
+  function primaryMeta(item) {
+    return item.type === "post" ? readingMinutesLabel(item.readingMinutes) : item.license || "";
+  }
+
+  function optionalMeta(value) {
+    return value ? `<span>${escapeHtml(value)}</span>` : "";
+  }
+
   function formulaSymbolHtml(value) {
     const source = String(value || "");
     return source
@@ -581,6 +594,22 @@
       </section>`;
   }
 
+  function renderFormulaGraphSection(card) {
+    const graph = card.graph || {};
+    const nodeCount = Array.isArray(graph.nodes) ? graph.nodes.length : 0;
+    return `
+      <section class="formula-graph-public" aria-labelledby="formulaGraphTitle">
+        <div class="formula-graph-heading">
+          <div>
+            <h2 id="formulaGraphTitle">推导网络</h2>
+            <p>上方为引用本式的推导，当前公式居中，下方为本式依赖。</p>
+          </div>
+          <span>${escapeHtml(nodeCount)} 个关联节点</span>
+        </div>
+        <div id="publicFormulaGraph" class="formula-graph-host"></div>
+      </section>`;
+  }
+
   async function renderFormulaCardPage(options, slug) {
     const hero = document.querySelector(`#${options.heroId}`);
     const content = document.querySelector(`#${options.contentId}`);
@@ -589,23 +618,23 @@
       renderFormulaState(hero, content, toc, "公式卡标识无效", "链接中的公式卡 slug 格式不正确。");
       return;
     }
-    renderFormulaState(hero, content, toc, "正在加载公式卡", "正在读取当前公式修订。");
+    renderFormulaState(hero, content, toc, "正在加载公式卡", "正在读取已发布公式修订。");
     try {
       const response = await fetch(`./api/formulas/${encodeURIComponent(slug)}`, { cache: "no-store" });
       if (response.status === 404) {
-        renderFormulaState(hero, content, toc, "公式卡不可用", "此公式卡不存在或已归档。");
+        renderFormulaState(hero, content, toc, "公式卡不可用", "此公式卡不存在、仍为草稿或已经归档。");
         return;
       }
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const payload = await response.json();
       const card = payload.card;
       if (!card) {
-        renderFormulaState(hero, content, toc, "公式卡不可用", "此公式卡不存在或已归档。");
+        renderFormulaState(hero, content, toc, "公式卡不可用", "此公式卡不存在、仍为草稿或已经归档。");
         return;
       }
       const item = {
         ...card,
-        id: card.formulaId,
+        id: card.slug,
         type: "formula_card",
         title: card.displayName,
         excerpt: card.purpose || `${card.moduleKey} / ${card.categoryPath}`,
@@ -627,35 +656,43 @@
               <h1>${escapeHtml(card.displayName)}</h1>
               <span>Formula Card</span>
             </div>
-            <p>${escapeHtml(card.purpose || "当前公式修订。")}</p>
+            <p>${escapeHtml(card.purpose || "已发布公式修订。")}</p>
             <div class="meta-row derive-meta-row">
               <span>${escapeHtml(card.moduleKey)}</span>
               <span>${escapeHtml(card.categoryPath)}</span>
-              <span>修订 ${escapeHtml(card.currentRevisionSequence || 1)}</span>
             </div>
             ${renderTagChips(item)}
           </div>`;
       }
       if (!content) return;
-      const formulaRendered = window.LarkixMarkdown.render(`## 公式\n\n$$\n${card.latex}\n$$`);
+      const formulaRendered = window.LarkixMarkdown.renderFormulaCard(card);
       content.innerHTML = `
+        ${renderFormulaGraphSection(card)}
         ${formulaRendered.html}
-        ${renderFormulaDerivationSection(card)}
         <section aria-labelledby="formulaCardInfo">
           <h2 id="formulaCardInfo">公式信息</h2>
           <dl class="formula-card-public-meta">
-            <div><dt>formulaId</dt><dd><code>${escapeHtml(card.formulaId)}</code></dd></div>
             <div><dt>模块</dt><dd>${escapeHtml(card.moduleKey)}</dd></div>
             <div><dt>分类</dt><dd>${escapeHtml(card.categoryPath)}</dd></div>
             ${card.sourceBookId ? `<div><dt>来源计算书</dt><dd>${escapeHtml(card.sourceBookId)}</dd></div>` : ""}
             ${card.sourceFormulaId ? `<div><dt>来源公式</dt><dd>${escapeHtml(card.sourceFormulaId)}</dd></div>` : ""}
           </dl>
         </section>`;
+      const graphHost = content.querySelector("#publicFormulaGraph");
+      if (graphHost && window.LarkixFormulaGraph) {
+        window.LarkixFormulaGraph.mount(graphHost, card.graph, {
+          hrefPrefix: "./derive.html?formula="
+        });
+      }
       if (toc) {
-        const formulaHeadingId = formulaRendered.headings?.[0]?.id || "formula";
-        toc.innerHTML = `
-          <a class="toc-level-2" data-level="2" href="#${escapeHtml(formulaHeadingId)}">公式</a>
-          <a class="toc-level-2" data-level="2" href="#formulaDerivationTitle">推导关系</a>
+        toc.innerHTML = `<a class="toc-level-2" data-level="2" href="#formulaGraphTitle">推导网络</a>${(formulaRendered.headings || [])
+          .map((heading) => {
+            const level = Math.max(2, Math.min(Number(heading.level || 2), 3));
+            return `<a class="toc-level-${level}" data-level="${level}" href="#${escapeHtml(heading.id)}">${escapeHtml(
+              heading.text
+            )}</a>`;
+          })
+          .join("")}
           <a class="toc-level-2" data-level="2" href="#formulaCardInfo">公式信息</a>`;
       }
       enhanceReading(content, toc);
@@ -745,7 +782,7 @@
 
     syncSeo(item);
     hero.innerHTML = `
-      ${window.LarkixMedia.image(item.cover, `${item.title}封面`, { loading: "eager", sizes: "100vw", fetchPriority: "high" })}
+      ${window.LarkixMedia.image(item.cover, `${item.title}封面`, { loading: "eager", sizes: "100vw", fetchPriority: "high", crop: item.coverCrop })}
       <div class="post-hero-content">
         <span class="category-pill">${escapeHtml(item.category || item.status)}</span>
         <div class="section-title-block split-title post-title-block">
@@ -754,7 +791,7 @@
         </div>
         <p>${escapeHtml(item.excerpt || item.summary)}</p>
         <div class="meta-row">
-          <span>${escapeHtml(item.readTime || item.license)}</span>
+          ${optionalMeta(primaryMeta(item))}
           <span>${escapeHtml(item.date || item.status)}</span>
         </div>
         ${renderTagChips(item)}

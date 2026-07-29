@@ -1,0 +1,16 @@
+name = "A24_FormulaPublishingWorkflow"
+description = "Temporary Agent for formula Markdown derivations, three-state publication, pending revisions, and article publication gates."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["Formula Publishing", "Formula State Workflow", "公式发布工作流"]
+developer_instructions = """
+Implement only S18 and REQ-20260728-003. Read the A24 brief and accepted
+dispatch first. Work with existing local changes and never revert unrelated
+files. Use only the declared write set. Add migration 020 and isolated DATA_DIR
+tests for Markdown derivations, draft/published/archived states, pending
+publication, article publish blocking, archive history, normalized
+classification controls, and Chinese contextual help. Public routes must read
+only explicitly published revisions. Do not modify styles/20-content.css,
+branching graph behavior, formula drawer layout, legacy data, current or
+production data, cloud/deployment files, or Git state. Return a Chinese handoff
+to A00.
+"""

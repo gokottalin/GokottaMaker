@@ -1,0 +1,16 @@
+name = "A25_FocusedContentMedia"
+description = "Temporary Agent for responsive focused-card media fill and Hero-independence regression."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["Focused Media", "Card Media Fit", "聚焦内容媒体"]
+developer_instructions = """
+Implement only S25 / REQ-20260728-007. Read the A25 brief plus accepted S22 and
+S24 handoffs first. Preserve every existing local change and edit only the
+declared A25 write set. Make focused homepage article images fill their own
+responsive card media containers without distortion, blank bands, or a fixed
+Hero ratio. Preserve saved S22 crop coordinates and keep the Hero completely
+independent. Validate square, portrait, landscape, ultra-wide, missing, and
+failed sources at desktop, half-width, and mobile. Never edit
+styles/20-content.css or touch current/production data, cloud, deployment,
+restore, rollback, or Git operations. Return a Chinese handoff directly to
+A00.
+"""

@@ -59,7 +59,11 @@ function createCards(store, prefix = "formula.graph") {
   return Object.fromEntries(
     specs.map(([key, name]) => {
       const card = store.saveFormulaCard(cardPayload(`${prefix}.${key}`, name)).card;
-      return [key, card];
+      const published = store.publishFormulaCard(card.formulaId, {
+        id: 21,
+        username: "LinearGraphTester"
+      }).card;
+      return [key, published];
     })
   );
 }
@@ -169,13 +173,26 @@ async function apiChecks(tempRoot) {
         body: JSON.stringify(cardPayload(formulaId, `API ${key}`))
       });
       assert.equal(created.response.status, 200);
-      cards[key] = created.payload.card;
+      const published = await request(`/api/admin/formulas/${encodeURIComponent(created.payload.card.formulaId)}/publish`, {
+        method: "POST",
+        body: "{}"
+      });
+      assert.equal(published.response.status, 200);
+      cards[key] = published.payload.card;
     }
 
     assert.equal((await mutate(cards["source-a"].formulaId, { action: "set", targetFormulaId: cards.shared.formulaId })).response.status, 200);
     assert.equal((await mutate(cards["source-b"].formulaId, { action: "set", targetFormulaId: cards.shared.formulaId })).response.status, 200);
     assert.equal((await mutate(cards.shared.formulaId, { action: "set", targetFormulaId: cards.third.formulaId })).response.status, 200);
     assert.equal((await mutate(cards.third.formulaId, { action: "set", targetFormulaId: cards.alternate.formulaId })).response.status, 200);
+    for (const key of ["source-a", "source-b", "shared", "third"]) {
+      const published = await request(`/api/admin/formulas/${encodeURIComponent(cards[key].formulaId)}/publish`, {
+        method: "POST",
+        body: "{}"
+      });
+      assert.equal(published.response.status, 200);
+      cards[key] = published.payload.card;
+    }
 
     const sharedAdmin = await request(`/api/admin/formulas/${encodeURIComponent(cards.shared.formulaId)}`);
     assert.equal(sharedAdmin.payload.card.derivation.incoming.length, 2);
@@ -185,8 +202,39 @@ async function apiChecks(tempRoot) {
     const sharedPublic = await request(`/api/formulas/${encodeURIComponent(cards.shared.slug)}`);
     assert.equal(sharedPublic.response.status, 200);
     assert.equal(sharedPublic.payload.card.derivation.incoming.length, 2);
-    assert.equal(sharedPublic.payload.card.derivation.next.formulaId, cards.third.formulaId);
+    assert.equal(sharedPublic.payload.card.derivation.next.referenceKey, cards.third.slug);
+    assert.equal(Object.hasOwn(sharedPublic.payload.card.derivation.next, "formulaId"), false);
+    assert.equal(Object.hasOwn(sharedPublic.payload.card.derivation.next, "revisionId"), false);
     assert.equal(Object.hasOwn(sharedPublic.payload.card.derivation.next, "actorUsername"), false);
+    assert.equal(Object.hasOwn(sharedPublic.payload.card, "formulaId"), false);
+    assert.equal(Object.hasOwn(sharedPublic.payload.card, "currentRevisionId"), false);
+    assert.equal(Object.hasOwn(sharedPublic.payload.card, "publishedRevisionId"), false);
+    assert.match(
+      sharedPublic.payload.card.markdownDerivation,
+      new RegExp(`\\{\\{formula-ref:${cards.third.slug}\\}\\}`)
+    );
+    assert.doesNotMatch(
+      sharedPublic.payload.card.markdownDerivation,
+      new RegExp(cards.third.formulaId.replaceAll(".", "\\."))
+    );
+    assert.equal(sharedPublic.payload.card.graph.mode, "published");
+    assert.equal(sharedPublic.payload.card.graph.currentNodeId, cards.shared.slug);
+    assert.ok(
+      sharedPublic.payload.card.graph.nodes
+        .filter((node) => ["source-a", "source-b"].some((key) => node.slug === cards[key].slug))
+        .every((node) => node.rank < 0)
+    );
+    assert.ok(
+      sharedPublic.payload.card.graph.nodes.find((node) => node.slug === cards.third.slug).rank > 0
+    );
+    assert.ok(
+      sharedPublic.payload.card.graph.nodes.every(
+        (node) =>
+          !Object.hasOwn(node, "formulaId") &&
+          !Object.hasOwn(node, "revisionId") &&
+          !Object.hasOwn(node, "publishStatus")
+      )
+    );
 
     const secondNext = await mutate(cards["source-a"].formulaId, {
       action: "set",
@@ -248,13 +296,25 @@ async function apiChecks(tempRoot) {
     assert.equal((await request(`/api/formulas/${encodeURIComponent(cards.shared.slug)}`)).response.status, 404);
 
     const sourcePublic = await request(`/api/formulas/${encodeURIComponent(cards["source-a"].slug)}`);
-    assert.equal(sourcePublic.payload.card.derivation.next.formulaId, cards.shared.formulaId);
-    assert.equal(sourcePublic.payload.card.derivation.next.available, false);
-    const thirdPublic = await request(`/api/formulas/${encodeURIComponent(cards.third.slug)}`);
-    const archivedIncoming = thirdPublic.payload.card.derivation.incoming.find(
-      (item) => item.formulaId === cards.shared.formulaId
+    assert.equal(sourcePublic.payload.card.derivation.next, null);
+    assert.equal(sourcePublic.payload.card.derivation.unavailableDependencyCount, 1);
+    assert.equal(
+      JSON.stringify(sourcePublic.payload).includes(cards.shared.displayName),
+      false
     );
-    assert.equal(archivedIncoming.available, false);
+    assert.equal(JSON.stringify(sourcePublic.payload).includes(cards.shared.latex), false);
+    assert.equal(
+      sourcePublic.payload.card.markdownDerivation.includes(cards.shared.formulaId),
+      false
+    );
+    assert.match(sourcePublic.payload.card.markdownDerivation, /formula-ref-unavailable/);
+    const thirdPublic = await request(`/api/formulas/${encodeURIComponent(cards.third.slug)}`);
+    assert.equal(
+      thirdPublic.payload.card.derivation.incoming.some(
+        (item) => item.formulaId === cards.shared.formulaId
+      ),
+      false
+    );
 
     const page = await fetch(`${baseUrl}/derive.html?formula=${encodeURIComponent(cards["source-a"].slug)}`);
     assert.equal(page.status, 200);
@@ -306,7 +366,23 @@ async function main() {
         targetFormulaId: cards.alternate.formulaId,
         replace: false
       });
-      assert.equal(db.prepare("SELECT COUNT(*) AS count FROM formula_derivation_edges").get().count, 4);
+      for (const key of ["source-a", "source-b", "shared", "third"]) {
+        cards[key] = store.publishFormulaCard(cards[key].formulaId, {
+          id: 21,
+          username: "LinearGraphTester"
+        }).card;
+      }
+      assert.equal(db.prepare("SELECT COUNT(*) AS count FROM formula_derivation_edges").get().count, 0);
+      assert.equal(
+        db
+          .prepare(
+            `SELECT COUNT(*) AS count
+             FROM formula_revision_dependencies dependency
+             JOIN formula_cards card ON card.current_revision_id = dependency.revision_id`
+          )
+          .get().count,
+        4
+      );
 
       let shared = store.adminFormulaCard(cards.shared.formulaId);
       assert.deepEqual(
@@ -375,12 +451,12 @@ async function main() {
         () =>
           db
             .prepare(
-              `UPDATE formula_derivation_edges
+              `UPDATE formula_revision_dependencies
                SET target_formula_id = ?
                WHERE source_formula_id = ?`
             )
             .run(cards.alternate.formulaId, cards.shared.formulaId),
-        /explicit|明确|replacement/i
+        /immutable|不可变/i
       );
 
       const archived = store.archiveFormulaCard(cards.shared.formulaId);
@@ -389,14 +465,13 @@ async function main() {
       assert.equal(archived.derivation.next.formulaId, cards.third.formulaId);
       assert.equal(archived.derivation.currentArchived, true);
       assert.ok(archived.derivation.brokenCount >= 1);
-      assert.equal(db.prepare("SELECT COUNT(*) AS count FROM formula_derivation_edges").get().count, 4);
       assert.equal(store.publicFormulaCardBySlug(cards.shared.slug), null);
       sourceA = store.publicFormulaCardBySlug(cards["source-a"].slug);
-      assert.equal(sourceA.derivation.next.formulaId, cards.shared.formulaId);
-      assert.equal(sourceA.derivation.next.available, false);
+      assert.equal(sourceA.derivation.next, null);
+      assert.equal(sourceA.derivation.unavailableDependencyCount, 1);
       const third = store.publicFormulaCardBySlug(cards.third.slug);
       assert.equal(
-        third.derivation.incoming.find((item) => item.formulaId === cards.shared.formulaId).available,
+        third.derivation.incoming.some((item) => item.formulaId === cards.shared.formulaId),
         false
       );
       store.restoreFormulaCard(cards.shared.formulaId);
@@ -413,16 +488,17 @@ async function main() {
     const postJs = fs.readFileSync(path.join(ROOT, "post.js"), "utf8");
     const deriveHtml = fs.readFileSync(path.join(ROOT, "derive.html"), "utf8");
     assert.match(adminHtml, /id="formulaDerivationPanel"/);
-    assert.match(adminHtml, /id="formulaIncomingSource"/);
+    assert.match(adminHtml, /\{\{formula-ref:formulaId\}\}/);
     assert.match(adminHtml, /id="formulaNextTarget"/);
-    assert.match(adminJs, /formula-derivation/);
-    assert.match(adminJs, /明确替换/);
-    assert.match(adminJs, /归档后关系历史保留/);
+    assert.match(adminHtml, /id="formulaAdminGraph"/);
+    assert.match(adminJs, /insertFormulaDependencyShortcode/);
+    assert.match(adminJs, /removeFormulaDependencyShortcode/);
     assert.match(adminCss, /formula-derivation-grid/);
-    assert.match(postJs, /推导关系/);
-    assert.match(postJs, /formula-derivation-link/);
-    assert.match(postJs, /已归档 · 链路中断/);
-    assert.match(deriveHtml, /formula-derivation-public-grid/);
+    assert.match(adminCss, /formula-graph-canvas/);
+    assert.match(postJs, /renderFormulaGraphSection/);
+    assert.match(postJs, /publicFormulaGraph/);
+    assert.match(deriveHtml, /assets\/vendor\/cytoscape\.min\.js/);
+    assert.match(deriveHtml, /formula-graph\.js/);
 
     console.log(
       "linear derivation graph checks passed: independent cards, convergence, unique next, explicit replacement, cycle rejection, archive state, API and UI contract"

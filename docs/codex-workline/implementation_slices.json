@@ -5,16 +5,16 @@
   "status": "complete",
   "workspaceRoot": "E:/Project/2607-LarkixWeb",
   "generatedAt": "2026-07-09 22:20 +08:00",
-  "mainline": "Confirmed formula-card authoring/version/derivation workline followed by global focus scope and carousel buffering.",
-  "lastReplannedAt": "2026-07-27T00:00:00+08:00",
+  "mainline": "Formula publication and branching-DAG critical path, followed by isolated migration proof, article presentation, theme completion, regression, and release review.",
+  "lastReplannedAt": "2026-07-28T16:00:00+08:00",
   "lastReplannedBy": "A00_ProjectDirector",
-  "requirementDispatch": "docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json",
+  "requirementDispatch": "docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json",
   "currentGate": {
-    "batch1": "automatic_queue_complete",
-    "businessImplementationAllowed": false,
+    "batch1": "dispatch_20260728_complete_owner_gate",
+    "businessImplementationAllowed": true,
     "databaseMutationAllowed": false,
     "migrationFileImplementationAllowed": false,
-    "isolatedDataDirVerificationAllowed": true,
+    "isolatedDataDirVerificationAllowed": false,
     "apiRuntimeBoundaryAllowed": false,
     "productionReleaseAllowed": false,
     "gitStagingAllowed": false,
@@ -32,7 +32,18 @@
     "carouselFocusBufferAllowed": false,
     "contentCloudSyncAllowed": false,
     "regressionEvidenceMatrixAllowed": false,
-    "releaseGitGatePlanningAllowed": false
+    "releaseGitGatePlanningAllowed": false,
+    "formulaPublicationWorkflowAllowed": false,
+    "branchingDerivationGraphAllowed": false,
+    "formulaAuthoringDrawerAllowed": false,
+    "legacyFormulaMigrationSafetyAllowed": false,
+    "legacyFormulaCleanupApplyAllowed": false,
+    "postCoverCoordinatesAllowed": false,
+    "postReadingMinutesAllowed": true,
+    "inlineMathLayoutAllowed": true,
+    "focusedContentMediaAllowed": false,
+    "fullSiteDarkThemeAllowed": false,
+    "batchRegressionEvidenceAllowed": false
   },
   "repairFinding": {
     "problem": "A05 was declared in task_registry.json but remained blocked and had no active brief, implementation_slices.json, or handoff in the current workspace.",
@@ -574,6 +585,8 @@
         "server.js",
         "lib/content.js",
         "lib/validators.js",
+        "data/posts.js",
+        "maker.html",
         "admin/index.html",
         "admin/admin.js",
         "admin/admin.css",
@@ -682,6 +695,8 @@
         "server.js",
         "lib/content.js",
         "lib/validators.js",
+        "data/posts.js",
+        "maker.html",
         "admin/index.html",
         "admin/admin.js",
         "admin/admin.css",
@@ -921,11 +936,687 @@
         "unrelated carousel layout work",
         "current/production data, cloud, deployment, or Git operations"
       ]
+    },
+    {
+      "id": "S18_formula_publication_workflow",
+      "agent": "A24_FormulaPublishingWorkflow",
+      "roleNote": "公式发布工作流：补齐 Markdown 推导、三态发布、待发布修订和文章发布门禁",
+      "status": "completed",
+      "purpose": "Implement the final formula-card publication model for REQ-20260728-003 before branching, drawer, or legacy migration work.",
+      "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260728-003.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json",
+        "docs/codex-workline/slices/S09_formula_catalog_management_handoff.md",
+        "docs/codex-workline/slices/S13_article_formula_authoring_handoff.md",
+        "docs/codex-workline/slices/S14_formula_reference_versioning_handoff.md",
+        "migrations/014_formula_catalog.js",
+        "migrations/015_article_formula_bindings.js",
+        "migrations/016_formula_reference_decisions.js",
+        "agents/A24_FormulaPublishingWorkflow/brief.md"
+      ],
+      "mayEdit": [
+        "migrations/020_formula_publication_workflow.js",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "data/markdown-renderer.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "post.js",
+        "derive.html",
+        "scripts/test-formula-catalog.js",
+        "scripts/test-article-formula-authoring.js",
+        "scripts/test-formula-reference-versioning.js",
+        "scripts/test-formula-publication-workflow.js",
+        "package.json",
+        "docs/calculation-book-authoring-guide.md",
+        "docs/codex-workline/slices/S18_formula_publication_workflow_handoff.md"
+      ],
+      "outputs": [
+        "formula Markdown derivation and immutable pending/published revision model",
+        "draft, published, and archived state enforcement across API, CMS, articles, and visitor routes",
+        "article publication blocking for draft formula dependencies",
+        "normalized single module/category and multi-tag CMS controls with Chinese contextual help"
+      ],
+      "verification": [
+        "isolated DATA_DIR migration and formula publication state matrix",
+        "public API and route draft-leak rejection",
+        "article draft-binding and publish-block evidence",
+        "archived history and no-new-insert evidence",
+        "responsive CMS and visitor browser checks",
+        "formula, Markdown, calculation-book, API, and contract regressions"
+      ],
+      "dependencies": [
+        "DISPATCH-20260728-001",
+        "A00 acceptance of A18 batch handoff",
+        "S09_formula_catalog_management",
+        "S13_article_formula_authoring",
+        "S14_formula_reference_versioning"
+      ],
+      "forbidden": [
+        "branching derivation graph or formula drawer changes",
+        "legacy formula migration or deletion",
+        "styles/20-content.css",
+        "current/production data, cloud, deployment, restore, rollback, or Git operations"
+      ]
+    },
+    {
+      "id": "S19_branching_derivation_graph",
+      "agent": "A26_BranchingDerivationGraph",
+      "roleNote": "分支推导图：把线性公式链升级为可管理、可验证的分支 DAG 与网络视图",
+      "status": "completed",
+      "purpose": "Implement REQ-20260728-005 after S18 acceptance by making formula dependencies revision-aware, branching, acyclic, and visible through one shared Markdown/CMS/public graph contract.",
+      "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260728-005.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json",
+        "docs/codex-workline/slices/S15_linear_derivation_graph_handoff.md",
+        "docs/codex-workline/slices/S18_formula_publication_workflow_handoff.md",
+        "migrations/017_linear_derivation_graph.js",
+        "migrations/020_formula_publication_workflow.js",
+        "agents/A26_BranchingDerivationGraph/brief.md"
+      ],
+      "mayEdit": [
+        "migrations/021_branching_derivation_graph.js",
+        "migrations/022_formula_revision_presentation_snapshot.js",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "data/markdown-renderer.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "post.js",
+        "derive.html",
+        "formula-graph.js",
+        "assets/vendor/cytoscape.min.js",
+        "assets/vendor/cytoscape.LICENSE.txt",
+        "scripts/test-linear-derivation-graph.js",
+        "scripts/test-branching-derivation-graph.js",
+        "scripts/test-formula-catalog.js",
+        "scripts/test-formula-reference-versioning.js",
+        "package.json",
+        "docs/calculation-book-authoring-guide.md",
+        "docs/codex-workline/slices/S19_branching_derivation_graph_handoff.md"
+      ],
+      "outputs": [
+        "revision-aware branching dependency schema with deterministic linear-edge compatibility",
+        "single-source Markdown dependency references and atomic DAG validation",
+        "CMS dependency editor and graph preview",
+        "public current-path network with bounded expansion and no draft leakage"
+      ],
+      "verification": [
+        "isolated migration and three-level branch-and-merge fixture",
+        "self, duplicate, dangling, direct-cycle, and multi-hop-cycle rejection",
+        "current versus published revision graph isolation",
+        "desktop, half-width, mobile, interaction, performance, and nonblank graph browser evidence",
+        "formula, Markdown, calculation-book, API, and contract regressions"
+      ],
+      "dependencies": [
+        "DISPATCH-20260728-001",
+        "REQ-20260728-005",
+        "S15_linear_derivation_graph",
+        "S18_formula_publication_workflow",
+        "A00 acceptance of A24 handoff"
+      ],
+      "forbidden": [
+        "formula authoring drawer or legacy physical cleanup",
+        "cover crop, reading time, inline-math, media-fit, or dark-theme work",
+        "styles/20-content.css",
+        "current/production data, cloud, deployment, restore, rollback, or Git operations"
+      ]
+    },
+    {
+      "id": "S20_formula_authoring_drawer",
+      "agent": "A27_FormulaAuthoringDrawer",
+      "roleNote": "公式创作抽屉：让长文章任意滚动位置都能安全调用公式搜索、插入、建卡和预览",
+      "status": "completed",
+      "purpose": "Implement REQ-20260728-008 after S19 acceptance by moving accepted article formula actions into a persistent collapsible drawer that preserves unsaved editor state.",
+      "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260728-008.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json",
+        "docs/codex-workline/slices/S13_article_formula_authoring_handoff.md",
+        "docs/codex-workline/slices/S18_formula_publication_workflow_handoff.md",
+        "docs/codex-workline/slices/S19_branching_derivation_graph_handoff.md",
+        "agents/A27_FormulaAuthoringDrawer/brief.md"
+      ],
+      "mayEdit": [
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "scripts/test-article-formula-authoring.js",
+        "scripts/test-formula-authoring-drawer.js",
+        "package.json",
+        "docs/calculation-book-authoring-guide.md",
+        "docs/codex-workline/slices/S20_formula_authoring_drawer_handoff.md"
+      ],
+      "outputs": [
+        "persistent collapsible formula drawer outside the article Markdown scroll flow",
+        "editor-state preservation contract for selection, scroll, focus, local draft, and insertion position",
+        "reused formula search, filter, insertion, selection-to-card, and quick-preview actions",
+        "responsive desktop, half-width, and mobile drawer layouts with independent workbench navigation"
+      ],
+      "verification": [
+        "long unsaved article top, middle, and bottom sticky-access fixture",
+        "drawer toggle and independent-workbench round-trip selection preservation",
+        "existing formula insertion, selected-LaTeX card creation, search/filter, and preview checks",
+        "desktop, half-width, mobile, keyboard, overflow, overlap, console, and network browser evidence",
+        "article formula, publication, catalog, branching graph, Markdown, API, and contract regressions"
+      ],
+      "dependencies": [
+        "DISPATCH-20260728-001",
+        "REQ-20260728-008",
+        "S13_article_formula_authoring",
+        "S18_formula_publication_workflow",
+        "S19_branching_derivation_graph",
+        "A00 acceptance of A26 handoff"
+      ],
+      "forbidden": [
+        "formula schema, publication, dependency graph, or migration changes",
+        "embedding the complete formula workbench inside the article editor",
+        "automatic article save or silent unsaved-content mutation",
+        "legacy cleanup, cover crop, reading time, inline-math, media-fit, or dark-theme work",
+        "styles/20-content.css",
+        "current/production data, cloud, deployment, restore, rollback, or Git operations"
+      ]
+    },
+    {
+      "id": "S21_legacy_formula_migration_safety",
+      "agent": "A28_LegacyFormulaMigrationSafety",
+      "roleNote": "旧公式迁移安全：先备份和逐项验证，再只在隔离副本证明迁移、重定向与物理清理",
+      "status": "completed",
+      "purpose": "Implement the isolated-proof portion of REQ-20260728-004 after S20 acceptance by proving backup-first deterministic migration, restore, redirects, and disposable-only cleanup without touching current or production data.",
+      "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260728-004.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json",
+        "docs/codex-workline/slices/S14_formula_reference_versioning_handoff.md",
+        "docs/codex-workline/slices/S18_formula_publication_workflow_handoff.md",
+        "docs/codex-workline/slices/S19_branching_derivation_graph_handoff.md",
+        "docs/codex-workline/slices/S20_formula_authoring_drawer_handoff.md",
+        "migrations/014_formula_catalog.js",
+        "migrations/015_article_formula_bindings.js",
+        "migrations/016_formula_reference_decisions.js",
+        "migrations/017_linear_derivation_graph.js",
+        "migrations/021_branching_derivation_graph.js",
+        "migrations/022_formula_revision_presentation_snapshot.js",
+        "agents/A28_LegacyFormulaMigrationSafety/brief.md"
+      ],
+      "mayEdit": [
+        "migrations/023_legacy_formula_migration_support.js",
+        "lib/legacy-formula-migration.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "server.js",
+        "scripts/migrate-legacy-formulas.js",
+        "scripts/test-legacy-formula-migration.js",
+        "package.json",
+        "docs/legacy-formula-migration.md",
+        "docs/codex-workline/slices/S21_legacy_formula_migration_safety_handoff.md"
+      ],
+      "outputs": [
+        "support-only migration 023 with no startup deletion",
+        "dry-run-first deterministic migration engine and operator CLI",
+        "SHA-256 backup manifest, isolated restore rehearsal, and exact verification report",
+        "permanent loop-free legacy redirects with no draft leakage",
+        "disposable-only physical cleanup proof that preserves mappings, audit evidence, backups, formula history, bindings, and redirects"
+      ],
+      "verification": [
+        "fresh disposable source fixture and default dry-run",
+        "backup checksum and second-directory restore comparison",
+        "counts, source content, mappings, formula revisions, bindings, dependencies, publication state, and redirect matrix",
+        "ambiguous merge, missing mapping, checksum failure, redirect loop, and count drift failure fixtures with zero legacy-row deletion",
+        "successful cleanup only with explicit disposable mode and exact report digest",
+        "formula catalog, article authoring, versioning, publication, branching graph, Markdown, API, redirect, and contract regressions"
+      ],
+      "dependencies": [
+        "DISPATCH-20260728-001",
+        "REQ-20260728-004",
+        "S19_branching_derivation_graph",
+        "S20_formula_authoring_drawer",
+        "A00 acceptance of A27 handoff"
+      ],
+      "forbidden": [
+        "current or production data and any current/production cleanup mode",
+        "numbered startup migration deletion",
+        "A35 cleanup authorization or implementation",
+        "formula drawer, cover crop, reading time, inline math, media fit, dark theme, or unrelated refactors",
+        "styles/20-content.css",
+        "cloud, deployment, restore, rollback, Git staging, commit, push, or branch/remote changes"
+      ]
+    },
+    {
+      "id": "S22_post_cover_coordinates",
+      "agent": "A29_PostCoverCoordinates",
+      "roleNote": "文章封面坐标：用可拖动、四角等比缩放的 16:9 框保存可还原坐标，并在网页无失真回放",
+      "status": "completed",
+      "purpose": "Implement REQ-20260728-001 after S21 acceptance by replacing destructive cropped-image exports with reversible normalized 16:9 coordinates and shared CMS/public replay.",
+      "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260728-001.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json",
+        "docs/codex-workline/slices/S21_legacy_formula_migration_safety_handoff.md",
+        "migrations/001_initial_schema.js",
+        "migrations/007_content_revisions.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "data/media.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "main.js",
+        "category-page.js",
+        "post.js",
+        "agents/A29_PostCoverCoordinates/brief.md"
+      ],
+      "mayEdit": [
+        "migrations/024_post_cover_coordinates.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "data/media.js",
+        "styles.css",
+        "styles/25-cover-crop.css",
+        "main.js",
+        "category-page.js",
+        "post.js",
+        "scripts/test-post-cover-coordinates.js",
+        "package.json",
+        "docs/post-cover-coordinates.md",
+        "docs/codex-workline/slices/S22_post_cover_coordinates_handoff.md"
+      ],
+      "outputs": [
+        "additive nullable post crop-coordinate schema and validated coverCrop DTO",
+        "reversible CMS 16:9 frame with body drag, four-corner resize, grayscale-blur exterior, clear-color interior, reopen, and reset",
+        "original-image-only upload and coordinate persistence with revision/local-draft round-trip",
+        "shared media crop replay for homepage, category, lesson/focus, and article hero surfaces without distortion"
+      ],
+      "verification": [
+        "migration, all-or-none validation, bounds, source-pixel aspect, old-post, round-trip, revision, restore, reset, and malformed payload checks",
+        "original URL and byte identity before/after crop save and adjustment with zero cropped replacement",
+        "horizontal, vertical, square, and ultra-wide frame move plus four-corner resize fixtures",
+        "desktop, half-width, mobile, pointer, touch, keyboard, overflow, overlap, console, network, and pixel evidence",
+        "public crop replay and no-crop compatibility across post surfaces",
+        "API, post/content/media, Markdown, formula, and contract regressions"
+      ],
+      "dependencies": [
+        "DISPATCH-20260728-001",
+        "REQ-20260728-001",
+        "A00 acceptance of A28 handoff"
+      ],
+      "forbidden": [
+        "cropped image generation, canvas.toDataURL upload, original overwrite, or original deletion",
+        "project or knowledge-node crop schema and forced 16:9 focused-card redesign",
+        "legacy cleanup, reading time, inline math, media fit, dark theme, or unrelated refactors",
+        "styles/20-content.css",
+        "current/production data, cloud, deployment, restore, rollback, or Git operations"
+      ]
+    },
+    {
+      "id": "S23_post_reading_minutes",
+      "agent": "A30_PostReadingMinutes",
+      "roleNote": "文章阅读时间：让作者选填正整数分钟，并在详情与各文章卡片中条件显示",
+      "status": "completed",
+      "parallelGroup": "article-math",
+      "purpose": "Implement REQ-20260728-006 after S22 acceptance by replacing fixed article reading-time fallbacks with one nullable author-entered positive integer and conditionally rendering it across CMS and public article surfaces.",
+      "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260728-006.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json",
+        "docs/codex-workline/slices/S22_post_cover_coordinates_handoff.md",
+        "migrations/001_initial_schema.js",
+        "migrations/007_content_revisions.js",
+        "migrations/024_post_cover_coordinates.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "data/posts.js",
+        "maker.html",
+        "admin/index.html",
+        "admin/admin.js",
+        "main.js",
+        "category-page.js",
+        "post.js",
+        "agents/A30_PostReadingMinutes/brief.md"
+      ],
+      "mayEdit": [
+        "migrations/025_post_reading_minutes.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "data/posts.js",
+        "maker.html",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "main.js",
+        "category-page.js",
+        "post.js",
+        "scripts/test-post-reading-minutes.js",
+        "package.json",
+        "docs/post-reading-minutes.md",
+        "docs/codex-workline/slices/S23_post_reading_minutes_handoff.md"
+      ],
+      "outputs": [
+        "additive nullable article readingMinutes schema and strict positive-integer validation",
+        "CMS article-only optional minute input with draft, revision, restore, set, and clear round-trip",
+        "conditional detail and article-card rendering with no default, placeholder, separator, or gap",
+        "complete removal evidence for fixed 10-minute article fallbacks"
+      ],
+      "verification": [
+        "migration, old-post null, bounds, malformed payload, admin/public DTO, update, clear, revision, and restore checks",
+        "homepage, category, focus/card, and article detail set-versus-unset browser matrix",
+        "desktop, half-width, mobile, console, network, API, JavaScript syntax, and whitespace evidence",
+        "cover-coordinate, formula, Markdown, calculation-book, and contract regressions"
+      ],
+      "dependencies": [
+        "DISPATCH-20260728-001",
+        "REQ-20260728-006",
+        "S22_post_cover_coordinates",
+        "A00 acceptance of A29 handoff"
+      ],
+      "forbidden": [
+        "word-count estimation, a 10-minute fallback, or non-positive/non-integer storage",
+        "inline-math renderer/style work or any A31 file",
+        "styles.css, styles/20-content.css, or styles/26-inline-math.css",
+        "current/production data, cloud, deployment, restore, rollback, or Git operations"
+      ]
+    },
+    {
+      "id": "S24_inline_math_layout",
+      "agent": "A31_InlineMathLayout",
+      "roleNote": "行内数学排版：统一复杂公式与中文基线、分数结构和响应式可读性",
+      "status": "completed",
+      "parallelGroup": "article-math",
+      "purpose": "Implement REQ-20260728-002 after S22 acceptance with one shared renderer/style contract for simple and deeply nested inline mathematics across CMS preview, visitor articles, and derivation pages.",
+      "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260728-002.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json",
+        "docs/codex-workline/slices/S22_post_cover_coordinates_handoff.md",
+        "data/markdown-renderer.js",
+        "styles.css",
+        "styles/20-content.css",
+        "post.html",
+        "derive.html",
+        "admin/index.html",
+        "agents/A31_InlineMathLayout/brief.md"
+      ],
+      "mayEdit": [
+        "data/markdown-renderer.js",
+        "styles.css",
+        "styles/26-inline-math.css",
+        "scripts/test-inline-math-layout.js",
+        "docs/inline-math-layout.md",
+        "docs/codex-workline/slices/S24_inline_math_layout_handoff.md"
+      ],
+      "outputs": [
+        "shared inline-math class and style contract across CMS, article, and derivation rendering",
+        "stable Chinese baseline and natural line-box expansion for simple and tall inline mathematics",
+        "correct complex fraction, integral, differential, root, nested-root, and multi-level script presentation",
+        "responsive light/dark visual-regression fixture including the published BUCK ripple example"
+      ],
+      "verification": [
+        "deterministic renderer fixture for every required complex inline structure",
+        "CMS preview, visitor article, and derivation page bounding-box and pixel comparisons",
+        "desktop, half-width, mobile, light, dark, overflow, overlap, console, and network evidence",
+        "display formula, formula publication/graph, Markdown, calculation-book, cover-coordinate, contract, and whitespace regressions"
+      ],
+      "dependencies": [
+        "DISPATCH-20260728-001",
+        "REQ-20260728-002",
+        "S22_post_cover_coordinates",
+        "A00 acceptance of A29 handoff"
+      ],
+      "forbidden": [
+        "per-article hacks, stored-LaTeX changes, or forcing all complex inline formulas to display",
+        "reading-time schema/CMS/page work or any A30 file",
+        "styles/20-content.css, media-fit work, dark-theme redesign, or unrelated refactors",
+        "current/production data, cloud, deployment, restore, rollback, or Git operations"
+      ]
+    },
+    {
+      "id": "S25_focused_content_media",
+      "agent": "A25_FocusedContentMedia",
+      "roleNote": "聚焦内容媒体：让文章图片按各自卡片容器自适应裁切，同时保持 Hero 独立",
+      "status": "completed",
+      "purpose": "Implement REQ-20260728-007 after S22 and S24 acceptance by making focused homepage article media fill each responsive card-owned viewport without distortion, blank bands, or Hero-ratio inheritance.",
+      "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260728-007.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json",
+        "docs/codex-workline/slices/S22_post_cover_coordinates_handoff.md",
+        "docs/codex-workline/slices/S24_inline_math_layout_handoff.md",
+        "maker.html",
+        "main.js",
+        "data/media.js",
+        "styles.css",
+        "styles/10-hero.css",
+        "styles/20-content.css",
+        "styles/25-cover-crop.css",
+        "styles/40-responsive.css",
+        "agents/A25_FocusedContentMedia/brief.md"
+      ],
+      "mayEdit": [
+        "main.js",
+        "data/media.js",
+        "styles.css",
+        "styles/27-focused-content-media.css",
+        "scripts/test-focused-content-media.js",
+        "docs/focused-content-media.md",
+        "docs/codex-workline/slices/S25_focused_content_media_handoff.md"
+      ],
+      "outputs": [
+        "focused-card media opt-in that derives sizing from the actual responsive card container",
+        "cover behavior for square, portrait, landscape, and ultra-wide sources without distortion or blank bands",
+        "responsive replay of saved S22 crop coordinates without changing stored data",
+        "Hero-independent deterministic and browser regression evidence"
+      ],
+      "verification": [
+        "deterministic focused-media, container sizing, crop replay, fallback, and Hero-independence checks",
+        "desktop, half-width, and mobile browser matrix across representative source ratios",
+        "computed dimension or pixel evidence for cover fill, no distortion, no overflow, and unchanged Hero",
+        "cover-coordinate, reading-minutes, Markdown, formula publication/graph, JavaScript syntax, contract, and whitespace regressions"
+      ],
+      "dependencies": [
+        "DISPATCH-20260728-001",
+        "REQ-20260728-007",
+        "S22_post_cover_coordinates",
+        "S24_inline_math_layout",
+        "A00 acceptance of A29 and A31 handoffs"
+      ],
+      "forbidden": [
+        "fixed 16:9 focused-card sizing or Hero selector/ratio reuse",
+        "styles/20-content.css, CMS authoring, stored cover/crop data, reading-time work, formula work, or dark-theme redesign",
+        "Hero carousel dimensions, overlay, crop policy, timing, or interaction changes",
+        "current/production data, cloud, deployment, restore, rollback, or Git operations"
+      ]
+    },
+    {
+      "id": "S26_full_site_dark_theme",
+      "agent": "A32_FullSiteDarkTheme",
+      "roleNote": "全站夜间主题：统一游客端与 CMS 的暗色表面、文字、状态和交互对比",
+      "status": "completed",
+      "purpose": "Implement REQ-20260728-009 after S20 and S23-S25 acceptance by auditing and repairing dark-mode consistency across every primary visitor, CMS, formula, graph, Markdown, drawer, modal, code, state, and tool surface while preserving daylight behavior.",
+      "reads": [
+        "docs/codex-workline/requirements/active/REQ-20260728-009.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json",
+        "docs/codex-workline/slices/S20_formula_authoring_drawer_handoff.md",
+        "docs/codex-workline/slices/S23_post_reading_minutes_handoff.md",
+        "docs/codex-workline/slices/S24_inline_math_layout_handoff.md",
+        "docs/codex-workline/slices/S25_focused_content_media_handoff.md",
+        "styles.css",
+        "styles/00-base.css",
+        "styles/10-hero.css",
+        "styles/20-content.css",
+        "styles/26-inline-math.css",
+        "styles/27-focused-content-media.css",
+        "styles/larkix-brand-theme.css",
+        "styles/larkix-home.css",
+        "styles/larkix-elec.css",
+        "styles/gokotta-elec.css",
+        "styles/md2doc.css",
+        "admin/index.html",
+        "admin/course-paths.html",
+        "admin/admin.css",
+        "formula-graph.js",
+        "agents/A32_FullSiteDarkTheme/brief.md"
+      ],
+      "mayEdit": [
+        "styles.css",
+        "styles/28-full-site-dark.css",
+        "admin/index.html",
+        "admin/course-paths.html",
+        "admin/admin-dark.css",
+        "scripts/test-full-site-dark-theme.js",
+        "docs/full-site-dark-theme.md",
+        "docs/codex-workline/slices/S26_full_site_dark_theme_handoff.md"
+      ],
+      "outputs": [
+        "shared semantic dark tokens and visitor override layer loaded after all existing public styles",
+        "dedicated CMS dark override layer loaded after admin.css on both CMS pages",
+        "full primary page and interaction-state audit including public derivation, formula graph/drawer, Markdown, code, dialogs, and statuses",
+        "responsive light/dark contrast and daylight-regression evidence"
+      ],
+      "verification": [
+        "deterministic import/link, token, selector, protected-file, state, and daylight-scope checks",
+        "visitor/CMS/tool desktop, half-width, and mobile light/dark page matrix",
+        "computed foreground/background/border contrast for critical states plus hover/focus/disabled/selected evidence",
+        "formula, graph, drawer, Markdown, inline-math, cover, reading-time, focused-media, CMS/API, syntax, contract, and whitespace regressions"
+      ],
+      "dependencies": [
+        "DISPATCH-20260728-001",
+        "REQ-20260728-009",
+        "S20_formula_authoring_drawer",
+        "S23_post_reading_minutes",
+        "S24_inline_math_layout",
+        "S25_focused_content_media",
+        "A00 acceptance of A27, A30, A31, and A25 handoffs"
+      ],
+      "forbidden": [
+        "styles/20-content.css, admin/admin.css, theme-toggle persistence, content state, graph data, formula meaning, or layout redesign",
+        "homepage-only patching, broad !important flooding, daylight changes, or brand redesign",
+        "current/production data, cloud, deployment, restore, rollback, or Git operations"
+      ]
+    },
+    {
+      "id": "S27_batch_regression_evidence",
+      "agent": "A33_BatchRegressionEvidence",
+      "roleNote": "批次回归证据：复测九项已确认需求，形成可重复、可追溯的发布前证据",
+      "status": "completed",
+      "purpose": "Verify all nine requirements in DISPATCH-20260728-001 after S18-S26 acceptance through a repeatable deterministic, isolated API, migration, CMS, public-page, browser, responsive, and theme evidence matrix without editing product code.",
+      "reads": [
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json",
+        "docs/codex-workline/requirements/active/REQ-20260728-001.json",
+        "docs/codex-workline/requirements/active/REQ-20260728-002.json",
+        "docs/codex-workline/requirements/active/REQ-20260728-003.json",
+        "docs/codex-workline/requirements/active/REQ-20260728-004.json",
+        "docs/codex-workline/requirements/active/REQ-20260728-005.json",
+        "docs/codex-workline/requirements/active/REQ-20260728-006.json",
+        "docs/codex-workline/requirements/active/REQ-20260728-007.json",
+        "docs/codex-workline/requirements/active/REQ-20260728-008.json",
+        "docs/codex-workline/requirements/active/REQ-20260728-009.json",
+        "docs/codex-workline/slices/S18_formula_publication_workflow_handoff.md",
+        "docs/codex-workline/slices/S19_branching_derivation_graph_handoff.md",
+        "docs/codex-workline/slices/S20_formula_authoring_drawer_handoff.md",
+        "docs/codex-workline/slices/S21_legacy_formula_migration_safety_handoff.md",
+        "docs/codex-workline/slices/S22_post_cover_coordinates_handoff.md",
+        "docs/codex-workline/slices/S23_post_reading_minutes_handoff.md",
+        "docs/codex-workline/slices/S24_inline_math_layout_handoff.md",
+        "docs/codex-workline/slices/S25_focused_content_media_handoff.md",
+        "docs/codex-workline/slices/S26_full_site_dark_theme_handoff.md",
+        "package.json",
+        "scripts/verify-api.ps1",
+        "agents/A33_BatchRegressionEvidence/brief.md"
+      ],
+      "mayEdit": [
+        "scripts/run-batch-regression-evidence.js",
+        "docs/batch-regression-evidence.md",
+        "docs/codex-workline/slices/S27_batch_regression_evidence_handoff.md"
+      ],
+      "outputs": [
+        "repeatable batch regression command runner with truthful pass/fail exit status",
+        "requirement-to-slice-to-command evidence matrix for REQ-20260728-001 through REQ-20260728-009",
+        "representative public/CMS desktop, half-width, mobile, light/dark browser evidence",
+        "protected-boundary and residual-risk summary suitable for A00 release review"
+      ],
+      "verification": [
+        "all S18-S26 dedicated deterministic tests and cross-feature regressions",
+        "isolated API, migration, restore, focus-mode, carousel-buffer, and calculation-book checks",
+        "public/CMS browser overflow, overlap, console, network, responsive, and theme matrix",
+        "JavaScript syntax, UTF-8/BOM, whitespace, protected hashes, and codex contract"
+      ],
+      "dependencies": [
+        "DISPATCH-20260728-001",
+        "S18_formula_publication_workflow through S26_full_site_dark_theme",
+        "A00 acceptance of all S18-S26 handoffs"
+      ],
+      "forbidden": [
+        "editing product, CMS, server, migration, style, content, package, governance, or accepted S18-S26 files",
+        "repairing failed regressions inside S27 instead of returning exact evidence to A00",
+        "current/production data, physical legacy cleanup, cloud, deployment, restore, rollback, or Git operations",
+        "credentials, session tokens, cookies, database contents, screenshots, or bulky logs in evidence artifacts"
+      ]
+    },
+    {
+      "id": "S28_release_git_gate",
+      "agent": "A34_ReleaseGitGate",
+      "roleNote": "发布与 Git 门禁：盘点工作树，形成精确文件清单并裁决是否具备后续发布条件",
+      "status": "completed",
+      "purpose": "Review release readiness and produce a path-explicit future Git staging plan for the accepted S18-S27 batch without changing source, Git, runtime data, cloud, or production state.",
+      "reads": [
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json",
+        "docs/batch-regression-evidence.md",
+        "docs/codex-workline/slices/S27_batch_regression_evidence_handoff.md",
+        "docs/codex-workline/slices/S18_formula_publication_workflow_handoff.md",
+        "docs/codex-workline/slices/S19_branching_derivation_graph_handoff.md",
+        "docs/codex-workline/slices/S20_formula_authoring_drawer_handoff.md",
+        "docs/codex-workline/slices/S21_legacy_formula_migration_safety_handoff.md",
+        "docs/codex-workline/slices/S22_post_cover_coordinates_handoff.md",
+        "docs/codex-workline/slices/S23_post_reading_minutes_handoff.md",
+        "docs/codex-workline/slices/S24_inline_math_layout_handoff.md",
+        "docs/codex-workline/slices/S25_focused_content_media_handoff.md",
+        "docs/codex-workline/slices/S26_full_site_dark_theme_handoff.md",
+        "package.json",
+        "docs/deployment.md",
+        "scripts/deploy-update.sh",
+        "scripts/backup-linux.sh",
+        "scripts/restore-linux.sh",
+        "scripts/rollback.sh",
+        "agents/A34_ReleaseGitGate/brief.md"
+      ],
+      "mayEdit": [
+        "docs/release-git-gate-20260728.md",
+        "docs/git-staging-plan-20260728.md",
+        "docs/codex-workline/slices/S28_release_git_gate_handoff.md"
+      ],
+      "outputs": [
+        "release-readiness decision with version, backup, rollback, health, and stop conditions",
+        "complete live-worktree include, exclude, and review-required inventory",
+        "path-explicit future staging commands that are not executed",
+        "proof that Git, cloud, services, and runtime data remained unchanged"
+      ],
+      "verification": [
+        "read-only git status, diff, untracked-path, branch, and commit inspection",
+        "cross-check every plan entry against the live worktree",
+        "git diff --check",
+        "npm.cmd run check:version",
+        "npm.cmd run codex:contract",
+        "UTF-8 without BOM and secret-free output audit"
+      ],
+      "dependencies": [
+        "DISPATCH-20260728-001",
+        "S27_batch_regression_evidence",
+        "A00 acceptance of S27"
+      ],
+      "forbidden": [
+        "editing product, test, content, migration, package, governance, or accepted handoff files",
+        "Git staging, commit, push, branch, remote, reset, checkout, clean, stash, merge, rebase, or cherry-pick operations",
+        "current/production data, physical legacy cleanup, cloud, deployment, service restart, backup execution, restore, or rollback",
+        "credentials, session tokens, cookies, database contents, or user data in planning artifacts"
+      ]
     }
   ],
   "nextDecision": {
-    "agent": "A00_ProjectDirector",
-    "decision": "S12 release and Git planning gate is accepted. The automatic functional-Agent queue is complete. Local technical evidence passes, future staging remains conditional on new explicit authorization and live revalidation, and production release is not ready. All mutation gates remain closed.",
-    "shortPrompt": "Agent 00 Project Director（项目导演：负责顺序、门禁和下一步裁决）：请进入 E:\\Project\\2607-LarkixWeb，运行 npm.cmd run codex:handoff，然后按输出的 controller brief 核对当前状态；当前无待派发职能 Agent；若收到新需求，直接交给对应职能 Agent，若不存在则由 A00 创建并注册后继续；使用中文交接，遵守 AGENTS.md 门禁。"
+    "agents": [],
+    "decision": "A00 accepted S28 after the complete worktree inventory, explicit future staging plan, and release gate review passed. The automatic queue is complete; Git, production, and S29 remain closed pending explicit Owner authority.",
+    "shortPrompts": [
+      "Agent 00 Project Director（项目导演：负责顺序、门禁和下一步裁决）：请进入 E:\\Project\\2607-LarkixWeb，运行 npm.cmd run codex:handoff 核验路由，然后执行 agents\\A00_ProjectDirector\\brief.md；使用中文交接，遵守 AGENTS.md 门禁。"
+    ]
   }
 }

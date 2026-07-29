@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260728-008",
+  "title": "文章编辑器常驻可折叠公式抽屉",
+  "status": "dispatched",
+  "priority": "normal",
+  "createdAt": "2026-07-28T15:07:48.136+08:00",
+  "updatedAt": "2026-07-28T15:31:47.952+08:00",
+  "intent": {
+    "problem": "公式卡入口与长篇 Markdown 编辑内容处于同一滚动模块，文章很长时作者难以随时切出公式卡。",
+    "desiredOutcome": "在文章编辑器右侧提供不随正文滚动丢失的可折叠公式抽屉，同时保留独立完整公式工作台。",
+    "targetUsers": [
+      "Owner/幕后作者"
+    ]
+  },
+  "scope": {
+    "in": [
+      "文章编辑器右侧提供始终可访问的公式抽屉",
+      "抽屉不受长篇 Markdown 正文滚动位置影响",
+      "抽屉支持展开和收起",
+      "收起后只保留清晰的关键公式图标，并可一键重新展开",
+      "抽屉内支持搜索和筛选公式、插入已有公式、把选中 LaTeX 创建为公式卡、快速预览",
+      "完整公式信息、Markdown 推导正文、状态、分类和依赖图在独立公式工作台编辑",
+      "抽屉打开和关闭不得丢失文章光标、选区、本地草稿或未保存修改",
+      "窄屏下保持可访问，不遮挡保存和主要编辑操作"
+    ],
+    "out": [
+      "把完整公式工作台重新嵌入文章正文滚动区域",
+      "要求作者滚回文章顶部才能打开公式工具",
+      "收起后完全移除入口",
+      "自动保存未经作者确认的文章修改"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "长文章中公式卡入口会随 Markdown 编辑模块滚动离开可视区域。"
+    ],
+    "expected": [
+      "作者在正文任意位置都能展开公式抽屉。",
+      "选择公式或创建公式卡后，内容插入原光标或选区位置。",
+      "作者需要深度编辑公式时可进入独立公式工作台，文章草稿保持。",
+      "收起状态节省空间但保留明确图标。"
+    ],
+    "edgeCases": [
+      "文章正文非常长且页面已滚动到底部。",
+      "打开抽屉前存在完整公式选区。",
+      "从独立公式工作台返回文章编辑器。",
+      "移动端或半宽窗口空间不足。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.sticky-access",
+      "statement": "无论文章滚动到何处，公式抽屉入口始终可见且可操作。",
+      "verification": "使用长篇 Markdown 在顶部、中部和底部重复打开抽屉。"
+    },
+    {
+      "id": "ac.collapsible",
+      "statement": "抽屉可展开和收起，收起后只保留关键图标并可一键恢复。",
+      "verification": "切换状态并检查占用宽度、图标可辨识度和焦点行为。"
+    },
+    {
+      "id": "ac.quick-actions",
+      "statement": "抽屉支持搜索筛选、已有卡插入、选区建卡和快速预览。",
+      "verification": "从长文章不同位置分别完成四类操作。"
+    },
+    {
+      "id": "ac.preserve-editor-state",
+      "statement": "抽屉及独立公式工作台切换不会丢失文章光标、有效选区或本地草稿。",
+      "verification": "在未保存文章中记录选区并往返切换，核对内容和插入位置。"
+    },
+    {
+      "id": "ac.responsive",
+      "statement": "桌面、半宽和移动布局下抽屉不遮挡保存按钮和主要编辑区域。",
+      "verification": "在主要响应式宽度检查溢出、层级、收起入口和键盘操作。"
+    }
+  ],
+  "constraints": {
+    "languages": [
+      "zh-CN",
+      "Markdown",
+      "LaTeX"
+    ],
+    "platforms": [
+      "Larkix CMS 文章编辑器",
+      "Larkix CMS 独立公式工作台"
+    ],
+    "compatibility": [
+      "保留既有文章公式卡搜索、插入和选区建卡能力"
+    ],
+    "data": [
+      "界面切换不得丢失本地草稿和未保存正文"
+    ],
+    "security": [],
+    "operations": [],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.editor-state",
+      "severity": "high",
+      "statement": "跨工作区切换若重建编辑器，可能丢失选区或未保存正文。",
+      "mitigation": "把文章编辑状态与公式抽屉生命周期解耦，并建立长文往返测试。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-28T15:21:35.320+08:00",
+    "confirmationText": "确认这9个需求包",
+    "digest": "sha256:13c03c4e2dfb936be5c45b4726bbb76a52567a660982af8cd67dd5d84a60c59d"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [
+      "REQ-20260728-003"
+    ],
+    "dispatchedAt": "2026-07-28T15:31:47.952+08:00"
+  }
+}

@@ -1,0 +1,394 @@
+/*
+  Final visitor dark-theme layer.
+  Keep every visual override inside an explicit or system dark scope so the
+  established daylight palette and dimensions remain unchanged.
+*/
+
+[data-theme="dark"] {
+  --theme-dark-canvas: #0b0712;
+  --theme-dark-surface: #120a1f;
+  --theme-dark-surface-raised: #1b102b;
+  --theme-dark-surface-strong: #2a1740;
+  --theme-dark-text: #f8fafc;
+  --theme-dark-muted: #c4b5d4;
+  --theme-dark-border: rgba(196, 181, 212, 0.28);
+  --theme-dark-border-strong: rgba(216, 180, 254, 0.5);
+  --theme-dark-link: #c4b5fd;
+  --theme-dark-link-hover: #ede9fe;
+  --theme-dark-focus: #d8b4fe;
+  --theme-dark-disabled: #988ca8;
+  --theme-dark-selected-bg: rgba(139, 92, 246, 0.24);
+  --theme-dark-success: #86efac;
+  --theme-dark-success-bg: rgba(22, 163, 118, 0.2);
+  --theme-dark-warning: #fde68a;
+  --theme-dark-warning-bg: rgba(180, 116, 0, 0.22);
+  --theme-dark-error: #fca5a5;
+  --theme-dark-error-bg: rgba(185, 28, 28, 0.22);
+  --theme-dark-draft: #fcd34d;
+  --theme-dark-published: #86efac;
+  --theme-dark-archived: #d4d4d8;
+  --theme-dark-code-bg: #211234;
+  --theme-dark-code-text: #ede9fe;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --theme-dark-canvas: #0b0712;
+    --theme-dark-surface: #120a1f;
+    --theme-dark-surface-raised: #1b102b;
+    --theme-dark-surface-strong: #2a1740;
+    --theme-dark-text: #f8fafc;
+    --theme-dark-muted: #c4b5d4;
+    --theme-dark-border: rgba(196, 181, 212, 0.28);
+    --theme-dark-border-strong: rgba(216, 180, 254, 0.5);
+    --theme-dark-link: #c4b5fd;
+    --theme-dark-link-hover: #ede9fe;
+    --theme-dark-focus: #d8b4fe;
+    --theme-dark-disabled: #988ca8;
+    --theme-dark-selected-bg: rgba(139, 92, 246, 0.24);
+    --theme-dark-success: #86efac;
+    --theme-dark-success-bg: rgba(22, 163, 118, 0.2);
+    --theme-dark-warning: #fde68a;
+    --theme-dark-warning-bg: rgba(180, 116, 0, 0.22);
+    --theme-dark-error: #fca5a5;
+    --theme-dark-error-bg: rgba(185, 28, 28, 0.22);
+    --theme-dark-draft: #fcd34d;
+    --theme-dark-published: #86efac;
+    --theme-dark-archived: #d4d4d8;
+    --theme-dark-code-bg: #211234;
+    --theme-dark-code-text: #ede9fe;
+  }
+}
+
+[data-theme="dark"] .skip-link,
+[data-theme="dark"] .empty-state {
+  border-color: var(--theme-dark-border);
+  background: var(--theme-dark-surface-raised);
+  color: var(--theme-dark-muted);
+}
+
+[data-theme="dark"] :is(a, button, input, select, textarea):focus-visible {
+  outline-color: var(--theme-dark-focus);
+}
+
+[data-theme="dark"] :is(button, input, select, textarea):disabled {
+  border-color: var(--theme-dark-border);
+  background-color: color-mix(in srgb, var(--theme-dark-surface) 86%, #000000);
+  color: var(--theme-dark-disabled);
+  opacity: 0.78;
+}
+
+[data-theme="dark"] :is(
+  .syllabus-chip.is-selected,
+  .toc-card a.is-active,
+  .md2doc-actions button.is-active,
+  .formula-authoring-tabs .is-active
+) {
+  border-color: var(--theme-dark-border-strong);
+  background: var(--theme-dark-selected-bg);
+  color: var(--theme-dark-link-hover);
+}
+
+[data-theme="dark"] :is(.button.primary, #downloadButton, #renderButton),
+[data-theme="dark"] body .larkix-hero-actions .button.primary {
+  border-color: #7c3aed;
+  background: #6d28d9;
+  color: #ffffff;
+  box-shadow: 0 14px 30px rgba(76, 29, 149, 0.34);
+}
+
+[data-theme="dark"] :is(.button.primary, #downloadButton, #renderButton):hover:not(:disabled),
+[data-theme="dark"] body .larkix-hero-actions .button.primary:hover:not(:disabled) {
+  border-color: #a78bfa;
+  background: #7c3aed;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .toc-card a {
+  border-bottom-color: var(--theme-dark-border);
+}
+
+[data-theme="dark"] .markdown-article :not(pre) > code {
+  border: 1px solid var(--theme-dark-border);
+  background: var(--theme-dark-code-bg);
+  color: var(--theme-dark-code-text);
+}
+
+[data-theme="dark"] .markdown-article blockquote {
+  border-left-color: var(--theme-dark-link);
+  background: var(--theme-dark-surface-raised);
+  color: var(--theme-dark-muted);
+}
+
+[data-theme="dark"] .markdown-math,
+[data-theme="dark"] .markdown-math-inline {
+  color: var(--theme-dark-code-text);
+}
+
+[data-theme="dark"] .markdown-math-display {
+  border-color: var(--theme-dark-border);
+  background: var(--theme-dark-surface-raised);
+  color: var(--theme-dark-code-text);
+}
+
+[data-theme="dark"] :is(.markdown-table-wrap, .formula-card-public-meta) {
+  border-color: var(--theme-dark-border);
+}
+
+[data-theme="dark"] :is(
+  .formula-derivation-public-grid > section,
+  .formula-derivation-link,
+  .formula-derivation-empty
+) {
+  border-color: var(--theme-dark-border);
+  background: var(--theme-dark-surface-raised);
+  color: var(--theme-dark-text);
+}
+
+[data-theme="dark"] .formula-derivation-link:hover {
+  border-color: var(--theme-dark-border-strong);
+  background: var(--theme-dark-selected-bg);
+}
+
+[data-theme="dark"] :is(
+  .formula-derivation-link.is-unavailable,
+  .formula-dependency-ref.is-unavailable
+) {
+  border-color: rgba(253, 230, 138, 0.46);
+  background: var(--theme-dark-warning-bg);
+  color: var(--theme-dark-warning);
+}
+
+[data-theme="dark"] .formula-dependency-ref {
+  border-left-color: #93c5fd;
+  background: rgba(37, 99, 235, 0.2);
+  color: #dbeafe;
+}
+
+[data-theme="dark"] .formula-dependency-ref:hover {
+  background: rgba(59, 130, 246, 0.28);
+  color: #eff6ff;
+}
+
+[data-theme="dark"] .formula-graph-toolbar button {
+  border-color: var(--theme-dark-border);
+  background: var(--theme-dark-surface-raised);
+  color: var(--theme-dark-text);
+}
+
+[data-theme="dark"] .formula-graph-toolbar button:hover,
+[data-theme="dark"] .formula-graph-toolbar button:focus-visible {
+  border-color: var(--theme-dark-focus);
+  background: var(--theme-dark-selected-bg);
+  color: var(--theme-dark-link-hover);
+}
+
+[data-theme="dark"] .formula-graph-canvas {
+  border-color: var(--theme-dark-border);
+  background:
+    linear-gradient(var(--theme-dark-canvas), var(--theme-dark-canvas)) padding-box,
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 23px,
+      rgba(196, 181, 212, 0.13) 24px
+    ) border-box;
+}
+
+/*
+  Cytoscape node colors are embedded in formula-graph.js and are outside this
+  slice's write set. Filtering only its render canvases maps those fixed
+  daylight colors to a readable dark graph without changing graph data.
+*/
+[data-theme="dark"] .formula-graph-canvas canvas {
+  filter: invert(0.88) hue-rotate(180deg) saturate(0.9) brightness(1.12);
+}
+
+[data-theme="dark"] :is(.status.is-success, .notice.is-success, .theme-status.is-success) {
+  border-color: rgba(134, 239, 172, 0.38);
+  background: var(--theme-dark-success-bg);
+  color: var(--theme-dark-success);
+}
+
+[data-theme="dark"] :is(.status.is-warning, .notice.is-warning, .theme-status.is-warning) {
+  border-color: rgba(253, 230, 138, 0.42);
+  background: var(--theme-dark-warning-bg);
+  color: var(--theme-dark-warning);
+}
+
+[data-theme="dark"] :is(.status.is-error, .notice.is-error, .theme-status.is-error) {
+  border-color: rgba(252, 165, 165, 0.42);
+  background: var(--theme-dark-error-bg);
+  color: var(--theme-dark-error);
+}
+
+[data-theme="dark"] :is(.status.is-draft, .theme-status.is-draft) {
+  color: var(--theme-dark-draft);
+}
+
+[data-theme="dark"] :is(.status.is-published, .theme-status.is-published) {
+  color: var(--theme-dark-published);
+}
+
+[data-theme="dark"] :is(.status.is-archived, .theme-status.is-archived) {
+  color: var(--theme-dark-archived);
+  opacity: 0.78;
+}
+
+[data-theme="dark"] body.md2doc-page {
+  background:
+    linear-gradient(90deg, rgba(167, 139, 250, 0.08) 1px, transparent 1px) 0 0 / 36px 36px,
+    var(--theme-dark-canvas);
+}
+
+[data-theme="dark"] body.md2doc-page .md2doc-preview-stage {
+  background:
+    linear-gradient(90deg, rgba(196, 181, 253, 0.08) 1px, transparent 1px) 0 0 / 24px 24px,
+    var(--theme-dark-canvas);
+}
+
+[data-theme="dark"] body.md2doc-page .md2doc-log.is-error {
+  color: var(--theme-dark-error);
+}
+
+[data-theme="dark"] body.md2doc-page .md2doc-preview {
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.52);
+}
+
+[data-theme="dark"] .ge-error {
+  color: var(--theme-dark-error);
+}
+
+[data-theme="dark"] .ge-warning {
+  color: var(--theme-dark-warning);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .skip-link,
+  :root:not([data-theme="light"]) .empty-state {
+    border-color: var(--theme-dark-border);
+    background: var(--theme-dark-surface-raised);
+    color: var(--theme-dark-muted);
+  }
+
+  :root:not([data-theme="light"]) :is(a, button, input, select, textarea):focus-visible {
+    outline-color: var(--theme-dark-focus);
+  }
+
+  :root:not([data-theme="light"]) :is(button, input, select, textarea):disabled {
+    border-color: var(--theme-dark-border);
+    background-color: color-mix(in srgb, var(--theme-dark-surface) 86%, #000000);
+    color: var(--theme-dark-disabled);
+    opacity: 0.78;
+  }
+
+  :root:not([data-theme="light"]) :is(
+    .syllabus-chip.is-selected,
+    .toc-card a.is-active,
+    .md2doc-actions button.is-active,
+    .formula-authoring-tabs .is-active
+  ) {
+    border-color: var(--theme-dark-border-strong);
+    background: var(--theme-dark-selected-bg);
+    color: var(--theme-dark-link-hover);
+  }
+
+  :root:not([data-theme="light"]) :is(.button.primary, #downloadButton, #renderButton),
+  :root:not([data-theme="light"]) body .larkix-hero-actions .button.primary {
+    border-color: #7c3aed;
+    background: #6d28d9;
+    color: #ffffff;
+  }
+
+  :root:not([data-theme="light"]) .toc-card a {
+    border-bottom-color: var(--theme-dark-border);
+  }
+
+  :root:not([data-theme="light"]) .markdown-article :not(pre) > code {
+    border: 1px solid var(--theme-dark-border);
+    background: var(--theme-dark-code-bg);
+    color: var(--theme-dark-code-text);
+  }
+
+  :root:not([data-theme="light"]) .markdown-article blockquote,
+  :root:not([data-theme="light"]) .markdown-math-display {
+    border-color: var(--theme-dark-border);
+    background: var(--theme-dark-surface-raised);
+    color: var(--theme-dark-code-text);
+  }
+
+  :root:not([data-theme="light"]) :is(.markdown-math, .markdown-math-inline) {
+    color: var(--theme-dark-code-text);
+  }
+
+  :root:not([data-theme="light"]) :is(
+    .formula-derivation-public-grid > section,
+    .formula-derivation-link,
+    .formula-derivation-empty
+  ) {
+    border-color: var(--theme-dark-border);
+    background: var(--theme-dark-surface-raised);
+    color: var(--theme-dark-text);
+  }
+
+  :root:not([data-theme="light"]) .formula-dependency-ref {
+    border-left-color: #93c5fd;
+    background: rgba(37, 99, 235, 0.2);
+    color: #dbeafe;
+  }
+
+  :root:not([data-theme="light"]) :is(
+    .formula-derivation-link.is-unavailable,
+    .formula-dependency-ref.is-unavailable
+  ) {
+    border-color: rgba(253, 230, 138, 0.46);
+    background: var(--theme-dark-warning-bg);
+    color: var(--theme-dark-warning);
+  }
+
+  :root:not([data-theme="light"]) .formula-graph-toolbar button {
+    border-color: var(--theme-dark-border);
+    background: var(--theme-dark-surface-raised);
+    color: var(--theme-dark-text);
+  }
+
+  :root:not([data-theme="light"]) .formula-graph-canvas {
+    border-color: var(--theme-dark-border);
+    background: var(--theme-dark-canvas);
+  }
+
+  :root:not([data-theme="light"]) .formula-graph-canvas canvas {
+    filter: invert(0.88) hue-rotate(180deg) saturate(0.9) brightness(1.12);
+  }
+
+  :root:not([data-theme="light"]) body.md2doc-page .md2doc-preview-stage {
+    background:
+      linear-gradient(90deg, rgba(196, 181, 253, 0.08) 1px, transparent 1px) 0 0 / 24px 24px,
+      var(--theme-dark-canvas);
+  }
+
+  :root:not([data-theme="light"]) :is(.ge-warning, .theme-status.is-warning) {
+    color: var(--theme-dark-warning);
+  }
+
+  :root:not([data-theme="light"]) :is(.ge-error, .theme-status.is-error) {
+    color: var(--theme-dark-error);
+  }
+}
+
+@media print {
+  [data-theme="dark"] {
+    --theme-dark-canvas: #ffffff;
+    --theme-dark-surface: #ffffff;
+    --theme-dark-surface-raised: #ffffff;
+    --theme-dark-surface-strong: #f4f4f5;
+    --theme-dark-text: #18181b;
+    --theme-dark-muted: #52525b;
+    --theme-dark-border: #d4d4d8;
+    --theme-dark-code-bg: #f4f4f5;
+    --theme-dark-code-text: #18181b;
+  }
+
+  [data-theme="dark"] .formula-graph-canvas canvas {
+    filter: none;
+  }
+}

@@ -8,7 +8,7 @@ window.LARKIX_POSTS = [
     categoryKey: "analog",
     recommendationPriority: 10,
     date: "2026-05-03",
-    readTime: "12 分钟阅读",
+    readingMinutes: 12,
     excerpt: "从指标拆解、拓扑选择、参数计算到示波器验证，整理一套可复用的模拟前端设计流程。",
     cover: "./assets/covers/analog-cover.png",
     tags: "模拟电子,滤波器,低通滤波,Sallen-Key,运放,仿真,调试,设计指南",
@@ -101,7 +101,7 @@ for (uint16_t i = 0; i < sample_count; i++) {
     categoryKey: "stm32",
     recommendationPriority: 20,
     date: "2026-05-03",
-    readTime: "15 分钟阅读",
+    readingMinutes: 15,
     excerpt: "围绕采样时间、DMA 环形缓冲、参考电压和软件滤波，建立稳定可信的 ADC 采样链路。",
     cover: "./assets/covers/stm32-cover.png",
     tags: "STM32,ADC,DMA,采样时间,环形缓冲,校准,调试,设计指南",
@@ -186,7 +186,7 @@ ADC 精度优化不是单一参数调优。真正有效的做法是把模拟电�
     categoryKey: "esp32",
     recommendationPriority: 30,
     date: "2026-05-03",
-    readTime: "14 分钟阅读",
+    readingMinutes: 14,
     excerpt: "从硬件静态电流、Deep Sleep、MQTT 上报到 OTA 维护，设计一个真正省电的联网节点。",
     cover: "./assets/covers/esp32-cover.png",
     tags: "ESP32,低功耗,Deep Sleep,MQTT,传感器节点,电池供电,智能家居,设计指南",
@@ -255,7 +255,7 @@ ESP32 低功耗项目的关键不是单独调用 Deep Sleep，而是把硬件供
     categoryKey: "projects",
     recommendationPriority: 80,
     date: "2026-05-03",
-    readTime: "10 分钟阅读",
+    readingMinutes: 10,
     excerpt: "一个适合长期沉淀的开源硬件项目：原理图、PCB、BOM、固件、外壳和调试记录都应可复现。",
     cover: "./assets/covers/project-cover.png",
     tags: "开源硬件,项目规划,功率放大器,音频,BOM,PCB,调试记录,复现指南",
@@ -308,3 +308,13 @@ Power In -> Protection -> Amplifier Supply
 一个好的开源硬件项目，不只是一块能工作的 PCB。它应该让别人能理解设计原因、复现制作过程，并在你的基础上继续改进。`
   }
 ];
+
+window.LARKIX_POSTS.forEach((post) => {
+  Object.defineProperty(post, "readTime", {
+    configurable: true,
+    enumerable: false,
+    get() {
+      return this.readingMinutes;
+    }
+  });
+});

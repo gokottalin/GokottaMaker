@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260728-001",
+  "title": "可还原的十六比九封面裁剪预览",
+  "status": "dispatched",
+  "priority": "normal",
+  "createdAt": "2026-07-28T15:07:48.136+08:00",
+  "updatedAt": "2026-07-28T15:31:47.952+08:00",
+  "intent": {
+    "problem": "新建文章时图片裁剪功能不能显示实际封面的预览矩形，作者无法准确判断最终保留区域。",
+    "desiredOutcome": "使用固定十六比九裁剪框完成可视化、无损、可还原的封面裁剪，并清楚区分保留区与舍弃区。",
+    "targetUsers": [
+      "Owner/幕后作者"
+    ]
+  },
+  "scope": {
+    "in": [
+      "文章封面裁剪界面显示固定 16:9 预览矩形，对应推荐输出比例 1920:1080",
+      "作者可拖动整个裁剪框改变位置",
+      "作者可拖动裁剪框四角等比例缩放，始终保持 16:9",
+      "裁剪框外区域显示为黑白灰度并应用高斯模糊，框内保持正常颜色和清晰度",
+      "保存时只保存可跨尺寸复现的裁剪坐标，不生成或覆盖新的图片文件",
+      "网页根据原图和裁剪坐标实时显示裁剪结果，不拉伸图片",
+      "作者可以重新打开裁剪界面继续调整，也可以重置并恢复完整原图"
+    ],
+    "out": [
+      "永久删除原图",
+      "保存一份不可还原的裁剪图片替代原图",
+      "把聚焦内容卡片强制为 16:9"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "裁剪界面无法显示与实际文章封面对应的预览矩形。"
+    ],
+    "expected": [
+      "选择图片后立即显示可移动、可等比例缩放的 16:9 裁剪框。",
+      "框外灰度模糊效果使最终保留区域一目了然。",
+      "保存后所有使用文章封面裁剪结果的页面按坐标实时渲染。",
+      "重新编辑或重置裁剪不会损失原图。"
+    ],
+    "edgeCases": [
+      "横图、竖图、方图和超长图均能生成有效 16:9 裁剪区域。",
+      "裁剪框不能越出原图有效区域。",
+      "旧文章没有裁剪坐标时仍能安全显示原图。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.visible-frame",
+      "statement": "选择文章图片后显示固定 16:9 裁剪预览框，框内清晰彩色，框外灰度并高斯模糊。",
+      "verification": "分别使用横图、竖图和方图打开裁剪界面，检查裁剪框和框外视觉效果。"
+    },
+    {
+      "id": "ac.move-resize",
+      "statement": "裁剪框可整体移动，四角缩放时始终保持 16:9 且不越出原图。",
+      "verification": "拖动框体和四个角到原图边缘，核对实时比例、边界限制和预览。"
+    },
+    {
+      "id": "ac.coordinate-only",
+      "statement": "保存只记录裁剪坐标，原始图片文件保持不变。",
+      "verification": "保存前后比较原图标识和内容，检查记录的归一化裁剪坐标及网页渲染结果。"
+    },
+    {
+      "id": "ac.reversible",
+      "statement": "作者可再次调整或重置裁剪，重置后恢复完整原图。",
+      "verification": "保存一次裁剪后重新进入编辑，调整并保存；随后重置并检查原图完整恢复。"
+    },
+    {
+      "id": "ac.no-distortion",
+      "statement": "桌面和移动网页均按坐标裁切而不拉伸或压扁图片。",
+      "verification": "在多种响应式宽度检查封面中的圆形、文字和已知比例对象。"
+    }
+  ],
+  "constraints": {
+    "languages": [
+      "zh-CN"
+    ],
+    "platforms": [
+      "Larkix CMS 图片裁剪器",
+      "Larkix 游客文章页面"
+    ],
+    "compatibility": [
+      "旧文章和无裁剪坐标图片继续可用",
+      "原图片资源保持可恢复"
+    ],
+    "data": [
+      "只新增或更新裁剪坐标",
+      "不得覆盖或删除原图"
+    ],
+    "security": [],
+    "operations": [
+      "裁剪调整必须可重复保存和重置"
+    ],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.coordinate-drift",
+      "severity": "medium",
+      "statement": "若保存像素坐标而非可缩放坐标，不同显示尺寸可能产生裁剪漂移。",
+      "mitigation": "使用与原图尺寸无关的坐标表示，并在多分辨率下回放验证。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-28T15:21:35.320+08:00",
+    "confirmationText": "确认这9个需求包",
+    "digest": "sha256:e8590c93e4a957f0f7e30a2e8b061e7127b6b3e93982e3fd41f08e30af7eaad1"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-07-28T15:31:47.952+08:00"
+  }
+}

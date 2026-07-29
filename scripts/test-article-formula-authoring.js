@@ -175,6 +175,11 @@ async function apiChecks(tempRoot) {
     const createdCard = await request("/api/admin/formulas", { method: "POST", body: JSON.stringify(card) });
     assert.equal(createdCard.response.status, 200);
     const currentRevisionId = createdCard.payload.card.currentRevisionId;
+    const publishedCard = await request(`/api/admin/formulas/${encodeURIComponent(card.formulaId)}/publish`, {
+      method: "POST",
+      body: "{}"
+    });
+    assert.equal(publishedCard.response.status, 200);
 
     const globalSearch = await request("/api/admin/formulas?authoring=1&q=output-voltage&pageSize=6");
     assert.equal(globalSearch.response.status, 200);
@@ -214,7 +219,8 @@ async function apiChecks(tempRoot) {
     const atomicPost = postPayload({
       id: "api-atomic-formula",
       slug: "api-atomic-formula",
-      markdown: selectionMarkdown
+      markdown: selectionMarkdown,
+      publishStatus: "draft"
     });
     const atomic = await request("/api/admin/formulas/from-selection", {
       method: "POST",
@@ -290,6 +296,7 @@ async function main() {
       assert.ok(db.prepare("SELECT 1 AS ok FROM schema_migrations WHERE id = '015_article_formula_bindings'").get()?.ok);
 
       const createdCard = store.saveFormulaCard(cardPayload());
+      store.publishFormulaCard(createdCard.card.formulaId);
       const unbound = postPayload();
       const savedUnbound = store.savePost(unbound);
       assert.equal(savedUnbound.markdown, unbound.markdown);
@@ -326,7 +333,8 @@ async function main() {
       const atomicPost = postPayload({
         id: "atomic-direct",
         slug: "atomic-direct",
-        markdown: displaySource
+        markdown: displaySource,
+        publishStatus: "draft"
       });
       const atomicFormula = cardPayload({
         formulaId: "formula.user.atomic-direct",
@@ -352,6 +360,7 @@ async function main() {
           latex: "x=2"
         })
       );
+      store.publishFormulaCard(replacementCard.card.formulaId);
       const rewritten = formulaBindingShortcode({
         ...binding,
         formulaId: replacementCard.card.formulaId,
@@ -404,8 +413,12 @@ async function main() {
     assert.match(adminJs, /contextmenu/);
     assert.match(adminJs, /from-selection/);
     assert.match(adminJs, /Shift \+ 右键/);
-    assert.match(adminCss, /@media \(max-width: 640px\)[\s\S]*formula-authoring-popover/);
-    console.log("article formula authoring checks passed: unbound LaTeX, existing binding, atomic create, rollback, immutable identity, renderer and API");
+    assert.match(adminHtml, /id="formulaAuthoringQuickPreview"/);
+    assert.match(adminHtml, /id="formulaAuthoringWorkbenchButton"/);
+    assert.match(adminJs, /captureFormulaEditorState/);
+    assert.match(adminJs, /renderFormulaAuthoringQuickPreview/);
+    assert.match(adminCss, /@media \(max-width: 640px\)[\s\S]*formula-authoring-drawer/);
+    console.log("article formula authoring checks passed: unbound LaTeX, existing binding, atomic create, rollback, immutable identity, drawer, renderer and API");
   } finally {
     safeRemoveTemp(tempRoot);
   }

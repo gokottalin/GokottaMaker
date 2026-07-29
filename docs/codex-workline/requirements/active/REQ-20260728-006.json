@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260728-006",
+  "title": "文章建议阅读时间的作者输入与条件显示",
+  "status": "dispatched",
+  "priority": "normal",
+  "createdAt": "2026-07-28T15:07:48.136+08:00",
+  "updatedAt": "2026-07-28T15:31:47.952+08:00",
+  "intent": {
+    "problem": "文章固定显示 10 分钟阅读时间，不能反映作者对不同文章体量的判断。",
+    "desiredOutcome": "由作者为每篇文章选填正整数分钟数，填写后在文章详情和文章列表显示，未填写时完全隐藏。",
+    "targetUsers": [
+      "Owner/幕后作者",
+      "游客"
+    ]
+  },
+  "scope": {
+    "in": [
+      "文章编辑界面新增建议阅读时间输入项",
+      "字段选填，单位为分钟",
+      "只接受正整数",
+      "填写后同时显示在文章详情页标题区和文章列表卡片",
+      "未填写时两处都不显示阅读时间",
+      "旧文章原有固定 10 分钟显示改为未设置状态，不再自动显示"
+    ],
+    "out": [
+      "根据字数自动估算阅读时间",
+      "未填写时回退到固定 10 分钟",
+      "允许零、负数、小数或带单位文本"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "每篇文章固定显示 10 分钟阅读时间。"
+    ],
+    "expected": [
+      "作者可填写例如 6、10、25 分钟。",
+      "有效值保存后在详情标题区和列表卡片一致显示。",
+      "空值不会产生占位文案或多余间距。"
+    ],
+    "edgeCases": [
+      "输入零、负数、小数、字母或超出合理存储范围。",
+      "作者清空已保存的阅读时间。",
+      "旧文章没有新字段。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.optional-input",
+      "statement": "建议阅读时间为选填分钟字段，仅接受正整数。",
+      "verification": "分别提交空值、有效正整数、零、负数、小数和文本，核对校验提示及存储结果。"
+    },
+    {
+      "id": "ac.detail-display",
+      "statement": "填写后文章详情页标题区显示相同分钟数。",
+      "verification": "发布含阅读时间的文章并检查详情页。"
+    },
+    {
+      "id": "ac.card-display",
+      "statement": "填写后所有适用文章列表卡片显示相同分钟数。",
+      "verification": "检查首页、分类列表和内容卡片中的显示一致性。"
+    },
+    {
+      "id": "ac.hidden-when-empty",
+      "statement": "未填写或清空后，详情和列表均不显示阅读时间，也不保留空白占位。",
+      "verification": "检查新旧未设置文章并比较布局。"
+    }
+  ],
+  "constraints": {
+    "languages": [
+      "zh-CN"
+    ],
+    "platforms": [
+      "Larkix CMS 文章编辑器",
+      "Larkix 游客文章详情页",
+      "Larkix 游客文章列表"
+    ],
+    "compatibility": [
+      "旧文章无字段时继续正常渲染"
+    ],
+    "data": [
+      "只保存正整数分钟或空值"
+    ],
+    "security": [],
+    "operations": [],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.legacy-default",
+      "severity": "low",
+      "statement": "旧前端若仍保留 10 分钟回退逻辑，会与新空值语义冲突。",
+      "mitigation": "搜索并移除所有固定回退，在详情和列表建立空值回归。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-28T15:21:35.320+08:00",
+    "confirmationText": "确认这9个需求包",
+    "digest": "sha256:9a5cd915bde214666a30d2a912bbdf3c313a6c16680683323594d5da2060e620"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-07-28T15:31:47.952+08:00"
+  }
+}

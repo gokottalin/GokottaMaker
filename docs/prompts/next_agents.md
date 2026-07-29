@@ -1,40 +1,61 @@
-# Next Agents
+# Next Agent
 
-## Next Step For The User
+## Automatic Dispatch
 
-Use this short handoff in a fresh Codex session:
+A00 dispatches the current short task directly. The Owner does not need to
+copy or relay this prompt.
 
 ```text
-Agent 00 Project Director（项目导演：负责顺序、门禁和下一步裁决）：请进入 E:\Project\2607-LarkixWeb，运行 npm.cmd run codex:handoff，然后按输出的 controller brief 核对当前状态；当前无待派发职能 Agent；若收到新需求，直接交给对应职能 Agent，若不存在则由 A00 创建并注册后继续；使用中文交接，遵守 AGENTS.md 门禁。
+Agent 00 Project Director（项目导演：负责顺序、门禁和下一步裁决）：请进入 E:\Project\2607-LarkixWeb，运行 npm.cmd run codex:handoff 核验路由，然后执行 agents\A00_ProjectDirector\brief.md；使用中文交接，遵守 AGENTS.md 门禁。
 ```
 
 Current controller: `A00_ProjectDirector`.
 
-S12 has been accepted. The automatic functional-Agent queue is complete.
-There is no pending functional Agent.
+The nine Owner-confirmed 2026-07-28 requirement packages remain governed by
+`DISPATCH-20260728-001`. S18 through S28 are accepted. There is no current
+short-task Agent; routing returns to `A00_ProjectDirector`.
 
-Source/test changes, current/production data, cloud, deployment, restore,
-rollback, staging, commit, and push remain closed until separately authorized.
+The S28 historical plan classified 216 paths. The authorized V2.5.2 release
+candidate now contains 121 include paths, 107 exclusions, and zero
+review-required paths after the 12-path version synchronization.
 
-The detailed task contract lives in:
+Current/production data, physical legacy cleanup, cloud, deployment, restore,
+and rollback remain closed. Owner has authorized A00 to stage, commit, and push
+the reviewed V2.5.2 candidate only.
+
+The detailed contract lives in:
 
 - `PROJECT_WINDOW.md`
 - `docs/codex-workline/task_registry.json`
 - `docs/codex-workline/implementation_slices.json`
-- `docs/codex-workline/release_gate_plan.md`
-- `docs/codex-workline/git_staging_plan.md`
-- `agents/A00_ProjectDirector/brief.md`
+- `docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json`
+- `docs/codex-workline/slices/S28_release_git_gate_handoff.md`
+- `docs/release-git-gate-20260728.md`
+- `docs/git-staging-plan-20260728.md`
 
 ## Confirmed Queue
 
-After each handoff is accepted by A00, open exactly one next workbench:
+1. A24 formula publication workflow. Accepted.
+2. A26 branching derivation graph. Accepted.
+3. A27 formula authoring drawer. Accepted.
+4. A28 isolated legacy migration and cleanup proof. Accepted.
+5. A29 post cover coordinates. Accepted.
+6. A30 reading minutes and A31 inline-math layout. Accepted.
+7. A25 focused-content media fit. Accepted.
+8. A32 full-site dark theme. Accepted.
+9. A33 batch regression evidence. Accepted.
+10. A34 release and Git gate. Accepted.
 
-No implementation Agent follows A17. A00 has accepted the final handoff.
+A35 physical legacy cleanup remains outside the automatic queue until a fresh
+current/production backup and independent restore rehearsal pass, A00 presents
+the exact report digest and affected rows, and the Owner explicitly authorizes
+the irreversible apply operation.
 
-A00 must not execute staging or release without a new explicit authorization.
-The Owner does not need to relay any completed handoff or type "继续".
+The automatic queue is complete. A00 may open new work only after a confirmed
+requirement package or explicit Owner authorization. Git staging/commit/push,
+production deployment, and S29 cleanup remain closed.
 
-Each routed brief must be dispatched directly to its matching functional Agent.
-If the functional Agent does not exist, A00 creates and registers a narrow
-temporary Agent and dispatches the brief immediately. Missing Agent definitions
-must never be used as a reason to stop or return relay text to the Owner.
+Each routed brief is dispatched directly to its matching functional Agent. If
+an Agent definition is missing, A00 creates and registers the narrow temporary
+Agent before dispatch. Missing Agent definitions never stop the queue or create
+manual relay work for the Owner.

@@ -1,0 +1,196 @@
+{
+  "schemaVersion": "larkix.requirement-dispatch.v1",
+  "dispatchId": "DISPATCH-20260728-001",
+  "status": "accepted_by_a00",
+  "acceptedAt": "2026-07-28T16:00:00+08:00",
+  "controller": "A00_ProjectDirector",
+  "sourceRequirements": [
+    {
+      "requirementId": "REQ-20260728-001",
+      "digest": "sha256:e8590c93e4a957f0f7e30a2e8b061e7127b6b3e93982e3fd41f08e30af7eaad1"
+    },
+    {
+      "requirementId": "REQ-20260728-002",
+      "digest": "sha256:d2e61fa63ef21f90e7d80705be05a9b12794f4936edb070d1900ff0cb3cc0e32"
+    },
+    {
+      "requirementId": "REQ-20260728-003",
+      "digest": "sha256:293dde205c90a4770c92615bb8233f0c816800dc744eca65750145e888438247"
+    },
+    {
+      "requirementId": "REQ-20260728-004",
+      "digest": "sha256:0ded0859f6d9360cdec15e58e69b2a89e6e27d218135f7c8fc458bfdfeb7a9c6"
+    },
+    {
+      "requirementId": "REQ-20260728-005",
+      "digest": "sha256:e2087547e7c12be383dcb91aa755bfaa91eae619f7d8833c1027343cd53e7ff9"
+    },
+    {
+      "requirementId": "REQ-20260728-006",
+      "digest": "sha256:9a5cd915bde214666a30d2a912bbdf3c313a6c16680683323594d5da2060e620"
+    },
+    {
+      "requirementId": "REQ-20260728-007",
+      "digest": "sha256:5e5c6e5c9964f99afb5d338511ec5faebccb273817963f300a432e74f0151831"
+    },
+    {
+      "requirementId": "REQ-20260728-008",
+      "digest": "sha256:13c03c4e2dfb936be5c45b4726bbb76a52567a660982af8cd67dd5d84a60c59d"
+    },
+    {
+      "requirementId": "REQ-20260728-009",
+      "digest": "sha256:7969df7f4d75550c453fe234f79dc266fb14b7934d7b95254806449bb006870e"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "decision.formula-critical-path",
+      "statement": "REQ-20260728-003 establishes the final formula publication model before REQ-20260728-005 branching relations, REQ-20260728-008 drawer work, and REQ-20260728-004 migration."
+    },
+    {
+      "id": "decision.single-writer-hot-files",
+      "statement": "Tasks that edit server.js, lib/content.js, admin/index.html, admin/admin.js, admin/admin.css, post.js, derive.html, data/markdown-renderer.js, or styles/20-content.css are serialized whenever their write sets overlap."
+    },
+    {
+      "id": "decision.parallel-only-disjoint",
+      "statement": "Article reading time and inline math layout may run in parallel only after cover-crop semantics are accepted because their declared write sets are disjoint; browser acceptance remains serialized."
+    },
+    {
+      "id": "decision.reserve-migration-numbers",
+      "statement": "Reserve migration 020 for formula publication, 021 and 022 for branching derivations and revision presentation snapshots, 023 for legacy migration support, 024 for post cover coordinates, and 025 for nullable reading minutes."
+    },
+    {
+      "id": "decision.destructive-split",
+      "statement": "REQ-20260728-004 is split into isolated migration and cleanup proof first, followed by a separately authorized current or production cleanup operation. No numbered startup migration may physically delete legacy records."
+    },
+    {
+      "id": "decision.theme-last",
+      "statement": "The full-site dark-theme repair runs after all new formula, graph, drawer, media, and math surfaces exist so one final theme matrix covers the completed UI."
+    }
+  ],
+  "executionOrder": [
+    {
+      "wave": 1,
+      "slice": "S18_formula_publication_workflow",
+      "agent": "A24_FormulaPublishingWorkflow",
+      "status": "completed",
+      "requirements": ["REQ-20260728-003"]
+    },
+    {
+      "wave": 2,
+      "slice": "S19_branching_derivation_graph",
+      "agent": "A26_BranchingDerivationGraph",
+      "status": "completed",
+      "requirements": ["REQ-20260728-005"],
+      "dependsOn": ["S18_formula_publication_workflow"]
+    },
+    {
+      "wave": 3,
+      "slice": "S20_formula_authoring_drawer",
+      "agent": "A27_FormulaAuthoringDrawer",
+      "status": "completed",
+      "requirements": ["REQ-20260728-008"],
+      "dependsOn": ["S18_formula_publication_workflow", "S19_branching_derivation_graph"]
+    },
+    {
+      "wave": 4,
+      "slice": "S21_legacy_formula_migration_safety",
+      "agent": "A28_LegacyFormulaMigrationSafety",
+      "status": "completed",
+      "requirements": ["REQ-20260728-004"],
+      "dependsOn": ["S19_branching_derivation_graph", "S20_formula_authoring_drawer"]
+    },
+    {
+      "wave": 5,
+      "slice": "S22_post_cover_coordinates",
+      "agent": "A29_PostCoverCoordinates",
+      "status": "completed",
+      "requirements": ["REQ-20260728-001"]
+    },
+    {
+      "wave": 6,
+      "slice": "S23_post_reading_minutes",
+      "agent": "A30_PostReadingMinutes",
+      "status": "completed",
+      "parallelGroup": "article-math",
+      "requirements": ["REQ-20260728-006"],
+      "dependsOn": ["S22_post_cover_coordinates"]
+    },
+    {
+      "wave": 6,
+      "slice": "S24_inline_math_layout",
+      "agent": "A31_InlineMathLayout",
+      "status": "completed",
+      "parallelGroup": "article-math",
+      "requirements": ["REQ-20260728-002"],
+      "dependsOn": ["S22_post_cover_coordinates"]
+    },
+    {
+      "wave": 7,
+      "slice": "S25_focused_content_media",
+      "agent": "A25_FocusedContentMedia",
+      "status": "completed",
+      "requirements": ["REQ-20260728-007"],
+      "dependsOn": ["S22_post_cover_coordinates", "S24_inline_math_layout"]
+    },
+    {
+      "wave": 8,
+      "slice": "S26_full_site_dark_theme",
+      "agent": "A32_FullSiteDarkTheme",
+      "status": "completed",
+      "requirements": ["REQ-20260728-009"],
+      "dependsOn": [
+        "S20_formula_authoring_drawer",
+        "S23_post_reading_minutes",
+        "S24_inline_math_layout",
+        "S25_focused_content_media"
+      ]
+    },
+    {
+      "wave": 9,
+      "slice": "S27_batch_regression_evidence",
+      "agent": "A33_BatchRegressionEvidence",
+      "status": "completed",
+      "requirements": [
+        "REQ-20260728-001",
+        "REQ-20260728-002",
+        "REQ-20260728-003",
+        "REQ-20260728-004",
+        "REQ-20260728-005",
+        "REQ-20260728-006",
+        "REQ-20260728-007",
+        "REQ-20260728-008",
+        "REQ-20260728-009"
+      ]
+    },
+    {
+      "wave": 10,
+      "slice": "S28_release_git_gate",
+      "agent": "A34_ReleaseGitGate",
+      "status": "completed",
+      "requirements": []
+    }
+  ],
+  "deferredCriticalGate": {
+    "slice": "S29_legacy_formula_cleanup_apply",
+    "agent": "A35_LegacyFormulaCleanupApply",
+    "status": "blocked_until_isolated_proof_and_owner_final_confirmation",
+    "requirement": "REQ-20260728-004",
+    "conditions": [
+      "S21 isolated migration, restore, mapping, redirect, and cleanup proof passes",
+      "a fresh current or production backup and independent restore rehearsal pass",
+      "the exact cleanup report digest and affected-row list are shown to the Owner",
+      "the Owner explicitly authorizes the irreversible apply operation"
+    ]
+  },
+  "gates": {
+    "namedSourceAndTestEditsAllowed": true,
+    "isolatedDataDirVerificationAllowed": true,
+    "currentOrProductionDataMutationAllowed": false,
+    "legacyPhysicalCleanupAllowed": false,
+    "productionDeploymentAllowed": false,
+    "gitStagingCommitPushAllowed": false,
+    "oneActiveWriterPerFile": true
+  },
+  "nextHandoffs": []
+}

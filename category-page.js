@@ -59,6 +59,16 @@
   const projectMap = new Map(allProjects.map((item) => [item.id, item]));
   const escapeHtml = window.LarkixMedia.escapeHtml;
 
+  function readingMinutesLabel(value) {
+    const minutes = Number(value);
+    return Number.isInteger(minutes) && minutes >= 1 && minutes <= 9999 ? `${minutes} 分钟阅读` : "";
+  }
+
+  function readingMinutesMeta(post) {
+    const label = readingMinutesLabel(post.readingMinutes);
+    return label ? `<span>${escapeHtml(label)}</span>` : "";
+  }
+
   const titleNode = document.querySelector("#categoryTitle");
   const titleEnNode = document.querySelector("#categoryTitleEn");
   const summaryNode = document.querySelector("#categorySummary");
@@ -222,7 +232,7 @@
   function lessonRow(post) {
     return `
       <article class="lesson-row">
-        <a href="${itemUrl(post)}">${window.LarkixMedia.image(post.cover, `${post.title}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 180px" })}</a>
+        <a href="${itemUrl(post)}">${window.LarkixMedia.image(post.cover, `${post.title}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 180px", crop: post.coverCrop })}</a>
         <div>
           <div class="lesson-row-meta">
             <span class="category-pill">${escapeHtml(post.category)}</span>
@@ -230,7 +240,7 @@
           </div>
           <h3><a href="${itemUrl(post)}">${escapeHtml(post.title)}</a></h3>
           <p>${escapeHtml(post.excerpt)}</p>
-          <div class="card-footer"><span>${escapeHtml(post.readTime)}</span><a class="card-link" href="${itemUrl(post)}">进入课程</a></div>
+          <div class="card-footer">${readingMinutesMeta(post)}<a class="card-link" href="${itemUrl(post)}">进入课程</a></div>
         </div>
       </article>
     `;
@@ -351,9 +361,9 @@
         </div>
         <h2><a href="${itemUrl(post)}">${escapeHtml(post.title)}</a></h2>
         <p>${escapeHtml(post.excerpt)}</p>
-        <div class="card-footer"><span>${escapeHtml(post.readTime)}</span><span>${escapeHtml(post.date)}</span></div>
+        <div class="card-footer">${readingMinutesMeta(post)}<span>${escapeHtml(post.date)}</span></div>
       </div>
-      <a class="lesson-feature-media" href="${itemUrl(post)}">${window.LarkixMedia.image(post.cover, `${post.title}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 360px" })}</a>
+      <a class="lesson-feature-media" href="${itemUrl(post)}">${window.LarkixMedia.image(post.cover, `${post.title}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 360px", crop: post.coverCrop })}</a>
     `;
   }
 

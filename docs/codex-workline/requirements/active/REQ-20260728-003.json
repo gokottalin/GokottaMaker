@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260728-003",
+  "title": "公式卡 Markdown 推导正文与三态发布工作流",
+  "status": "dispatched",
+  "priority": "normal",
+  "createdAt": "2026-07-28T15:07:48.136+08:00",
+  "updatedAt": "2026-07-28T15:31:47.952+08:00",
+  "intent": {
+    "problem": "现有公式卡不能撰写完整 Markdown 推导过程，公式推导节点处于半维护状态；公式发布状态和文章引用边界也不够完整。",
+    "desiredOutcome": "让每张公式卡都具备独立、可编辑、可预览、可发布的 Markdown 推导正文，并建立草稿、已发布、已归档三态工作流。",
+    "targetUsers": [
+      "Owner/幕后作者",
+      "游客"
+    ]
+  },
+  "scope": {
+    "in": [
+      "每张公式卡新增独立的 Markdown 推导正文和实时预览",
+      "游客公式页按结论公式、用途说明、Markdown 推导正文的顺序展示",
+      "公式卡状态固定为草稿、已发布、已归档",
+      "新建公式卡默认是草稿，只有 CMS 可见并可继续编辑公式与推导正文",
+      "已发布公式卡才允许游客访问独立公式页",
+      "已归档公式卡保留文章引用、不可变修订和推导关系，但独立公式页不公开",
+      "已发布公式卡的公式或 Markdown 被编辑时生成待发布修订，游客继续看到旧的已发布修订，直到作者明确重新发布",
+      "公式模块使用单选、主分类使用单选、标签使用多选",
+      "模块、分类和标签使用可搜索下拉选项卡",
+      "没有目标模块或分类时，作者可在下拉框输入新名称并明确保存；系统清理空格、统一格式并生成 slug",
+      "全部模块、分类和标签可在 CMS 后台管理",
+      "草稿公式卡可以绑定草稿文章",
+      "文章准备发布时若引用草稿公式卡，系统阻止发布并提示先发布公式卡",
+      "已归档公式卡继续在既有文章中显示旧修订，但不能插入新文章"
+    ],
+    "out": [
+      "未获作者确认就根据正文猜测并创建类目",
+      "编辑已发布公式后立即覆盖游客当前版本",
+      "向新文章插入已归档公式卡",
+      "让游客访问草稿或已归档公式卡独立页面",
+      "旧公式体系的迁移和删除",
+      "公式推导依赖图与顶部网络图"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "公式卡缺少可编辑的 Markdown 推导正文。",
+      "现有推导节点与公式卡存在重复和半维护状态。"
+    ],
+    "expected": [
+      "作者在独立公式工作台同时维护结论公式、用途、分类、标签和 Markdown 推导。",
+      "公式卡保存草稿与公开发布明确分离。",
+      "公开版本更新必须由作者明确发布，不能静默变化。",
+      "文章发布门禁检查所有公式卡状态。",
+      "公式卡归档不破坏既有文章的历史复现。"
+    ],
+    "edgeCases": [
+      "已发布公式存在未发布修订时，游客继续看到上一已发布修订。",
+      "文章同时引用草稿、已发布和已归档公式时，发布门禁给出逐项说明。",
+      "新建类目规范化后与既有类目重复时应复用既有项而不是产生重复。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.markdown-authoring",
+      "statement": "每张公式卡均可编辑和实时预览独立 Markdown 推导正文。",
+      "verification": "新建草稿公式卡，输入包含标题、正文、LaTeX 和链接的 Markdown，保存并重新打开核对。"
+    },
+    {
+      "id": "ac.public-order",
+      "statement": "已发布公式页依次显示公式、用途和推导正文；草稿与归档页不向游客公开。",
+      "verification": "分别创建三种状态公式卡并检查公开路由。"
+    },
+    {
+      "id": "ac.pending-publication",
+      "statement": "编辑已发布公式或推导正文只生成待发布修订，游客继续看到旧版，重新发布后才切换。",
+      "verification": "发布一张公式卡、修改两类内容、比较发布前后游客页面与修订记录。"
+    },
+    {
+      "id": "ac.classification-controls",
+      "statement": "模块和主分类各单选，标签多选；选项可搜索并可由作者显式新建，保存时自动规范化。",
+      "verification": "选择既有项、创建新项、输入空格和大小写变体并检查去重、slug 和后台管理。"
+    },
+    {
+      "id": "ac.article-draft-binding",
+      "statement": "草稿公式卡可绑定草稿文章，但引用草稿公式卡的文章不能发布。",
+      "verification": "在草稿文章插入草稿卡，再尝试发布并检查阻止原因；发布公式卡后重新发布文章。"
+    },
+    {
+      "id": "ac.archived-history",
+      "statement": "归档公式卡保留既有文章渲染和历史，但不允许新插入且独立公式页隐藏。",
+      "verification": "归档被文章引用的公式卡，检查旧文章、新插入选择器和公式独立路由。"
+    }
+  ],
+  "constraints": {
+    "languages": [
+      "zh-CN",
+      "Markdown",
+      "LaTeX"
+    ],
+    "platforms": [
+      "Larkix CMS 公式工作台",
+      "Larkix CMS 文章编辑器",
+      "Larkix 游客公式页",
+      "Larkix 游客文章页"
+    ],
+    "compatibility": [
+      "保留既有文章绑定的不可变公式修订",
+      "已发布内容在待发布修订期间保持当前公开版本"
+    ],
+    "data": [
+      "状态和修订必须可追踪",
+      "类目规范化不得静默合并语义不同的项"
+    ],
+    "security": [
+      "草稿和待发布修订不得进入游客接口"
+    ],
+    "operations": [
+      "公开版本切换必须由作者明确发布"
+    ],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.draft-leak",
+      "severity": "high",
+      "statement": "若公开 API 错误读取最新修订，会泄露尚未发布的公式或推导。",
+      "mitigation": "公开接口只读取明确发布的修订，并建立状态组合回归。"
+    },
+    {
+      "id": "risk.category-duplication",
+      "severity": "medium",
+      "statement": "作者自由创建类目可能产生格式不同但语义相同的重复项。",
+      "mitigation": "保存前规范化并提示可能重复项，由作者明确选择复用或新建。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-28T15:21:35.320+08:00",
+    "confirmationText": "确认这9个需求包",
+    "digest": "sha256:293dde205c90a4770c92615bb8233f0c816800dc744eca65750145e888438247"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-07-28T15:31:47.952+08:00"
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260728-004",
+  "title": "旧公式与推导节点的验证迁移及物理清理",
+  "status": "dispatched",
+  "priority": "normal",
+  "createdAt": "2026-07-28T15:07:48.136+08:00",
+  "updatedAt": "2026-07-28T15:31:47.952+08:00",
+  "intent": {
+    "problem": "旧公式、旧推导节点和新公式卡形成重复的半维护体系，作者难以判断应维护哪一套数据。",
+    "desiredOutcome": "把旧公式和推导内容自动迁入统一公式卡体系，完整验证后物理删除旧记录，并用永久重定向保护旧公开链接。",
+    "targetUsers": [
+      "Owner/幕后作者",
+      "游客"
+    ]
+  },
+  "scope": {
+    "in": [
+      "迁移前创建完整、可验证、可恢复的旧数据备份",
+      "系统自动把旧公式和旧推导节点映射到新的公式卡、Markdown 推导正文和依赖关系",
+      "文章引用直接更新为新公式卡身份和有效修订",
+      "核对迁移前后公式正文、Markdown、文章引用、推导关系、状态和总数量",
+      "只有全部验证通过后才物理删除已迁移的旧公式和旧推导节点记录",
+      "旧公开地址永久重定向到对应新公式卡",
+      "迁移结果提供映射、验证、删除和重定向摘要"
+    ],
+    "out": [
+      "未备份或未验证就删除旧数据",
+      "删除新公式卡修订、文章历史引用或迁移备份",
+      "把无法确定映射的旧记录自动丢弃",
+      "改变文章正文的数学含义"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "公式推导节点处于半维护状态，与公式卡存在重复职责。"
+    ],
+    "expected": [
+      "迁移完成后，公式卡成为唯一公式和推导维护入口。",
+      "无法确定映射的记录会阻止清理并进入人工核对清单。",
+      "删除旧记录前必须有备份和逐项一致性证据。",
+      "旧文章链接和外部收藏通过永久重定向继续有效。"
+    ],
+    "edgeCases": [
+      "多个旧节点映射到同一新公式卡。",
+      "旧节点缺少正文、分类或有效公开地址。",
+      "文章引用的旧公式无法找到唯一新目标。",
+      "迁移完成后验证失败必须保留旧记录并支持恢复。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.backup-first",
+      "statement": "迁移和删除前完成可验证、可恢复的完整备份。",
+      "verification": "检查备份清单、校验值和隔离恢复演练，确认未通过时删除入口不可用。"
+    },
+    {
+      "id": "ac.complete-mapping",
+      "statement": "旧公式、推导 Markdown、文章引用、推导关系和状态均映射到新体系。",
+      "verification": "对迁移清单逐项比较源记录和目标记录，并抽查公开渲染。"
+    },
+    {
+      "id": "ac.block-on-mismatch",
+      "statement": "数量、正文、引用或关系存在不一致时，系统阻止物理删除并输出核对清单。",
+      "verification": "制造缺失映射和数量不一致夹具，确认旧记录全部保留。"
+    },
+    {
+      "id": "ac.authorized-cleanup",
+      "statement": "全部验证通过后，系统物理删除已成功迁移的旧公式和旧推导节点记录。",
+      "verification": "在隔离副本完成迁移、验证和清理，确认仅旧记录删除，新体系和备份完整。"
+    },
+    {
+      "id": "ac.permanent-redirect",
+      "statement": "每个有对应目标的旧公开地址永久跳转到新公式卡。",
+      "verification": "遍历旧公开路由映射，检查重定向状态、目标身份和无循环。"
+    }
+  ],
+  "constraints": {
+    "languages": [
+      "zh-CN",
+      "Markdown",
+      "LaTeX"
+    ],
+    "platforms": [
+      "Larkix 数据迁移工具",
+      "Larkix CMS",
+      "Larkix 游客公式路由"
+    ],
+    "compatibility": [
+      "保护既有文章引用和外部旧链接",
+      "迁移失败时旧体系保持可恢复"
+    ],
+    "data": [
+      "物理删除仅限已成功迁移且验证通过的旧记录",
+      "备份和迁移映射不得随旧记录一起删除"
+    ],
+    "security": [],
+    "operations": [
+      "Owner 已明确授权在完整备份和全部验证通过后物理删除旧记录",
+      "必须先在隔离副本演练再接触当前或生产数据"
+    ],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.destructive-cleanup",
+      "severity": "critical",
+      "statement": "旧记录物理删除不可依赖普通界面撤销，错误映射可能造成推导或引用永久丢失。",
+      "mitigation": "强制备份、隔离恢复演练、全量映射验证、删除前门禁和删除后完整性复核。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-28T15:21:35.320+08:00",
+    "confirmationText": "确认这9个需求包",
+    "digest": "sha256:0ded0859f6d9360cdec15e58e69b2a89e6e27d218135f7c8fc458bfdfeb7a9c6"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [
+      "REQ-20260728-003",
+      "REQ-20260728-005"
+    ],
+    "dispatchedAt": "2026-07-28T15:31:47.952+08:00"
+  }
+}

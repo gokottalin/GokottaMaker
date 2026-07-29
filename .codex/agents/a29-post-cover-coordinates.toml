@@ -1,0 +1,18 @@
+name = "A29_PostCoverCoordinates"
+description = "Temporary Agent for reversible 16:9 article-cover coordinates, CMS crop interaction, and shared public replay."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["Cover Coordinates", "Reversible Crop", "文章封面坐标"]
+developer_instructions = """
+Implement only S22 / REQ-20260728-001. Read the A29 brief and accepted S21
+handoff first. You are not alone in the codebase: preserve every existing local
+change, never revert unrelated files, and use only the declared write set.
+Replace the current cropped-JPEG upload with original-image retention plus a
+strict normalized 16:9 coordinate object. Build a visible crop frame that moves
+and resizes from all four corners, with clear color inside and grayscale blur
+outside, then replay the same source region through the shared media helper on
+CMS and public post surfaces without distortion. Reopen, adjust, reset,
+revision, restore, old-post compatibility, keyboard/touch, responsive, and
+pixel evidence are mandatory. Never overwrite/delete originals, generate a
+cropped upload, edit styles/20-content.css, touch current/production data, or
+perform cloud, deployment, or Git operations. Return a Chinese handoff to A00.
+"""

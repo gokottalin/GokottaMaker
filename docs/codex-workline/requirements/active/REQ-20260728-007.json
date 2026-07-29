@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260728-007",
+  "title": "聚焦内容卡片按容器比例自动填充图片",
+  "status": "dispatched",
+  "priority": "normal",
+  "createdAt": "2026-07-28T15:07:48.136+08:00",
+  "updatedAt": "2026-07-28T15:31:47.952+08:00",
+  "intent": {
+    "problem": "LarkixMaker 聚焦内容的文章图片错误沿用 Hero 比例，导致卡片图片比例和内容区域不匹配。",
+    "desiredOutcome": "聚焦内容图片按当前响应式卡片容器的实际比例自动裁切并完整填满，不拉伸、不强制为 16:9。",
+    "targetUsers": [
+      "游客"
+    ]
+  },
+  "scope": {
+    "in": [
+      "聚焦内容文章卡片使用自身容器比例，不复用 Hero 图片比例",
+      "图片按当前桌面、半宽和移动卡片尺寸自动裁切",
+      "图片刚好填满图片区域，不留空白、不拉伸、不压扁",
+      "响应式尺寸变化时重新适配当前容器比例",
+      "Hero 区域继续使用自己的独立图片比例和布局"
+    ],
+    "out": [
+      "把聚焦内容卡片固定为 16:9",
+      "修改 Hero 区域为卡片比例",
+      "要求作者为每个响应式尺寸上传不同图片"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "聚焦内容文章图片显示为不合适的 Hero 比例。"
+    ],
+    "expected": [
+      "每张聚焦内容卡片图片完全覆盖自己的图片容器。",
+      "不同屏幕宽度下保持构图合理且不产生变形。",
+      "Hero 与普通聚焦卡片分别遵循各自布局。"
+    ],
+    "edgeCases": [
+      "竖图、方图和超宽图。",
+      "卡片从多列切换为单列。",
+      "图片加载失败或文章没有封面。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.container-ratio",
+      "statement": "聚焦内容图片按当前卡片容器比例裁切，不使用 Hero 比例。",
+      "verification": "比较 Hero 与聚焦卡片的计算尺寸和实际截图。"
+    },
+    {
+      "id": "ac.fill-no-distortion",
+      "statement": "图片完全填满容器且不拉伸、压扁或留空白。",
+      "verification": "使用包含圆形和文字的多种比例图片检查显示。"
+    },
+    {
+      "id": "ac.responsive",
+      "statement": "桌面、半宽和移动布局切换时图片随当前容器重新适配。",
+      "verification": "在主要响应式断点检查裁切和横向溢出。"
+    },
+    {
+      "id": "ac.hero-independent",
+      "statement": "聚焦卡片修复不会改变 Hero 区域的既有比例和布局。",
+      "verification": "修复前后比较 Hero 尺寸、轮播和响应式行为。"
+    }
+  ],
+  "constraints": {
+    "languages": [
+      "zh-CN"
+    ],
+    "platforms": [
+      "LarkixMaker 聚焦内容首页及文章卡片"
+    ],
+    "compatibility": [
+      "继续使用现有文章封面资源",
+      "保持 Hero 现有行为"
+    ],
+    "data": [],
+    "security": [],
+    "operations": [],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.subject-crop",
+      "severity": "low",
+      "statement": "自动填充可能在极端图片比例下裁掉主体。",
+      "mitigation": "优先使用已保存的图像焦点或安全居中策略，并用多比例素材验收。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-28T15:21:35.320+08:00",
+    "confirmationText": "确认这9个需求包",
+    "digest": "sha256:5e5c6e5c9964f99afb5d338511ec5faebccb273817963f300a432e74f0151831"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-07-28T15:31:47.952+08:00"
+  }
+}

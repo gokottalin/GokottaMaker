@@ -49,7 +49,7 @@ function cardPayload(overrides = {}) {
   });
 }
 
-function postPayload(id, markdown) {
+function postPayload(id, markdown, publishStatus = "published") {
   return validatePostPayload({
     id,
     slug: id,
@@ -58,7 +58,7 @@ function postPayload(id, markdown) {
     excerpt: "隔离版本测试",
     markdown,
     cover: "./assets/covers/analog-cover.png",
-    publishStatus: "published",
+    publishStatus,
     featured: false,
     featuredOrder: 0,
     recommendationPriority: 100,
@@ -170,6 +170,15 @@ async function apiChecks(tempRoot) {
     });
     assert.equal(created.response.status, 200);
     const oldRevisionId = created.payload.card.currentRevisionId;
+    assert.equal(
+      (
+        await request(`/api/admin/formulas/${encodeURIComponent(created.payload.card.formulaId)}/publish`, {
+          method: "POST",
+          body: "{}"
+        })
+      ).response.status,
+      200
+    );
     for (const suffix of ["one", "two"]) {
       const binding = formulaBindingShortcode({
         bindingId: `bind.api-${suffix}`,
@@ -218,6 +227,16 @@ async function apiChecks(tempRoot) {
     assert.equal(kept.payload.decision.status, "kept");
     assert.equal(kept.payload.decisions.length, 1);
 
+    assert.equal(
+      (
+        await request(`/api/admin/formulas/${encodeURIComponent(created.payload.card.formulaId)}/publish`, {
+          method: "POST",
+          body: "{}"
+        })
+      ).response.status,
+      200
+    );
+
     const adopted = await request(
       `/api/admin/formula-decisions/${encodeURIComponent(pending.payload.decisions[1].decisionId)}/resolve`,
       { method: "POST", body: JSON.stringify({ action: "adopt" }) }
@@ -244,6 +263,7 @@ async function main() {
 
       let savedCard = store.saveFormulaCard(cardPayload());
       const originalRevisionId = savedCard.card.currentRevisionId;
+      store.publishFormulaCard(savedCard.card.formulaId);
       const bindings = [];
       for (const suffix of ["keep", "adopt", "clone"]) {
         const binding = {
@@ -268,8 +288,9 @@ async function main() {
       for (const step of metadataSteps) {
         metadataCard = cardPayload({ ...metadataCard, ...step });
         const metadataSaved = store.saveFormulaCard(metadataCard);
-        assert.equal(metadataSaved.decisionCount, 0);
-        assert.equal(store.listFormulaReferenceDecisions().length, 0);
+        assert.equal(metadataSaved.decisionCount, 3);
+        assert.equal(store.listFormulaReferenceDecisions().length, 3);
+        assert.equal(metadataSaved.card.pendingPublication, true);
       }
 
       savedCard = store.saveFormulaCard(cardPayload({ ...metadataCard, latex: "V=2", revisionReason: "body-update-1" }));
@@ -287,9 +308,10 @@ async function main() {
       assert.equal(savedCard.decisionCount, 3);
       assert.equal(store.listFormulaReferenceDecisions().length, 3);
       const historyAfterSecondUpdate = store.listFormulaReferenceDecisions({ status: "all" });
-      assert.equal(historyAfterSecondUpdate.length, 6);
-      assert.equal(historyAfterSecondUpdate.filter((item) => item.status === "superseded").length, 3);
+      assert.equal(historyAfterSecondUpdate.length, 21);
+      assert.equal(historyAfterSecondUpdate.filter((item) => item.status === "superseded").length, 18);
       assert.ok(store.listFormulaReferenceDecisions().every((item) => item.targetRevisionId === newestRevisionId));
+      store.publishFormulaCard(savedCard.card.formulaId);
 
       const keepDecision = store.listFormulaReferenceDecisions({ postId: "direct-keep" })[0];
       const kept = store.resolveFormulaReferenceDecision(keepDecision.decisionId, { action: "keep" });
@@ -304,6 +326,8 @@ async function main() {
       assert.match(adopted.post.markdown, new RegExp(newestRevisionId.replaceAll(".", "\\.")));
 
       const cloneDecision = store.listFormulaReferenceDecisions({ postId: "direct-clone" })[0];
+      const clonePost = store.postById("direct-clone");
+      store.savePost(postPayload("direct-clone", clonePost.markdown, "draft"));
       const cloned = store.resolveFormulaReferenceDecision(cloneDecision.decisionId, {
         action: "clone",
         formula: cardPayload({
@@ -348,7 +372,7 @@ async function main() {
       const metadataAfterArchive = store.saveFormulaCard(
         cardPayload({ ...metadataCard, latex: "V=3", displayName: "归档后元数据同步" })
       );
-      assert.equal(metadataAfterArchive.decisionCount, 0);
+      assert.equal(metadataAfterArchive.decisionCount, 2);
       assert.equal(store.listFormulaReferenceDecisions().length, 2);
     } finally {
       db.close();

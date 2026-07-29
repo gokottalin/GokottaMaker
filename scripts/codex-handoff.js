@@ -95,21 +95,20 @@ function findLongLivedRole(registry, roleId) {
   return roles.find((role) => role.id === roleId) || null;
 }
 
-function findNextEntry(governance, registry) {
+function findNextEntries(governance, registry) {
   const taskAgents = Array.isArray(registry.taskAgents) ? registry.taskAgents : [];
   const nextTasks = taskAgents.filter((task) => task.status === "next");
 
-  if (nextTasks.length === 1) {
-    return { kind: "task", entry: nextTasks[0] };
-  }
-
-  if (nextTasks.length > 1) {
-    throw new Error(`Expected at most one next task, found ${nextTasks.length}.`);
+  if (nextTasks.length > 0) {
+    return {
+      kind: nextTasks.length === 1 ? "task" : "parallel tasks",
+      entries: nextTasks
+    };
   }
 
   const controllerId = governance.workline?.nextController;
   if (!controllerId) {
-    throw new Error("Expected one next task or a workline.nextController.");
+    throw new Error("Expected at least one next task or a workline.nextController.");
   }
 
   const controller = findLongLivedRole(registry, controllerId);
@@ -117,7 +116,7 @@ function findNextEntry(governance, registry) {
     throw new Error(`workline.nextController ${controllerId} is not declared in longLivedRoles.`);
   }
 
-  return { kind: "controller", entry: controller };
+  return { kind: "controller", entries: [controller] };
 }
 
 function agentRoleNote(governance, agentId) {
@@ -142,11 +141,28 @@ function taskForbidden(entry) {
   ];
 }
 
-function shortPrompt(governance, agentId, promptRoot) {
-  const title = formatAgentTitle(agentId);
-  const note = agentRoleNote(governance, agentId);
+function shortPrompt(governance, entry, promptRoot) {
+  const title = formatAgentTitle(entry.id);
+  const note = agentRoleNote(governance, entry.id);
   const noteText = note ? `（${note}）` : "";
-  return `${title}${noteText}：请进入 ${promptRoot}，运行 npm.cmd run codex:handoff，然后按输出的 Next Agent brief 执行当前任务；使用中文交接，遵守 AGENTS.md 门禁；直接交给对应职能 Agent，若不存在则由 A00 创建并注册后继续；不等待用户发送“继续”。`;
+  const briefText = entry.brief ? `，然后执行 ${displayWindowsPath(entry.brief)}` : "";
+  return `${title}${noteText}：请进入 ${promptRoot}，运行 npm.cmd run codex:handoff 核验路由${briefText}；使用中文交接，遵守 AGENTS.md 门禁；完成后直接回传 A00，不等待用户转发或发送“继续”。`;
+}
+
+function printEntryDetails(entry, index, total) {
+  const suffix = total > 1 ? ` ${index + 1}` : "";
+  console.log(`Next Agent${suffix}: ${entry.id}`);
+  console.log(`Next Agent brief${suffix}: ${entry.brief || "not declared"}`);
+  console.log(`Expected handoff${suffix}: ${entry.handoff || entry.activeHandoff || "not declared"}`);
+  console.log(`Scope${suffix}: ${entry.scope || entry.purpose || "not declared"}`);
+  console.log("");
+  listItems(`Read first${suffix}:`, entry.reads);
+  console.log("");
+  listItems(`Allowed outputs${suffix}:`, entry.mayEdit);
+  console.log("");
+  listItems(`Done when${suffix}:`, entry.doneWhen);
+  console.log("");
+  listItems(`Forbidden${suffix}:`, taskForbidden(entry));
 }
 
 function main() {
@@ -154,15 +170,11 @@ function main() {
     const governance = readJson(".codex/larkix-governance.json");
     const registry = readJson(governance.workline.taskRegistry);
     const projectWindow = readText("PROJECT_WINDOW.md");
-    const { kind, entry } = findNextEntry(governance, registry);
+    const { kind, entries } = findNextEntries(governance, registry);
+    const primaryEntry = entries[0];
 
     const workspaceRoot = governance.workspaceRoot || displayPath(root);
-    const currentPhase = projectWindowValue(projectWindow, "Current phase") || entry.id;
-    const nextAgentPath =
-      projectWindowValue(projectWindow, "Next agent") ||
-      entry.brief ||
-      governance.workline?.nextControllerBrief ||
-      "not declared";
+    const currentPhase = projectWindowValue(projectWindow, "Current phase") || primaryEntry.id;
     const lastHandoff = projectWindowValue(projectWindow, "Last accepted handoff") || "none";
     const gate = projectWindowValue(projectWindow, "Current gate") || "see PROJECT_WINDOW.md";
     const promptRoot = displayWindowsPath(workspaceRoot);
@@ -170,26 +182,20 @@ function main() {
     console.log("LarkixMaker handoff");
     console.log("===================");
     console.log("");
-    console.log("Short prompt for a fresh Codex session:");
-    console.log(shortPrompt(governance, entry.id, promptRoot));
+    console.log(entries.length === 1
+      ? "Short prompt for a fresh Codex session:"
+      : "Short prompts for parallel Codex sessions:");
+    for (const entry of entries) {
+      console.log(shortPrompt(governance, entry, promptRoot));
+    }
     console.log("");
     console.log(`Project root: ${workspaceRoot}`);
     console.log(`Current phase: ${currentPhase}`);
-    console.log(`Next ${kind}: ${entry.id}`);
-    console.log(`Next agent brief: ${nextAgentPath}`);
-    console.log(`Expected handoff: ${entry.handoff || entry.activeHandoff || "not declared"}`);
+    console.log(`Next ${kind}: ${entries.map((entry) => entry.id).join(", ")}`);
     console.log(`Last accepted handoff: ${lastHandoff}`);
     console.log(`Gate: ${gate}`);
     console.log("");
-    console.log(`Scope: ${entry.scope || entry.purpose || "not declared"}`);
-    console.log("");
-    listItems("Read first:", entry.reads);
-    console.log("");
-    listItems("Allowed outputs:", entry.mayEdit);
-    console.log("");
-    listItems("Done when:", entry.doneWhen);
-    console.log("");
-    listItems("Forbidden:", taskForbidden(entry));
+    entries.forEach((entry, index) => printEntryDetails(entry, index, entries.length));
   } catch (error) {
     console.error(error.message);
     process.exitCode = 1;

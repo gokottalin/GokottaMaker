@@ -1,0 +1,72 @@
+#homeRecommended .focused-card-media {
+  position: relative;
+  display: block;
+  inline-size: 100%;
+  min-inline-size: 0;
+  block-size: var(--focused-card-media-size, 96px);
+  min-block-size: var(--focused-card-media-size, 96px);
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--surface-2, #f4f4f5);
+  isolation: isolate;
+}
+
+#homeRecommended .focused-card-media--article {
+  --focused-card-media-size: 150px;
+}
+
+#homeRecommended .focused-card-media--feature {
+  position: absolute;
+  inset: 0;
+  block-size: auto;
+  min-block-size: 100%;
+  border-radius: 0;
+}
+
+#homeRecommended .focused-card-media > picture,
+#homeRecommended .focused-card-media > img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  min-block-size: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: inherit;
+}
+
+#homeRecommended .focused-card-media > img,
+#homeRecommended .focused-card-media > picture:not(.larkix-cover-crop) > img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  min-block-size: 0;
+  border: 0;
+  border-radius: inherit;
+  object-fit: cover;
+  object-position: center;
+}
+
+#homeRecommended .focused-card-media > .larkix-cover-crop {
+  block-size: 100%;
+  min-block-size: 0;
+  border: 0;
+  border-radius: inherit;
+}
+
+#homeRecommended .focused-card-media[data-focused-media-state="failed"] > img,
+#homeRecommended .focused-card-media[data-focused-media-state="failed"] > picture {
+  opacity: 0;
+}
+
+@media (max-width: 760px) {
+  #homeRecommended .focused-card-media--row,
+  #homeRecommended .focused-card-media--article {
+    --focused-card-media-size: 210px;
+  }
+}
+
+@media (max-width: 480px) {
+  #homeRecommended .focused-card-media--article {
+    --focused-card-media-size: 184px;
+  }
+}

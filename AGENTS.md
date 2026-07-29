@@ -159,6 +159,37 @@ The short prompt must begin with the current Agent number, English role, and a
 concise Chinese role note, for example
 `Agent 00 Project Director（项目导演：负责顺序、门禁和下一步裁决）`.
 
+## Cross-Session Dispatch and Scheduling Rule
+
+The Owner must not be used as a relay between Codex tasks. Routine handoffs,
+acceptance results, blockers, and next-task dispatches must be sent directly
+between the relevant Codex tasks with the available thread messaging or
+handoff tools.
+
+- `A18_RequirementClarifier` sends only Owner-confirmed, digest-valid
+  requirement packages to `A00_ProjectDirector`. Draft, questioning, and
+  `awaiting_user_confirmation` packages do not enter the implementation queue.
+- After receiving a valid A18 handoff, A00 verifies the package, derives the
+  dependency graph, assigns narrow file contracts, and dispatches the work
+  directly to the relevant temporary Agents.
+- A00 may run tasks in parallel only when their write sets are disjoint and
+  they do not concurrently change the same schema, API contract, migration,
+  shared state, generated artifact, or acceptance baseline.
+- Tasks that share files or contracts must be serialized. When a later task
+  depends on an earlier output, the earlier handoff and acceptance gate must
+  pass before dispatching the dependent task.
+- Every dispatch must declare `reads`, `may_edit`, `outputs`, dependencies,
+  acceptance checks, and the direct return target.
+- One file has one active editing owner at a time.
+- A00 should make routine technical, sequencing, and file-boundary decisions
+  without interrupting the Owner. Ask the Owner only for a material product
+  choice, conflicting confirmed requirements, irreversible or destructive
+  action, production/cloud credential or cost approval, or another decision
+  that cannot be safely inferred or rolled back.
+- A00 keeps the Owner informed with concise Chinese milestone summaries, but
+  does not require the Owner to copy prompts, open relay tasks, or type a
+  routine continuation command.
+
 ## Encoding Rules
 
 - New and edited text files should be UTF-8 without BOM unless an existing file

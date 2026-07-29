@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260728-009",
+  "title": "游客端与 CMS 全站夜间主题一致性修复",
+  "status": "dispatched",
+  "priority": "normal",
+  "createdAt": "2026-07-28T15:07:48.136+08:00",
+  "updatedAt": "2026-07-28T15:31:47.952+08:00",
+  "intent": {
+    "problem": "夜间模式中部分模块颜色不协调，已发现首页公开推导节点区域存在背景、文字或卡片配色不匹配。",
+    "desiredOutcome": "对游客端和 CMS 进行全站夜间主题审查并修复所有不协调、低对比或仍使用日间颜色的组件。",
+    "targetUsers": [
+      "游客",
+      "Owner/幕后作者"
+    ]
+  },
+  "scope": {
+    "in": [
+      "审查游客端和 CMS 全部页面的夜间模式",
+      "修复首页公开推导节点发布区域的夜间配色",
+      "统一背景、卡片、文字、边框、链接、按钮和输入框的夜间主题",
+      "覆盖公式、Markdown 正文、推导网络图、抽屉、弹窗和代码块",
+      "覆盖成功、警告、错误、草稿、已发布、已归档等状态提示",
+      "保证普通、悬停、聚焦、禁用和选中状态均可读",
+      "日间模式保持既有设计，不因夜间修复退化",
+      "桌面、半宽和移动页面保持一致"
+    ],
+    "out": [
+      "只修复首页单个模块而忽略其他页面",
+      "重新设计整个品牌视觉",
+      "改变内容状态或业务行为"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "夜间模式存在部分模块颜色不搭配。",
+      "首页公开推导节点发布区域是已明确发现的异常位置。"
+    ],
+    "expected": [
+      "所有表面使用一致的夜间主题色和层级。",
+      "文字、公式、边框和交互状态具有清楚对比。",
+      "网络图节点、连线和当前路径在暗色背景上可辨识。",
+      "切换日间与夜间模式时不存在残留错误颜色。"
+    ],
+    "edgeCases": [
+      "嵌套卡片、弹窗覆盖层和禁用按钮。",
+      "黄色公式待决、红色错误和绿色成功状态。",
+      "数学公式、代码块和推导网络图同时出现。",
+      "浏览器跟随系统主题及手动主题切换。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.full-site-audit",
+      "statement": "游客端和 CMS 的全部主要页面与模块完成夜间主题检查，不只覆盖首页。",
+      "verification": "按页面清单执行桌面和移动截图矩阵，记录每个模块结果。"
+    },
+    {
+      "id": "ac.public-derivation",
+      "statement": "首页公开推导节点区域在夜间模式下背景、卡片、文字和链接颜色协调可读。",
+      "verification": "发布公开推导节点并在夜间首页检查全部交互状态。"
+    },
+    {
+      "id": "ac.formula-graph",
+      "statement": "公式、Markdown 推导和网络图在夜间模式下保持清晰层级和可点击状态辨识。",
+      "verification": "打开含多层公式网络的游客页和 CMS 工作台进行视觉检查。"
+    },
+    {
+      "id": "ac.status-controls",
+      "statement": "按钮、输入框、边框及成功、警告、错误、草稿、发布、归档状态在夜间模式下可区分。",
+      "verification": "建立交互状态矩阵并检查普通、悬停、聚焦、禁用和选中状态。"
+    },
+    {
+      "id": "ac.daylight-regression",
+      "statement": "夜间主题修复不改变日间模式的既有可读性和品牌布局。",
+      "verification": "对同一页面执行日间与夜间对照截图并检查布局回归。"
+    }
+  ],
+  "constraints": {
+    "languages": [
+      "zh-CN"
+    ],
+    "platforms": [
+      "Larkix 游客网页",
+      "Larkix CMS"
+    ],
+    "compatibility": [
+      "保持日间主题和现有品牌结构"
+    ],
+    "data": [],
+    "security": [],
+    "operations": [
+      "需要页面级和状态级视觉回归证据"
+    ],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.local-overrides",
+      "severity": "medium",
+      "statement": "分散的局部颜色覆盖可能导致修复一个模块后其他状态仍不一致。",
+      "mitigation": "优先收敛主题变量并用全站页面与交互状态矩阵验收。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-28T15:21:35.320+08:00",
+    "confirmationText": "确认这9个需求包",
+    "digest": "sha256:7969df7f4d75550c453fe234f79dc266fb14b7934d7b95254806449bb006870e"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-07-28T15:31:47.952+08:00"
+  }
+}

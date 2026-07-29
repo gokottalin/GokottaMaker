@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>课程路径配置 | LarkixMaker</title>
     <meta name="robots" content="noindex,nofollow" />
-    <link rel="stylesheet" href="../styles.css?v=20260726-1650" />
-    <link rel="stylesheet" href="./admin.css?v=20260726-1650" />
+    <link rel="stylesheet" href="../styles.css?v=20260730-0012" />
+    <link rel="stylesheet" href="./admin.css?v=20260730-0012" />
+    <link rel="stylesheet" href="./admin-dark.css?v=20260729-s26" />
     <style>
       .course-admin-shell {
         width: min(100% - 40px, 1320px);
@@ -207,6 +208,7 @@
           <p>这一页是课程路径的本地预览工具，只写入当前浏览器 localStorage，不写入 CMS 或数据库。必须登录后才能编辑本地覆盖值。</p>
         </div>
         <div class="course-admin-actions">
+          <button class="theme-toggle admin-theme-toggle" type="button" data-theme-toggle aria-label="切换夜间模式" title="切换夜间模式"><span class="theme-toggle-icon" aria-hidden="true"></span></button>
           <a class="button secondary" href="./index.html">返回 CMS</a>
           <a class="button secondary" href="../maker.html">打开访客首页</a>
         </div>
@@ -263,10 +265,10 @@
       </section>
     </main>
 
-    <script src="../data/posts.js?v=20260726-1650"></script>
-    <script src="../api/content.js?v=20260726-1650"></script>
-    <script src="../data/content-store.js?v=20260726-1650"></script>
-    <script src="../data/course-meta.js?v=20260726-1650"></script>
+    <script src="../data/posts.js?v=20260730-0012"></script>
+    <script src="../api/content.js?v=20260730-0012"></script>
+    <script src="../data/content-store.js?v=20260730-0012"></script>
+    <script src="../data/course-meta.js?v=20260730-0012"></script>
     <script>
       (() => {
         const STORAGE_KEY = "larkixmaker_course_meta_v1";
@@ -495,5 +497,6 @@
         });
       })();
     </script>
+    <script src="../data/footer.js?v=20260729-s26"></script>
   </body>
 </html>

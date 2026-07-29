@@ -1,109 +1,116 @@
 # A00 Project Director Handoff
 
-Status: `S12 accepted; automatic functional-Agent queue complete`.
+Status: `S28 accepted; automatic queue complete; Owner gate active`.
 
-## Confirmed Inputs
+## Authority
 
-The following Owner-confirmed packages passed digest validation:
+Nine Owner-confirmed requirement packages passed digest validation. The
+authoritative batch manifest is
+`docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json`.
 
-- `REQ-20260726-001` - 全站聚焦模式与首发内容范围
-- `REQ-20260726-002` - 聚焦模式轮播内容缓冲与手动恢复
-- `REQ-20260726-003` - 公式库分类管理与文章内公式卡创建
-- `REQ-20260726-004` - 文章公式绑定与逐篇版本决策
-- `REQ-20260726-005` - 可汇入且不分叉的多阶公式推导链
+A00 owns sequence, single-writer contracts, gates, acceptance, and automatic
+cross-session dispatch. Functional Agents return handoffs directly to A00.
+Consult the Owner only for material product choices, conflicting confirmed
+requirements, production/cloud authority, or irreversible actions.
 
-Machine dispatch:
-`docs/codex-workline/requirements/dispatch/DISPATCH-20260726-001.json`.
+## Accepted Through S28
 
-## A00 Decisions
+- S18 / A24: formula publication workflow.
+- S19 / A26: revision-aware branching derivation DAG.
+- S20 / A27: persistent article formula authoring drawer.
+- S21 / A28: backup-first isolated legacy migration and restore proof.
+- S22 / A29: reversible original-image cover coordinates and shared replay.
+- S23 / A30: nullable author-entered reading minutes with conditional CMS and
+  public rendering.
+- S24 / A31: shared complex inline-math layout across CMS, article, and
+  derivation surfaces.
+- S25 / A25: focused/recommended article media owned by each responsive card
+  viewport while Hero remains independent.
+- S26 / A32: full-site light/dark consistency, semantic-state contrast, and
+  responsive CMS/public/tool coverage.
+- S27 / A33: 23-check isolated batch regression and independent public/CMS
+  browser evidence for all nine requirements.
+- S28 / A34: complete worktree classification, future path-explicit staging
+  plan, version/backup/rollback/health review, and release stop conditions.
 
-- Do not create one broad implementation Agent.
-- Accept `A14_FormulaCatalogManagement`: S09 delivered 60 unique formula
-  cards, immutable revisions, catalog search/pagination, archive/restore,
-  deterministic import/export, local non-overwrite snapshots, and isolated
-  CMS/visitor evidence.
-- Accept `A19_ArticleFormulaAuthoring`: S13 preserves ordinary unbound LaTeX,
-  provides existing-card search/insertion and exact-selection atomic card
-  creation, stores stable card plus immutable revision identities, and passes
-  isolated API, renderer, CMS, responsive browser, and regression checks.
-- Accept `A20_FormulaReferenceVersioning`: S14 keeps metadata-only edits quiet,
-  creates CMS-only per-article decisions for LaTeX revisions and archive
-  events, preserves old visitor rendering, supports independent keep, adopt,
-  or clone actions, retains superseded history, and passes isolated API, CMS,
-  responsive browser, and regression checks.
-- Accept `A21_LinearDerivationGraph`: S15 keeps every step as an independent
-  formula card, allows manual many-incoming convergence with one unique next,
-  rejects silent branching, self-links, dangling targets and cycles, preserves
-  archived edge history, and passes isolated API, CMS, visitor, responsive
-  browser, calculation-book and contract checks.
-- Accept `A22_FocusModeScopeGate`: S16 delivers one default-enabled persistent
-  switch, server-authoritative visitor/CMS scope, hidden direct-route rejection,
-  focused public navigation and homepage entry points, isolated responsive
-  browser evidence, and full regression coverage.
-- Accept `A23_CarouselFocusBuffer`: S17 delivers transactional selective
-  buffering, stable identity and snapshots, no automatic restore, explicit-slot
-  Owner restore, conflict/reason codes, CMS dual views, isolated responsive
-  browser evidence, and full regression coverage.
-- Create and register missing `A15_ContentCloudSync` for S10, narrowed to
-  dry-run-first local integration of backup, checksum, stable-slug idempotency,
-  and rollback-aware failure gates.
-- Accept `A15_ContentCloudSync`: S10 delivers default zero-write/zero-network
-  dry-run, explicit apply confirmation, backup/checksum gates, stable-slug
-  idempotency, transaction rollback evidence, operator-controlled restore
-  guidance, and safe deployment-script integration.
-- Create and register missing `A16_RegressionEvidenceMatrix` as the only next
-  task, narrowed to evidence-only isolated regression and browser smoke.
-- Accept `A16_RegressionEvidenceMatrix`: S11 records 17 passing commands,
-  9 passing isolated browser scenarios, zero release-blocking failures,
-  explicit tool limitations, complete cleanup, and protected boundaries.
-- Create and register missing `A17_ReleaseGitGate` as the only next task,
-  narrowed to planning-only staging inventory and release readiness.
-- Accept `A17_ReleaseGitGate`: S12 classifies all 191 live status paths with no
-  gap or overlap, provides 84 explicit future include paths, isolates 107
-  review-required paths, preserves protected exclusions, and records local
-  technical pass, conditional future staging, and production not-ready.
-- Return control to `A00_ProjectDirector`; no functional Agent remains pending.
-- Split article formula authoring from the catalog foundation so the data/API
-  and editor interactions can be accepted independently.
-- Serialize all six implementation slices because they share server, CMS, and
-  persistence boundaries.
-- Treat `electronics-basics` as the canonical focus module and existing
-  `power-electronics` metadata/routes as compatibility aliases. This does not
-  create or delete a stored business category.
-- Enforce focus visibility in server public payloads and direct content lookup,
-  not only navigation.
-- Preserve publication state, formula revisions, article-bound versions,
-  carousel identity, and hidden content throughout all transitions.
+S25 final A00 evidence:
 
-## Execution Order
+- Dedicated multi-ratio fixture covered square, portrait, landscape,
+  ultra-wide, failed, and S22-cropped sources at 1280, 800, and 360 widths.
+- Ordinary images used `object-fit: cover`; cropped images preserved source
+  ratio and covered all host edges; failed hosts retained stable dimensions.
+- Fixture and real homepage had `pageOverflow=false`; browser console
+  `warn/error=[]`.
+- Hero never opted into focused media. `styles/20-content.css`,
+  `styles/10-hero.css`, and `maker.html` hashes remained unchanged.
+- Cover-coordinate, reading-minutes, Markdown, formula publication, branching
+  graph, syntax, and focused-media tests passed.
+- Accepted handoff:
+  `docs/codex-workline/slices/S25_focused_content_media_handoff.md`.
 
-1. `S09 / A14` - formula catalog foundation.
-2. `S13 / A19` - article formula authoring.
-3. `S14 / A20` - formula reference version decisions.
-4. `S15 / A21` - convergent, non-branching derivation graph.
-5. `S16 / A22` - global focus mode scope gate.
-6. `S17 / A23` - carousel focus buffer and manual restore.
-7. `S10 / A15` - content cloud sync.
-8. `S11 / A16` - regression evidence matrix.
-9. `S12 / A17` - release and Git gate.
+S26 final A00 evidence:
 
-No functional Agent is open. The planned queue is complete and control has
-returned to A00. Every mutation gate remains closed until separately
-authorized.
+- The public derivation empty state used a dark surface with readable text at
+  1280, 800, and 360 widths and no horizontal overflow.
+- CMS focus-mode surfaces met the dark token contract and the 1181-1320
+  compatibility breakpoint removed the 1280 brand/navigation collision.
+- Independent `1280x900` and `360x800` checks found no brand/navigation/theme
+  control intersection and `warn/error=[]`.
+- The dedicated audit passed 14 pages, 8 contrast pairs, and 3 CMS header
+  widths; governance remained `732/0/0`.
+- Accepted handoff:
+  `docs/codex-workline/slices/S26_full_site_dark_theme_handoff.md`.
+
+S27 final A00 evidence:
+
+- Unified runner: 23 passed, 0 failed in about 42.1 seconds.
+- Browser matrix covered inline math, focused media, and visitor/CMS themes at
+  1280, 800, and 360 representative widths without horizontal overflow.
+- Syntax, protected hashes, UTF-8/BOM, whitespace, conflict-marker, isolated
+  API/CMS, migration, restore-proof, formula, graph, content, media, and Codex
+  contract checks passed.
+- Accepted handoff:
+  `docs/codex-workline/slices/S27_batch_regression_evidence_handoff.md`.
+
+S28 final A00 evidence:
+
+- Initial 213 paths and historical final 216 paths each appear exactly once in the plan.
+- Authorized V2.5.2 classification: 121 include, 107 exclude, 0 review-required.
+- The 121 explicit command paths exactly equal the include set, with no duplicates
+  or extras.
+- `lib/seo.js` and `styles/20-content.css` match their index blobs and have no
+  content diff; both remain excluded.
+- Version, contract, whitespace, encoding, Git HEAD/index/branch/origin, backup,
+  rollback, and health prerequisites were independently reviewed.
+- Accepted handoff:
+  `docs/codex-workline/slices/S28_release_git_gate_handoff.md`.
 
 ## Current Gate
 
-- Allowed: A00 read-only acceptance/status reporting and future requirement
-  routing under the direct-dispatch rule.
-- Closed: source/test edits, current/production mutation, cloud, deployment,
-  restore, rollback, staging, commit, push, and branch/remote changes.
-- Required after governance edits: `npm.cmd run codex:contract`.
-- Required before any future Git or release action: new explicit authorization,
-  live worktree revalidation, exact path allowlist, staged diff/secret review,
-  production backup/restore-dry-run/health gates, and updated regression.
+The automatic queue is complete. A00 holds the Owner gate. A new short task may
+open only from a confirmed requirement package or explicit authority.
 
-## Next Handoff
+## Closed Boundaries
+
+- Current/production data and physical legacy cleanup.
+- All product, CMS, server, migration, style, content, package, accepted
+  handoff, and governance files.
+- Cloud, deployment, restore, rollback, staging, commit, push, and
+  branch/remote changes.
+
+## Queue
+
+1. S27 / A33 batch regression evidence. Accepted.
+2. S28 / A34 release and Git gate. Accepted.
+3. No automatic task is open.
+
+S29 / A35 physical legacy cleanup remains outside the automatic queue. It is
+blocked until a fresh current/production backup and independent restore
+rehearsal pass, A00 presents the exact report digest and affected rows, and the
+Owner explicitly authorizes the irreversible apply operation.
+
+## Current Handoff
 
 ```text
-Agent 00 Project Director（项目导演：负责顺序、门禁和下一步裁决）：请进入 E:\Project\2607-LarkixWeb，运行 npm.cmd run codex:handoff，然后按输出的 controller brief 核对当前状态；当前无待派发职能 Agent；若收到新需求，直接交给对应职能 Agent，若不存在则由 A00 创建并注册后继续；使用中文交接，遵守 AGENTS.md 门禁。
+Agent 00 Project Director（项目导演：负责顺序、门禁和下一步裁决）：请进入 E:\Project\2607-LarkixWeb，运行 npm.cmd run codex:handoff 核验路由，然后执行 agents\A00_ProjectDirector\brief.md；使用中文交接，遵守 AGENTS.md 门禁。
 ```

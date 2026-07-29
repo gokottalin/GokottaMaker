@@ -24,6 +24,15 @@
     return String(value || "");
   }
 
+  function readingMinutesLabel(value) {
+    const minutes = Number(value);
+    return Number.isInteger(minutes) && minutes >= 1 && minutes <= 9999 ? `${minutes} 分钟阅读` : "";
+  }
+
+  function optionalMeta(value) {
+    return value ? `<span>${safe(value)}</span>` : "";
+  }
+
   function html(value) {
     if (window.LarkixMedia?.escapeHtml) return window.LarkixMedia.escapeHtml(value);
     return safe(value)
@@ -137,15 +146,15 @@
   function articleCard(post) {
     return `
       <article class="article-card">
-        <a href="./post.html?id=${post.id}" aria-label="${safe(post.title)}">
-          ${window.LarkixMedia.image(post.cover, `${safe(post.title)}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 180px" })}
+        <a class="focused-card-media focused-card-media--article" data-focused-card-media="article" href="./post.html?id=${post.id}" aria-label="${safe(post.title)}">
+          ${window.LarkixMedia.image(post.cover, `${safe(post.title)}封面`, { className: "focused-card-media__image", loading: "lazy", sizes: "(max-width: 760px) 100vw, 180px", crop: post.coverCrop })}
         </a>
         <div>
           <span class="category-pill">${safe(post.category)}</span>
           <h3><a href="./post.html?id=${post.id}">${safe(post.title)}</a></h3>
           <p>${safe(post.excerpt)}</p>
           <div class="card-footer">
-            <span>${safe(post.readTime)}</span>
+            ${optionalMeta(readingMinutesLabel(post.readingMinutes))}
             <span>${safe(post.date)}</span>
           </div>
         </div>
@@ -164,12 +173,12 @@
         <h3><a href="./post.html?id=${post.id}">${safe(post.title)}</a></h3>
         <p>${safe(post.excerpt)}</p>
         <div class="card-footer">
-          <span>${safe(post.readTime)}</span>
+          ${optionalMeta(readingMinutesLabel(post.readingMinutes))}
           <span>${safe(post.date)}</span>
         </div>
       </div>
-      <a class="lesson-feature-media" href="./post.html?id=${post.id}">
-        ${window.LarkixMedia.image(post.cover, `${safe(post.title)}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 360px" })}
+      <a class="lesson-feature-media focused-card-media focused-card-media--feature" data-focused-card-media="feature" href="./post.html?id=${post.id}" aria-label="${safe(post.title)}">
+        ${window.LarkixMedia.image(post.cover, `${safe(post.title)}封面`, { className: "focused-card-media__image", loading: "lazy", sizes: "(max-width: 760px) 100vw, 360px", crop: post.coverCrop })}
       </a>
     `;
   }
@@ -177,8 +186,8 @@
   function lessonListCard(post) {
     return `
       <article class="lesson-row">
-        <a href="./post.html?id=${post.id}" aria-label="${safe(post.title)}">
-          ${window.LarkixMedia.image(post.cover, `${safe(post.title)}封面`, { loading: "lazy", sizes: "(max-width: 760px) 100vw, 180px" })}
+        <a class="focused-card-media focused-card-media--row" data-focused-card-media="row" href="./post.html?id=${post.id}" aria-label="${safe(post.title)}">
+          ${window.LarkixMedia.image(post.cover, `${safe(post.title)}封面`, { className: "focused-card-media__image", loading: "lazy", sizes: "(max-width: 760px) 100vw, 180px", crop: post.coverCrop })}
         </a>
         <div>
           <div class="lesson-row-meta">
@@ -188,7 +197,7 @@
           <h3><a href="./post.html?id=${post.id}">${safe(post.title)}</a></h3>
           <p>${safe(post.excerpt)}</p>
           <div class="card-footer">
-            <span>${safe(post.readTime)}</span>
+            ${optionalMeta(readingMinutesLabel(post.readingMinutes))}
             <a class="card-link" href="./post.html?id=${post.id}">进入课程</a>
           </div>
         </div>
@@ -247,9 +256,12 @@
       const [lead, ...rest] = items;
       recentLessonFeature.innerHTML = lessonFeatureCard(lead);
       list.innerHTML = rest.map(lessonListCard).join("") || `<div class="empty-state">没有找到更多匹配的文章。</div>`;
+      window.LarkixMedia.hydrateFocusedMedia?.(recentLessonFeature);
+      window.LarkixMedia.hydrateFocusedMedia?.(list);
       return;
     }
     list.innerHTML = items.map(articleCard).join("") || `<div class="empty-state">没有找到匹配的文章。</div>`;
+    window.LarkixMedia.hydrateFocusedMedia?.(list);
   }
 
   function itemUrl(item) {
@@ -270,6 +282,7 @@
   }
 
   function itemReadTime(item) {
+    if (item.type === "post") return readingMinutesLabel(item.readingMinutes);
     return item.readTime || item.license || item.status || "";
   }
 
@@ -316,7 +329,10 @@
       document.querySelector("#featuredTitle").textContent = featured.title;
       document.querySelector("#featuredExcerpt").textContent = itemSummary(featured);
       document.querySelector("#featuredCategory").textContent = itemLabel(featured);
-      document.querySelector("#featuredReadTime").textContent = itemReadTime(featured);
+      const featuredReadTime = document.querySelector("#featuredReadTime");
+      const readTime = itemReadTime(featured);
+      featuredReadTime.textContent = readTime;
+      featuredReadTime.hidden = !readTime;
       document.querySelector("#featuredDate").textContent = itemDate(featured);
       document.querySelector("#featuredLink").href = canOpen(featured) ? itemUrl(featured) : "#projectList";
       document.querySelector("#featuredLink").textContent = canOpen(featured) ? "阅读全文" : "查看项目概述";
@@ -325,7 +341,11 @@
     }, 240);
 
     if (nextBg && currentBg) {
-      window.LarkixMedia.applyToImage(nextBg, featured.cover || "./assets/hero/electronics-lab-hero.png", { sizes: "100vw", fetchPriority: "high" });
+      window.LarkixMedia.applyToImage(nextBg, featured.cover || "./assets/hero/electronics-lab-hero.png", {
+        sizes: "100vw",
+        fetchPriority: "high",
+        crop: featured.coverCrop
+      });
       nextBg.classList.add("is-active");
       currentBg.classList.remove("is-active");
       activeBg = activeBg === "A" ? "B" : "A";

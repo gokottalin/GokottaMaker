@@ -1,0 +1,115 @@
+.markdown-math-inline[data-math-layout="inline-flow"] {
+  display: inline-flex;
+  max-inline-size: 100%;
+  box-sizing: border-box;
+  align-items: center;
+  padding-inline: 0.12em;
+  color: inherit;
+  line-height: normal;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.markdown-math-inline .math-inline-frame {
+  display: inline-flex;
+  min-inline-size: max-content;
+  align-items: center;
+  line-height: 1.2;
+}
+
+.markdown-math-inline.is-complex .math-inline-frame {
+  padding-block: 0.32em 0.28em;
+}
+
+.markdown-math-inline .math-frac {
+  grid-template-rows: max-content max-content;
+  align-self: center;
+  margin: 0.12em 0.2em;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.markdown-math-inline .math-num,
+.markdown-math-inline .math-den {
+  min-inline-size: max-content;
+  padding-inline: 0.24em;
+  line-height: 1.14;
+}
+
+.markdown-math-inline .math-num {
+  padding-bottom: 0.1em;
+}
+
+.markdown-math-inline .math-den {
+  padding-top: 0.1em;
+}
+
+.markdown-math-inline .math-frac .math-frac {
+  margin-block: 0.08em;
+  font-size: 0.94em;
+}
+
+.markdown-math-inline .math-root {
+  align-self: center;
+  align-items: flex-start;
+  margin-block: 0.08em;
+  vertical-align: middle;
+}
+
+.markdown-math-inline .math-radical {
+  flex: 0 0 auto;
+  line-height: 1.08;
+}
+
+.markdown-math-inline .math-radicand {
+  display: inline-flex;
+  min-inline-size: max-content;
+  align-items: center;
+  padding-top: 0.08em;
+  line-height: 1.14;
+}
+
+.markdown-math-inline .math-limit-op,
+.markdown-math-inline .math-limit-int {
+  align-self: center;
+  vertical-align: middle;
+}
+
+.markdown-math-inline .math-limit-int .math-limit-upper,
+.markdown-math-inline .math-limit-int .math-limit-lower {
+  transform: none;
+}
+
+.markdown-math-inline sub,
+.markdown-math-inline sup {
+  font-size: 0.72em;
+  line-height: 1;
+}
+
+.markdown-math-inline.is-scrollable {
+  overflow: visible;
+}
+
+.markdown-math-inline.is-scrollable .math-inline-frame {
+  padding-inline: 0.06em;
+}
+
+a:hover .markdown-math-inline,
+a:focus-visible .markdown-math-inline,
+.formula-reference:hover .markdown-math-inline,
+.formula-reference:focus-within .markdown-math-inline {
+  color: inherit;
+}
+
+@media (max-width: 640px) {
+  .markdown-math-inline.is-scrollable {
+    overflow-x: auto;
+    overflow-y: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+  }
+
+  .markdown-math-inline.is-complex .math-inline-frame {
+    padding-block: 0.38em 0.32em;
+  }
+}

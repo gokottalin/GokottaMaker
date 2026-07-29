@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260728-002",
+  "title": "复杂行内公式的垂直对齐与分数排版",
+  "status": "dispatched",
+  "priority": "normal",
+  "createdAt": "2026-07-28T15:07:48.136+08:00",
+  "updatedAt": "2026-07-28T15:31:47.952+08:00",
+  "intent": {
+    "problem": "已发布 BUCK 文章中的电流纹波率公式不能与同一行文字垂直居中，复杂分数、积分、微分和根号进一步放大排版错误。",
+    "desiredOutcome": "全站行内公式与中文正文稳定垂直对齐，并正确排版复杂数学结构。",
+    "targetUsers": [
+      "游客",
+      "Owner/幕后作者"
+    ]
+  },
+  "scope": {
+    "in": [
+      "修复所有文章和公式推导正文中的行内公式垂直对齐，不只修复 BUCK 单个示例",
+      "确保复杂行内公式在文字行内视觉居中且不与上下行重叠",
+      "重点覆盖分数、分子或分母中的积分与微分、根号与嵌套根号、多层上下标",
+      "保证分数线、分子、分母的相对位置正确",
+      "CMS Markdown 预览与游客页面使用一致排版规则",
+      "日间与夜间模式、桌面与移动页面均保持可读"
+    ],
+    "out": [
+      "修改公式本身的数学含义",
+      "把所有复杂行内公式强制改成块级公式",
+      "只对某一篇 BUCK 文章写专用样式"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "BUCK 文章电流纹波率公式与同一行文字垂直方向不居中。",
+      "复杂公式存在分数结构错位风险。"
+    ],
+    "expected": [
+      "普通和复杂行内公式均与周围文字形成稳定、自然的行盒。",
+      "公式可以按自身高度适度扩展行高，但不得错位或遮挡相邻内容。",
+      "分数、积分、微分、根号和上下标保持正确数学层级。"
+    ],
+    "edgeCases": [
+      "分子中同时包含积分、根号和多层上下标。",
+      "中文标点紧邻复杂行内公式。",
+      "窄屏换行时公式整体保持完整或安全换行，不被裁切。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.buck-ripple",
+      "statement": "已发布 BUCK 文章的电流纹波率公式与同一行文字垂直对齐。",
+      "verification": "在 CMS 预览和游客文章页检查指定公式的基线、行高及相邻文字。"
+    },
+    {
+      "id": "ac.complex-fractions",
+      "statement": "分子或分母包含积分、微分、根号和上下标时，分数结构仍正确且不互相覆盖。",
+      "verification": "建立覆盖各类嵌套结构的公式夹具并进行视觉截图对比。"
+    },
+    {
+      "id": "ac.global-consistency",
+      "statement": "同一套修复适用于文章、公式 Markdown 推导、CMS 预览和游客端。",
+      "verification": "在各内容表面渲染同一组公式，比较布局与尺寸。"
+    },
+    {
+      "id": "ac.responsive-theme",
+      "statement": "复杂行内公式在桌面、窄屏、日间和夜间模式下均可读且不被裁切。",
+      "verification": "在至少桌面、半宽和移动宽度切换主题检查溢出与颜色。"
+    }
+  ],
+  "constraints": {
+    "languages": [
+      "zh-CN",
+      "LaTeX"
+    ],
+    "platforms": [
+      "Larkix 游客文章页",
+      "Larkix 游客公式页",
+      "Larkix CMS Markdown 预览"
+    ],
+    "compatibility": [
+      "保留现有 LaTeX 写法和块级公式行为"
+    ],
+    "data": [],
+    "security": [],
+    "operations": [
+      "不得依赖单篇文章专用样式"
+    ],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.line-height",
+      "severity": "medium",
+      "statement": "固定行高或粗暴位移可能在解决简单公式时破坏复杂公式。",
+      "mitigation": "以真实数学渲染尺寸建立复杂公式视觉回归矩阵。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-28T15:21:35.320+08:00",
+    "confirmationText": "确认这9个需求包",
+    "digest": "sha256:d2e61fa63ef21f90e7d80705be05a9b12794f4936edb070d1900ff0cb3cc0e32"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-07-28T15:31:47.952+08:00"
+  }
+}

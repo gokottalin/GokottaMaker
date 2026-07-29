@@ -1,0 +1,146 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260728-005",
+  "title": "多分支无环公式推导图与顶部网络图",
+  "status": "dispatched",
+  "priority": "normal",
+  "createdAt": "2026-07-28T15:07:48.136+08:00",
+  "updatedAt": "2026-07-28T15:31:47.952+08:00",
+  "intent": {
+    "problem": "原有线性推导关系无法表达一阶推导同时依赖多个二阶结论公式，公式页面也缺少对整条推导路径的可视化认知。",
+    "desiredOutcome": "允许公式 Markdown 引用多个下一级公式形成无环依赖图，并在每个公式页顶部用可交互网络图展示逐级推导路径和关键公式。",
+    "targetUsers": [
+      "Owner/幕后作者",
+      "游客"
+    ]
+  },
+  "scope": {
+    "in": [
+      "公式卡 Markdown 推导正文可以绑定并插入多个下一级公式引用",
+      "同一公式可以被多个上级公式复用，也可以引用多个下级公式",
+      "推导关系允许分支与汇聚，但禁止自引用、循环和悬空引用",
+      "推导正文中的公式引用在游客页可点击并进入下一层公式推导",
+      "每个公式推导页最上方显示网络图",
+      "网络图当前公式高亮，上级公式位于上方，下级依赖位于下方",
+      "网络图节点直接显示关键公式和简短名称，不只显示内部标识",
+      "网络图支持点击跳转、缩放、拖动、分支展开和收起",
+      "网络过大时默认聚焦当前推导路径，其他分支按需展开",
+      "网络图与 Markdown 公式引用读取同一套依赖关系，不单独维护流程图数据",
+      "CMS 提供关系编辑、循环检查和网络预览"
+    ],
+    "out": [
+      "允许循环推导或公式引用自身",
+      "单独维护一套与 Markdown 引用可能不一致的流程图",
+      "在游客网络图中显示数据库 ID、草稿状态或内部管理信息",
+      "把完整推导过程压缩成不可编辑图片"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "现有规则限制每张公式卡只有一个下一阶，无法表达多公式依赖。",
+      "公式页顶部没有显示推导来源、当前路径和后续层级的网络图。"
+    ],
+    "expected": [
+      "作者可以在一阶 Markdown 中插入多个二阶公式引用。",
+      "系统保存前检查依赖图，任何循环、自引用或失效目标都会被拒绝。",
+      "游客先通过网络图理解当前位置，再阅读当前公式和 Markdown 推导。",
+      "点击正文引用或网络节点均进入对应公式页并更新当前路径。"
+    ],
+    "edgeCases": [
+      "多个上级公式共享同一个基础公式。",
+      "大型反激计算书形成多层、多分支依赖。",
+      "依赖公式为草稿或归档状态。",
+      "节点数量过多时仍能聚焦当前路径且保持响应式可用。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.multiple-children",
+      "statement": "一张公式卡的 Markdown 可以绑定多个下一级公式，同一下级也可被多个上级复用。",
+      "verification": "建立含分支和汇聚的至少三层公式网络，核对保存结果和文章内链接。"
+    },
+    {
+      "id": "ac.acyclic-validation",
+      "statement": "系统拒绝自引用、直接循环、跨多层循环和悬空目标。",
+      "verification": "分别尝试四类无效关系，确认保存失败且原图关系不变。"
+    },
+    {
+      "id": "ac.graph-layout",
+      "statement": "公式页顶部网络图高亮当前公式，上级在上、下级在下，节点显示关键公式。",
+      "verification": "从多个层级公式页打开同一网络，检查方向、当前节点和公式内容。"
+    },
+    {
+      "id": "ac.graph-interaction",
+      "statement": "网络图支持点击跳转、缩放、拖动和分支展开收起。",
+      "verification": "在桌面和触控尺寸执行各项交互，确认当前路径与目标页面同步。"
+    },
+    {
+      "id": "ac.large-graph",
+      "statement": "大型网络默认聚焦当前路径，不会一次展开全部节点造成不可用。",
+      "verification": "建立多层多分支图，检查首屏节点数量、按需展开和性能。"
+    },
+    {
+      "id": "ac.single-source",
+      "statement": "网络图和 Markdown 引用始终来自同一依赖数据，不会产生两套冲突关系。",
+      "verification": "增删 Markdown 公式引用后重新打开 CMS 和游客网络图，核对关系一致。"
+    }
+  ],
+  "constraints": {
+    "languages": [
+      "zh-CN",
+      "Markdown",
+      "LaTeX"
+    ],
+    "platforms": [
+      "Larkix CMS 公式工作台",
+      "Larkix 游客公式页"
+    ],
+    "compatibility": [
+      "保留既有文章中的公式卡身份和修订",
+      "迁移现有线性关系时保持已表达的推导语义"
+    ],
+    "data": [
+      "推导关系必须形成有向无环图",
+      "公开图只使用可公开公式修订"
+    ],
+    "security": [
+      "游客网络图不得泄露草稿公式或内部管理字段"
+    ],
+    "operations": [
+      "关系保存前必须完成全路径循环检查"
+    ],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.graph-scale",
+      "severity": "medium",
+      "statement": "大型公式网络可能导致页面拥挤、渲染缓慢或移动端难以操作。",
+      "mitigation": "默认聚焦当前路径、按需展开、限制初始节点量并建立性能与响应式测试。"
+    },
+    {
+      "id": "risk.hidden-dependency",
+      "severity": "high",
+      "statement": "草稿或归档依赖若进入公开网络，会泄露未公开内容或产生断链。",
+      "mitigation": "公开关系按公式发布状态过滤并显示明确的不可访问边界。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-28T15:21:35.320+08:00",
+    "confirmationText": "确认这9个需求包",
+    "digest": "sha256:e2087547e7c12be383dcb91aa755bfaa91eae619f7d8833c1027343cd53e7ff9"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [
+      "REQ-20260728-003"
+    ],
+    "dispatchedAt": "2026-07-28T15:31:47.952+08:00"
+  }
+}

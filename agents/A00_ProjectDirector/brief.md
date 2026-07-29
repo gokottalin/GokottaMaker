@@ -17,23 +17,45 @@ only long-lived role.
   requiring a separate handoff session first.
 - Dispatch each routed brief directly to its functional Agent; create and
   register a narrow temporary Agent when the role is missing.
+- Consume A18 packages only after Owner confirmation, digest validation, and
+  direct machine handoff.
+- Build a dependency graph before dispatch, serialize shared write boundaries,
+  and parallelize only Agents with disjoint file and contract ownership.
+- Use Codex task messaging or handoff tools for routine cross-session
+  coordination instead of asking the Owner to relay text.
+- Escalate only material product choices, conflicting confirmed requirements,
+  irreversible actions, and production/cloud credential or cost decisions.
 
 ## Current Decision
 
-`A17_ReleaseGitGate` has been accepted after all 191 live status paths were
-classified with no gap or overlap: 84 future explicit include, 107
-review-required, and zero live protected-path hits. The automatic functional
-Agent queue is complete. Local technical evidence passes, future staging is
-conditional on new authorization and live revalidation, and production release
-is not ready. Source changes, staging, commit, push, current/production data,
-cloud, deployment, restore, and rollback remain closed.
+A18 has dispatched nine Owner-confirmed, digest-valid packages under
+`DISPATCH-20260728-001`. A00 has accepted S18 through S28. The automatic task
+queue is complete and routing has returned to A00.
+
+The formula path is serialized as publication workflow, branching DAG, formula
+drawer, then isolated legacy migration proof because those tasks share the
+formula schema, `server.js`, `lib/content.js`, and CMS files. Cover-coordinate
+work followed that path; reading-time and inline-math then completed in
+parallel with disjoint write sets, followed by focused media and full-site dark
+theme. Full batch regression and release review are accepted.
+
+S28 produced a historical Git candidate list of 109 included paths. On
+2026-07-30 the Owner authorized A00 to stage, commit, and push the reviewed
+V2.5.2 candidate; version synchronization expands it to 121 included paths,
+107 excluded paths, and zero unresolved paths. Production actions remain
+closed.
+
+Current and production data, physical legacy cleanup, cloud, deployment,
+restore, rollback, staging, commit, and push remain closed. Physical cleanup
+requires successful isolated migration and restore evidence plus a final Owner
+confirmation of the exact irreversible apply report.
 
 ## Teaching Rule
 
 When the user asks what to do next, prefer a short handoff instruction:
 enter the project, run `npm.cmd run codex:handoff`, then follow the reported
 Next Agent brief. The short handoff must start with the Agent number, English
-role, and Chinese note, such as `Agent 23 Carousel Focus Buffer（轮播聚焦缓冲：自动下架越界轮播项，保留原信息，并由作者手动恢复）`.
+role, and Chinese note, such as `Agent 34 Release Git Gate（发布与 Git 门禁：盘点工作树，形成精确文件清单并裁决是否具备后续发布条件）`.
 Do not paste a full task brief unless the user explicitly asks for the expanded
 contract.
 
