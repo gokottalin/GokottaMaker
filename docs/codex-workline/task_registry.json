@@ -4,8 +4,8 @@
   "operatingModel": "project_director_plus_short_task_agents",
   "legacyAgentDocsMode": "historical_reference_only",
   "currentGate": {
-    "batch1": "dispatch_20260730_active_wave10",
-    "businessImplementationAllowed": true,
+    "batch1": "dispatch_20260730_complete",
+    "businessImplementationAllowed": false,
     "databaseMutationAllowed": false,
     "migrationFileImplementationAllowed": false,
     "isolatedDataDirVerificationAllowed": true,
@@ -50,7 +50,7 @@
     "md2filePublicEntryAllowed": false,
     "apiVerifyRedirectedOutputAllowed": false,
     "releaseVersionSyncAllowed": false,
-    "releaseGitGateReverificationAllowed": true
+    "releaseGitGateReverificationAllowed": false
   },
   "longLivedRoles": [
     {
@@ -2064,7 +2064,7 @@
     },
     {
       "id": "A51_GitPublisher",
-      "status": "next",
+      "status": "completed",
       "scope": "Publish the accepted V2.5.3 candidate with an exact staged path set, verified release commit, and fast-forward push to the existing origin/main upstream.",
       "reads": [
         "AGENTS.md",

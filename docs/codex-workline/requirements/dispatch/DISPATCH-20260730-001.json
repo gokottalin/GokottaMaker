@@ -288,7 +288,7 @@
       "wave": 11,
       "slice": "S42_git_publish",
       "agent": "A51_GitPublisher",
-      "status": "next",
+      "status": "completed",
       "requirements": [],
       "dependsOn": [
         "S41B_release_git_gate_reverification",
@@ -304,17 +304,13 @@
     "currentOrProductionDataMutationAllowed": false,
     "legacyPhysicalCleanupAllowed": false,
     "productionDeploymentAllowed": false,
-    "gitStagingCommitPushAllowed": true,
+    "gitStagingCommitPushAllowed": false,
     "oneActiveWriterPerFile": true
   },
   "currentWave": {
     "wave": 11,
-    "agents": [
-      "A51_GitPublisher"
-    ],
-    "slices": [
-      "S42_git_publish"
-    ]
+    "agents": [],
+    "slices": []
   },
   "nextHandoffs": [
     "docs/codex-workline/slices/S42_git_publish_handoff.md"

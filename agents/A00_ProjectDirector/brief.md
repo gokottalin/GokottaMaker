@@ -28,12 +28,11 @@ only long-lived role.
 
 ## Current Decision
 
-A00 accepted S41B after 37/37 regression, exact 309-path classification,
-strict UTF-8, empty-index, and 961/0/0 contract checks.
+A00 accepted S42 after exact 207-path staging, commit `450b041`, successful
+push to `origin/main`, 37/37 post-commit regression, and remote relation `0/0`.
 
-S42 / A51 is now the only open workbench. It may refresh the release plan and
-execute exact staging, commit, and push for `V2.5.3+20260807-0001`. Production,
-cloud, runtime data, product changes, broad staging, and destructive Git remain closed.
+`DISPATCH-20260730-001` is complete. No short-task Agent is open. Git,
+production, cloud, runtime data, product changes, and destructive operations are closed.
 
 ## Teaching Rule
 
@@ -55,7 +54,7 @@ production release, or Git operations.
 ## Active Batch 2026-07-30
 
 - Confirmed dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json`
-- Accepted slices: `S30` through `S41B`, including `S40A`.
-- Current slice: `S42_git_publish`.
+- Accepted slices: `S30` through `S42`, including `S40A`.
+- Current slice: none; control returned to `A00_ProjectDirector`.
 - Candidate identity: `V2.5.3+20260807-0001`.
-- Exact Git execution is authorized by the Owner and S41B acceptance; production deployment remains closed.
+- GitHub `main` is at release commit `450b041`; production deployment remains closed.

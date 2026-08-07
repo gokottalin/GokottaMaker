@@ -190,7 +190,7 @@
       "codeImplementationAllowedNow": false,
       "databaseMutationAllowedNow": false,
       "productionReleaseAllowedNow": false,
-      "gitStagingAllowedNow": true
+      "gitStagingAllowedNow": false
     },
     "packageScripts": {
       "codex:handoff": "node scripts/codex-handoff.js",
@@ -201,13 +201,13 @@
     },
     "projectWindowRequiredText": [
       "# Project Window",
-      "Current phase: `DISPATCH-20260730-001_Wave11_GitPublish`",
+      "Current phase: `DISPATCH-20260730-001_Complete`",
       "Current controller: `agents/A00_ProjectDirector/brief.md`",
-      "Next agent: `agents/A51_GitPublisher/brief.md`",
+      "Next agent: `agents/A00_ProjectDirector/brief.md`",
       "Confirmed requirement dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json`",
-      "Current work target: execute S42 exact Git publication",
-      "Current gate: only the declared A51 planning files and exact Git staging, commit, and push are open",
-      "Confirmed queue: S42 / A51 is current"
+      "Current work target: await the next Owner-confirmed requirement package",
+      "Current gate: Git, production, cloud, data, and product writes are closed",
+      "Confirmed queue: A00 requirement intake and sequencing"
     ],
     "agentsGuideRequiredText": [
       "Recommended handoff and coordination language: Chinese",
@@ -230,10 +230,10 @@
       "run `npm.cmd run codex:contract`"
     ],
     "nextAgentsRequiredText": [
-      "Agent 51 Git Publisher",
-      "Git 发布执行",
+      "Agent 00 Project Director",
+      "项目导演：",
       "DISPATCH-20260730-001",
-      "S42",
+      "A00_ProjectDirector",
       "A00_ProjectDirector",
       "npm.cmd run codex:handoff"
     ],
@@ -599,7 +599,7 @@
       "continueUntilQueueComplete": true,
       "stopOnClosedGateOrNewAuthority": true
     },
-    "expectedNextTaskCount": 1,
+    "expectedNextTaskCount": 0,
     "agentRoleNotes": {
       "A00_ProjectDirector": "项目导演：负责顺序、门禁和下一步裁决",
       "A01_ProjectStateRetriever": "项目状态检索器：只读取资料并建立来源索引",
@@ -702,7 +702,7 @@
       "A48_ApiVerifyRedirectedOutput": "completed",
       "A49_ReleaseVersionSync": "completed",
       "A50_ReleaseGitGateReverification": "completed",
-      "A51_GitPublisher": "next"
+      "A51_GitPublisher": "completed"
     }
   },
   "temporaryExperts": [

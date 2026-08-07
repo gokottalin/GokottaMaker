@@ -2583,7 +2583,7 @@
       "id": "S42_git_publish",
       "agent": "A51_GitPublisher",
       "roleNote": "Git 发布执行：精确暂存、提交并推送已验收的新版本候选",
-      "status": "next",
+      "status": "completed",
       "purpose": "Publish V2.5.3+20260807-0001 to the existing origin/main with exact staging and no production operations.",
       "reads": [
         "AGENTS.md",
@@ -2629,11 +2629,11 @@
   ],
   "nextDecision": {
     "agents": [
-      "A51_GitPublisher"
+      "A00_ProjectDirector"
     ],
-    "decision": "A00 accepted S41B after 37/37 regression, exact 309-path classification, strict UTF-8, diff, secret, empty-index, and 961/0/0 contract checks. Execute only exact Git publication for V2.5.3+20260807-0001; production remains closed.",
+    "decision": "A00 accepted S42 after exact 207-path staging, commit 450b041, successful origin/main push, 37/37 post-commit regression, and 0/0 local/remote relation. DISPATCH-20260730-001 is complete; await the next Owner-confirmed requirement package.",
     "shortPrompts": [
-      "Agent 51 Git Publisher（Git 发布执行：精确暂存、提交并推送已验收的新版本候选）：请进入 E:\\Project\\2607-LarkixWeb，运行 npm.cmd run codex:handoff 核验路由，然后执行 agents\\A51_GitPublisher\\brief.md；使用中文交接，完成后直接回传 A00。"
+      "Agent 00 Project Director（项目导演：负责顺序、门禁和下一步裁决）：请进入 E:\\Project\\2607-LarkixWeb，运行 npm.cmd run codex:handoff 核验当前已回到 A00；使用中文交接，等待新的已确认需求后再分派短任务 Agent。"
     ]
   }
 }

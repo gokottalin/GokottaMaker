@@ -1,6 +1,6 @@
 # A00 Project Director Handoff
 
-Status: `S41B accepted; S42 is the only Wave 11 Git publication task`.
+Status: `DISPATCH-20260730-001 complete; control returned to A00`.
 
 ## Authority
 
@@ -87,9 +87,9 @@ S28 final A00 evidence:
 
 ## Current Gate
 
-S42 / A51 is the only open workbench. It owns the refreshed release plan,
-exact candidate staging, release commit, and push to the existing `origin/main`.
-Production, cloud, data, version, product, branch, and remote changes remain closed.
+No short-task workbench is open. S42 published `V2.5.3+20260807-0001` as
+commit `450b041` to the existing `origin/main`. Production, cloud, data,
+version, product, branch, remote, and Git write gates are closed.
 
 ## Closed Boundaries
 
@@ -101,28 +101,29 @@ Production, cloud, data, version, product, branch, and remote changes remain clo
 
 ## Queue
 
-1. S30-S41B. Accepted.
-2. S42 / A51 exact Git publication. Current.
+1. S30-S42. Accepted.
+2. A00 requirement intake and sequencing. Current.
 3. Production deployment. Closed.
 
 ## Current Handoff
 
 ```text
-Agent 51 Git Publisher（Git 发布执行：精确暂存、提交并推送已验收的新版本候选）：请进入 E:\Project\2607-LarkixWeb，运行 npm.cmd run codex:handoff 核验路由，然后执行 agents\A51_GitPublisher\brief.md；使用中文交接，完成后直接回传 A00。
+Agent 00 Project Director（项目导演：负责顺序、门禁和下一步裁决）：请进入 E:\Project\2607-LarkixWeb，运行 npm.cmd run codex:handoff 核验当前已回到 A00；使用中文交接，等待新的已确认需求后再分派短任务 Agent。
 ```
 
 ## 2026-07-30 Confirmed Batch
 
 ### status
 
-`wave11_s42_git_publish`
+`dispatch_complete_returned_to_a00`
 
 ### scope_completed
 
-- Accepted S41B at `V2.5.3+20260807-0001`.
-- Confirmed 37/37 regression, exact 309-path classification, empty index, strict encoding, and 961/0/0 contract.
-- Opened A51 as the only exact Git publication workbench; production remains closed.
+- Accepted S42 at `V2.5.3+20260807-0001`.
+- Confirmed exact 207-path staging, release commit `450b041`, successful `origin/main` push, and relation `0/0`.
+- Confirmed post-commit 37/37 regression; the 107 excluded historical/metadata paths were not committed.
+- Closed Git write permission and returned control to A00; production remains closed.
 
 ### next_handoff
 
-`A51_GitPublisher` returns Git commit and push evidence directly to `A00_ProjectDirector`.
+`A00_ProjectDirector` waits for the next Owner-confirmed requirement package.

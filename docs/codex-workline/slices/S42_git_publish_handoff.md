@@ -2,7 +2,7 @@
 
 ## status
 
-`ready_for_exact_git_execution`
+`completed`
 
 ## candidate
 
@@ -24,4 +24,8 @@
 
 ## execution_result
 
-本文件只记录执行前可验证事实。A00 以执行后的终端提交号、远端关系、push 结果和干净候选状态作为最终证据，避免在提交前预写尚未发生的结果。
+- 207 个 include 路径精确暂存并提交；107 个 exclude 路径均未进入 index 或提交。
+- 发布提交：`450b041832899a7d5637e9e072a77ec082464ff7`，消息为 `feat: release LarkixMaker V2.5.3`。
+- 推送：现有 `main` 已普通推送到现有 `origin/main`，双方提交一致，关系为 `0/0`。
+- 提交后全量回归：`37 passed / 0 failed`；changed-path audit 为 `105/105 classified, 0 staged`。
+- 生产、云端、服务、数据、凭据、备份、恢复和回滚均未执行。
