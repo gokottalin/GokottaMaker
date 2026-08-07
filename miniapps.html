@@ -7,7 +7,7 @@
     <meta name="description" content="LarkixMaker 小程序中心，集中管理在线电路、工具和后续可扩展的小应用。" />
     <link rel="manifest" href="./site.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="./assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524" />
-    <link rel="stylesheet" href="./styles.css?v=20260730-0012" />
+    <link rel="stylesheet" href="./styles.css?v=20260807-0001" />
   </head>
   <body class="themed-page miniapp-page" data-page-theme="projects" data-layout-page="miniappsPage">
     <a class="skip-link" href="#mainContent">跳到主要内容</a>
@@ -40,13 +40,17 @@
       <section class="miniapp-registry" id="miniappRegistry" aria-label="小程序列表" data-layout-section="miniappRegistry"></section>
     </main>
 
-    <script src="./data/miniapps.js?v=20260730-0012"></script>
+    <script src="./data/miniapps.js?v=20260801-s39"></script>
     <script>
-      const miniapps = window.LARKIX_MINIAPPS || [];
+      const storedMiniapps = Array.isArray(window.LARKIX_MINIAPPS) ? window.LARKIX_MINIAPPS : [];
+      const miniapps = window.LarkixMiniapps?.publicList?.(storedMiniapps) || storedMiniapps
+        .filter((app) => app?.id === "md2file")
+        .slice(0, 1)
+        .map((app) => ({ ...app, name: "MD2File", href: "./tools/md2doc.html" }));
       const safe = (value) => String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#039;" })[char]);
       document.querySelector("#miniappRegistry").innerHTML = miniapps
         .map((app) => `
-          <article class="miniapp-card miniapp-card-${safe(app.id)}">
+          <article class="miniapp-card miniapp-card-${safe(app.id)}" data-public-miniapp-card="${safe(app.id)}">
             <img class="miniapp-icon miniapp-icon-${safe(app.id)}" src="${safe(app.icon)}" alt="" loading="lazy" />
             <div class="miniapp-card-body">
               <div class="miniapp-card-kicker">
@@ -67,8 +71,8 @@
         `)
         .join("") || `<div class="empty-state">当前还没有可用小程序。</div>`;
     </script>
-    <script src="./site-layout.js?v=20260730-0012"></script>
-    <script src="./data/site-meta.js?v=20260730-0012"></script>
-    <script src="./data/footer.js?v=20260730-0012"></script>
+    <script src="./site-layout.js?v=20260807-0001"></script>
+    <script src="./data/site-meta.js?v=20260807-0001"></script>
+    <script src="./data/footer.js?v=20260807-0001"></script>
   </body>
 </html>

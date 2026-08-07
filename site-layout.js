@@ -5,7 +5,7 @@
   let layoutSignature = JSON.stringify(siteLayout);
   const focusFallback = {
     enabled: true,
-    hideMiniappsFromPrimaryNav: true,
+    hideMiniappsFromPrimaryNav: false,
     hideAdminFromPublicNav: true
   };
 
@@ -32,7 +32,8 @@
       const links = [
         { href: "./maker.html", label: "首页" },
         { href: "./category.html?category=power-electronics", label: "电力电子" },
-        { href: "./derive.html", label: "公式推导" }
+        { href: "./derive.html", label: "公式推导" },
+        { href: "./miniapps.html", label: "MD2File" }
       ];
       nav.innerHTML = links
         .map((link) => `<a href="${link.href}"${isCurrentHref(link.href) ? ' aria-current="page"' : ""}>${link.label}</a>`)
@@ -139,7 +140,10 @@
       })
       .forEach((section) => {
         const config = orderMap.get(section.dataset.layoutSection);
-        section.hidden = config?.visible === false;
+        const requiredPublicEntry =
+          (pageKey === "home" && section.dataset.layoutSection === "miniapps") ||
+          (pageKey === "miniappsPage" && ["miniappsHeader", "miniappRegistry"].includes(section.dataset.layoutSection));
+        section.hidden = requiredPublicEntry ? false : config?.visible === false;
         section.dataset.layoutSize = config?.size || "standard";
         container.appendChild(section);
       });

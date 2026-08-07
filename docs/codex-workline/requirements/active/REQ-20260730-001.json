@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260730-001",
+  "title": "Hero 轮播管理器唯一来源与四槽位互斥",
+  "status": "dispatched",
+  "priority": "high",
+  "createdAt": "2026-07-30T11:39:33.767+08:00",
+  "updatedAt": "2026-07-30T11:53:27.440+08:00",
+  "intent": {
+    "problem": "Hero 当前会出现未被轮播管理器管理的幽灵文章，且多个文章可能占用相同排序值，导致展示顺序冲突。",
+    "desiredOutcome": "Hero 只展示轮播管理器明确配置的四个互斥槽位，发布普通文章不得绕过配置进入轮播。",
+    "targetUsers": ["游客", "Owner/幕后作者"]
+  },
+  "scope": {
+    "in": [
+      "轮播管理器成为 Hero 展示条目的唯一数据来源",
+      "固定提供 1、2、3、4 四个排序槽位且同一槽位最多一个文章",
+      "从 Hero 移除所有不存在于轮播管理器配置中的幽灵条目，但保留文章本体与发布状态",
+      "新发布但未配置轮播槽位的文章不进入 Hero，也不改变现有排序",
+      "给新文章选择已占用槽位时阻止保存并显示占用文章名称",
+      "继续遵守聚焦模式缓冲区、禁止不合规恢复及 CMS 手动恢复规则"
+    ],
+    "out": [
+      "删除幽灵条目对应的文章",
+      "自动覆盖、交换、挤位或重排已配置槽位",
+      "通过最新发布时间自动选择 Hero 文章"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "Hero 会显示轮播管理器中不存在的已发布文章。",
+      "轮播排序值可能重复，导致多个文章同时声称相同位置。"
+    ],
+    "expected": [
+      "Hero 展示集合与轮播管理器四个槽位完全一致。",
+      "四个槽位在保存层和展示层均保持唯一。",
+      "槽位冲突不会静默覆盖任何已有配置。",
+      "文章发布和轮播上架是两个独立动作。"
+    ],
+    "edgeCases": [
+      "历史数据已经存在重复槽位或幽灵条目。",
+      "一个轮播文章被归档、取消发布或被聚焦模式排除。",
+      "四个槽位已满时发布新文章。",
+      "并发作者尝试占用同一槽位。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.manager-authority",
+      "statement": "Hero 中不存在任何未被轮播管理器四个槽位引用的文章。",
+      "verification": "准备已发布但未配置槽位的文章并刷新 Hero，确认文章不出现。"
+    },
+    {
+      "id": "ac.ghost-cleanup",
+      "statement": "历史幽灵文章从 Hero 移除，但文章详情、发布状态和 CMS 数据保持不变。",
+      "verification": "记录幽灵文章状态，执行修正后核对 Hero 与文章详情。"
+    },
+    {
+      "id": "ac.slot-uniqueness",
+      "statement": "槽位 1 至 4 各自最多绑定一个文章，重复选择已占用槽位时保存被阻止并指出占用文章。",
+      "verification": "分别通过 CMS 与接口尝试制造重复槽位并确认均被拒绝。"
+    },
+    {
+      "id": "ac.publish-independent",
+      "statement": "发布新文章不会自动进入轮播、覆盖槽位或改变已有 1 至 4 顺序。",
+      "verification": "先配置四个槽位，再发布第五篇文章并核对 Hero 顺序。"
+    },
+    {
+      "id": "ac.focus-compatibility",
+      "statement": "聚焦模式排除的轮播文章仍进入缓冲区且不能在聚焦开启时手动恢复。",
+      "verification": "开启聚焦模式并尝试恢复不合规文章，确认被阻止且原因清晰。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN"],
+    "platforms": ["Larkix 游客网页", "Larkix CMS"],
+    "compatibility": ["保留既有文章及其发布状态", "兼容既有轮播缓冲区规则"],
+    "data": ["修正历史冲突时不得删除文章本体"],
+    "security": [],
+    "operations": ["需要历史冲突数据修复与并发唯一性验证"],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.legacy-conflicts",
+      "severity": "high",
+      "statement": "历史重复槽位如果被静默覆盖可能丢失作者配置。",
+      "mitigation": "迁移前保留冲突清单，按轮播管理器明确记录修复并验证文章本体未变化。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-30T11:51:02.563+08:00",
+    "confirmationText": "确认无误，开始执行",
+    "digest": "sha256:5e922998b001479323984457ff1a4e09cc0e38fd10958225ce2dd5de86e3698b"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-07-30T11:53:27.440+08:00"
+  }
+}

@@ -89,6 +89,15 @@
     return mergeDefaults(window.LARKIX_PROJECTS || window.LARKIX_SEED?.projects || [], read(projectStorageKey, []), deleted("projects")).map(sanitizeProjectPreview);
   }
 
+  function getHeroCarousel() {
+    const slots = window.LARKIX_SERVER_CONTENT?.heroCarousel;
+    if (!Array.isArray(slots)) return [];
+    return slots
+      .slice()
+      .sort((a, b) => Number(a.slot ?? a.featuredOrder ?? 0) - Number(b.slot ?? b.featuredOrder ?? 0))
+      .slice(0, 4);
+  }
+
   function isCurrentHref(href) {
     const target = new URL(href, location.href);
     return target.pathname === location.pathname && target.search === location.search;
@@ -146,6 +155,7 @@
     getPosts,
     getProjects,
     getProjectDirectory,
+    getHeroCarousel,
     savePost,
     saveProject,
     remove

@@ -1,97 +1,181 @@
+.markdown-math {
+  box-sizing: border-box;
+  color: inherit;
+  font-family: inherit;
+  letter-spacing: 0;
+}
+
 .markdown-math-inline[data-math-layout="inline-flow"] {
   display: inline-flex;
   max-inline-size: 100%;
   box-sizing: border-box;
-  align-items: center;
-  padding-inline: 0.12em;
+  align-items: baseline;
+  padding-inline: 0.08em;
   color: inherit;
   line-height: normal;
-  vertical-align: middle;
+  vertical-align: baseline;
   white-space: nowrap;
 }
 
 .markdown-math-inline .math-inline-frame {
   display: inline-flex;
   min-inline-size: max-content;
-  align-items: center;
+  align-items: baseline;
+  line-height: 1.2;
+}
+
+.markdown-math-inline .katex {
+  color: inherit;
+  font-size: 1em;
   line-height: 1.2;
 }
 
 .markdown-math-inline.is-complex .math-inline-frame {
-  padding-block: 0.32em 0.28em;
-}
-
-.markdown-math-inline .math-frac {
-  grid-template-rows: max-content max-content;
-  align-self: center;
-  margin: 0.12em 0.2em;
-  line-height: 1;
-  vertical-align: middle;
-}
-
-.markdown-math-inline .math-num,
-.markdown-math-inline .math-den {
-  min-inline-size: max-content;
-  padding-inline: 0.24em;
-  line-height: 1.14;
-}
-
-.markdown-math-inline .math-num {
-  padding-bottom: 0.1em;
-}
-
-.markdown-math-inline .math-den {
-  padding-top: 0.1em;
-}
-
-.markdown-math-inline .math-frac .math-frac {
-  margin-block: 0.08em;
-  font-size: 0.94em;
-}
-
-.markdown-math-inline .math-root {
-  align-self: center;
-  align-items: flex-start;
-  margin-block: 0.08em;
-  vertical-align: middle;
-}
-
-.markdown-math-inline .math-radical {
-  flex: 0 0 auto;
-  line-height: 1.08;
-}
-
-.markdown-math-inline .math-radicand {
-  display: inline-flex;
-  min-inline-size: max-content;
-  align-items: center;
-  padding-top: 0.08em;
-  line-height: 1.14;
-}
-
-.markdown-math-inline .math-limit-op,
-.markdown-math-inline .math-limit-int {
-  align-self: center;
-  vertical-align: middle;
-}
-
-.markdown-math-inline .math-limit-int .math-limit-upper,
-.markdown-math-inline .math-limit-int .math-limit-lower {
-  transform: none;
-}
-
-.markdown-math-inline sub,
-.markdown-math-inline sup {
-  font-size: 0.72em;
-  line-height: 1;
+  padding-block: 0.18em 0.14em;
 }
 
 .markdown-math-inline.is-scrollable {
   overflow: visible;
 }
 
-.markdown-math-inline.is-scrollable .math-inline-frame {
-  padding-inline: 0.06em;
+.markdown-math-display {
+  position: relative;
+  display: block;
+  max-inline-size: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  margin: 20px 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1.08em;
+  line-height: normal;
+  text-align: center;
+  white-space: normal;
+  scrollbar-width: thin;
+}
+
+.formula-binding-marker {
+  --formula-marker-fg: #6d28d9;
+  --formula-marker-bg: #f3e8ff;
+  --formula-marker-border: #c084fc;
+  position: relative;
+  display: inline-flex;
+  inline-size: 1.18em;
+  block-size: 1.18em;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  margin-inline-start: 0.16em;
+  padding: 0;
+  border: 1px solid var(--formula-marker-border);
+  border-radius: 50%;
+  background: var(--formula-marker-bg);
+  color: var(--formula-marker-fg);
+  font-size: 0.66em;
+  font-weight: 850;
+  line-height: 1;
+  text-decoration: none;
+  vertical-align: baseline;
+  inset-block-start: -0.62em;
+  box-shadow: 0 2px 7px rgb(109 40 217 / 18%);
+}
+
+.formula-binding-marker:hover {
+  border-color: #8b5cf6;
+  background: #ede9fe;
+  color: #4c1d95;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.formula-binding-marker:focus-visible {
+  outline: 3px solid rgb(139 92 246 / 32%);
+  outline-offset: 2px;
+}
+
+.formula-binding-marker__icon {
+  font-family: "Cascadia Code", Consolas, monospace;
+  transform: translateY(-0.02em);
+}
+
+.formula-binding-marker__label {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.markdown-math-display > .formula-binding-marker--display {
+  position: absolute;
+  z-index: 1;
+  inset-block-start: 0.08em;
+  inset-inline-end: 0.08em;
+  margin: 0;
+}
+
+.formula-reference--display > .formula-binding-marker--display {
+  position: absolute;
+  inset-block-start: 0.08em;
+  inset-inline-end: 0.08em;
+}
+
+.formula-reference--display {
+  position: relative;
+}
+
+.markdown-math-display .katex-display {
+  min-inline-size: max-content;
+  margin: 0;
+}
+
+.markdown-math-display .katex-display > .katex {
+  color: inherit;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.markdown-math-display.is-boxed {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.markdown-math-display.is-boxed .katex-display {
+  width: max-content;
+  min-inline-size: 0;
+  max-inline-size: none;
+  margin-inline: auto;
+}
+
+.markdown-math-display.is-boxed .fbox {
+  box-sizing: border-box;
+}
+
+.markdown-math-error {
+  box-sizing: border-box;
+  color: #b42318;
+  font-family: inherit;
+  font-size: 0.92em;
+}
+
+.markdown-math-error--inline {
+  display: inline;
+}
+
+.markdown-math-error--display {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 16px auto;
+  padding: 6px 10px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  background: #fff4f2;
 }
 
 a:hover .markdown-math-inline,
@@ -101,15 +185,54 @@ a:focus-visible .markdown-math-inline,
   color: inherit;
 }
 
+[data-theme="dark"] .markdown-math-display,
+[data-theme="dark"] .markdown-math-display.is-boxed {
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+
+[data-theme="dark"] .markdown-math-error {
+  color: #ffb4ab;
+}
+
+[data-theme="dark"] .formula-binding-marker {
+  --formula-marker-fg: #ddd6fe;
+  --formula-marker-bg: #3b1d61;
+  --formula-marker-border: #8b5cf6;
+}
+
+[data-theme="dark"] .markdown-math-error--display {
+  background: #3f1512;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .markdown-math-display,
+  :root:not([data-theme="light"]) .markdown-math-display.is-boxed {
+    border: 0;
+    background: transparent;
+    color: inherit;
+  }
+
+  :root:not([data-theme="light"]) .markdown-math-error {
+    color: #ffb4ab;
+  }
+
+  :root:not([data-theme="light"]) .markdown-math-error--display {
+    background: #3f1512;
+  }
+}
+
 @media (max-width: 640px) {
   .markdown-math-inline.is-scrollable {
     overflow-x: auto;
     overflow-y: auto;
     overscroll-behavior-inline: contain;
     scrollbar-width: thin;
+    vertical-align: middle;
   }
 
   .markdown-math-inline.is-complex .math-inline-frame {
-    padding-block: 0.38em 0.32em;
+    padding-block: 0.24em 0.2em;
   }
 }

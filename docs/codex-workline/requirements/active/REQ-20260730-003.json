@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260730-003",
+  "title": "全站 LaTeX 数学排版与定界符显示修复",
+  "status": "dispatched",
+  "priority": "high",
+  "createdAt": "2026-07-30T11:39:33.767+08:00",
+  "updatedAt": "2026-07-30T11:53:27.440+08:00",
+  "intent": {
+    "problem": "公式下标、根号、复杂分式和公式定界区域存在错位、原始文本或多余边框，降低文章与公式页的专业可读性。",
+    "desiredOutcome": "在预览、文章、公式页面和公式地图中使用一致、正确且无多余装饰的 LaTeX 渲染。",
+    "targetUsers": ["游客", "Owner/幕后作者"]
+  },
+  "scope": {
+    "in": [
+      "正确渲染下标、上标、根号、积分、微分和嵌套复杂分式",
+      "分式按数学轴垂直居中，包含根号的分子不得导致整式下沉",
+      "准确区分整个分式开根号与仅分子开根号",
+      "识别 LaTeX 的 \\[...\\] 块级区域并隐藏定界符容器的视觉边框",
+      "仅当源码显式使用 \\boxed{...} 时显示紧贴公式内容的最小矩形框",
+      "公式框不得扩展为整行宽度或留下大量空白",
+      "覆盖 CMS 实时预览、游客文章、公式页、推导正文和公式地图",
+      "LaTeX 输入框继续显示可编辑原始文本，不改为所见即所得",
+      "语法错误在 CMS 标出并阻止发布，游客继续读取上一条有效发布修订"
+    ],
+    "out": [
+      "在 LaTeX 原始输入框内渲染公式",
+      "为所有块级公式自动添加边框",
+      "把 \\[...\\] 强制改为行内公式",
+      "向游客暴露无效 LaTeX、错误堆栈或原始定界符"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "一行文字中的变量下标与主体位置接近，层级不清。",
+      "根号显示为分离的符号和横线。",
+      "部分复杂分式整体靠下或分子、分母布局错误。",
+      "部分 \\[...\\] 区域出现不需要的外框，公式地图或公式卡会显示原始 LaTeX。"
+    ],
+    "expected": [
+      "上下标、根号和分式符合标准数学排版。",
+      "\\[...\\] 只承担公式识别与块级布局，不产生可见边框。",
+      "\\boxed{...} 只包围公式自身。",
+      "同一 LaTeX 在各公开和预览表面得到一致结果。"
+    ],
+    "edgeCases": [
+      "\\frac{\\sqrt{a}}{b} 与 \\sqrt{\\frac{a}{b}}。",
+      "分子包含积分、微分、根号和多层上下标。",
+      "嵌套 \\boxed、长公式及行内公式与中文混排。",
+      "不完整定界符、未知命令或错误括号。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.math-fixtures",
+      "statement": "标准测试集中上下标、根号、积分、微分和复杂分式均正确渲染并垂直居中。",
+      "verification": "使用包含根号分子、整分式根号和多层分式的固定样例执行截图回归。"
+    },
+    {
+      "id": "ac.delimiter-border",
+      "statement": "\\[...\\] 定界符及其普通容器不显示外框，公式本身仍保持正确块级排版。",
+      "verification": "在文章、公式推导和 CMS 预览中渲染同一样例并检查边界。"
+    },
+    {
+      "id": "ac.tight-boxed",
+      "statement": "\\boxed{D = \\frac{V_{OUT}}{V_{IN}}} 的矩形仅包围公式内容，不占满一行且无大面积留白。",
+      "verification": "比较普通块级公式与显式 boxed 公式的边框尺寸。"
+    },
+    {
+      "id": "ac.surface-consistency",
+      "statement": "CMS 预览、文章、公式页、推导正文和公式地图均不显示原始 LaTeX，且渲染样式一致。",
+      "verification": "用同一公式卡贯穿全部表面执行对照截图。"
+    },
+    {
+      "id": "ac.invalid-gate",
+      "statement": "无效 LaTeX 在 CMS 显示可定位错误并阻止发布，公开页面保持上一条有效修订。",
+      "verification": "向已发布公式输入错误语法并尝试保存及发布，核对 CMS 和游客结果。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN"],
+    "platforms": ["Larkix 游客网页", "Larkix CMS"],
+    "compatibility": ["保留原始 LaTeX 可编辑文本", "保持既有有效公式内容语义"],
+    "data": ["无效编辑不得覆盖公开有效修订"],
+    "security": [],
+    "operations": ["需要统一数学样例库和跨页面视觉回归"],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.renderer-divergence",
+      "severity": "high",
+      "statement": "不同页面使用不同渲染路径会再次产生不一致。",
+      "mitigation": "统一数学渲染入口，并用同一固定样例覆盖所有表面。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-30T11:51:02.563+08:00",
+    "confirmationText": "确认无误，开始执行",
+    "digest": "sha256:48e9facf95c24ae1bc75391a1f1bc17e2aca0ce5878286ee9a44c42510b969bc"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-07-30T11:53:27.440+08:00"
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260730-005",
+  "title": "公式卡绑定统一为公式右上角紫色跳转图标",
+  "status": "dispatched",
+  "priority": "high",
+  "createdAt": "2026-07-30T11:39:33.767+08:00",
+  "updatedAt": "2026-07-30T11:53:27.440+08:00",
+  "intent": {
+    "problem": "公式卡插入后会另起一行显示推导链接或重复公式内容，破坏文章连续排版。",
+    "desiredOutcome": "公式卡绑定只在原公式右上角增加统一的紫色圆形跳转图标，保持正文紧凑且可进入对应推导。",
+    "targetUsers": ["游客", "Owner/幕后作者"]
+  },
+  "scope": {
+    "in": [
+      "文章正文和公式推导正文中的公式卡绑定统一显示紫色圆形 ↩ 图标",
+      "图标位于被绑定公式右上角，大小接近上标",
+      "保留作者原本写入的公式，不额外插入公式、卡片或文字链接",
+      "悬停或键盘聚焦时显示目标公式或推导名称",
+      "点击图标进入对应公式详情与推导页面",
+      "所有公式卡插入入口产生相同绑定表现",
+      "没有绑定公式卡的普通公式不显示图标",
+      "公式地图节点继续使用节点点击，不叠加此图标"
+    ],
+    "out": [
+      "在公式后另起一行显示文字链接",
+      "重复显示数据库中的公式正文",
+      "给所有未绑定公式自动添加图标",
+      "改变公式本身的 LaTeX"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "推导跳转可能另起一行显示，导致公式和跳转入口分离。",
+      "公式卡插入可能产生额外内容而不是装饰作者原公式。"
+    ],
+    "expected": [
+      "作者原公式保持原位，绑定只增加右上角小图标。",
+      "不同公式显示相同图标样式，但悬停名称对应各自目标。",
+      "图标不影响行高、分式垂直居中或块级公式边界。"
+    ],
+    "edgeCases": [
+      "行内公式、块级公式和显式 boxed 公式。",
+      "同一段包含多个公式卡绑定。",
+      "长公式、复杂分式及移动端窄屏。",
+      "目标公式归档、未发布或不存在。",
+      "仅键盘或触控用户访问图标。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.decorate-only",
+      "statement": "绑定已写入文章的公式卡后，只增加右上角图标，不重复公式、不新增卡片且不另起文字链接行。",
+      "verification": "比较绑定前后 DOM、截图和正文文本流。"
+    },
+    {
+      "id": "ac.bound-only",
+      "statement": "只有公式卡绑定显示图标，普通未绑定公式完全不显示。",
+      "verification": "在同一段放置已绑定与未绑定公式并对照。"
+    },
+    {
+      "id": "ac.tooltip-navigation",
+      "statement": "每个图标悬停或聚焦时显示准确目标名称，点击进入相应公式推导。",
+      "verification": "为多个不同公式绑定不同目标并逐项检查提示与 URL。"
+    },
+    {
+      "id": "ac.layout-stability",
+      "statement": "图标不会导致公式另起一行、复杂分式下沉、边框扩大或正文横向溢出。",
+      "verification": "使用行内、块级、boxed 和复杂分式执行响应式截图。"
+    },
+    {
+      "id": "ac.accessibility",
+      "statement": "图标可通过键盘聚焦，具有可读名称，并在触控设备提供等价入口。",
+      "verification": "执行键盘、可访问名称和移动触控检查。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN"],
+    "platforms": ["Larkix 游客网页", "Larkix CMS 预览"],
+    "compatibility": ["兼容既有文章公式绑定", "保留公式卡版本和归档规则"],
+    "data": ["绑定仍指向稳定公式卡身份及指定修订策略"],
+    "security": [],
+    "operations": ["需要文章与推导正文的视觉和导航回归"],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.overlay-collision",
+      "severity": "medium",
+      "statement": "图标可能与上标、boxed 边框或相邻文字重叠。",
+      "mitigation": "针对行内、块级、上标、分式和窄屏建立定位样例并验收。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-30T11:51:02.563+08:00",
+    "confirmationText": "确认无误，开始执行",
+    "digest": "sha256:2a5bc12a4f83fb5795266a4e25d981e611b4dbf9a8909810c64f003f3138f070"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-07-30T11:53:27.440+08:00"
+  }
+}

@@ -634,12 +634,91 @@
     return output.replace(/[ \t]{2,}/g, " ");
   }
 
+  let activeMathDiagnostics = null;
+
+  function mathErrorMarkup(displayMode) {
+    const tag = displayMode ? "div" : "span";
+    const mode = displayMode ? "display" : "inline";
+    return `<${tag} class="markdown-math-error markdown-math-error--${mode}" role="status" aria-label="公式渲染失败">公式暂不可用</${tag}>`;
+  }
+
+  function recordMathDiagnostics(result, source, displayMode) {
+    if (!activeMathDiagnostics || !result || !Array.isArray(result.diagnostics)) return;
+    result.diagnostics.forEach((item) => {
+      activeMathDiagnostics.push({
+        ...item,
+        formula: {
+          index: activeMathDiagnostics.length + 1,
+          displayMode,
+          source: String(source || "")
+        }
+      });
+    });
+  }
+
+  function recordDelimiterDiagnostic(delimiter, line) {
+    if (!activeMathDiagnostics) return;
+    activeMathDiagnostics.push({
+      code: "math.delimiter.unclosed",
+      severity: "error",
+      blocking: true,
+      message: `数学块缺少结束定界符 ${delimiter}。`,
+      range: {
+        offset: 0,
+        length: delimiter.length,
+        line,
+        column: 1,
+        endLine: line,
+        endColumn: delimiter.length + 1
+      }
+    });
+  }
+
+  function mathEngineResult(source, displayMode) {
+    if (!window.LarkixMath || typeof window.LarkixMath.render !== "function") {
+      if (typeof document === "undefined") {
+        return {
+          valid: true,
+          blocking: false,
+          diagnostics: [],
+          html: renderLatexHtml(source)
+        };
+      }
+      const result = {
+        valid: false,
+        blocking: true,
+        diagnostics: [
+          {
+            code: "math.engine.unavailable",
+            severity: "error",
+            blocking: true,
+            message: "共享数学引擎未加载，已阻止数学内容输出。",
+            range: {
+              offset: 0,
+              length: 0,
+              line: 1,
+              column: 1,
+              endLine: 1,
+              endColumn: 1
+            }
+          }
+        ],
+        html: ""
+      };
+      recordMathDiagnostics(result, source, displayMode);
+      return result;
+    }
+    const result = window.LarkixMath.render(source, { displayMode });
+    recordMathDiagnostics(result, source, displayMode);
+    return result;
+  }
+
   function inlineMathProfile(source, html) {
     const structureCounts = {
-      fraction: (html.match(/class="math-frac"/g) || []).length,
-      integral: (html.match(/\bmath-limit-(?:i{0,2}int|oi?int)\b/g) || []).length,
-      root: (html.match(/class="math-root"/g) || []).length,
-      script: (html.match(/<(?:sub|sup)(?:\s|>)/g) || []).length
+      fraction: (html.match(/\bmfrac\b/g) || []).length,
+      integral: (source.match(/\\(?:i{1,3}nt|oi{1,2}nt)(?![A-Za-z])/g) || []).length,
+      root: (html.match(/\bsqrt\b/g) || []).length,
+      script: (html.match(/\bmsupsub\b/g) || []).length
     };
     const structures = Object.entries(structureCounts)
       .filter(([, count]) => count > 0)
@@ -661,14 +740,19 @@
 
   function renderInlineMath(latex) {
     const source = decodeMathEntities(latex);
-    const body = renderLatexHtml(source);
-    const profile = inlineMathProfile(source, body);
+    const result = mathEngineResult(source, false);
+    if (!result.valid) return mathErrorMarkup(false);
+    const profile = inlineMathProfile(source, result.html);
     const classes = ["markdown-math", "markdown-math-inline", ...profile.classes].join(" ");
-    return `<span class="${classes}" data-math-layout="inline-flow" data-math-structures="${profile.structures}" data-latex="${escapeHtml(source)}"><span class="math-inline-frame">${body}</span></span>`;
+    return `<span class="${classes}" data-math-layout="inline-flow" data-math-structures="${profile.structures}" data-latex="${escapeHtml(source)}"><span class="math-inline-frame">${result.html}</span></span>`;
   }
 
   function renderDisplayMath(latex) {
-    return `<div class="markdown-math markdown-math-display" data-latex="${escapeHtml(latex)}">${renderLatexHtml(latex)}</div>`;
+    const source = decodeMathEntities(latex);
+    const result = mathEngineResult(source, true);
+    if (!result.valid) return mathErrorMarkup(true);
+    const boxed = /\\boxed\s*\{/.test(source) ? " is-boxed" : "";
+    return `<div class="markdown-math markdown-math-display${boxed}" data-latex="${escapeHtml(source)}">${result.html}</div>`;
   }
 
   function looksLikeFormulaText(value) {
@@ -791,29 +875,52 @@
     )}</span>${latex ? renderInlineMath(latex) : ""}</a>`;
   }
 
-  function renderFormulaReference(shortcode, bindingId, formulaId, revisionId, displayMode, block = false) {
+  function resolveFormulaBinding(bindingId, formulaId, revisionId, displayMode) {
     const binding = activeFormulaBindings.get(bindingId);
     const resolved =
       binding &&
       binding.formulaId === formulaId &&
       binding.revisionId === revisionId &&
       binding.displayMode === displayMode &&
-      String(binding.latex || "").trim();
-    const slug = resolved ? String(binding.slug || "") : "";
-    const label = resolved ? String(binding.displayName || formulaId) : formulaId;
-    const link = slug
-      ? `<a class="formula-reference-link" href="./derive.html?formula=${encodeURIComponent(slug)}" title="查看公式卡：${escapeHtml(label)}" aria-label="查看公式卡：${escapeHtml(label)}">↗</a>`
-      : "";
+      String(binding.latex || "").trim() &&
+      String(binding.slug || "").trim();
+    return {
+      binding,
+      resolved: Boolean(resolved),
+      slug: resolved ? String(binding.slug).trim() : "",
+      label: resolved ? String(binding.displayName || formulaId).trim() : formulaId
+    };
+  }
+
+  function renderFormulaBindingMarker(bindingId, formulaId, revisionId, displayMode) {
+    const target = resolveFormulaBinding(bindingId, formulaId, revisionId, displayMode);
+    if (!target.resolved) return "";
+    const title = `${target.label}详细推导`;
+    return `<a class="formula-binding-marker formula-binding-marker--${displayMode}" href="./derive.html?formula=${encodeURIComponent(
+      target.slug
+    )}" data-formula-binding-id="${escapeHtml(bindingId)}" data-formula-id="${escapeHtml(
+      formulaId
+    )}" data-formula-revision-id="${escapeHtml(revisionId)}" title="${escapeHtml(
+      title
+    )}" aria-label="查看 ${escapeHtml(title)}"><span class="formula-binding-marker__icon" aria-hidden="true">↩</span><span class="formula-binding-marker__label">${escapeHtml(
+      target.label
+    )}</span></a>`;
+  }
+
+  function renderFormulaReference(shortcode, bindingId, formulaId, revisionId, displayMode, block = false) {
+    const target = resolveFormulaBinding(bindingId, formulaId, revisionId, displayMode);
+    const { binding, resolved, label } = target;
+    const marker = renderFormulaBindingMarker(bindingId, formulaId, revisionId, displayMode);
     const archive = resolved && binding.archiveState === "archived" ? '<span class="formula-reference-state">已归档修订</span>' : "";
     const attributes = `data-formula-binding-id="${escapeHtml(bindingId)}" data-formula-id="${escapeHtml(formulaId)}" data-formula-revision-id="${escapeHtml(revisionId)}"`;
     if (block) {
       const body = resolved
         ? renderDisplayMath(binding.latex)
         : `<div class="formula-reference-unresolved">公式卡引用：<code>${escapeHtml(formulaId)}</code></div>`;
-      return `<section class="formula-reference formula-reference--display ${resolved ? "" : "is-unresolved"}" ${attributes}>${body}<span class="formula-reference-meta">${escapeHtml(label)}${archive}${link}</span></section>`;
+      return `<section class="formula-reference formula-reference--display ${resolved ? "" : "is-unresolved"}" ${attributes}>${body}<span class="formula-reference-meta">${escapeHtml(label)}${archive}</span>${marker}</section>`;
     }
     const body = resolved ? renderInlineMath(binding.latex) : `<code>${escapeHtml(formulaId)}</code>`;
-    return `<span class="formula-reference formula-reference--inline ${resolved ? "" : "is-unresolved"}" ${attributes}>${body}${archive}${link}</span>`;
+    return `<span class="formula-reference formula-reference--inline ${resolved ? "" : "is-unresolved"}" ${attributes}>${body}${archive}${marker}</span>`;
   }
 
   function inline(value) {
@@ -849,9 +956,14 @@
       return token;
     });
 
-    text = text.replace(formulaReferencePattern, (shortcode, bindingId, formulaId, revisionId, displayMode) => {
+    text = text.replace(formulaReferencePattern, (shortcode, bindingId, formulaId, revisionId, displayMode, offset, source) => {
       const token = `@@LARKIXFORMULA${formulaSpans.length}@@`;
-      formulaSpans.push(renderFormulaReference(shortcode, bindingId, formulaId, revisionId, displayMode, false));
+      const followsAuthorMath = /@@LARKIXMATH\d+@@\s*$/.test(source.slice(0, offset));
+      formulaSpans.push(
+        followsAuthorMath
+          ? renderFormulaBindingMarker(bindingId, formulaId, revisionId, displayMode)
+          : renderFormulaReference(shortcode, bindingId, formulaId, revisionId, displayMode, false)
+      );
       return token;
     });
     text = text.replace(formulaDependencyPattern, (shortcode, formulaId) => {
@@ -942,6 +1054,9 @@
   }
 
   function render(markdown, options = {}) {
+    const parentMathDiagnostics = activeMathDiagnostics;
+    const diagnostics = [];
+    activeMathDiagnostics = diagnostics;
     const includeH1 = Boolean(options && options.includeH1);
     setFormulaBindings(options.formulaBindings);
     setFormulaDependencies(options.formulaDependencies, options);
@@ -960,6 +1075,7 @@
     let inMath = false;
     let mathDelimiter = "";
     let math = [];
+    let mathStartLine = 0;
 
     function uniqueId(text) {
       const base = slugify(text) || "section";
@@ -998,6 +1114,7 @@
       inMath = false;
       mathDelimiter = "";
       math = [];
+      mathStartLine = 0;
     }
 
     function isDeriveShortcodeOnly(line) {
@@ -1009,6 +1126,14 @@
       if (lastIndex < 0 || !/class="markdown-math markdown-math-display"/.test(blocks[lastIndex])) return false;
       if (!/class="derivation-link/.test(jumpHtml)) return false;
       blocks[lastIndex] = blocks[lastIndex].replace(/<\/div>$/, `${jumpHtml}</div>`);
+      return true;
+    }
+
+    function attachFormulaBindingToLastDisplayMath(markerHtml) {
+      const lastIndex = blocks.length - 1;
+      if (lastIndex < 0 || !/class="markdown-math markdown-math-display/.test(blocks[lastIndex])) return false;
+      if (!/class="formula-binding-marker/.test(markerHtml)) return false;
+      blocks[lastIndex] = blocks[lastIndex].replace(/<\/div>$/, `${markerHtml}</div>`);
       return true;
     }
 
@@ -1104,6 +1229,13 @@
       const formulaOnly = line.match(formulaReferenceOnlyPattern);
       if (formulaOnly && formulaOnly[4] === "display") {
         flushLooseBlocks();
+        const markerHtml = renderFormulaBindingMarker(
+          formulaOnly[1],
+          formulaOnly[2],
+          formulaOnly[3],
+          formulaOnly[4]
+        );
+        if (markerHtml && attachFormulaBindingToLastDisplayMath(markerHtml)) continue;
         blocks.push(renderFormulaReference(line, formulaOnly[1], formulaOnly[2], formulaOnly[3], formulaOnly[4], true));
         continue;
       }
@@ -1117,6 +1249,7 @@
           inMath = true;
           mathDelimiter = mathStart.delimiter;
           math = mathStart.content ? [mathStart.content] : [];
+          mathStartLine = index + 1;
         }
         continue;
       }
@@ -1188,25 +1321,44 @@
         blocks.push(`<pre data-lang="${escapeHtml(codeLang)}"><code>${highlight(escapeHtml(codeText))}</code></pre>`);
       }
     }
-    if (inMath) closeMathBlock();
+    if (inMath) {
+      recordDelimiterDiagnostic(mathDelimiter, mathStartLine || lines.length);
+      blocks.push(mathErrorMarkup(true));
+      inMath = false;
+      mathDelimiter = "";
+      math = [];
+      mathStartLine = 0;
+    }
     flushLooseBlocks();
-    return { html: blocks.join("\n"), headings };
+    activeMathDiagnostics = parentMathDiagnostics;
+    if (parentMathDiagnostics) parentMathDiagnostics.push(...diagnostics);
+    return {
+      html: blocks.join("\n"),
+      headings,
+      diagnostics,
+      valid: diagnostics.length === 0,
+      canPublish: diagnostics.length === 0
+    };
   }
 
   function renderFormulaCard(card = {}) {
+    const parentMathDiagnostics = activeMathDiagnostics;
+    const diagnostics = [];
+    activeMathDiagnostics = diagnostics;
     const derivation = render(card.markdownDerivation || "", {
       formulaDependencies: card.derivation?.dependencies || [],
       formulaDependencyMode: "public"
     });
+    const conclusionHtml = renderDisplayMath(String(card.latex || ""));
     const purpose = String(card.purpose || "").trim();
     const derivationBody = String(card.markdownDerivation || "").trim()
       ? derivation.html
       : '<p class="formula-card-empty">这条已发布修订暂未提供 Markdown 推导正文。</p>';
-    return {
+    const result = {
       html: `
         <section class="formula-conclusion-public" aria-labelledby="formulaConclusionTitle">
           <h2 id="formulaConclusionTitle">结论公式</h2>
-          ${renderDisplayMath(String(card.latex || ""))}
+          ${conclusionHtml}
         </section>
         <section class="formula-purpose-public" aria-labelledby="formulaPurposeTitle">
           <h2 id="formulaPurposeTitle">用途说明</h2>
@@ -1221,8 +1373,14 @@
         { id: "formulaPurposeTitle", text: "用途说明", level: 2 },
         { id: "formulaMarkdownTitle", text: "推导正文", level: 2 },
         ...derivation.headings
-      ]
+      ],
+      diagnostics,
+      valid: diagnostics.length === 0,
+      canPublish: diagnostics.length === 0
     };
+    activeMathDiagnostics = parentMathDiagnostics;
+    if (parentMathDiagnostics) parentMathDiagnostics.push(...diagnostics);
+    return result;
   }
 
   window.LarkixMarkdown = {

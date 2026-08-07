@@ -59,6 +59,7 @@ $$
   let syncScrollEnabled = true;
   let isSyncingScroll = false;
   let lastScrollSource = "input";
+  let previewState = { valid: false, empty: true, diagnostics: [] };
 
   const pageProfiles = {
     a4: { width: 210, height: 297, label: "A4" },
@@ -82,6 +83,22 @@ $$
   function setLog(message, tone) {
     el.log.textContent = message;
     el.log.classList.toggle("is-error", tone === "error");
+  }
+
+  function formatDiagnostics(diagnostics) {
+    return (Array.isArray(diagnostics) ? diagnostics : [])
+      .map((item, index) => {
+        const line = Number(item?.range?.line || 0);
+        const formula = Number(item?.formula?.index || 0);
+        const location = line > 0 ? `第 ${line} 行` : formula > 0 ? `第 ${formula} 个公式` : `问题 ${index + 1}`;
+        return `${location}：${item.message || item.code || "内容无法解析"}`;
+      })
+      .join("\n");
+  }
+
+  function refreshExportAvailability() {
+    el.downloadButton.disabled = previewState.empty || !previewState.valid;
+    el.downloadButton.setAttribute("aria-disabled", String(el.downloadButton.disabled));
   }
 
   function getScrollRatio(node) {
@@ -124,9 +141,24 @@ $$
 
   function renderPreview() {
     const markdown = el.input.value;
-    const result = window.LarkixMarkdown.render(markdown);
+    const result = window.LarkixMarkdown.render(markdown, { includeH1: true });
     el.preview.innerHTML = result.html || '<div class="empty-state">\u7b49\u5f85\u9884\u89c8\u3002</div>';
+    previewState = {
+      valid: Boolean(result.valid),
+      empty: !markdown.trim(),
+      diagnostics: Array.isArray(result.diagnostics) ? result.diagnostics : []
+    };
+    el.preview.dataset.validationState = previewState.empty ? "empty" : previewState.valid ? "valid" : "invalid";
+    if (previewState.empty) {
+      setLog("等待转换。");
+    } else if (!previewState.valid) {
+      setLog(formatDiagnostics(previewState.diagnostics) || "Markdown 或 LaTeX 无法解析，已阻止导出。", "error");
+    } else {
+      setLog(`预览校验通过：共享数学引擎 ${window.LarkixMath?.ENGINE || "KaTeX"} ${window.LarkixMath?.VERSION || ""}。`);
+    }
+    refreshExportAvailability();
     el.stats.textContent = `${markdown.length} \u5b57\u7b26`;
+    return result;
   }
 
   function currentOptions() {
@@ -189,6 +221,12 @@ $$
       setLog("\u004d\u0061\u0072\u006b\u0064\u006f\u0077\u006e \u5185\u5bb9\u4e0d\u80fd\u4e3a\u7a7a\u3002", "error");
       return;
     }
+    renderPreview();
+    if (!previewState.valid) {
+      setLog(formatDiagnostics(previewState.diagnostics) || "Markdown 或 LaTeX 无法解析，已阻止导出。", "error");
+      refreshExportAvailability();
+      return;
+    }
 
     el.downloadButton.disabled = true;
     setLog("\u6b63\u5728\u751f\u6210 DOCX ...");
@@ -215,7 +253,7 @@ $$
     } catch (error) {
       setLog(error.message || "DOCX \u751f\u6210\u5931\u8d25\u3002", "error");
     } finally {
-      el.downloadButton.disabled = false;
+      refreshExportAvailability();
     }
   }
 
@@ -229,7 +267,19 @@ $$
 
   async function importMarkdown(file) {
     if (!file) return;
+    if (file.size > 512 * 1024) {
+      previewState = { valid: false, empty: false, diagnostics: [] };
+      refreshExportAvailability();
+      setLog("Markdown 文件不能超过 512 KB。", "error");
+      return;
+    }
     const text = await file.text();
+    if (text.includes("\ufffd")) {
+      previewState = { valid: false, empty: false, diagnostics: [] };
+      refreshExportAvailability();
+      setLog("文件不是可识别的 UTF-8 文本，已停止导入。", "error");
+      return;
+    }
     el.input.value = text;
     el.fileName.value = safeFileName(file.name.replace(/\.(md|markdown|txt)$/i, ""));
     updatePreview();

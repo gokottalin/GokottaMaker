@@ -3,7 +3,9 @@
   const draftKey = "larkixmaker_admin_autodraft_v1";
   const sidebarStateKey = "larkixmaker_admin_sidebar_collapsed";
   const editorDockStateKey = "larkixmaker_admin_editor_dock_collapsed";
+  const articlePublishDockStateKey = "larkixmaker_admin_article_publish_dock_collapsed";
   const autosaveDelay = 900;
+  const operationTimeoutMs = 20_000;
 
   const loginPanel = document.querySelector("#loginPanel");
   const dashboard = document.querySelector("#dashboard");
@@ -16,6 +18,15 @@
   const editorDockHandle = document.querySelector("#editorDockHandle");
   const editorDockState = document.querySelector("#editorDockState");
   const adminNotice = document.querySelector("#adminNotice");
+  const nonArticleSaveButton = document.querySelector("#nonArticleSaveButton");
+  const articlePublishDock = document.querySelector("#articlePublishDock");
+  const articlePublishDockBody = document.querySelector("#articlePublishDockBody");
+  const articlePublishDockStatus = document.querySelector("#articlePublishDockStatus");
+  const articlePublishDockCollapse = document.querySelector("#articlePublishDockCollapse");
+  const articlePublishDockExpand = document.querySelector("#articlePublishDockExpand");
+  const articleSaveDraftButton = document.querySelector("#articleSaveDraftButton");
+  const articlePublishButton = document.querySelector("#articlePublishButton");
+  const cmsToastRegion = document.querySelector("#cmsToastRegion");
   const focusModeGate = document.querySelector("#focusModeGate");
   const focusModeToggle = document.querySelector("#focusModeToggle");
   const focusModeGateState = document.querySelector("#focusModeGateState");
@@ -89,6 +100,7 @@
   const recentContentList = document.querySelector("#recentContentList");
   const featuredSlots = document.querySelector("#featuredSlots");
   const carouselManagerSummary = document.querySelector("#carouselManagerSummary");
+  const carouselConflictReport = document.querySelector("#carouselConflictReport");
   const carouselBufferList = document.querySelector("#carouselBufferList");
   const adminViews = [...document.querySelectorAll("[data-admin-view]")];
   const adminNavLinks = [...document.querySelectorAll("[data-admin-nav]")];
@@ -104,6 +116,11 @@
   const formulaCategoryTree = document.querySelector("#formulaCategoryTree");
   const formulaCatalogSummary = document.querySelector("#formulaCatalogSummary");
   const formulaCardList = document.querySelector("#formulaCardList");
+  const formulaRepairSummary = document.querySelector("#formulaRepairSummary");
+  const formulaRepairStatus = document.querySelector("#formulaRepairStatus");
+  const formulaRepairIssue = document.querySelector("#formulaRepairIssue");
+  const formulaRepairRefresh = document.querySelector("#formulaRepairRefresh");
+  const formulaRepairList = document.querySelector("#formulaRepairList");
   const formulaSearchInput = document.querySelector("#formulaSearchInput");
   const formulaTagFilter = document.querySelector("#formulaTagFilter");
   const formulaArchiveFilter = document.querySelector("#formulaArchiveFilter");
@@ -171,8 +188,13 @@
   const formulaSelectionPreview = document.querySelector("#formulaSelectionPreview");
   const formulaCreateName = document.querySelector("#formulaCreateName");
   const formulaCreateModule = document.querySelector("#formulaCreateModule");
+  const formulaCreateModuleButton = document.querySelector("#formulaCreateModuleButton");
   const formulaCreateCategory = document.querySelector("#formulaCreateCategory");
+  const formulaCreateCategoryButton = document.querySelector("#formulaCreateCategoryButton");
   const formulaCreatePurpose = document.querySelector("#formulaCreatePurpose");
+  const formulaCreateTagPicker = document.querySelector("#formulaCreateTagPicker");
+  const formulaCreateTagAddButton = document.querySelector("#formulaCreateTagAddButton");
+  const formulaCreateSelectedTags = document.querySelector("#formulaCreateSelectedTags");
   const formulaCreateTags = document.querySelector("#formulaCreateTags");
   const formulaCreateMarkdown = document.querySelector("#formulaCreateMarkdown");
   const formulaCreateAndBindButton = document.querySelector("#formulaCreateAndBindButton");
@@ -194,10 +216,16 @@
     projects: [],
     knowledgeNodes: [],
     formulaReferenceDecisions: [],
+    formulaRelationRepairs: [],
     siteLayout: { home: [] },
     publicFocusMode: { enabled: true },
     focusScopeCounts: {},
-    carousel: { activeItems: [], buffered: [], summary: { activeCount: 0, bufferedCount: 0, focusEnabled: true } }
+    carousel: {
+      activeItems: [],
+      buffered: [],
+      conflicts: [],
+      summary: { activeCount: 0, bufferedCount: 0, conflictCount: 0, focusEnabled: true }
+    }
   };
   let isDirty = false;
   let isRestoringForm = false;
@@ -211,6 +239,10 @@
   let formulaDecisionCloneId = "";
   let formulaWorkbenchReturnState = null;
   let formulaAuthoringPointerSnapshot = null;
+  let articleOperationInFlight = false;
+  let pendingArticleAction = "";
+  const feedbackOperationVersions = new Map();
+  const toastEntries = new Map();
   const selectedContent = new Set();
   const filters = { search: "", type: "all", status: "all" };
   const featuredLimit = 4;
@@ -222,9 +254,16 @@
     pagination: { page: 1, pageSize: 12, total: 0, pageCount: 0 },
     loaded: false
   };
+  const formulaRelationRepairState = {
+    items: [],
+    status: "pending",
+    issueCode: "",
+    loaded: false
+  };
   let formulaClassifications = [];
   const formulaAuthoringState = {
     sourceMarkdown: "",
+    baseSourceMarkdown: null,
     selectionStart: 0,
     selectionEnd: 0,
     selectionInfo: null,
@@ -700,18 +739,32 @@ $$
   async function request(path, options = {}) {
     const method = String(options.method || "GET").toUpperCase();
     const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
+    const timeoutMs = Number.isFinite(Number(options.timeoutMs)) ? Number(options.timeoutMs) : operationTimeoutMs;
+    const controller = options.signal ? null : new AbortController();
+    const timeoutId = controller && timeoutMs > 0
+      ? window.setTimeout(() => controller.abort(), timeoutMs)
+      : 0;
     if (!["GET", "HEAD", "OPTIONS"].includes(method) && csrfToken) {
       headers["X-CSRF-Token"] = csrfToken;
     }
-    const response = await fetch(path, {
-      credentials: "same-origin",
-      headers,
-      ...options
-    });
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(payload.error || "请求失败");
-    if (payload.csrfToken) csrfToken = payload.csrfToken;
-    return payload;
+    const { timeoutMs: _timeoutMs, ...fetchOptions } = options;
+    try {
+      const response = await fetch(path, {
+        credentials: "same-origin",
+        headers,
+        ...fetchOptions,
+        signal: fetchOptions.signal || controller?.signal
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.error || "请求失败");
+      if (payload.csrfToken) csrfToken = payload.csrfToken;
+      return payload;
+    } catch (error) {
+      if (error?.name === "AbortError") throw new Error("请求超时，请检查网络后重试");
+      throw error;
+    } finally {
+      if (timeoutId) window.clearTimeout(timeoutId);
+    }
   }
 
   async function loadServerContent() {
@@ -721,15 +774,25 @@ $$
       projects: payload.projects || [],
       knowledgeNodes: payload.knowledgeNodes || [],
       formulaReferenceDecisions: payload.formulaReferenceDecisions || [],
+      formulaRelationRepairs: payload.formulaRelationRepairs || [],
       siteLayout: payload.siteLayout || { home: [] },
       publicFocusMode: payload.publicFocusMode || { enabled: true },
       focusScopeCounts: payload.focusScopeCounts || {},
       carousel: payload.carousel || {
         activeItems: [],
         buffered: [],
-        summary: { activeCount: 0, bufferedCount: 0, focusEnabled: true }
+        conflicts: [],
+        summary: { activeCount: 0, bufferedCount: 0, conflictCount: 0, focusEnabled: true }
       }
     };
+    if (
+      formulaRelationRepairState.status === "pending" &&
+      !formulaRelationRepairState.issueCode
+    ) {
+      formulaRelationRepairState.items = serverContent.formulaRelationRepairs;
+      formulaRelationRepairState.loaded = true;
+      renderFormulaRelationRepairs();
+    }
     renderFocusModeGate();
   }
 
@@ -819,6 +882,7 @@ $$
     loginPanel.hidden = value;
     dashboard.hidden = !value;
     syncFormulaDrawerAvailability();
+    syncArticlePublishDock();
   }
 
   function saveLogin(username) {
@@ -834,12 +898,136 @@ $$
     }
   }
 
-  function setNotice(message = "", type = "info") {
-    const target = dashboard.hidden ? loginNotice : adminNotice;
-    if (!target) return;
-    target.textContent = message;
-    target.classList.remove("is-success", "is-warning", "is-error");
-    if (message && type !== "info") target.classList.add(`is-${type}`);
+  function toastIcon(type) {
+    return { success: "OK", warning: "!", error: "!", info: "i" }[type] || "i";
+  }
+
+  function dismissToast(key = "cms-global", options = {}) {
+    const entry = toastEntries.get(key);
+    if (!entry) return;
+    window.clearTimeout(entry.timerId);
+    if (toastEntries.get(key) === entry) toastEntries.delete(key);
+    const remove = () => {
+      entry.element.remove();
+    };
+    if (options.immediate || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      remove();
+      return;
+    }
+    entry.element.classList.add("is-leaving");
+    window.setTimeout(remove, 180);
+  }
+
+  function setNotice(message = "", type = "info", options = {}) {
+    const normalizedType = ["success", "warning", "error", "info"].includes(type) ? type : "info";
+    if (dashboard.hidden || !cmsToastRegion) {
+      const target = dashboard.hidden ? loginNotice : adminNotice;
+      if (!target) return;
+      target.textContent = message;
+      target.classList.remove("is-success", "is-warning", "is-error");
+      if (message && normalizedType !== "info") target.classList.add(`is-${normalizedType}`);
+      return;
+    }
+
+    const key = String(options.key || "cms-global");
+    if (!message) {
+      dismissToast(key);
+      return;
+    }
+    const persistent = options.persistent ?? normalizedType === "error";
+    const existing = toastEntries.get(key);
+    const element = existing?.element || document.createElement("article");
+    window.clearTimeout(existing?.timerId);
+    element.className = `cms-toast is-${normalizedType}`;
+    element.dataset.toastKey = key;
+    element.setAttribute("role", persistent ? "alert" : "status");
+    element.setAttribute("aria-atomic", "true");
+    element.innerHTML = `
+      <span class="cms-toast-icon" aria-hidden="true">${toastIcon(normalizedType)}</span>
+      <span class="cms-toast-message"></span>
+      <button class="cms-toast-close" type="button" aria-label="关闭提示" title="关闭提示">&times;</button>
+    `;
+    element.querySelector(".cms-toast-message").textContent = String(message);
+    if (!existing) cmsToastRegion.append(element);
+    const entry = { element, timerId: 0, persistent };
+    toastEntries.set(key, entry);
+    if (!persistent) {
+      entry.timerId = window.setTimeout(() => dismissToast(key), 3000);
+    }
+  }
+
+  function beginFeedbackOperation(key) {
+    const version = (feedbackOperationVersions.get(key) || 0) + 1;
+    feedbackOperationVersions.set(key, version);
+    dismissToast(key, { immediate: true });
+    return { key, version };
+  }
+
+  function setOperationNotice(operation, message, type = "info", options = {}) {
+    if (!operation || feedbackOperationVersions.get(operation.key) !== operation.version) return false;
+    setNotice(message, type, { ...options, key: operation.key });
+    return true;
+  }
+
+  function setArticlePublishDockCollapsed(value, options = {}) {
+    if (!articlePublishDock) return;
+    articlePublishDock.classList.toggle("is-collapsed", value);
+    articlePublishDockBody.hidden = value;
+    articlePublishDockExpand.hidden = !value;
+    articlePublishDockCollapse.setAttribute("aria-expanded", String(!value));
+    articlePublishDockExpand.setAttribute("aria-expanded", String(!value));
+    if (options.persist !== false) localStorage.setItem(articlePublishDockStateKey, String(value));
+  }
+
+  function syncVisualViewportOffset() {
+    const viewport = window.visualViewport;
+    const keyboardOffset = viewport
+      ? Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop)
+      : 0;
+    document.documentElement.style.setProperty("--cms-keyboard-offset", `${Math.round(keyboardOffset)}px`);
+    document.documentElement.style.setProperty("--cms-visual-height", `${Math.round(viewport?.height || window.innerHeight)}px`);
+    document.documentElement.classList.toggle("has-cms-keyboard", keyboardOffset > 80);
+  }
+
+  function currentEditingPost() {
+    if (getType() !== "post" || !editingId) return null;
+    return serverContent.posts.find((post) => post.id === editingId) || null;
+  }
+
+  function syncArticlePublishDock() {
+    if (!articlePublishDock) return;
+    const isArticle = getType() === "post";
+    const visible = !dashboard.hidden && currentAdminView() === "editor" && isArticle;
+    articlePublishDock.hidden = !visible;
+    dashboard.classList.toggle("has-article-publish-dock", visible);
+    if (nonArticleSaveButton) nonArticleSaveButton.hidden = isArticle;
+    articlePublishDock.classList.toggle("has-formula-rail", !formulaAuthoringPopover?.hidden);
+    articlePublishDock.classList.toggle("is-formula-drawer-open", Boolean(formulaAuthoringState.expanded));
+    articlePublishDock.classList.toggle("is-dirty", isDirty);
+    articlePublishDock.classList.toggle("is-busy", articleOperationInFlight);
+    articlePublishDock.setAttribute("aria-busy", String(articleOperationInFlight));
+    if (articlePublishDockStatus) {
+      articlePublishDockStatus.textContent = articleOperationInFlight
+        ? pendingArticleAction === "publish" ? "正在发布文章" : "正在保存草稿"
+        : isDirty ? "有未保存修改" : "当前内容已保存";
+    }
+    const published = currentEditingPost()?.publishStatus === "published";
+    if (articlePublishButton) articlePublishButton.textContent = published ? "更新发布" : "发布文章";
+    if (articleSaveDraftButton) articleSaveDraftButton.disabled = articleOperationInFlight;
+    if (articlePublishButton) articlePublishButton.disabled = articleOperationInFlight;
+  }
+
+  function requestArticleAction(action) {
+    if (articleOperationInFlight) {
+      setNotice("当前文章操作仍在进行，请等待结果。", "warning", { key: "article-operation" });
+      return;
+    }
+    pendingArticleAction = action;
+    contentForm.publishStatus.value = action === "publish" ? "published" : "draft";
+    updateVisibilityHint();
+    markDirty();
+    syncArticlePublishDock();
+    contentForm.requestSubmit();
   }
 
   function setBusy(button, busy, label) {
@@ -948,26 +1136,56 @@ $$
     setNotice(`已插入公式片段：${snippet.label}。`, "success");
   }
 
+  function formulaTokenIsEscaped(source, index) {
+    let slashCount = 0;
+    for (let cursor = index - 1; cursor >= 0 && source[cursor] === "\\"; cursor -= 1) {
+      slashCount += 1;
+    }
+    return slashCount % 2 === 1;
+  }
+
+  function formulaHasUnescapedToken(source, token) {
+    let index = source.indexOf(token);
+    while (index >= 0) {
+      if (!formulaTokenIsEscaped(source, index)) return true;
+      index = source.indexOf(token, index + token.length);
+    }
+    return false;
+  }
+
   function parseCompleteLatexSelection(value) {
     const selectedText = String(value || "");
     const trimmed = selectedText.trim();
-    if (/^\$\$[\s\S]+\$\$$/.test(trimmed) && !trimmed.slice(2, -2).includes("$$")) {
-      const latex = trimmed.slice(2, -2).trim();
-      return latex ? { selectedText, latex, displayMode: "display" } : null;
-    }
-    if (trimmed.startsWith("\\[") && trimmed.endsWith("\\]") && !trimmed.slice(2, -2).includes("\\]")) {
-      const latex = trimmed.slice(2, -2).trim();
-      return latex ? { selectedText, latex, displayMode: "display" } : null;
-    }
-    if (/^\$(?:\\.|[^$\n\\])+\$$/.test(trimmed)) {
-      const latex = trimmed.slice(1, -1).trim();
-      return latex ? { selectedText, latex, displayMode: "inline" } : null;
-    }
-    if (trimmed.startsWith("\\(") && trimmed.endsWith("\\)") && !trimmed.slice(2, -2).includes("\\)")) {
-      const latex = trimmed.slice(2, -2).trim();
-      return latex ? { selectedText, latex, displayMode: "inline" } : null;
+    const candidates = [
+      { open: "$$", close: "$$", displayMode: "display", multiline: true, forbidden: ["$"] },
+      { open: "\\[", close: "\\]", displayMode: "display", multiline: true, forbidden: ["\\[", "\\]"] },
+      { open: "\\(", close: "\\)", displayMode: "inline", multiline: false, forbidden: ["\\(", "\\)"] },
+      { open: "$", close: "$", displayMode: "inline", multiline: false, forbidden: ["$"] }
+    ];
+    for (const candidate of candidates) {
+      if (!trimmed.startsWith(candidate.open) || !trimmed.endsWith(candidate.close)) continue;
+      if (candidate.open === "$" && (trimmed.startsWith("$$") || trimmed.endsWith("$$"))) continue;
+      const sourceLatex = trimmed.slice(candidate.open.length, -candidate.close.length);
+      if (!sourceLatex.trim() || (!candidate.multiline && /[\r\n]/.test(sourceLatex))) continue;
+      if (candidate.forbidden.some((token) => formulaHasUnescapedToken(sourceLatex, token))) continue;
+      return {
+        selectedText,
+        latex: sourceLatex.trim(),
+        displayMode: candidate.displayMode,
+        openDelimiter: candidate.open,
+        closeDelimiter: candidate.close,
+        leadingWhitespace: selectedText.indexOf(trimmed),
+        trailingWhitespace: selectedText.length - selectedText.indexOf(trimmed) - trimmed.length
+      };
     }
     return null;
+  }
+
+  async function sha256Text(value) {
+    if (!window.crypto?.subtle) throw new Error("当前浏览器不支持来源哈希校验，不能安全创建公式卡");
+    const bytes = new TextEncoder().encode(String(value || ""));
+    const digest = await window.crypto.subtle.digest("SHA-256", bytes);
+    return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
   }
 
   function setFormulaAuthoringTab(tab) {
@@ -1118,8 +1336,26 @@ $$
     const selectionStart = Number(field.selectionStart || 0);
     const selectionEnd = Number(field.selectionEnd || selectionStart);
     const selected = field.value.slice(selectionStart, selectionEnd);
-    const selectionInfo = parseCompleteLatexSelection(selected);
+    let selectionInfo = parseCompleteLatexSelection(selected);
+    if (selectionInfo) {
+      const formulaStart = selectionStart + selectionInfo.leadingWhitespace;
+      const formulaEnd = selectionEnd - selectionInfo.trailingWhitespace;
+      if (
+        formulaTokenIsEscaped(field.value, formulaStart) ||
+        (selectionInfo.openDelimiter.startsWith("$") &&
+          (field.value[formulaStart - 1] === "$" || field.value[formulaEnd] === "$"))
+      ) {
+        selectionInfo = null;
+      }
+    }
+    const storedPost =
+      editingType === "post" && editingId
+        ? serverContent.posts.find((item) => item.id === editingId)
+        : null;
     formulaAuthoringState.sourceMarkdown = field.value;
+    formulaAuthoringState.baseSourceMarkdown = storedPost
+      ? String(storedPost.markdown || "")
+      : null;
     formulaAuthoringState.selectionStart = selectionStart;
     formulaAuthoringState.selectionEnd = selectionEnd;
     formulaAuthoringState.selectionInfo = selectionInfo;
@@ -1169,6 +1405,7 @@ $$
     );
     openFormulaAuthoringButton.title = formulaAuthoringState.expanded ? "公式创作抽屉已展开" : "展开公式创作抽屉";
     formulaAuthoringDrawerBody?.setAttribute("aria-hidden", String(!formulaAuthoringState.expanded));
+    syncArticlePublishDock();
     if (!formulaAuthoringState.expanded) {
       if (options.restoreEditor !== false) restoreFormulaEditorState();
       return;
@@ -1194,6 +1431,7 @@ $$
       formulaAuthoringPopover.classList.add("is-collapsed");
       dashboard.classList.remove("is-formula-drawer-open");
     }
+    syncArticlePublishDock();
   }
 
   function updateFormulaSelectionStatus(selectionInfo, hasSelection) {
@@ -1237,6 +1475,7 @@ $$
     captureFormulaEditorState();
     formulaWorkbenchReturnState = {
       sourceMarkdown: formulaAuthoringState.sourceMarkdown,
+      baseSourceMarkdown: formulaAuthoringState.baseSourceMarkdown,
       selectionStart: formulaAuthoringState.selectionStart,
       selectionEnd: formulaAuthoringState.selectionEnd,
       selectionInfo: formulaAuthoringState.selectionInfo,
@@ -1280,6 +1519,24 @@ $$
     return `bind.${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
   }
 
+  function appendFormulaBindingToSelection(source, start, end, shortcode, displayMode) {
+    const before = source.slice(0, end);
+    const after = source.slice(end);
+    if (displayMode === "display") {
+      const leadingBreak = before.endsWith("\n") ? "" : "\n";
+      const trailingBreak = after.startsWith("\n") || !after ? "" : "\n";
+      const inserted = `${leadingBreak}${shortcode}${trailingBreak}`;
+      return {
+        value: `${before}${inserted}${after}`,
+        cursor: end + inserted.length
+      };
+    }
+    return {
+      value: `${before}${shortcode}${after}`,
+      cursor: end + shortcode.length
+    };
+  }
+
   function insertExistingFormulaBinding(card, requestedMode) {
     const field = contentForm.markdown;
     if (field.value !== formulaAuthoringState.sourceMarkdown) {
@@ -1303,19 +1560,29 @@ $$
     const start = formulaAuthoringState.selectionStart;
     const end = formulaAuthoringState.selectionEnd;
     let inserted = shortcode;
+    let nextValue = "";
+    let cursor = start + shortcode.length;
+    if (hasSelection) {
+      const bound = appendFormulaBindingToSelection(field.value, start, end, shortcode, mode);
+      nextValue = bound.value;
+      cursor = bound.cursor;
+    }
     if (!hasSelection && mode === "display") {
       const before = field.value.slice(0, start);
       const after = field.value.slice(end);
       inserted = `${before && !before.endsWith("\n") ? "\n\n" : ""}${shortcode}${after && !after.startsWith("\n") ? "\n\n" : ""}`;
     }
-    field.value = `${field.value.slice(0, start)}${inserted}${field.value.slice(end)}`;
-    const cursor = start + inserted.length;
+    if (!hasSelection) {
+      nextValue = `${field.value.slice(0, start)}${inserted}${field.value.slice(end)}`;
+      cursor = start + inserted.length;
+    }
+    field.value = nextValue;
     field.focus();
     field.setSelectionRange(cursor, cursor);
     updatePreview();
     markDirty();
     closeFormulaAuthoring();
-    setNotice(`已插入公式卡引用：${card.displayName}。保存文章后建立稳定绑定。`, "success");
+    setNotice(`已保留原公式并追加公式卡绑定：${card.displayName}。保存文章后生效。`, "success");
   }
 
   async function createFormulaCardFromSelection() {
@@ -1324,11 +1591,13 @@ $$
       throw new Error("打开公式浮窗后正文已变化，请关闭浮窗并重新框选");
     }
     const displayName = formulaCreateName.value.trim();
-    const moduleKey = formulaCreateModule.value.trim();
-    const categoryPath = formulaCreateCategory.value.trim();
-    if (!displayName || !moduleKey || !categoryPath) {
+    const module = selectedFormulaCreateModule();
+    const category = selectedFormulaCreateCategory(module?.slug || "");
+    if (!displayName || !formulaCreateModule.value.trim() || !formulaCreateCategory.value.trim()) {
       throw new Error("请填写公式名称、所属模块和自定义分类");
     }
+    if (!module) throw new Error("请选择已有模块，或明确点击“新增模块”后再保存");
+    if (!category) throw new Error("请选择已有主分类，或明确点击“新增主分类”后再保存");
     const built = buildPayload();
     if (built.collectionKey !== "posts") throw new Error("选中公式建卡仅支持文章");
     if (built.payload.publishStatus === "published") {
@@ -1336,29 +1605,36 @@ $$
     }
     validateFeaturedPayload(built.payload);
     saveDraft();
+    const sourceHash = await sha256Text(formulaAuthoringState.sourceMarkdown);
+    const baseSourceHash = formulaAuthoringState.baseSourceMarkdown !== null
+      ? await sha256Text(formulaAuthoringState.baseSourceMarkdown)
+      : "";
     const result = await request("/api/admin/formulas/from-selection", {
       method: "POST",
       body: JSON.stringify({
         post: built.payload,
+        sourceHash,
+        baseSourceHash,
         selectionStart: formulaAuthoringState.selectionStart,
         selectionEnd: formulaAuthoringState.selectionEnd,
         formula: {
           displayName,
-          moduleKey,
-          categoryPath,
+          moduleKey: module.slug,
+          categoryPath: category.displayName,
           purpose: formulaCreatePurpose.value.trim(),
           markdownDerivation: formulaCreateMarkdown?.value || "",
-          tags: formulaCreateTags.value
-            .split(/[\n,，、]/)
-            .map((tag) => tag.trim())
-            .filter(Boolean)
+          tags: formulaCreateTagValues()
         }
       })
     });
-    serverContent = { ...serverContent, posts: result.posts || [] };
+    serverContent = {
+      ...serverContent,
+      posts: result.posts || [],
+      carousel: result.carousel || serverContent.carousel
+    };
     applyItemToForm("post", result.post, { confirm: false });
     contentForm.markdown.focus();
-    contentForm.markdown.setSelectionRange(result.selection.end, result.selection.end);
+    contentForm.markdown.setSelectionRange(result.selection.cursor, result.selection.cursor);
     clearDraft();
     markClean();
     renderList();
@@ -1366,7 +1642,10 @@ $$
     renderFeaturedSlots();
     formulaAuthoringState.loaded = false;
     closeFormulaAuthoring();
-    setNotice(`已创建公式卡“${result.card.displayName}”，文章已原子保存并建立修订绑定。`, "success");
+    setNotice(
+      `已创建草稿公式卡“${result.card.displayName}”，原公式保持不变，文章已原子保存并绑定。`,
+      "success"
+    );
   }
 
   function pendingFormulaDecisions(postId = editingId) {
@@ -1729,9 +2008,9 @@ $$
   }
 
   function featuredItems() {
-    return combinedItems()
-      .filter((item) => item.contentType !== "knowledge_node" && item.featured)
-      .sort((a, b) => featuredOrderValue(a.featuredOrder) - featuredOrderValue(b.featuredOrder) || itemTimestamp(b) - itemTimestamp(a));
+    return (serverContent.carousel?.activeItems || [])
+      .slice()
+      .sort((a, b) => featuredOrderValue(a.slot ?? a.featuredOrder) - featuredOrderValue(b.slot ?? b.featuredOrder));
   }
 
   function visitorFocusCorpus(item) {
@@ -1807,25 +2086,9 @@ $$
   }
 
   function visitorFeaturedKeys() {
-    const focusEnabled = serverContent.publicFocusMode?.enabled === true;
-    let posts = (serverContent.posts || [])
-      .map((item) => ({ ...item, contentType: "post" }))
-      .filter((item) => !visitorPublicState(item));
-    let projects = (serverContent.projects || [])
-      .map((item) => ({ ...item, contentType: "project" }))
-      .filter((item) => !visitorPublicState(item));
-    if (focusEnabled) {
-      const byRecommendation = (a, b) =>
-        recommendationPriorityValue(a.recommendationPriority) - recommendationPriorityValue(b.recommendationPriority) ||
-        itemTimestamp(b) - itemTimestamp(a);
-      posts = posts.slice().sort(byRecommendation);
-      projects = projects.slice().sort(byRecommendation);
-    }
-    const eligible = [...posts, ...projects]
-      .filter((item) => !focusEnabled || matchesVisitorFocus(item))
-      .filter((item) => item.featured)
-      .sort((a, b) => featuredOrderValue(a.featuredOrder) - featuredOrderValue(b.featuredOrder))
-      .slice(0, featuredLimit);
+    const eligible = featuredItems()
+      .filter((item) => !visitorPublicState(item))
+      .filter((item) => !focusModeEnabled() || matchesVisitorFocus(item));
     return new Set(eligible.map(itemKey));
   }
 
@@ -2092,15 +2355,23 @@ $$
 
   function markDirty(value = true) {
     if (isRestoringForm) return;
+    const wasDirty = isDirty;
     isDirty = value;
     if (isDirty) {
       queueDraftSave();
-      setNotice("当前有未保存修改，本地草稿会自动保存在此浏览器。", "warning");
+      if (!wasDirty) {
+        setNotice("当前有未保存修改，本地草稿会自动保存在此浏览器。", "warning", {
+          key: "article-dirty"
+        });
+      }
     }
+    syncArticlePublishDock();
   }
 
   function markClean() {
     isDirty = false;
+    dismissToast("article-dirty");
+    syncArticlePublishDock();
   }
 
   function readDraft() {
@@ -2612,7 +2883,7 @@ $$
     const byOrder = new Map();
     const visibleKeys = visitorFeaturedKeys();
     featuredItems().forEach((item) => {
-      const order = featuredOrderValue(item.featuredOrder);
+      const order = featuredOrderValue(item.slot ?? item.featuredOrder);
       if (!byOrder.has(order)) byOrder.set(order, item);
     });
     const current = currentSnapshot();
@@ -2653,13 +2924,33 @@ $$
           </div>
           <div class="featured-slot-actions">
             <button class="button secondary" data-action="edit-featured" data-type="${item.contentType}" data-id="${item.id}" type="button">编辑</button>
-            <button class="button secondary" data-action="replace-featured-slot" data-slot="${order}" data-type="${item.contentType}" data-id="${item.id}" type="button" ${canAssignCurrent ? "" : "disabled"}>替换</button>
             <button class="button secondary danger ${visibility.visible ? "" : "is-recommended"}" data-action="clear-featured-slot" data-type="${item.contentType}" data-id="${item.id}" type="button">${visibility.visible ? "取消轮播" : "建议取消轮播"}</button>
           </div>
         </article>
       `;
     }).join("");
+    renderCarouselConflictReport();
     renderCarouselBuffer();
+  }
+
+  function renderCarouselConflictReport() {
+    if (!carouselConflictReport) return;
+    const conflicts = serverContent.carousel?.conflicts || [];
+    carouselConflictReport.innerHTML =
+      conflicts
+        .map(
+          (item) => `
+            <article class="carousel-conflict-row">
+              <div>
+                <strong>${Number.isInteger(Number(item.slot)) ? featuredSlotLabel(item.slot) : "越界槽位"}</strong>
+                <span>${escapeHtml(item.contentType === "project" ? "项目" : "文章")} · ${escapeHtml(item.contentTitle || item.contentId)}</span>
+              </div>
+              <code>${escapeHtml(item.reasonCode)}</code>
+              <small>${escapeHtml(item.contentType)}:${escapeHtml(item.contentId)} · ${escapeHtml(item.detectedAt || "")}</small>
+            </article>
+          `
+        )
+        .join("") || `<div class="empty-state">未检测到历史重复或越界槽位。</div>`;
   }
 
   function carouselReferenceLabel(status) {
@@ -2674,10 +2965,10 @@ $$
     if (!carouselBufferList) return;
     const buffered = serverContent.carousel?.buffered || [];
     const activeCount = featuredItems().length;
+    const conflictCount = Number(serverContent.carousel?.summary?.conflictCount || 0);
     if (carouselManagerSummary) {
       carouselManagerSummary.textContent =
-        `活跃槽位 ${activeCount}/${featuredLimit}，聚焦缓冲 ${buffered.length} 项。` +
-        (focusModeEnabled() ? " 聚焦已开启。" : " 聚焦已关闭，缓冲项仍需手动恢复。");
+        `已配置槽位 ${activeCount}/${featuredLimit}，缓冲 ${buffered.length} 项，历史冲突 ${conflictCount} 项。`;
     }
     carouselBufferList.innerHTML =
       buffered
@@ -3285,13 +3576,13 @@ $$
     if (item.contentType === "post") {
       const payload = { ...item, type: "post", featured: Boolean(featured), featuredOrder: featuredOrderValue(order) };
       const result = await request("/api/posts", { method: "POST", body: JSON.stringify(payload) });
-      serverContent = { ...serverContent, posts: result.posts };
+      serverContent = { ...serverContent, posts: result.posts, carousel: result.carousel || serverContent.carousel };
       return;
     }
 
     const payload = { ...item, type: "project", featured: Boolean(featured), featuredOrder: featuredOrderValue(order) };
     const result = await request("/api/projects", { method: "POST", body: JSON.stringify(payload) });
-    serverContent = { ...serverContent, projects: result.projects };
+    serverContent = { ...serverContent, projects: result.projects, carousel: result.carousel || serverContent.carousel };
   }
 
   function assignCurrentToFeaturedSlot(order) {
@@ -3305,23 +3596,6 @@ $$
     markDirty();
     renderFeaturedSlots();
     setNotice(`已把当前编辑内容安排到首页轮播${featuredSlotLabel(order)}，保存后生效。`, "warning");
-  }
-
-  async function replaceFeaturedSlot(order, occupiedItem) {
-    const current = currentSnapshot();
-    if (!snapshotHasContent(current)) {
-      setNotice("请先在编辑器中填写要替换到轮播的内容。", "warning");
-      return;
-    }
-    const currentName = current.title.trim() || "当前编辑内容";
-    const occupiedName = occupiedItem.title || "未命名内容";
-    if (!window.confirm(`确认用《${currentName}》替换首页轮播${featuredSlotLabel(order)}的《${occupiedName}》吗？旧内容会先取消首页轮播，当前内容仍需点击保存。`)) return;
-    await saveItemFeatured(occupiedItem, false, occupiedItem.featuredOrder);
-    assignCurrentToFeaturedSlot(order);
-    renderList();
-    renderRecentContent();
-    renderFeaturedSlots();
-    setNotice(`首页轮播${featuredSlotLabel(order)}已腾出。请保存《${currentName}》完成替换。`, "warning");
   }
 
   function selectedItems() {
@@ -3354,13 +3628,13 @@ $$
     if (item.contentType === "post") {
       const payload = { ...item, type: "post", publishStatus: status };
       const result = await request("/api/posts", { method: "POST", body: JSON.stringify(payload) });
-      serverContent = { ...serverContent, posts: result.posts };
+      serverContent = { ...serverContent, posts: result.posts, carousel: result.carousel || serverContent.carousel };
       return;
     }
 
     const payload = { ...item, type: "project", visibilityStatus: status };
     const result = await request("/api/projects", { method: "POST", body: JSON.stringify(payload) });
-    serverContent = { ...serverContent, projects: result.projects };
+    serverContent = { ...serverContent, projects: result.projects, carousel: result.carousel || serverContent.carousel };
   }
 
   async function mutateItem(item, action) {
@@ -3423,6 +3697,112 @@ $$
       .toLocaleLowerCase("zh-CN");
   }
 
+  function formulaCreateTagValues() {
+    return String(formulaCreateTags?.value || "")
+      .split(/[\n,，、]/)
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+  }
+
+  function uniqueFormulaClassificationValues(values) {
+    const seen = new Set();
+    return (values || []).filter((value) => {
+      const key = formulaClassificationNameKey(value);
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  function renderFormulaCreateSelectedTags() {
+    if (!formulaCreateSelectedTags) return;
+    formulaCreateSelectedTags.innerHTML =
+      formulaCreateTagValues()
+        .map(
+          (tag) =>
+            `<span>${escapeHtml(tag)}<button type="button" data-formula-create-remove-tag="${escapeHtml(
+              tag
+            )}" aria-label="移除标签 ${escapeHtml(tag)}">×</button></span>`
+        )
+        .join("") || "<em>尚未选择标签</em>";
+  }
+
+  function setFormulaCreateTags(tags) {
+    if (formulaCreateTags) {
+      formulaCreateTags.value = uniqueFormulaClassificationValues(
+        (tags || []).map((tag) => String(tag).trim()).filter(Boolean)
+      ).join("\n");
+    }
+    renderFormulaCreateSelectedTags();
+  }
+
+  function selectedFormulaCreateModule() {
+    const value = String(formulaCreateModule?.value || "").trim();
+    const key = formulaClassificationNameKey(value);
+    return (
+      formulaClassifications.find(
+        (item) =>
+          item.kind === "module" &&
+          (item.slug === value || formulaClassificationNameKey(item.displayName) === key)
+      ) || null
+    );
+  }
+
+  function selectedFormulaCreateCategory(moduleSlug = selectedFormulaCreateModule()?.slug || "") {
+    const value = String(formulaCreateCategory?.value || "").trim();
+    const key = formulaClassificationNameKey(value);
+    return (
+      formulaClassifications.find(
+        (item) =>
+          item.kind === "category" &&
+          item.parentSlug === moduleSlug &&
+          formulaClassificationNameKey(item.displayName) === key
+      ) || null
+    );
+  }
+
+  async function createFormulaSelectionClassification(kind) {
+    const module = selectedFormulaCreateModule();
+    const displayName = String(
+      kind === "module" ? formulaCreateModule?.value : formulaCreateCategory?.value
+    ).trim();
+    if (!displayName) throw new Error(`请先输入${kind === "module" ? "模块" : "主分类"}名称`);
+    if (kind === "category" && !module) {
+      throw new Error("请先选择已有模块，或明确点击“新增模块”");
+    }
+    const classification = await createFormulaClassification(
+      kind,
+      displayName,
+      kind === "category" ? module.slug : ""
+    );
+    if (kind === "module") {
+      formulaCreateModule.value = classification.slug;
+      formulaCreateCategory.value = "";
+    } else {
+      formulaCreateCategory.value = classification.displayName;
+    }
+    renderFormulaClassificationOptions();
+    setNotice(
+      `${kind === "module" ? "模块" : "主分类"}已明确登记：${classification.displayName}`,
+      "success"
+    );
+  }
+
+  async function addFormulaCreateTag() {
+    const value = String(formulaCreateTagPicker?.value || "").trim();
+    if (!value) return;
+    if (!/^[a-z0-9][a-z0-9-]{0,31}:[^,，、\s].{0,63}$/i.test(value)) {
+      throw new Error("标签必须使用 namespace:value 格式，例如 unit:V");
+    }
+    const key = formulaClassificationNameKey(value);
+    const existing = formulaClassifications.find(
+      (item) => item.kind === "tag" && formulaClassificationNameKey(item.displayName) === key
+    );
+    const classification = existing || (await createFormulaClassification("tag", value));
+    setFormulaCreateTags([...formulaCreateTagValues(), classification.displayName]);
+    formulaCreateTagPicker.value = "";
+  }
+
   function formulaSelectedTagValues() {
     return String(formulaFormField("tags")?.value || "")
       .split(/[\n,，、]/)
@@ -3466,10 +3846,12 @@ $$
   function renderFormulaClassificationOptions() {
     const classifications = formulaClassifications || [];
     const modules = classifications.filter((item) => item.kind === "module");
-    const selectedModule =
-      (!formulaCardEditor?.hidden ? formulaFormField("moduleKey")?.value : formulaCreateModule?.value) ||
-      formulaClassificationParent?.value ||
-      "";
+    const selectedModule = !formulaCardEditor?.hidden
+      ? formulaFormField("moduleKey")?.value || ""
+      : selectedFormulaCreateModule()?.slug ||
+        formulaCreateModule?.value ||
+        formulaClassificationParent?.value ||
+        "";
     const categories = classifications.filter(
       (item) => item.kind === "category" && (!selectedModule || item.parentSlug === selectedModule)
     );
@@ -3665,6 +4047,113 @@ $$
     }
     if (formulaPreviousPage) formulaPreviousPage.disabled = pagination.page <= 1;
     if (formulaNextPage) formulaNextPage.disabled = !pagination.pageCount || pagination.page >= pagination.pageCount;
+  }
+
+  function formulaRelationIssueLabel(issueCode) {
+    return {
+      ambiguous_target: "目标歧义",
+      missing_source: "来源缺失",
+      missing_target: "目标缺失",
+      duplicate_dependency: "重复依赖",
+      self_reference: "自环",
+      evidence_conflict: "证据冲突",
+      cycle: "成环",
+      archived_target: "目标已归档",
+      invalid_shortcode: "短码无效",
+      relation_without_revision: "来源无修订"
+    }[issueCode] || issueCode;
+  }
+
+  function renderFormulaRelationRepairs() {
+    if (!formulaRepairList || !formulaRepairSummary) return;
+    const items = formulaRelationRepairState.items || [];
+    formulaRepairStatus.value = formulaRelationRepairState.status;
+    formulaRepairIssue.value = formulaRelationRepairState.issueCode;
+    formulaRepairSummary.textContent = `${items.length} 项 · 仅追加复核记录`;
+    formulaRepairList.innerHTML =
+      items
+        .map((repair) => {
+          const resolved = repair.status === "resolved";
+          const candidates = Array.isArray(repair.candidateTargetIds)
+            ? repair.candidateTargetIds
+            : [];
+          const candidateHtml = candidates.length
+            ? `<div class="formula-repair-candidates" aria-label="候选目标">${candidates
+                .map((formulaId) => `<code>${escapeHtml(formulaId)}</code>`)
+                .join("")}</div>`
+            : `<span class="formula-repair-none">无可确认候选</span>`;
+          const latestNote = repair.latestEvent?.evidence?.note || "";
+          return `
+            <article class="formula-repair-item" data-formula-repair-id="${escapeHtml(repair.repairId)}">
+              <div class="formula-repair-heading">
+                <div>
+                  <span class="formula-status-badge ${resolved ? "is-published" : "is-draft"}">${resolved ? "已结案" : "待处理"}</span>
+                  <strong>${escapeHtml(formulaRelationIssueLabel(repair.issueCode))}</strong>
+                </div>
+                <code>${escapeHtml(repair.repairId)}</code>
+              </div>
+              <p>${escapeHtml(repair.reason)}</p>
+              <dl class="formula-repair-meta">
+                <div><dt>来源公式</dt><dd>${escapeHtml(repair.sourceDisplayName || repair.sourceFormulaId || "未识别")}</dd></div>
+                <div><dt>来源修订</dt><dd><code>${escapeHtml(repair.sourceRevisionId || "未建立")}</code></dd></div>
+                <div><dt>旧引用</dt><dd><code>${escapeHtml(repair.targetReference || "无")}</code></dd></div>
+                <div><dt>证据位置</dt><dd><code>${escapeHtml(`${repair.sourceTable}:${repair.sourceKey}`)}</code></dd></div>
+              </dl>
+              <div class="formula-repair-candidate-row">
+                <span>迁移候选</span>
+                ${candidateHtml}
+              </div>
+              ${
+                resolved
+                  ? `<div class="formula-repair-resolution">
+                      <span>结案目标</span>
+                      <strong>${escapeHtml(repair.latestEvent?.targetDisplayName || repair.latestEvent?.targetFormulaId || "")}</strong>
+                      <code>${escapeHtml(repair.latestEvent?.targetFormulaId || "")}</code>
+                      <p>${escapeHtml(latestNote)}</p>
+                    </div>
+                    <div class="formula-repair-actions">
+                      <label>重新打开说明<textarea rows="2" maxlength="500" data-formula-repair-note></textarea></label>
+                      <button class="button secondary" type="button" data-formula-repair-action="reopened">重新打开</button>
+                    </div>`
+                  : `<div class="formula-repair-actions">
+                      <label>已保存的目标 formulaId<input maxlength="128" data-formula-repair-target placeholder="手动填写，不自动选择" /></label>
+                      <label>复核证据<textarea rows="2" maxlength="500" data-formula-repair-note placeholder="记录人工核对依据"></textarea></label>
+                      <div class="row-actions">
+                        ${repair.sourceFormulaId ? `<button class="button secondary" type="button" data-formula-repair-action="open-source" data-formula-id="${escapeHtml(repair.sourceFormulaId)}">打开来源公式</button>` : ""}
+                        <button class="button primary" type="button" data-formula-repair-action="resolved">校验关系并结案</button>
+                      </div>
+                    </div>`
+              }
+            </article>`;
+        })
+        .join("") || `<div class="empty-state">当前筛选条件下没有关系待修复事项。</div>`;
+  }
+
+  async function loadFormulaRelationRepairs() {
+    const params = new URLSearchParams({ status: formulaRelationRepairState.status });
+    if (formulaRelationRepairState.issueCode) {
+      params.set("issue", formulaRelationRepairState.issueCode);
+    }
+    const result = await request(`/api/admin/formula-relation-repairs?${params.toString()}`);
+    formulaRelationRepairState.items = result.repairs || [];
+    formulaRelationRepairState.loaded = true;
+    renderFormulaRelationRepairs();
+  }
+
+  async function appendFormulaRelationRepairEvent(repairId, eventType, container) {
+    const note = container.querySelector("[data-formula-repair-note]")?.value.trim() || "";
+    const targetFormulaId =
+      container.querySelector("[data-formula-repair-target]")?.value.trim() || "";
+    if (!note) throw new Error("请填写复核证据");
+    if (eventType === "resolved" && !targetFormulaId) {
+      throw new Error("请手动填写已经保存到来源修订的目标 formulaId");
+    }
+    await request(`/api/admin/formula-relation-repairs/${encodeURIComponent(repairId)}/events`, {
+      method: "POST",
+      body: JSON.stringify({ eventType, targetFormulaId, note })
+    });
+    await loadFormulaRelationRepairs();
+    setNotice(eventType === "resolved" ? "关系已核验并追加结案记录。" : "待修复事项已重新打开。", "success");
   }
 
   function renderFormulaCatalog() {
@@ -4016,7 +4505,7 @@ $$
     formulaEditingCard = null;
   }
 
-  async function saveFormulaEditor() {
+  async function saveFormulaEditor(operation = null) {
     const tags = String(formulaFormField("tags")?.value || "")
       .split(/[\n,，、]/)
       .map((tag) => tag.trim())
@@ -4064,19 +4553,18 @@ $$
     await loadServerContent();
     renderFormulaDecisions();
     renderList();
-    setNotice(
-      result.decisionCount
-        ? `公式卡已保存，并为 ${result.decisionCount} 篇引用文章生成黄色待决策事项。`
-        : result.revisionCreated
-          ? result.card.pendingPublication
-            ? "公式卡已保存，并生成待发布的不可变修订；访客仍看到上一发布版本。"
-            : "公式卡已保存，并生成新的不可变修订。"
-          : "公式卡元数据已保存，LaTeX 与 Markdown 未变更；未生成文章待决策事项。",
-      result.decisionCount ? "warning" : "success"
-    );
+    const message = result.decisionCount
+      ? `公式卡已保存，并为 ${result.decisionCount} 篇引用文章生成黄色待决策事项。`
+      : result.revisionCreated
+        ? result.card.pendingPublication
+          ? "公式卡已保存，并生成待发布的不可变修订；访客仍看到上一发布版本。"
+          : "公式卡已保存，并生成新的不可变修订。"
+        : "公式卡元数据已保存，LaTeX 与 Markdown 未变更；未生成文章待决策事项。";
+    if (operation) setOperationNotice(operation, message, result.decisionCount ? "warning" : "success");
+    else setNotice(message, result.decisionCount ? "warning" : "success", { key: "formula-save" });
   }
 
-  async function mutateFormulaCard(id, action) {
+  async function mutateFormulaCard(id, action, operation = null) {
     const result = await request(`/api/admin/formulas/${encodeURIComponent(id)}/${action}`, { method: "POST", body: "{}" });
     closeFormulaEditor();
     await loadFormulaCatalog({ selectDefault: false });
@@ -4084,18 +4572,18 @@ $$
     renderFormulaDecisions();
     renderList();
     const decisionCount = Number(result.card?.decisionCount || 0);
-    setNotice(
-      action === "publish"
-        ? result.card?.pendingPublication
-          ? "公式发布未切换，请刷新后重试。"
-          : "公式卡当前修订已发布。"
-        : action === "archive"
+    const message = action === "publish"
+      ? result.card?.pendingPublication
+        ? "公式发布未切换，请刷新后重试。"
+        : "公式卡当前修订已发布。"
+      : action === "archive"
         ? decisionCount
           ? `公式卡已归档；${decisionCount} 篇引用文章继续显示原修订，并出现黄色待决策事项。`
           : "公式卡已归档，修订历史已保留。"
-        : "公式卡已恢复。",
-      decisionCount ? "warning" : "success"
-    );
+        : "公式卡已恢复。";
+    const type = result.card?.pendingPublication && action === "publish" ? "error" : decisionCount ? "warning" : "success";
+    if (operation) setOperationNotice(operation, message, type, { persistent: type === "error" });
+    else setNotice(message, type, { key: `formula-${action}`, persistent: type === "error" });
   }
 
   async function archiveFormulaCardWithImpact(id) {
@@ -4166,12 +4654,16 @@ $$
     if (view === "formulas" && !formulaCatalogState.loaded) {
       loadFormulaCatalog().catch((error) => setNotice(error.message, "error"));
     }
+    if (view === "formulas" && !formulaRelationRepairState.loaded) {
+      loadFormulaRelationRepairs().catch((error) => setNotice(error.message, "error"));
+    }
     if (view === "carousel") renderFeaturedSlots();
     if (view === "layout") renderLayoutPanel();
     if (returnToArticleFormulaButton) {
       returnToArticleFormulaButton.hidden = view !== "formulas" || !formulaWorkbenchReturnState;
     }
     syncFormulaDrawerAvailability();
+    syncArticlePublishDock();
   }
 
   loginForm.addEventListener("submit", (event) => {
@@ -4220,6 +4712,38 @@ $$
   editorDockHandle.addEventListener("click", () => {
     setEditorDockCollapsed(!editorDock.classList.contains("is-collapsed"));
   });
+
+  articlePublishDockCollapse?.addEventListener("click", () => {
+    setArticlePublishDockCollapsed(true);
+    articlePublishDockExpand?.focus();
+  });
+
+  articlePublishDockExpand?.addEventListener("click", () => {
+    setArticlePublishDockCollapsed(false);
+    articleSaveDraftButton?.focus();
+  });
+
+  articleSaveDraftButton?.addEventListener("click", () => requestArticleAction("draft"));
+  articlePublishButton?.addEventListener("click", () => requestArticleAction("publish"));
+
+  cmsToastRegion?.addEventListener("click", (event) => {
+    const closeButton = event.target.closest(".cms-toast-close");
+    if (!closeButton) return;
+    const toast = closeButton.closest("[data-toast-key]");
+    if (toast) dismissToast(toast.dataset.toastKey);
+  });
+
+  contentForm.addEventListener("invalid", (event) => {
+    pendingArticleAction = "";
+    syncArticlePublishDock();
+    setNotice(`请检查“${event.target.closest("label")?.firstChild?.textContent?.trim() || "必填字段"}”后再继续。`, "error", {
+      key: "article-validation",
+      persistent: true
+    });
+  }, true);
+
+  window.visualViewport?.addEventListener("resize", syncVisualViewportOffset);
+  window.visualViewport?.addEventListener("scroll", syncVisualViewportOffset);
 
   focusModeToggle?.addEventListener("change", () => {
     const enabled = focusModeToggle.checked;
@@ -4433,10 +4957,6 @@ $$
       assignCurrentToFeaturedSlot(button.dataset.slot);
       return;
     }
-    if (action === "replace-featured-slot" && item) {
-      withBusy(button, "替换中...", () => replaceFeaturedSlot(button.dataset.slot, item)).catch((error) => setNotice(error.message, "error"));
-      return;
-    }
     if (action === "clear-featured-slot" && item) {
       if (!window.confirm(`确认将《${item.title || "未命名内容"}》移出首页轮播吗？\n\n本操作只会取消首页推荐并释放槽位，不会删除文章或项目正文。`)) return;
       withBusy(button, "取消中...", async () => {
@@ -4632,13 +5152,44 @@ $$
     withBusy(button, "处理中...", () => mutateFormulaCard(id, action)).catch((error) => setNotice(error.message, "error"));
   });
 
+  formulaRepairStatus?.addEventListener("change", () => {
+    formulaRelationRepairState.status = formulaRepairStatus.value;
+    loadFormulaRelationRepairs().catch((error) => setNotice(error.message, "error"));
+  });
+  formulaRepairIssue?.addEventListener("change", () => {
+    formulaRelationRepairState.issueCode = formulaRepairIssue.value;
+    loadFormulaRelationRepairs().catch((error) => setNotice(error.message, "error"));
+  });
+  formulaRepairRefresh?.addEventListener("click", () => {
+    withBusy(formulaRepairRefresh, "刷新中...", loadFormulaRelationRepairs).catch((error) =>
+      setNotice(error.message, "error")
+    );
+  });
+  formulaRepairList?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-formula-repair-action]");
+    if (!button) return;
+    const container = button.closest("[data-formula-repair-id]");
+    if (!container) return;
+    const action = button.dataset.formulaRepairAction;
+    if (action === "open-source") {
+      withBusy(button, "加载中...", () => editFormulaCard(button.dataset.formulaId)).catch((error) =>
+        setNotice(error.message, "error")
+      );
+      return;
+    }
+    withBusy(button, "校验中...", () =>
+      appendFormulaRelationRepairEvent(container.dataset.formulaRepairId, action, container)
+    ).catch((error) => setNotice(error.message, "error"));
+  });
+
   newFormulaButton?.addEventListener("click", () => populateFormulaEditor());
   formulaEditorCancel?.addEventListener("click", closeFormulaEditor);
   formulaPublishButton?.addEventListener("click", () => {
     if (!formulaEditingCard) return;
-    withBusy(formulaPublishButton, "发布中...", () => mutateFormulaCard(formulaEditingCard.formulaId, "publish")).catch((error) =>
-      setNotice(error.message, "error")
-    );
+    const operation = beginFeedbackOperation("formula-publish");
+    withBusy(formulaPublishButton, "发布中...", () =>
+      mutateFormulaCard(formulaEditingCard.formulaId, "publish", operation)
+    ).catch((error) => setOperationNotice(operation, error.message, "error", { persistent: true }));
   });
   formulaClassificationKind?.addEventListener("change", renderFormulaClassificationManager);
   formulaClassificationParent?.addEventListener("input", () => {
@@ -4669,7 +5220,7 @@ $$
       createFormulaClassificationFromEditor(createButton.dataset.formulaCreateClassification)
     ).catch((error) => setNotice(error.message, "error"));
   });
-  formulaCardEditor?.querySelectorAll(".formula-field-help-button").forEach((button) => {
+  document.querySelectorAll(".formula-field-help-button").forEach((button) => {
     button.addEventListener("pointerenter", () => showFormulaFieldHelp(button));
     button.addEventListener("pointerleave", () => {
       if (button.getAttribute("aria-expanded") !== "true") hideFormulaFieldHelp(button);
@@ -4703,11 +5254,16 @@ $$
   formulaCardEditor?.addEventListener("input", (event) => {
     if (event.target.name === "latex" || event.target.name === "markdownDerivation") updateFormulaEditorPreview();
     if (event.target.name === "moduleKey") renderFormulaClassificationOptions();
+    dismissToast("formula-save");
+    dismissToast("formula-publish");
   });
   formulaCardEditor?.addEventListener("submit", (event) => {
     event.preventDefault();
     const submitButton = formulaCardEditor.querySelector("button[type='submit']");
-    withBusy(submitButton, "保存中...", saveFormulaEditor).catch((error) => setNotice(error.message, "error"));
+    const operation = beginFeedbackOperation("formula-save");
+    withBusy(submitButton, "保存中...", () => saveFormulaEditor(operation)).catch((error) =>
+      setOperationNotice(operation, error.message, "error", { persistent: true })
+    );
   });
   formulaImportButton?.addEventListener("click", () => {
     withBusy(formulaImportButton, "导入中...", importFormulaCatalogFile).catch((error) => setNotice(error.message, "error"));
@@ -4742,6 +5298,38 @@ $$
     if (formulaAuthoringState.selectionInfo) setFormulaAuthoringTab("create");
   });
   formulaCreateModule?.addEventListener("input", renderFormulaClassificationOptions);
+  formulaCreateModuleButton?.addEventListener("click", () => {
+    withBusy(formulaCreateModuleButton, "新增中...", () =>
+      createFormulaSelectionClassification("module")
+    ).catch((error) => setNotice(error.message, "error"));
+  });
+  formulaCreateCategoryButton?.addEventListener("click", () => {
+    withBusy(formulaCreateCategoryButton, "新增中...", () =>
+      createFormulaSelectionClassification("category")
+    ).catch((error) => setNotice(error.message, "error"));
+  });
+  formulaCreateTagAddButton?.addEventListener("click", () => {
+    withBusy(formulaCreateTagAddButton, "添加中...", addFormulaCreateTag).catch((error) =>
+      setNotice(error.message, "error")
+    );
+  });
+  formulaCreateTagPicker?.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    addFormulaCreateTag().catch((error) => setNotice(error.message, "error"));
+  });
+  formulaCreateSelectedTags?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-formula-create-remove-tag]");
+    if (!button) return;
+    const removeKey = formulaClassificationNameKey(
+      button.dataset.formulaCreateRemoveTag
+    );
+    setFormulaCreateTags(
+      formulaCreateTagValues().filter(
+        (tag) => formulaClassificationNameKey(tag) !== removeKey
+      )
+    );
+  });
   formulaAuthoringModule?.addEventListener("change", () => {
     formulaAuthoringState.moduleKey = formulaAuthoringModule.value;
     formulaAuthoringState.categoryPath = "";
@@ -4866,6 +5454,7 @@ $$
 
   contentForm.addEventListener("input", (event) => {
     if (event.target.closest("#formulaDecisionPanel")) return;
+    if (!contentForm.querySelector(":invalid")) dismissToast("article-validation");
     markDirty();
     updatePreview();
     updateVisibilityHint();
@@ -4874,6 +5463,7 @@ $$
 
   contentForm.addEventListener("change", (event) => {
     if (event.target.closest("#formulaDecisionPanel")) return;
+    if (!contentForm.querySelector(":invalid")) dismissToast("article-validation");
     if (event.target.name === "type") updateTypeFields();
     if (event.target.name === "featuredOrder") {
       event.target.value = String(featuredOrderValue(event.target.value));
@@ -5010,8 +5600,24 @@ $$
 
   contentForm.addEventListener("submit", (event) => {
     event.preventDefault();
-    const submitButton = contentForm.querySelector("button[type='submit']");
-    withBusy(submitButton, "保存中...", async () => {
+    const isArticle = getType() === "post";
+    if (isArticle && articleOperationInFlight) {
+      setNotice("当前文章操作仍在进行，请等待结果。", "warning", { key: "article-operation" });
+      return;
+    }
+    const action = isArticle
+      ? pendingArticleAction || (contentForm.publishStatus.value === "published" ? "publish" : "draft")
+      : "save";
+    const operation = isArticle ? beginFeedbackOperation("article-operation") : null;
+    const submitButton = isArticle
+      ? action === "publish" ? articlePublishButton : articleSaveDraftButton
+      : nonArticleSaveButton;
+    if (isArticle) {
+      articleOperationInFlight = true;
+      pendingArticleAction = action;
+      syncArticlePublishDock();
+    }
+    withBusy(submitButton, action === "publish" ? "发布中..." : "保存中...", async () => {
       try {
         saveDraft();
         const { endpoint, collectionKey, payload } = buildPayload();
@@ -5029,11 +5635,25 @@ $$
           resetForm();
         }
         renderList(); renderRecentContent(); renderFeaturedSlots();
-        setNotice(`保存成功：${payload.title || "未命名内容"}。`, "success");
+        const message = isArticle
+          ? action === "publish"
+            ? `文章已发布：${payload.title || "未命名内容"}。`
+            : `文章草稿已保存：${payload.title || "未命名内容"}。`
+          : `保存成功：${payload.title || "未命名内容"}。`;
+        if (operation) setOperationNotice(operation, message, "success");
+        else setNotice(message, "success");
       } catch (error) {
         saveDraft();
-        setNotice(`${error.message}。当前编辑内容已保留在本地草稿。`, "error");
+        markDirty();
+        const message = `${error.message}。当前编辑内容已保留在本地草稿。`;
+        if (operation) setOperationNotice(operation, message, "error", { persistent: true });
+        else setNotice(message, "error", { persistent: true });
       }
+    }).finally(() => {
+      if (!isArticle) return;
+      articleOperationInFlight = false;
+      pendingArticleAction = "";
+      syncArticlePublishDock();
     });
   });
 
@@ -5098,8 +5718,11 @@ $$
 
   (async () => {
     populateFormulaAuthoringControls();
+    renderFormulaCreateSelectedTags();
     setSidebarCollapsed(storedBool(sidebarStateKey));
     setEditorDockCollapsed(storedBool(editorDockStateKey));
+    setArticlePublishDockCollapsed(storedBool(articlePublishDockStateKey), { persist: false });
+    syncVisualViewportOffset();
     setPasswordVisible(false);
     updatePasswordActive();
     loadSavedLogin();

@@ -3548,12 +3548,168 @@ button:disabled {
 }
 
 .formula-graph-canvas {
+  position: relative;
+  isolation: isolate;
   width: 100%;
   height: 380px;
   min-width: 0;
+  overflow: hidden;
   border-block: 1px solid var(--line);
   background: #f8fafc;
+  cursor: grab;
   touch-action: none;
+}
+
+.formula-graph-canvas:active {
+  cursor: grabbing;
+}
+
+.formula-graph-canvas:focus-visible {
+  outline: 2px solid #0b6bcb;
+  outline-offset: 2px;
+}
+
+.formula-graph-cytoscape,
+.formula-graph-node-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.formula-graph-node-layer {
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.formula-graph-node-layer.is-measuring {
+  overflow: visible;
+}
+
+.formula-graph-node {
+  position: absolute;
+  display: grid;
+  width: max-content;
+  min-width: 176px;
+  max-width: none;
+  gap: 8px;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  overflow: visible;
+  border: 1.5px solid #7b8794;
+  border-radius: 7px;
+  color: #17202a;
+  background: #f8fafc;
+  box-shadow: 0 3px 10px rgba(23, 32, 42, 0.1);
+  cursor: grab;
+  font: inherit;
+  text-align: center;
+  text-decoration: none;
+  transform-origin: center;
+  user-select: none;
+  touch-action: none;
+  pointer-events: auto;
+}
+
+button.formula-graph-node {
+  appearance: none;
+}
+
+.formula-graph-node:active {
+  cursor: grabbing;
+}
+
+.formula-graph-node:hover {
+  border-color: #0b6bcb;
+  color: #17202a;
+}
+
+.formula-graph-node:focus-visible,
+.formula-graph-node.is-selected {
+  outline: 3px solid rgba(11, 107, 203, 0.7);
+  outline-offset: 2px;
+}
+
+.formula-graph-node.is-current {
+  border: 3px solid #b35c00;
+  color: #4a2a00;
+  background: #fff4cf;
+  box-shadow: 0 5px 16px rgba(179, 92, 0, 0.2);
+}
+
+.formula-graph-node.is-draft {
+  border-style: dashed;
+  border-color: #8a5d00;
+}
+
+.formula-graph-node.is-archived {
+  border-style: dotted;
+  opacity: 0.62;
+}
+
+.formula-graph-node-title {
+  display: block;
+  max-width: 30ch;
+  margin-inline: auto;
+  overflow-wrap: anywhere;
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.formula-graph-node-math {
+  display: block;
+  width: max-content;
+  max-width: none;
+  margin-inline: auto;
+  color: inherit;
+  font-size: 0.96rem;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.formula-graph-node-math .katex-display {
+  width: max-content;
+  margin: 0;
+}
+
+.formula-graph-node-math.is-invalid {
+  color: #8b1e1e;
+  font-size: 0.82rem;
+  white-space: normal;
+}
+
+.formula-graph-node-layer.is-measuring .formula-graph-node {
+  visibility: hidden;
+  transform: none !important;
+}
+
+[data-theme="dark"] .formula-graph-canvas {
+  border-color: var(--line);
+  background: #0b0712;
+}
+
+[data-theme="dark"] .formula-graph-node {
+  border-color: #6f5c83;
+  color: #f8fafc;
+  background: #1b102b;
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.38);
+}
+
+[data-theme="dark"] .formula-graph-node:hover,
+[data-theme="dark"] .formula-graph-node:focus-visible,
+[data-theme="dark"] .formula-graph-node.is-selected {
+  border-color: #c4b5fd;
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .formula-graph-node.is-current {
+  border-color: #fbbf24;
+  color: #fff7d6;
+  background: #53330d;
+}
+
+[data-theme="dark"] .formula-graph-node-math.is-invalid {
+  color: #fca5a5;
 }
 
 .formula-graph-status {
@@ -3819,6 +3975,27 @@ button:disabled {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+}
+
+.formula-authoring-create-fields label,
+.formula-create-latex-field {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.formula-create-latex-field .formula-selection-preview {
+  margin: 0;
+}
+
+.formula-create-intent {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
 }
 
 .formula-authoring-results {
@@ -4391,8 +4568,508 @@ button:disabled {
   }
 }
 
+/* S38: one fixed article action surface and one viewport-level feedback surface. */
+.dashboard.has-article-publish-dock .admin-main {
+  padding-bottom: 178px;
+}
+
+.article-publish-dock {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: calc(16px + env(safe-area-inset-bottom) + var(--cms-keyboard-offset, 0px));
+  z-index: 38;
+  display: grid;
+  width: min(350px, calc(100vw - 32px));
+  border: 1px solid rgba(76, 29, 149, 0.26);
+  border-radius: 8px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 16px 44px rgba(36, 20, 58, 0.22);
+  transition: right 180ms ease, bottom 180ms ease, width 180ms ease, box-shadow 180ms ease;
+}
+
+.article-publish-dock[hidden],
+.article-publish-dock-body[hidden],
+.article-publish-dock-rail[hidden] {
+  display: none !important;
+}
+
+.article-publish-dock.has-formula-rail:not(.is-formula-drawer-open) {
+  right: max(84px, calc(env(safe-area-inset-right) + 76px));
+}
+
+.article-publish-dock.is-formula-drawer-open {
+  right: 432px;
+}
+
+.article-publish-dock.is-collapsed {
+  width: 52px;
+  max-width: 52px;
+  height: 52px;
+  border-radius: 8px;
+}
+
+.article-publish-dock.is-dirty {
+  border-color: rgba(180, 83, 9, 0.56);
+  box-shadow: 0 16px 44px rgba(180, 83, 9, 0.2);
+}
+
+.article-publish-dock-body {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.article-publish-dock-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.article-publish-dock-heading > div {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.article-publish-dock-heading strong,
+.article-publish-dock-heading span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.article-publish-dock-heading strong {
+  font-size: 14px;
+}
+
+.article-publish-dock-heading span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.article-publish-dock.is-dirty .article-publish-dock-heading span {
+  color: #9a4b08;
+}
+
+.article-publish-dock-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
+}
+
+.article-publish-dock-actions .button {
+  min-width: 0;
+  min-height: 42px;
+  padding-inline: 12px;
+  white-space: normal;
+}
+
+.article-publish-dock-collapse,
+.article-publish-dock-rail {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  color: var(--ink);
+  background: var(--surface);
+  font-size: 20px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.article-publish-dock-rail {
+  width: 52px;
+  height: 52px;
+  border: 0;
+  border-radius: 8px;
+  color: white;
+  background: #6d28d9;
+  font-size: 24px;
+}
+
+.article-publish-dock-collapse:hover,
+.article-publish-dock-collapse:focus-visible,
+.article-publish-dock-rail:hover,
+.article-publish-dock-rail:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.32);
+  outline-offset: 2px;
+}
+
+.cms-toast-region {
+  position: fixed;
+  top: max(16px, env(safe-area-inset-top));
+  right: max(16px, env(safe-area-inset-right));
+  z-index: 92;
+  display: grid;
+  width: min(390px, calc(100vw - 32px));
+  gap: 8px;
+  pointer-events: none;
+}
+
+.cms-toast-region:empty {
+  display: none;
+}
+
+.cms-toast {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) 34px;
+  gap: 10px;
+  align-items: center;
+  min-height: 58px;
+  padding: 10px;
+  border: 1px solid #cbd5e1;
+  border-left-width: 4px;
+  border-radius: 8px;
+  color: #17202a;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.22);
+  animation: cms-toast-enter 180ms ease both;
+  pointer-events: auto;
+}
+
+.cms-toast.is-success {
+  border-left-color: #15803d;
+}
+
+.cms-toast.is-warning {
+  border-left-color: #b45309;
+}
+
+.cms-toast.is-error {
+  border-left-color: #b91c1c;
+}
+
+.cms-toast.is-info {
+  border-left-color: #1d4ed8;
+}
+
+.cms-toast.is-leaving {
+  animation: cms-toast-leave 180ms ease both;
+}
+
+.cms-toast-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: #1d4ed8;
+  background: #dbeafe;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.cms-toast.is-success .cms-toast-icon {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.cms-toast.is-warning .cms-toast-icon {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.cms-toast.is-error .cms-toast-icon {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.cms-toast-message {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.cms-toast-close {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  color: #475569;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.cms-toast-close:hover,
+.cms-toast-close:focus-visible {
+  color: #111827;
+  background: #eef2f7;
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
+@keyframes cms-toast-enter {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cms-toast-leave {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-8px); }
+}
+
+@media (max-width: 1180px) {
+  .formula-authoring-drawer {
+    bottom: calc(12px + var(--cms-keyboard-offset, 0px));
+  }
+
+  .article-publish-dock.is-formula-drawer-open {
+    right: max(12px, env(safe-area-inset-right));
+    bottom: calc(min(46vh, 430px) + 28px + env(safe-area-inset-bottom) + var(--cms-keyboard-offset, 0px));
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard.has-article-publish-dock .admin-main {
+    padding-bottom: 196px;
+  }
+
+  .article-publish-dock {
+    right: max(8px, env(safe-area-inset-right));
+    bottom: calc(8px + env(safe-area-inset-bottom) + var(--cms-keyboard-offset, 0px));
+    width: min(360px, calc(100vw - 16px));
+  }
+
+  .article-publish-dock.has-formula-rail:not(.is-formula-drawer-open) {
+    right: max(8px, env(safe-area-inset-right));
+    bottom: calc(72px + env(safe-area-inset-bottom) + var(--cms-keyboard-offset, 0px));
+  }
+
+  .article-publish-dock.is-formula-drawer-open {
+    right: max(8px, env(safe-area-inset-right));
+    bottom: calc(min(48vh, 405px) + 20px + env(safe-area-inset-bottom) + var(--cms-keyboard-offset, 0px));
+  }
+
+  .cms-toast-region {
+    top: max(8px, env(safe-area-inset-top));
+    right: max(8px, env(safe-area-inset-right));
+    width: min(374px, calc(100vw - 16px));
+  }
+}
+
+:root.has-cms-keyboard .article-publish-dock.is-formula-drawer-open {
+  top: max(8px, env(safe-area-inset-top));
+  bottom: auto;
+}
+
+:root.has-cms-keyboard .cms-toast-region {
+  top: 148px;
+}
+
+@media (max-width: 1180px) {
+  :root.has-cms-keyboard .formula-authoring-drawer:not(.is-collapsed) {
+    height: max(120px, calc(var(--cms-visual-height, 100vh) - 250px));
+    max-height: max(120px, calc(var(--cms-visual-height, 100vh) - 250px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article-publish-dock,
+  .cms-toast,
+  .cms-toast.is-leaving {
+    transition: none;
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .login-mascot {
     animation: none;
+  }
+}
+
+
+.formula-repair-manager {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.formula-repair-toolbar {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.7fr) minmax(180px, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.formula-repair-toolbar label,
+.formula-repair-actions label {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.formula-repair-list {
+  display: grid;
+  gap: 12px;
+}
+
+.formula-repair-item {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--surface-2) 54%, transparent);
+}
+
+.formula-repair-item > p,
+.formula-repair-resolution p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.formula-repair-heading,
+.formula-repair-heading > div,
+.formula-repair-candidate-row,
+.formula-repair-resolution {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  min-width: 0;
+}
+
+.formula-repair-heading {
+  justify-content: space-between;
+}
+
+.formula-repair-heading code,
+.formula-repair-meta code,
+.formula-repair-resolution code {
+  overflow-wrap: anywhere;
+}
+
+.formula-repair-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 18px;
+  margin: 0;
+}
+
+.formula-repair-meta div {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.formula-repair-meta dt,
+.formula-repair-candidate-row > span,
+.formula-repair-resolution > span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.formula-repair-meta dd {
+  min-width: 0;
+  margin: 0;
+}
+
+.formula-repair-candidates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.formula-repair-candidates code {
+  padding: 4px 7px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  overflow-wrap: anywhere;
+}
+
+.formula-repair-none {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.formula-repair-actions {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.8fr) minmax(240px, 1.2fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.formula-repair-actions .row-actions {
+  justify-content: flex-end;
+}
+
+.formula-repair-resolution {
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.carousel-conflict-manager {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--admin-border);
+}
+
+.carousel-conflict-report {
+  display: grid;
+  gap: 8px;
+}
+
+.carousel-conflict-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.carousel-conflict-row div,
+.carousel-conflict-row small {
+  min-width: 0;
+}
+
+.carousel-conflict-row span,
+.carousel-conflict-row small {
+  display: block;
+  color: var(--admin-muted);
+}
+
+.carousel-conflict-row code {
+  color: var(--admin-danger);
+}
+
+@media (max-width: 640px) {
+  .formula-repair-toolbar,
+  .formula-repair-actions,
+  .formula-repair-meta {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .formula-repair-meta div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .carousel-conflict-row {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

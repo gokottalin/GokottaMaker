@@ -1,6 +1,6 @@
 {
   "name": "larkixmaker",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "private": true,
   "description": "LarkixMaker embedded electronics blog and project site.",
   "main": "server.js",
@@ -27,10 +27,14 @@
     "codex:requirement": "node scripts/requirement-handoff.js",
     "codex:contract": "node scripts/codex-governance.js contract",
     "codex:resources": "node scripts/codex-governance.js resources",
-    "codex:check": "node scripts/codex-governance.js all"
+    "codex:check": "node scripts/codex-governance.js all",
+    "test:math-rendering": "node scripts/test-math-rendering.js",
+    "test:batch-regression": "node scripts/run-batch-regression-evidence.js"
   },
   "engines": {
     "node": ">=22.5.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "katex": "0.16.22"
+  }
 }

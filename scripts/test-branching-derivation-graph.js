@@ -10,6 +10,7 @@ const { createContentStore } = require("../lib/content");
 const { createDatabase } = require("../lib/db");
 const {
   extractFormulaDependencyReferences,
+  validateFormulaCatalogPackage,
   validateFormulaCardPayload
 } = require("../lib/validators");
 
@@ -337,6 +338,42 @@ function revisionPresentationUpgradeChecks(tempRoot) {
   }
 }
 
+function catalogImportChecks(tempRoot) {
+  const source = openStore(path.join(tempRoot, "catalog-source"));
+  let catalog;
+  try {
+    let dependency = save(source.store, "formula.import.z-dependency");
+    let parent = save(source.store, "formula.import.a-parent", [dependency.formulaId]);
+    dependency = publish(source.store, dependency);
+    parent = publish(source.store, parent);
+    catalog = validateFormulaCatalogPackage(source.store.exportFormulaCatalog());
+    assert.equal(catalog.cards[0].formulaId, parent.formulaId);
+  } finally {
+    source.db.close();
+  }
+
+  const destination = openStore(path.join(tempRoot, "catalog-destination"));
+  try {
+    const imported = destination.store.importFormulaCatalog(catalog, {
+      actor: { id: 26, username: "BranchingGraphTester" }
+    });
+    assert.equal(imported.importedCards, 2);
+    assert.equal(imported.dependenciesCreated, 1);
+    const publicParent = destination.store.publicFormulaCardBySlug("import-a-parent");
+    assert.deepEqual(
+      publicParent.derivation.dependencies.map((item) => item.formulaId),
+      ["formula.import.z-dependency"]
+    );
+    const second = destination.store.importFormulaCatalog(catalog, {
+      actor: { id: 26, username: "BranchingGraphTester" }
+    });
+    assert.equal(Number(second.dependenciesCreated || 0), 0);
+    assert.equal(destination.db.prepare("PRAGMA integrity_check").get().integrity_check, "ok");
+  } finally {
+    destination.db.close();
+  }
+}
+
 function main() {
   const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "larkix-branching-graph-"));
   try {
@@ -545,6 +582,21 @@ function main() {
         /循环|cycle/i
       );
 
+      const deepCycle = [];
+      for (let index = 0; index < 9; index += 1) {
+        deepCycle.push(save(store, `formula.reject.deep-${index}`));
+      }
+      for (let index = 0; index < deepCycle.length - 1; index += 1) {
+        deepCycle[index] = save(store, deepCycle[index].formulaId, [deepCycle[index + 1].formulaId]);
+      }
+      rejectionIsAtomic(
+        store,
+        db,
+        deepCycle.at(-1).formulaId,
+        () => save(store, deepCycle.at(-1).formulaId, [deepCycle[0].formulaId]),
+        /循环|cycle/i
+      );
+
       let multiA = save(store, "formula.reject.multi-a");
       let multiB = save(store, "formula.reject.multi-b");
       let multiC = save(store, "formula.reject.multi-c");
@@ -618,6 +670,25 @@ function main() {
         [middleA.formulaId, pendingTarget.formulaId]
       );
 
+      let archivedTarget = save(store, "formula.boundary.archived-target");
+      let archivedSource = save(store, "formula.boundary.archived-source", [
+        archivedTarget.formulaId
+      ]);
+      archivedTarget = publish(store, archivedTarget);
+      archivedSource = publish(store, archivedSource);
+      store.archiveFormulaCard(archivedTarget.formulaId, {
+        id: 26,
+        username: "BranchingGraphTester"
+      });
+      assert.equal(store.publicFormulaCardBySlug(archivedTarget.slug), null);
+      const publicArchivedBoundary = store.publicFormulaCardBySlug(archivedSource.slug);
+      assert.deepEqual(publicArchivedBoundary.derivation.dependencies, []);
+      assert.equal(publicArchivedBoundary.derivation.unavailableDependencyCount, 1);
+      assert.equal(
+        publicArchivedBoundary.graph.nodes.some((node) => node.slug === archivedTarget.slug),
+        false
+      );
+
       let presentation = save(store, "formula.presentation.snapshot", [], {
         displayName: "已发布展示名称",
         body: "## 固定推导正文",
@@ -679,6 +750,7 @@ function main() {
 
     legacyMigrationChecks(tempRoot);
     revisionPresentationUpgradeChecks(tempRoot);
+    catalogImportChecks(tempRoot);
     const postSource = fs.readFileSync(path.join(ROOT, "post.js"), "utf8");
     const deriveSource = fs.readFileSync(path.join(ROOT, "derive.html"), "utf8");
     const adminSource = fs.readFileSync(path.join(ROOT, "admin", "admin.js"), "utf8");
@@ -694,7 +766,9 @@ function main() {
     );
     assert.ok(
       postSource.indexOf("${renderFormulaGraphSection(card)}") <
-        postSource.indexOf("${formulaRendered.html}")
+        postSource.indexOf("${renderFormulaDerivationSection(card)}") &&
+        postSource.indexOf("${renderFormulaDerivationSection(card)}") <
+          postSource.indexOf("${formulaRendered.html}")
     );
     assert.match(deriveSource, /assets\/vendor\/cytoscape\.min\.js/);
     assert.match(deriveSource, /formula-graph\.js/);
@@ -710,7 +784,7 @@ function main() {
     assert.match(cytoscapeLicense, /The Cytoscape Consortium/);
     assert.match(cytoscapeLicense, /Permission is hereby granted, free of charge/);
     console.log(
-      "branching derivation graph checks passed: revision branches, merge reuse, atomic validation, publication isolation, and legacy promotion"
+      "branching derivation graph checks passed: branches, merges, deep cycles, boundaries, reverse-topological import, and legacy promotion"
     );
   } finally {
     safeRemoveTemp(tempRoot);

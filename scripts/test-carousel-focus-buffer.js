@@ -241,6 +241,9 @@ async function run() {
     assert.equal(restoredDraft.payload.restored.publishStatus, "draft");
     const publicAfterRestore = await request("/api/content");
     assert.ok(publicAfterRestore.payload.posts.some((item) => item.id === outsidePublished.id && item.featured));
+    assert.ok(Array.isArray(publicAfterRestore.payload.heroCarousel));
+    assert.ok(publicAfterRestore.payload.heroCarousel.some((item) => item.id === outsidePublished.id));
+    assert.equal(new Set(publicAfterRestore.payload.heroCarousel.map((item) => item.slot)).size, publicAfterRestore.payload.heroCarousel.length);
     assert.equal(publicAfterRestore.payload.posts.some((item) => item.id === outsideDraft.id), false);
 
     const reenabled = await request("/api/admin/focus-mode", {

@@ -1,0 +1,322 @@
+{
+  "schemaVersion": "larkix.requirement-dispatch.v1",
+  "dispatchId": "DISPATCH-20260730-001",
+  "status": "in_progress_wave10_release_reverification",
+  "acceptedAt": "2026-07-30T12:11:16+08:00",
+  "controller": "A00_ProjectDirector",
+  "sourceRequirements": [
+    {
+      "requirementId": "REQ-20260730-001",
+      "digest": "sha256:5e922998b001479323984457ff1a4e09cc0e38fd10958225ce2dd5de86e3698b"
+    },
+    {
+      "requirementId": "REQ-20260730-002",
+      "digest": "sha256:21606803c40f2b2305c0f9572eb3f33d690a9aed9962fcb7925b413213927bca"
+    },
+    {
+      "requirementId": "REQ-20260730-003",
+      "digest": "sha256:48e9facf95c24ae1bc75391a1f1bc17e2aca0ce5878286ee9a44c42510b969bc"
+    },
+    {
+      "requirementId": "REQ-20260730-004",
+      "digest": "sha256:213c62482f1cfb6dd9615f833b245ee8d4a4ec89e9f79c7a3c298dc213fde6ae"
+    },
+    {
+      "requirementId": "REQ-20260730-005",
+      "digest": "sha256:2a5bc12a4f83fb5795266a4e25d981e611b4dbf9a8909810c64f003f3138f070"
+    },
+    {
+      "requirementId": "REQ-20260730-006",
+      "digest": "sha256:fb32b8f46d1acbda6dc60fc7b283ff7b92b946e5784ab5fc4caffc85f12f1e0f"
+    },
+    {
+      "requirementId": "REQ-20260730-007",
+      "digest": "sha256:94ac66992a7e0040490bb3725a98eddce6c29191689573dbefe0bf4bbc66094f"
+    },
+    {
+      "requirementId": "REQ-20260730-008",
+      "digest": "sha256:19f874169b6aea8b7d120633955ef025b4e66764242559e959b080b263c9e4dc"
+    },
+    {
+      "requirementId": "REQ-20260730-009",
+      "digest": "sha256:a46588979ae49245683ed63075d79b2db63a0c3bd6887750b3c3ab699f87719d"
+    },
+    {
+      "requirementId": "REQ-20260730-010",
+      "digest": "sha256:72327eade6c9acab8a67bf96f9c4e5b75b36467e3dd40a1d2b46265bd8af3386"
+    },
+    {
+      "requirementId": "REQ-20260730-011",
+      "digest": "sha256:65586fd8747d3cf343eed2f8eb2ea94bea4ab020d41b04739e2b61d19052abd7"
+    },
+    {
+      "requirementId": "REQ-20260730-012",
+      "digest": "sha256:49cbfbf2fc8fa69b72e1f8ce4e10f03557b4b37b1a1f93c13c17f9e436a0795a"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "decision.shared-math-first",
+      "statement": "REQ-20260730-003 establishes one fixed shared math renderer and diagnostics contract before formula binding, MD2File parity, derivation recovery, or graph layout."
+    },
+    {
+      "id": "decision.formula-critical-path",
+      "statement": "Formula work is serialized as binding marker, selected-formula atomic creation, derivation workflow recovery, then left-to-right graph layout because these tasks share Markdown, CMS, API, and relation contracts."
+    },
+    {
+      "id": "decision.carousel-authority-before-main",
+      "statement": "REQ-20260730-001 and REQ-20260730-010 share carousel, focus, server, main.js, and CMS ownership and therefore execute in one workbench before focused cover or MD2File public entry changes."
+    },
+    {
+      "id": "decision.parallel-only-disjoint",
+      "statement": "S30 and S31 may run in parallel. After acceptance, focused cover, binding marker, and MD2File renderer parity may run in parallel only with their declared disjoint write sets."
+    },
+    {
+      "id": "decision.migration-reservations",
+      "statement": "Reserve migration 026 for authoritative Hero slots and 027 for append-only formula relation repair evidence; old migrations remain immutable."
+    },
+    {
+      "id": "decision.no-destructive-apply",
+      "statement": "Legacy relation work is limited to isolated fixtures, append-only repair evidence, and zero-deletion migration proof. Current/production mutation and physical cleanup remain separately blocked."
+    },
+    {
+      "id": "decision.protected-paths",
+      "statement": "styles/20-content.css, lib/seo.js, and historical docs/Agent* remain outside this batch write sets; later-loaded overrides and scoped public projections must be used."
+    }
+  ],
+  "executionOrder": [
+    {
+      "wave": 1,
+      "slice": "S30_shared_math_rendering",
+      "agent": "A36_SharedMathRendering",
+      "status": "completed",
+      "parallelGroup": "foundation",
+      "requirements": [
+        "REQ-20260730-003"
+      ]
+    },
+    {
+      "wave": 1,
+      "slice": "S31_carousel_slot_authority",
+      "agent": "A37_CarouselSlotAuthority",
+      "status": "completed",
+      "parallelGroup": "foundation",
+      "requirements": [
+        "REQ-20260730-001",
+        "REQ-20260730-010"
+      ]
+    },
+    {
+      "wave": 2,
+      "slice": "S32_focused_cover_reverification",
+      "agent": "A38_FocusedCoverReverification",
+      "status": "completed",
+      "parallelGroup": "presentation",
+      "requirements": [
+        "REQ-20260730-002"
+      ],
+      "dependsOn": [
+        "S31_carousel_slot_authority"
+      ]
+    },
+    {
+      "wave": 2,
+      "slice": "S33_formula_binding_marker",
+      "agent": "A39_FormulaBindingMarker",
+      "status": "completed",
+      "parallelGroup": "presentation",
+      "requirements": [
+        "REQ-20260730-005"
+      ],
+      "dependsOn": [
+        "S30_shared_math_rendering"
+      ]
+    },
+    {
+      "wave": 2,
+      "slice": "S34_md2file_renderer_parity",
+      "agent": "A40_MD2FileRendererParity",
+      "status": "completed",
+      "parallelGroup": "presentation",
+      "requirements": [
+        "REQ-20260730-012"
+      ],
+      "dependsOn": [
+        "S30_shared_math_rendering"
+      ]
+    },
+    {
+      "wave": 3,
+      "slice": "S35_article_formula_selection_create",
+      "agent": "A41_ArticleFormulaSelectionCreate",
+      "status": "completed",
+      "requirements": [
+        "REQ-20260730-006"
+      ],
+      "dependsOn": [
+        "S33_formula_binding_marker"
+      ]
+    },
+    {
+      "wave": 4,
+      "slice": "S36_derivation_workflow_recovery",
+      "agent": "A42_DerivationWorkflowRecovery",
+      "status": "completed",
+      "requirements": [
+        "REQ-20260730-008"
+      ],
+      "dependsOn": [
+        "S35_article_formula_selection_create"
+      ]
+    },
+    {
+      "wave": 5,
+      "slice": "S37_formula_map_flow_layout",
+      "agent": "A43_FormulaMapFlowLayout",
+      "status": "completed",
+      "requirements": [
+        "REQ-20260730-004"
+      ],
+      "dependsOn": [
+        "S30_shared_math_rendering",
+        "S36_derivation_workflow_recovery"
+      ]
+    },
+    {
+      "wave": 6,
+      "slice": "S38_cms_feedback_publish_dock",
+      "agent": "A44_CmsFeedbackPublishDock",
+      "status": "completed",
+      "parallelGroup": "final-ui",
+      "requirements": [
+        "REQ-20260730-007",
+        "REQ-20260730-009"
+      ],
+      "dependsOn": [
+        "S36_derivation_workflow_recovery",
+        "S37_formula_map_flow_layout"
+      ]
+    },
+    {
+      "wave": 6,
+      "slice": "S39_md2file_public_entry",
+      "agent": "A45_MD2FilePublicEntry",
+      "status": "completed",
+      "parallelGroup": "final-ui",
+      "requirements": [
+        "REQ-20260730-011"
+      ],
+      "dependsOn": [
+        "S31_carousel_slot_authority",
+        "S32_focused_cover_reverification",
+        "S34_md2file_renderer_parity"
+      ]
+    },
+    {
+      "wave": 7,
+      "slice": "S40A_api_verify_redirected_output",
+      "agent": "A48_ApiVerifyRedirectedOutput",
+      "status": "completed",
+      "requirements": [
+        "REQ-20260730-012"
+      ],
+      "dependsOn": [
+        "S34_md2file_renderer_parity",
+        "S40 first regression run reproducing the redirected-output failure",
+        "A00 confirmation that direct API behavior returns 422 with located diagnostics"
+      ]
+    },
+    {
+      "wave": 7,
+      "slice": "S40_batch_regression_evidence",
+      "agent": "A46_BatchRegressionEvidence",
+      "status": "completed",
+      "requirements": [
+        "REQ-20260730-001",
+        "REQ-20260730-002",
+        "REQ-20260730-003",
+        "REQ-20260730-004",
+        "REQ-20260730-005",
+        "REQ-20260730-006",
+        "REQ-20260730-007",
+        "REQ-20260730-008",
+        "REQ-20260730-009",
+        "REQ-20260730-010",
+        "REQ-20260730-011",
+        "REQ-20260730-012"
+      ],
+      "dependsOn": [
+        "S30_shared_math_rendering through S39_md2file_public_entry",
+        "A00 acceptance of every implementation handoff",
+        "A00 acceptance of S40A_api_verify_redirected_output"
+      ]
+    },
+    {
+      "wave": 8,
+      "slice": "S41_release_git_gate",
+      "agent": "A47_ReleaseGitGate",
+      "status": "completed",
+      "requirements": [],
+      "dependsOn": [
+        "S40_batch_regression_evidence",
+        "A00 acceptance of S40"
+      ]
+    },
+    {
+      "wave": 9,
+      "slice": "S41A_release_version_sync",
+      "agent": "A49_ReleaseVersionSync",
+      "status": "completed",
+      "requirements": [],
+      "dependsOn": [
+        "S41_release_git_gate",
+        "A00 acceptance of S41 version blocker"
+      ]
+    },
+    {
+      "wave": 10,
+      "slice": "S41B_release_git_gate_reverification",
+      "agent": "A50_ReleaseGitGateReverification",
+      "status": "completed",
+      "requirements": [],
+      "dependsOn": [
+        "S41A_release_version_sync",
+        "A00 acceptance of S41A"
+      ]
+    },
+    {
+      "wave": 11,
+      "slice": "S42_git_publish",
+      "agent": "A51_GitPublisher",
+      "status": "next",
+      "requirements": [],
+      "dependsOn": [
+        "S41B_release_git_gate_reverification",
+        "A00 acceptance of S41B",
+        "Owner authorization to execute Git with a new version"
+      ]
+    }
+  ],
+  "gates": {
+    "namedSourceAndTestEditsAllowed": true,
+    "migrationFileImplementationAllowed": true,
+    "isolatedDataDirVerificationAllowed": true,
+    "currentOrProductionDataMutationAllowed": false,
+    "legacyPhysicalCleanupAllowed": false,
+    "productionDeploymentAllowed": false,
+    "gitStagingCommitPushAllowed": true,
+    "oneActiveWriterPerFile": true
+  },
+  "currentWave": {
+    "wave": 11,
+    "agents": [
+      "A51_GitPublisher"
+    ],
+    "slices": [
+      "S42_git_publish"
+    ]
+  },
+  "nextHandoffs": [
+    "docs/codex-workline/slices/S42_git_publish_handoff.md"
+  ]
+}

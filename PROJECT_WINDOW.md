@@ -1,29 +1,24 @@
 # Project Window
 
-This file is the reserved top-level window for new Codex sessions. Keep it
-short, pointer-only, and current.
+This file is the reserved top-level window for new Codex sessions. Keep it short, pointer-only, and current.
 
 ## Active Window
 
-- Current phase: `S28_ReleaseGitGate_Accepted_OwnerGate`
+- Current phase: `DISPATCH-20260730-001_Wave11_GitPublish`
 - Current controller: `agents/A00_ProjectDirector/brief.md`
-- Next agent: `agents/A00_ProjectDirector/brief.md`
-- Confirmed requirement dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json`
+- Next agent: `agents/A51_GitPublisher/brief.md`
+- Confirmed requirement dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json`
 - Active task registry: `docs/codex-workline/task_registry.json`
 
 ## Status Slots
 
 - Product target: LarkixMaker website and local content/CMS runtime.
-- Current work target: A00 holds the post-S28 Owner gate and waits for a new
-  confirmed requirement or explicit Git/production authorization.
-- Current gate: the automatic task queue is complete. All product files,
-  current/production data, physical legacy cleanup, cloud, deployment, restore,
-  rollback, staging, commit, push, and branch/remote changes are closed.
-- Confirmed queue: S28 is accepted; Owner authority is required for any Git,
-  production, or S29 action.
-- Last accepted handoff:
-  `docs/codex-workline/slices/S28_release_git_gate_handoff.md`
-- Last updated: 2026-07-29
+- Current work target: execute S42 exact Git publication for `V2.5.3+20260807-0001`.
+- Current gate: only the declared A51 planning files and exact Git staging, commit, and push are open.
+- Confirmed queue: S42 / A51 is current after S41B acceptance.
+- Closed boundaries: product/version changes, current/production data, cloud, deployment, restore, rollback, branch/remote mutation, and destructive Git.
+- Last accepted handoff: `docs/codex-workline/slices/S41B_release_git_gate_reverification_handoff.md`.
+- Last updated: 2026-08-07
 
 ## Do Not Put Here
 

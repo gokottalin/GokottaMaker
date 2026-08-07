@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260730-004",
+  "title": "公式地图横向流程布局与自适应数学节点",
+  "status": "dispatched",
+  "priority": "high",
+  "createdAt": "2026-07-30T11:39:33.767+08:00",
+  "updatedAt": "2026-07-30T11:53:27.440+08:00",
+  "intent": {
+    "problem": "公式地图会显示原始 LaTeX，节点框不能完整容纳复杂公式，且现有布局无法清晰表达逐级深入关系。",
+    "desiredOutcome": "公式地图成为从左向右展开、可滚动缩放并能完整展示每个数学公式的可用推导导航。",
+    "targetUsers": ["游客", "Owner/幕后作者"]
+  },
+  "scope": {
+    "in": [
+      "起始公式位于左侧，每深入一级向右排列",
+      "连接线随层级从左向右延伸并清楚表达有向依赖",
+      "节点内部使用统一 LaTeX 渲染而非原始文本",
+      "节点矩形随公式实际渲染尺寸增长并完整框住公式",
+      "复杂或超长公式不得被裁切或省略",
+      "地图提供滚动、拖动画布和缩放",
+      "节点本身保持可点击导航，不在地图节点内叠加紫色返回图标",
+      "保留当前节点突出显示、分支 DAG 与无环规则"
+    ],
+    "out": [
+      "把公式压缩到不可读尺寸",
+      "通过截断或省略号隐藏公式",
+      "在节点内重复添加文章正文使用的跳转图标",
+      "改变公式依赖数据的语义"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "公式地图部分节点显示 LaTeX 源码。",
+      "节点矩形可能无法随公式体量增长，公式或边框被裁切。",
+      "推导深度的阅读方向不符合从左到右逐级深入的预期。"
+    ],
+    "expected": [
+      "根节点到深层节点沿水平方向稳定展开。",
+      "每个节点完整展示已渲染公式，边框紧随内容尺寸。",
+      "超出视口时可通过滚动、拖动和缩放浏览，不破坏公式排版。",
+      "点击节点可进入对应公式页。"
+    ],
+    "edgeCases": [
+      "多父级汇入同一公式及一个公式引用多个下级。",
+      "节点包含复杂分式、根号、积分和长上下标。",
+      "图谱宽度远大于视口。",
+      "移动端触控缩放与拖动。",
+      "归档、草稿或游客不可见节点边界。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.left-to-right",
+      "statement": "图谱根节点在左，依赖深度逐级向右，边方向与公式推导路径一致。",
+      "verification": "建立至少三层且含分支汇入的 DAG，核对层级坐标与连线方向。"
+    },
+    {
+      "id": "ac.adaptive-node",
+      "statement": "节点矩形完整框住实际渲染公式，复杂公式无裁切、省略或大面积无效留白。",
+      "verification": "使用短公式、长公式和嵌套分式节点执行边界截图检查。"
+    },
+    {
+      "id": "ac.navigation-controls",
+      "statement": "超宽图谱可滚动、拖动和缩放，缩放后节点仍可点击并保持清晰。",
+      "verification": "在桌面和移动尺寸操作三层以上大图并验证导航。"
+    },
+    {
+      "id": "ac.math-rendering",
+      "statement": "地图节点不显示原始 LaTeX，且根号、分式和上下标与公式页一致。",
+      "verification": "对同一卡片的地图节点与公式页执行视觉对照。"
+    },
+    {
+      "id": "ac.no-extra-icon",
+      "statement": "地图节点自身承担跳转，不显示文章正文使用的紫色圆形返回图标。",
+      "verification": "检查可点击节点的视觉元素和悬停状态。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN"],
+    "platforms": ["Larkix 游客网页", "Larkix CMS"],
+    "compatibility": ["保持现有无环依赖图语义", "遵守草稿、已发布与已归档可见性规则"],
+    "data": ["地图只读取公式修订关系，不保存第二份关系"],
+    "security": [],
+    "operations": ["需要大图性能、桌面鼠标和移动触控验收"],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.oversized-graph",
+      "severity": "medium",
+      "statement": "完全自适应节点可能让复杂图谱非常宽。",
+      "mitigation": "保留公式完整尺寸，并依靠聚焦当前路径、滚动、拖动和缩放管理视口。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-30T11:51:02.563+08:00",
+    "confirmationText": "确认无误，开始执行",
+    "digest": "sha256:213c62482f1cfb6dd9615f833b245ee8d4a4ec89e9f79c7a3c298dc213fde6ae"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-07-30T11:53:27.440+08:00"
+  }
+}

@@ -5,17 +5,17 @@
   "status": "complete",
   "workspaceRoot": "E:/Project/2607-LarkixWeb",
   "generatedAt": "2026-07-09 22:20 +08:00",
-  "mainline": "Formula publication and branching-DAG critical path, followed by isolated migration proof, article presentation, theme completion, regression, and release review.",
-  "lastReplannedAt": "2026-07-28T16:00:00+08:00",
+  "mainline": "Shared math and authoritative carousel foundations, followed by serialized formula recovery, isolated MD2File and media work, CMS interaction completion, batch regression, and release review.",
+  "lastReplannedAt": "2026-08-07",
   "lastReplannedBy": "A00_ProjectDirector",
-  "requirementDispatch": "docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json",
+  "requirementDispatch": "docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json",
   "currentGate": {
-    "batch1": "dispatch_20260728_complete_owner_gate",
+    "batch1": "dispatch_20260730_active_wave10",
     "businessImplementationAllowed": true,
     "databaseMutationAllowed": false,
     "migrationFileImplementationAllowed": false,
-    "isolatedDataDirVerificationAllowed": false,
-    "apiRuntimeBoundaryAllowed": false,
+    "isolatedDataDirVerificationAllowed": true,
+    "apiRuntimeBoundaryAllowed": true,
     "productionReleaseAllowed": false,
     "gitStagingAllowed": false,
     "markdownDocxDerivationLinksAllowed": false,
@@ -39,11 +39,24 @@
     "legacyFormulaMigrationSafetyAllowed": false,
     "legacyFormulaCleanupApplyAllowed": false,
     "postCoverCoordinatesAllowed": false,
-    "postReadingMinutesAllowed": true,
-    "inlineMathLayoutAllowed": true,
+    "postReadingMinutesAllowed": false,
+    "inlineMathLayoutAllowed": false,
     "focusedContentMediaAllowed": false,
     "fullSiteDarkThemeAllowed": false,
-    "batchRegressionEvidenceAllowed": false
+    "batchRegressionEvidenceAllowed": false,
+    "sharedMathRenderingAllowed": false,
+    "carouselSlotAuthorityAllowed": false,
+    "focusedCoverReverificationAllowed": false,
+    "formulaBindingMarkerAllowed": false,
+    "md2fileRendererParityAllowed": false,
+    "articleFormulaSelectionCreateAllowed": false,
+    "derivationWorkflowRecoveryAllowed": false,
+    "formulaMapFlowLayoutAllowed": false,
+    "cmsFeedbackPublishDockAllowed": false,
+    "md2filePublicEntryAllowed": false,
+    "apiVerifyRedirectedOutputAllowed": false,
+    "releaseVersionSyncAllowed": false,
+    "releaseGitGateReverificationAllowed": true
   },
   "repairFinding": {
     "problem": "A05 was declared in task_registry.json but remained blocked and had no active brief, implementation_slices.json, or handoff in the current workspace.",
@@ -1610,13 +1623,1017 @@
         "current/production data, physical legacy cleanup, cloud, deployment, service restart, backup execution, restore, or rollback",
         "credentials, session tokens, cookies, database contents, or user data in planning artifacts"
       ]
+    },
+    {
+      "id": "S30_shared_math_rendering",
+      "agent": "A36_SharedMathRendering",
+      "roleNote": "共享数学渲染：统一 LaTeX 引擎、错误诊断和发布门禁",
+      "status": "completed",
+      "purpose": "Replace divergent string-level math rendering with one fixed, locally served LaTeX engine and structured diagnostics shared by CMS preview and public Markdown surfaces.",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-003.json",
+        "data/markdown-renderer.js",
+        "styles/20-content.css",
+        "styles/26-inline-math.css",
+        "post.html",
+        "project.html",
+        "derive.html",
+        "admin/index.html",
+        "scripts/test-markdown-renderer.js",
+        "scripts/test-inline-math-layout.js"
+      ],
+      "mayEdit": [
+        "package.json",
+        "package-lock.json",
+        "assets/vendor/katex/**",
+        "data/math-renderer.js",
+        "data/markdown-renderer.js",
+        "styles/26-inline-math.css",
+        "post.html",
+        "project.html",
+        "derive.html",
+        "scripts/test-markdown-renderer.js",
+        "scripts/test-inline-math-layout.js",
+        "scripts/test-math-rendering.js",
+        "docs/shared-math-rendering.md",
+        "docs/codex-workline/slices/S30_shared_math_rendering_handoff.md"
+      ],
+      "outputs": [
+        "one fixed-version local math engine exposed as LarkixMath.render and LarkixMath.validate",
+        "correct subscripts, superscripts, roots, integrals, nested fractions, root scope, and compact boxed formulas",
+        "display delimiters without decorative full-row borders unless source explicitly uses boxed",
+        "structured blocking diagnostics that preserve the last valid public revision"
+      ],
+      "verification": [
+        "fixed math fixture matrix across CMS preview, article, formula, and derivation surfaces",
+        "invalid delimiter and brace diagnostics with no invalid public output",
+        "desktop and mobile baseline, overflow, boxed sizing, and dark-mode browser checks",
+        "Markdown, inline-math, JavaScript syntax, diff, encoding, and Codex contract checks"
+      ],
+      "dependencies": [
+        "DISPATCH-20260730-001"
+      ],
+      "forbidden": [
+        "files outside the declared mayEdit list",
+        "current or production data mutation, physical cleanup, cloud writes, deployment, restore, rollback, or service restart",
+        "Git staging, commit, push, branch, remote, reset, checkout, clean, stash, merge, rebase, or cherry-pick",
+        "overwriting unrelated or concurrent edits; one file has one active writer",
+        "editing styles/20-content.css; override its legacy rules in the later loaded math layer",
+        "formula binding, graph layout, MD2File DOCX conversion, current data, or publication-state migration"
+      ],
+      "parallelGroup": "foundation",
+      "requirements": [
+        "REQ-20260730-003"
+      ]
+    },
+    {
+      "id": "S31_carousel_slot_authority",
+      "agent": "A37_CarouselSlotAuthority",
+      "roleNote": "轮播槽位权威源：四槽互斥、幽灵清除和排布页唯一聚焦开关",
+      "status": "completed",
+      "purpose": "Make four persistent carousel slots the only Hero source, preserve focus buffering, and keep the sole focus-mode control inside the CMS layout view.",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-001.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-010.json",
+        "migrations/019_carousel_focus_buffer.js",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "data/content-store.js",
+        "maker.html",
+        "main.js",
+        "scripts/check-carousel-db.js",
+        "scripts/test-carousel-focus-buffer.js",
+        "scripts/test-focus-mode.js"
+      ],
+      "mayEdit": [
+        "migrations/026_hero_carousel_slots.js",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "data/content-store.js",
+        "maker.html",
+        "main.js",
+        "scripts/check-carousel-db.js",
+        "scripts/test-carousel-focus-buffer.js",
+        "scripts/test-focus-mode.js",
+        "scripts/test-hero-carousel-authority.js",
+        "docs/carousel-slot-authority.md",
+        "docs/codex-workline/slices/S31_carousel_slot_authority_handoff.md"
+      ],
+      "outputs": [
+        "four database-enforced slots with no cross-type collision or silent overwrite",
+        "Hero content derived only from configured slots with no fallback or static ghost article",
+        "article publication and revision restore unable to bypass carousel management",
+        "one focus-mode switch inside the layout view while all hidden business restrictions remain active"
+      ],
+      "verification": [
+        "isolated DATA_DIR migration, conflict-report, concurrency, restore, and no-article-deletion checks",
+        "carousel focus-buffer idempotency and explicit-slot restoration regression",
+        "CMS carousel/layout/editor browser checks at desktop, half width, and mobile",
+        "Hero exact-set and fifth-published-article exclusion checks"
+      ],
+      "dependencies": [
+        "DISPATCH-20260730-001"
+      ],
+      "forbidden": [
+        "files outside the declared mayEdit list",
+        "current or production data mutation, physical cleanup, cloud writes, deployment, restore, rollback, or service restart",
+        "Git staging, commit, push, branch, remote, reset, checkout, clean, stash, merge, rebase, or cherry-pick",
+        "overwriting unrelated or concurrent edits; one file has one active writer",
+        "silently choosing a winner for historical duplicate slots",
+        "deleting articles, auto-swapping slots, latest-publish fallback, or changing cover behavior",
+        "editing package.json, shared math files, MD2File files, lib/seo.js, or styles/20-content.css"
+      ],
+      "parallelGroup": "foundation",
+      "requirements": [
+        "REQ-20260730-001",
+        "REQ-20260730-010"
+      ]
+    },
+    {
+      "id": "S32_focused_cover_reverification",
+      "agent": "A38_FocusedCoverReverification",
+      "roleNote": "聚焦封面复验：先复现真实页面，再最小修复卡片容器 cover",
+      "status": "completed",
+      "purpose": "Re-test the real focused homepage path and make the smallest required cover-fill repair without inheriting Hero ratio or crop behavior.",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-002.json",
+        "docs/codex-workline/slices/S31_carousel_slot_authority_handoff.md",
+        "docs/codex-workline/slices/S25_focused_content_media_handoff.md",
+        "maker.html",
+        "main.js",
+        "data/media.js",
+        "styles/27-focused-content-media.css",
+        "scripts/test-focused-content-media.js"
+      ],
+      "mayEdit": [
+        "main.js",
+        "data/media.js",
+        "styles/27-focused-content-media.css",
+        "scripts/test-focused-content-media.js",
+        "docs/focused-content-media.md",
+        "docs/codex-workline/slices/S32_focused_cover_reverification_handoff.md"
+      ],
+      "outputs": [
+        "real-page evidence that focused covers fill their responsive card hosts without distortion or blank bands",
+        "saved crop focus replay when present and centered cover fallback otherwise",
+        "unchanged Hero-specific ratio and crop policy"
+      ],
+      "verification": [
+        "real maker.html checks at 1280, 800, and 360 widths using multiple source ratios",
+        "computed host/image geometry, no overflow, no console error, and unchanged Hero evidence",
+        "focused-media and post-cover-coordinate regressions"
+      ],
+      "dependencies": [
+        "DISPATCH-20260730-001",
+        "S31_carousel_slot_authority"
+      ],
+      "forbidden": [
+        "files outside the declared mayEdit list",
+        "current or production data mutation, physical cleanup, cloud writes, deployment, restore, rollback, or service restart",
+        "Git staging, commit, push, branch, remote, reset, checkout, clean, stash, merge, rebase, or cherry-pick",
+        "overwriting unrelated or concurrent edits; one file has one active writer",
+        "product edits before a real-page failure is reproduced",
+        "fixed 16:9 focused cards, original-image overwrite, Hero changes, CMS changes, or database changes"
+      ],
+      "parallelGroup": "presentation",
+      "requirements": [
+        "REQ-20260730-002"
+      ]
+    },
+    {
+      "id": "S33_formula_binding_marker",
+      "agent": "A39_FormulaBindingMarker",
+      "roleNote": "公式绑定标记：只在原公式右上角添加紫色上标式跳转图标",
+      "status": "completed",
+      "purpose": "Define one decorative formula-binding protocol that preserves source math and adds only an accessible purple superscript-sized jump marker.",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-005.json",
+        "docs/codex-workline/slices/S30_shared_math_rendering_handoff.md",
+        "data/math-renderer.js",
+        "data/markdown-renderer.js",
+        "post.js",
+        "derive.html",
+        "styles/26-inline-math.css"
+      ],
+      "mayEdit": [
+        "data/markdown-renderer.js",
+        "post.js",
+        "derive.html",
+        "styles/26-inline-math.css",
+        "scripts/test-markdown-renderer.js",
+        "scripts/test-formula-binding-marker.js",
+        "docs/formula-binding-marker.md",
+        "docs/codex-workline/slices/S33_formula_binding_marker_handoff.md"
+      ],
+      "outputs": [
+        "one binding marker protocol shared by article and derivation Markdown",
+        "exact preservation of author formula text with one top-right purple circular marker",
+        "accessible hover/focus title and navigation to the published target",
+        "no marker on ordinary formulas or formula-map nodes"
+      ],
+      "verification": [
+        "bound/unbound, inline/display, superscript, boxed, keyboard, touch, and long-form fixtures",
+        "DOM proof that formula content is not duplicated or rewritten",
+        "Markdown and shared-math regressions"
+      ],
+      "dependencies": [
+        "DISPATCH-20260730-001",
+        "S30_shared_math_rendering"
+      ],
+      "forbidden": [
+        "files outside the declared mayEdit list",
+        "current or production data mutation, physical cleanup, cloud writes, deployment, restore, rollback, or service restart",
+        "Git staging, commit, push, branch, remote, reset, checkout, clean, stash, merge, rebase, or cherry-pick",
+        "overwriting unrelated or concurrent edits; one file has one active writer",
+        "inserting a second formula, text link, card block, or graph-node marker",
+        "editing CMS, API, formula relation data, package files, or protected styles/20-content.css"
+      ],
+      "parallelGroup": "presentation",
+      "requirements": [
+        "REQ-20260730-005"
+      ]
+    },
+    {
+      "id": "S34_md2file_renderer_parity",
+      "agent": "A40_MD2FileRendererParity",
+      "roleNote": "MD2File 渲染一致性：预览与 DOCX 共用最新 Markdown 和数学语义",
+      "status": "completed",
+      "purpose": "Make MD2File import, paste, edit, preview, validation, and DOCX export consume the accepted shared Markdown and math contract without silently dropping content.",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-012.json",
+        "docs/codex-workline/slices/S30_shared_math_rendering_handoff.md",
+        "data/math-renderer.js",
+        "data/markdown-renderer.js",
+        "tools/md2doc.html",
+        "tools/md2doc.js",
+        "styles/md2doc.css",
+        "lib/md2doc.js",
+        "server.js"
+      ],
+      "mayEdit": [
+        "tools/md2doc.html",
+        "tools/md2doc.js",
+        "styles/md2doc.css",
+        "lib/md2doc.js",
+        "server.js",
+        "scripts/test-md2file-docx-semantics.js",
+        "scripts/verify-api.ps1",
+        "docs/md2file-renderer-parity.md",
+        "docs/codex-workline/slices/S34_md2file_renderer_parity_handoff.md"
+      ],
+      "outputs": [
+        "identical heading, paragraph, list, table, image, link, code, and math semantics in preview and DOCX",
+        "compact boxed formulas and correct roots, scripts, fractions, and display delimiters",
+        "located blocking diagnostics that disable misleading export",
+        "no independent browser-only legacy parser"
+      ],
+      "verification": [
+        "one fixed long-form fixture compared across browser DOM and DOCX XML",
+        "invalid Markdown/LaTeX 422 diagnostics with export blocked",
+        "image and link security checks with no arbitrary server-side remote fetch",
+        "shared Markdown/math, API, DOCX, and syntax regressions"
+      ],
+      "dependencies": [
+        "DISPATCH-20260730-001",
+        "S30_shared_math_rendering"
+      ],
+      "forbidden": [
+        "files outside the declared mayEdit list",
+        "current or production data mutation, physical cleanup, cloud writes, deployment, restore, rollback, or service restart",
+        "Git staging, commit, push, branch, remote, reset, checkout, clean, stash, merge, rebase, or cherry-pick",
+        "overwriting unrelated or concurrent edits; one file has one active writer",
+        "editing data/markdown-renderer.js or shared math files owned by accepted S30",
+        "formula-card database links in standalone DOCX, silent content loss, or arbitrary remote image fetching",
+        "editing styles/20-content.css or package.json"
+      ],
+      "parallelGroup": "presentation",
+      "requirements": [
+        "REQ-20260730-012"
+      ]
+    },
+    {
+      "id": "S35_article_formula_selection_create",
+      "agent": "A41_ArticleFormulaSelectionCreate",
+      "roleNote": "框选公式建卡：完整选区、分类检索和原子创建绑定",
+      "status": "completed",
+      "purpose": "Repair selected-LaTeX formula-card creation so complete delimiters create one normalized draft card and atomically bind the unchanged source formula.",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-006.json",
+        "docs/codex-workline/slices/S33_formula_binding_marker_handoff.md",
+        "docs/codex-workline/slices/S20_formula_authoring_drawer_handoff.md",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js"
+      ],
+      "mayEdit": [
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "scripts/test-article-formula-authoring.js",
+        "scripts/test-formula-authoring-drawer.js",
+        "scripts/test-article-formula-selection-create.js",
+        "docs/article-formula-selection-create.md",
+        "docs/codex-workline/slices/S35_article_formula_selection_create_handoff.md"
+      ],
+      "outputs": [
+        "complete selection recognition for dollar, parenthesis, and bracket delimiters",
+        "shared searchable module, category, and multi-tag controls with explicit creation intent",
+        "stable normalized slug and draft state",
+        "atomic card creation plus source-hash-protected article binding"
+      ],
+      "verification": [
+        "complete/partial/multiple/plain-text selection fixtures",
+        "classification search, explicit new option, normalization, and field-help checks",
+        "transaction rollback when either card creation or article binding fails",
+        "article formula, drawer, publication, marker, API, and responsive CMS regressions"
+      ],
+      "dependencies": [
+        "DISPATCH-20260730-001",
+        "S33_formula_binding_marker"
+      ],
+      "forbidden": [
+        "files outside the declared mayEdit list",
+        "current or production data mutation, physical cleanup, cloud writes, deployment, restore, rollback, or service restart",
+        "Git staging, commit, push, branch, remote, reset, checkout, clean, stash, merge, rebase, or cherry-pick",
+        "overwriting unrelated or concurrent edits; one file has one active writer",
+        "automatic formula-card creation without an explicit complete selection and save action",
+        "rewriting selected formula content or bypassing draft/publication gates",
+        "editing package.json, graph layout, MD2File, carousel, or protected files"
+      ],
+      "requirements": [
+        "REQ-20260730-006"
+      ]
+    },
+    {
+      "id": "S36_derivation_workflow_recovery",
+      "agent": "A42_DerivationWorkflowRecovery",
+      "roleNote": "推导关系恢复：无环图、旧关系迁移和待修复队列",
+      "status": "completed",
+      "purpose": "Restore the complete formula authoring-to-public derivation workflow and migrate unambiguous legacy relations on isolated copies while queuing unresolved evidence.",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-008.json",
+        "docs/codex-workline/slices/S35_article_formula_selection_create_handoff.md",
+        "docs/codex-workline/slices/S21_legacy_formula_migration_safety_handoff.md",
+        "migrations/021_branching_derivation_graph.js",
+        "migrations/023_legacy_formula_migration_support.js",
+        "lib/legacy-formula-migration.js",
+        "scripts/migrate-legacy-formulas.js",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css"
+      ],
+      "mayEdit": [
+        "migrations/027_formula_relation_repairs.js",
+        "lib/legacy-formula-relation-migration.js",
+        "scripts/migrate-legacy-formula-relations.js",
+        "server.js",
+        "lib/content.js",
+        "lib/validators.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "post.js",
+        "scripts/test-branching-derivation-graph.js",
+        "scripts/test-legacy-formula-migration.js",
+        "scripts/test-legacy-formula-relation-migration.js",
+        "docs/legacy-formula-relation-recovery.md",
+        "docs/codex-workline/slices/S36_derivation_workflow_recovery_handoff.md"
+      ],
+      "outputs": [
+        "one source-to-dependency DAG contract with existence, duplicate, self, dangling, and cycle validation",
+        "published-revision-only public traversal with draft and archived boundaries",
+        "idempotent isolated migration of stable IDs, existing shortcodes, and relation records",
+        "append-only unresolved repair queue without guessed targets or legacy deletion"
+      ],
+      "verification": [
+        "multi-parent, multi-child, merge, deep-cycle, draft, archived, and dangling graph fixtures",
+        "isolated backup, checksum, count, direction, path, binding, idempotency, and zero-deletion evidence",
+        "CMS repair queue and public step-by-step navigation checks",
+        "formula publication, binding, migration, API, and contract regressions"
+      ],
+      "dependencies": [
+        "DISPATCH-20260730-001",
+        "S35_article_formula_selection_create"
+      ],
+      "forbidden": [
+        "files outside the declared mayEdit list",
+        "current or production data mutation, physical cleanup, cloud writes, deployment, restore, rollback, or service restart",
+        "Git staging, commit, push, branch, remote, reset, checkout, clean, stash, merge, rebase, or cherry-pick",
+        "overwriting unrelated or concurrent edits; one file has one active writer",
+        "editing old migrations or immutable legacy mapping evidence",
+        "guessing ambiguous targets, mutating current/production data, or invoking physical cleanup",
+        "moving published pointers outside validated reverse-topological order"
+      ],
+      "requirements": [
+        "REQ-20260730-008"
+      ]
+    },
+    {
+      "id": "S37_formula_map_flow_layout",
+      "agent": "A43_FormulaMapFlowLayout",
+      "roleNote": "公式地图流程布局：从左向右、自适应数学节点和可操作画布",
+      "status": "completed",
+      "purpose": "Render the accepted derivation DAG as a left-to-right navigable flow with measured math nodes, pan, zoom, drag, and no formula truncation.",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-004.json",
+        "docs/codex-workline/slices/S30_shared_math_rendering_handoff.md",
+        "docs/codex-workline/slices/S36_derivation_workflow_recovery_handoff.md",
+        "data/math-renderer.js",
+        "formula-graph.js",
+        "derive.html",
+        "admin/index.html",
+        "admin/admin.css"
+      ],
+      "mayEdit": [
+        "formula-graph.js",
+        "derive.html",
+        "admin/admin.css",
+        "scripts/test-formula-map-flow-layout.js",
+        "docs/formula-map-flow-layout.md",
+        "docs/codex-workline/slices/S37_formula_map_flow_layout_handoff.md"
+      ],
+      "outputs": [
+        "stable source-to-dependency depth laid out from left to right",
+        "shared math rendering inside measured nodes that grow to content",
+        "pan, zoom, drag, scroll, current-node highlight, and node navigation",
+        "bounded initial viewport without truncation or binding-marker duplication"
+      ],
+      "verification": [
+        "branch, merge, long formula, nested fraction, and deep path fixtures",
+        "node DOM measurement and edge-direction assertions",
+        "desktop and mobile canvas pixel, overflow, pan, zoom, drag, and click checks",
+        "DAG, shared-math, dark-theme, syntax, and accessibility regressions"
+      ],
+      "dependencies": [
+        "DISPATCH-20260730-001",
+        "S30_shared_math_rendering",
+        "S36_derivation_workflow_recovery"
+      ],
+      "forbidden": [
+        "files outside the declared mayEdit list",
+        "current or production data mutation, physical cleanup, cloud writes, deployment, restore, rollback, or service restart",
+        "Git staging, commit, push, branch, remote, reset, checkout, clean, stash, merge, rebase, or cherry-pick",
+        "overwriting unrelated or concurrent edits; one file has one active writer",
+        "changing dependency semantics, compressing unreadably, truncating formulas, or adding marker icons inside nodes",
+        "editing server, database, CMS JavaScript/HTML, package files, or protected styles"
+      ],
+      "requirements": [
+        "REQ-20260730-004"
+      ]
+    },
+    {
+      "id": "S38_cms_feedback_publish_dock",
+      "agent": "A44_CmsFeedbackPublishDock",
+      "roleNote": "CMS 操作反馈：分级 toast 与右下角可折叠发布栏",
+      "status": "completed",
+      "purpose": "Unify CMS save/publish feedback as accessible queued toasts and keep article actions reachable in one collapsible bottom-right dock without creating a second state machine.",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-007.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-009.json",
+        "docs/codex-workline/slices/S35_article_formula_selection_create_handoff.md",
+        "docs/codex-workline/slices/S36_derivation_workflow_recovery_handoff.md",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "admin/admin-dark.css"
+      ],
+      "mayEdit": [
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "admin/admin-dark.css",
+        "scripts/test-cms-floating-feedback-publish-bar.js",
+        "scripts/test-formula-authoring-drawer.js",
+        "scripts/test-full-site-dark-theme.js",
+        "docs/cms-feedback-publish-dock.md",
+        "docs/codex-workline/slices/S38_cms_feedback_publish_dock_handoff.md"
+      ],
+      "outputs": [
+        "queued or keyed replacement toasts with transient status and persistent blocking alerts",
+        "one article dirty-state source and one save/publish submit path",
+        "collapsible persistent article dock coordinated with formula drawer, keyboard, and safe area",
+        "field-level errors retained alongside global operation feedback"
+      ],
+      "verification": [
+        "success, reminder, blocking error, timeout, rapid operation, and out-of-order response fixtures",
+        "top/middle/bottom long-form checks at 1440, 760, and 390 widths in light and dark modes",
+        "geometry proof for dock, drawer, toast, keyboard, and safe-area non-overlap",
+        "keyboard, reduced-motion, dirty-state, formula-drawer, and publication regressions"
+      ],
+      "dependencies": [
+        "DISPATCH-20260730-001",
+        "S36_derivation_workflow_recovery",
+        "S37_formula_map_flow_layout"
+      ],
+      "forbidden": [
+        "files outside the declared mayEdit list",
+        "current or production data mutation, physical cleanup, cloud writes, deployment, restore, rollback, or service restart",
+        "Git staging, commit, push, branch, remote, reset, checkout, clean, stash, merge, rebase, or cherry-pick",
+        "overwriting unrelated or concurrent edits; one file has one active writer",
+        "replacing precise field errors with toast-only feedback",
+        "creating a second draft/publication state machine or auto-hiding blocking errors",
+        "editing server, database, content, graph, MD2File, package files, or protected paths"
+      ],
+      "parallelGroup": "final-ui",
+      "requirements": [
+        "REQ-20260730-007",
+        "REQ-20260730-009"
+      ]
+    },
+    {
+      "id": "S39_md2file_public_entry",
+      "agent": "A45_MD2FilePublicEntry",
+      "roleNote": "MD2File 公开入口：三处唯一展示与聚焦模式精确例外",
+      "status": "completed",
+      "purpose": "Expose exactly one MD2File card on the brand home, Maker home, and miniapp center while retaining all other tool code and allowing only precise focus-mode routes.",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-011.json",
+        "docs/codex-workline/slices/S31_carousel_slot_authority_handoff.md",
+        "docs/codex-workline/slices/S32_focused_cover_reverification_handoff.md",
+        "docs/codex-workline/slices/S34_md2file_renderer_parity_handoff.md",
+        "data/miniapps.js",
+        "index.html",
+        "maker.html",
+        "miniapps.html",
+        "main.js",
+        "site-layout.js",
+        "server.js",
+        "lib/seo.js"
+      ],
+      "mayEdit": [
+        "data/miniapps.js",
+        "index.html",
+        "maker.html",
+        "miniapps.html",
+        "main.js",
+        "site-layout.js",
+        "server.js",
+        "scripts/test-focus-mode.js",
+        "scripts/test-md2file-public-entry.js",
+        "docs/md2file-public-entry.md",
+        "docs/codex-workline/slices/S39_md2file_public_entry_handoff.md"
+      ],
+      "outputs": [
+        "one MD2File card at each required public location with one canonical tool URL",
+        "public projection that hides other tools without deleting registry data, code, or assets",
+        "precise focus-mode route exceptions for the center, MD2File assets, and conversion endpoint",
+        "layout configuration unable to hide the required MD2File exception"
+      ],
+      "verification": [
+        "three locations by focus on/off by 1280/800/390 browser matrix",
+        "exactly one MD2File card, zero other public tool cards, and successful tool navigation",
+        "precise-route denial tests proving other tools remain blocked in focus mode",
+        "shared MD2File renderer, focus mode, layout, syntax, and accessibility regressions"
+      ],
+      "dependencies": [
+        "DISPATCH-20260730-001",
+        "S31_carousel_slot_authority",
+        "S32_focused_cover_reverification",
+        "S34_md2file_renderer_parity"
+      ],
+      "forbidden": [
+        "files outside the declared mayEdit list",
+        "current or production data mutation, physical cleanup, cloud writes, deployment, restore, rollback, or service restart",
+        "Git staging, commit, push, branch, remote, reset, checkout, clean, stash, merge, rebase, or cherry-pick",
+        "overwriting unrelated or concurrent edits; one file has one active writer",
+        "deleting hidden tools or broadly allowing /tools/",
+        "creating a second MD2File implementation or changing its formal name",
+        "editing lib/seo.js, styles/20-content.css, package files, or formula/CMS files"
+      ],
+      "parallelGroup": "final-ui",
+      "requirements": [
+        "REQ-20260730-011"
+      ]
+    },
+    {
+      "id": "S40A_api_verify_redirected_output",
+      "agent": "A48_ApiVerifyRedirectedOutput",
+      "roleNote": "API 验证重定向兼容：修复 Node 捕获下 PowerShell/curl UTF-8 响应解析",
+      "status": "completed",
+      "purpose": "Make the isolated PowerShell API verifier deterministic when Node captures native UTF-8 output without changing product behavior.",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json",
+        "docs/codex-workline/slices/S34_md2file_renderer_parity_handoff.md",
+        "scripts/verify-api.ps1",
+        "scripts/run-batch-regression-evidence.js",
+        "scripts/test-md2file-docx-semantics.js"
+      ],
+      "mayEdit": [
+        "scripts/verify-api.ps1",
+        "scripts/test-api-verify-redirected-output.js",
+        "docs/codex-workline/slices/S40A_api_verify_redirected_output_handoff.md"
+      ],
+      "outputs": [
+        "redirect-safe UTF-8 response parsing for Invoke-CurlJson",
+        "Node-spawned PowerShell regression for the full isolated API verifier",
+        "cleanup proof for request, response, and isolated data artifacts",
+        "no product or API expectation change"
+      ],
+      "verification": [
+        "node scripts/test-api-verify-redirected-output.js",
+        "direct isolated scripts/verify-api.ps1 execution",
+        "Node syntax and Codex contract checks"
+      ],
+      "dependencies": [
+        "S34_md2file_renderer_parity",
+        "S40 first regression run reproducing the redirected-output failure",
+        "A00 confirmation that direct API behavior returns 422 with located diagnostics"
+      ],
+      "forbidden": [
+        "files outside the declared mayEdit list",
+        "weakening or removing API assertions",
+        "product, CMS, server, renderer, migration, content, style, or package changes",
+        "current or production data mutation, cloud writes, deployment, service restart, restore, rollback, or physical cleanup",
+        "Git staging, commit, push, branch, remote, reset, checkout, clean, stash, merge, rebase, or cherry-pick"
+      ],
+      "requirements": [
+        "REQ-20260730-012"
+      ]
+    },
+    {
+      "id": "S40_batch_regression_evidence",
+      "agent": "A46_BatchRegressionEvidence",
+      "roleNote": "批次回归证据：覆盖十二项需求、响应式页面与受保护边界",
+      "status": "completed",
+      "purpose": "Run one repeatable deterministic, isolated-data, API, CMS, public-page, MD2File, responsive, and protected-boundary regression matrix for all twelve confirmed requirements.",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-001.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-002.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-003.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-004.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-005.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-006.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-007.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-008.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-009.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-010.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-011.json",
+        "docs/codex-workline/requirements/active/REQ-20260730-012.json",
+        "docs/codex-workline/slices/S30_shared_math_rendering_handoff.md",
+        "docs/codex-workline/slices/S31_carousel_slot_authority_handoff.md",
+        "docs/codex-workline/slices/S32_focused_cover_reverification_handoff.md",
+        "docs/codex-workline/slices/S33_formula_binding_marker_handoff.md",
+        "docs/codex-workline/slices/S34_md2file_renderer_parity_handoff.md",
+        "docs/codex-workline/slices/S35_article_formula_selection_create_handoff.md",
+        "docs/codex-workline/slices/S36_derivation_workflow_recovery_handoff.md",
+        "docs/codex-workline/slices/S37_formula_map_flow_layout_handoff.md",
+        "docs/codex-workline/slices/S38_cms_feedback_publish_dock_handoff.md",
+        "docs/codex-workline/slices/S39_md2file_public_entry_handoff.md",
+        "docs/codex-workline/slices/S40A_api_verify_redirected_output_handoff.md"
+      ],
+      "mayEdit": [
+        "package.json",
+        "scripts/run-batch-regression-evidence.js",
+        "docs/batch-regression-evidence.md",
+        "docs/codex-workline/slices/S40_batch_regression_evidence_handoff.md"
+      ],
+      "outputs": [
+        "repeatable runner with truthful nonzero failure status",
+        "requirement-to-slice-to-command and browser evidence matrix",
+        "protected hash, encoding, whitespace, secret, syntax, data isolation, and residual-risk evidence",
+        "no product repair hidden inside the verification slice"
+      ],
+      "verification": [
+        "all S30-S39 dedicated tests and prior S18-S28 regressions",
+        "isolated migration and API fixtures with cleanup",
+        "representative visitor/CMS/MD2File desktop, half-width, mobile, light, and dark matrix",
+        "Codex contract and complete changed-path audit"
+      ],
+      "dependencies": [
+        "DISPATCH-20260730-001",
+        "S30_shared_math_rendering through S39_md2file_public_entry",
+        "A00 acceptance of every implementation handoff",
+        "A00 acceptance of S40A_api_verify_redirected_output"
+      ],
+      "forbidden": [
+        "files outside the declared mayEdit list",
+        "current or production data mutation, physical cleanup, cloud writes, deployment, restore, rollback, or service restart",
+        "Git staging, commit, push, branch, remote, reset, checkout, clean, stash, merge, rebase, or cherry-pick",
+        "overwriting unrelated or concurrent edits; one file has one active writer",
+        "editing product, CMS, server, migration, content, style, or previously accepted handoff files",
+        "repairing failures instead of returning exact evidence",
+        "recording credentials, database contents, screenshots, or bulky logs in Git artifacts"
+      ],
+      "requirements": [
+        "REQ-20260730-001",
+        "REQ-20260730-002",
+        "REQ-20260730-003",
+        "REQ-20260730-004",
+        "REQ-20260730-005",
+        "REQ-20260730-006",
+        "REQ-20260730-007",
+        "REQ-20260730-008",
+        "REQ-20260730-009",
+        "REQ-20260730-010",
+        "REQ-20260730-011",
+        "REQ-20260730-012"
+      ]
+    },
+    {
+      "id": "S41_release_git_gate",
+      "agent": "A47_ReleaseGitGate",
+      "roleNote": "发布与 Git 门禁：盘点新批次差异并形成显式候选清单",
+      "status": "completed",
+      "purpose": "Review the accepted batch, classify every live path, and produce a version, backup, rollback, health, and path-explicit Git readiness decision without executing Git or production actions.",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/PROJECT_CHARTER.md",
+        "docs/codex-workline/task_registry.json",
+        "docs/codex-workline/implementation_slices.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json",
+        "docs/codex-workline/slices/S40_batch_regression_evidence_handoff.md",
+        "docs/batch-regression-evidence.md",
+        "docs/deployment.md",
+        "scripts/deploy-update.sh",
+        "scripts/backup-linux.sh",
+        "scripts/restore-linux.sh",
+        "scripts/rollback.sh"
+      ],
+      "mayEdit": [
+        "docs/release-git-gate-20260730.md",
+        "docs/git-staging-plan-20260730.md",
+        "docs/codex-workline/slices/S41_release_git_gate_handoff.md"
+      ],
+      "outputs": [
+        "complete include, exclude, and review-required worktree partition",
+        "path-explicit future staging commands without executing them",
+        "version, backup, rollback, service health, and stop-condition decision",
+        "proof that Git, production, cloud, and runtime data were unchanged"
+      ],
+      "verification": [
+        "live status and staged-index audit",
+        "version, batch regression, diff, encoding, secret, and Codex contract checks",
+        "cross-check every candidate and exclusion against accepted ownership"
+      ],
+      "dependencies": [
+        "DISPATCH-20260730-001",
+        "S40_batch_regression_evidence",
+        "A00 acceptance of S40"
+      ],
+      "forbidden": [
+        "files outside the declared mayEdit list",
+        "current or production data mutation, physical cleanup, cloud writes, deployment, restore, rollback, or service restart",
+        "Git staging, commit, push, branch, remote, reset, checkout, clean, stash, merge, rebase, or cherry-pick",
+        "overwriting unrelated or concurrent edits; one file has one active writer",
+        "editing product, test, package, content, migration, governance, or accepted implementation files",
+        "executing any Git write or production operation"
+      ],
+      "requirements": []
+    },
+    {
+      "id": "S41A_release_version_sync",
+      "agent": "A49_ReleaseVersionSync",
+      "roleNote": "发布版本同步：为已验收批次递增唯一版本与静态资源 build",
+      "status": "completed",
+      "purpose": "Advance the accepted batch to V2.5.3+20260807-0001 without changing feature behavior.",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json",
+        "docs/release-git-gate-20260730.md",
+        "docs/codex-workline/slices/S41_release_git_gate_handoff.md",
+        "scripts/check-version.js"
+      ],
+      "mayEdit": [
+        "404.html",
+        "category.html",
+        "admin/course-paths.html",
+        "admin/index.html",
+        "data/miniapps.js",
+        "data/site-meta.js",
+        "projects.html",
+        "project.html",
+        "post.html",
+        "package.json",
+        "package-lock.json",
+        "miniapps.html",
+        "index.html",
+        "maker.html",
+        "README.md",
+        "server.js",
+        "tools/gokotta-elec.html",
+        "tools/larkix-elec.html",
+        "tools/md2doc.html",
+        "derive.html",
+        "docs/codex-workline/slices/S41A_release_version_sync_handoff.md"
+      ],
+      "outputs": [
+        "unique V2.5.3 patch identity",
+        "20260807-0001 build identity",
+        "synchronized package, server, metadata, README, icon, and HTML cache keys",
+        "version-only Chinese handoff"
+      ],
+      "verification": [
+        "npm.cmd run check:version",
+        "old identity residue scan",
+        "npm.cmd run test:batch-regression",
+        "UTF-8, diff, secret, index, and contract checks"
+      ],
+      "dependencies": [
+        "S41_release_git_gate",
+        "A00 acceptance of S41 version blocker"
+      ],
+      "forbidden": [
+        "files outside the declared mayEdit list",
+        "feature, content, layout, API, database, migration, or test behavior changes",
+        "current or production data mutation, cloud writes, deployment, service restart, backup, restore, rollback, or physical cleanup",
+        "Git staging, commit, push, branch, remote, reset, checkout, clean, stash, merge, rebase, or cherry-pick"
+      ],
+      "requirements": []
+    },
+    {
+      "id": "S41B_release_git_gate_reverification",
+      "agent": "A50_ReleaseGitGateReverification",
+      "roleNote": "发布门禁复核：在新版本同步后重建最终 Git 候选清单",
+      "status": "completed",
+      "purpose": "Rebuild the complete path-explicit Git candidate plan after V2.5.3 synchronization.",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json",
+        "docs/batch-regression-evidence.md",
+        "docs/release-git-gate-20260730.md",
+        "docs/git-staging-plan-20260730.md",
+        "docs/codex-workline/slices/S41A_release_version_sync_handoff.md",
+        "docs/deployment.md",
+        "scripts/deploy-update.sh",
+        "scripts/backup-linux.sh",
+        "scripts/restore-linux.sh",
+        "scripts/rollback.sh"
+      ],
+      "mayEdit": [
+        "docs/release-git-gate-20260730.md",
+        "docs/git-staging-plan-20260730.md",
+        "docs/codex-workline/slices/S41B_release_git_gate_reverification_handoff.md"
+      ],
+      "outputs": [
+        "complete path partition",
+        "path-explicit staging commands",
+        "new-version readiness decision",
+        "unchanged Git and production proof"
+      ],
+      "verification": [
+        "live Git read-only audit",
+        "version and batch regression",
+        "plan set equality",
+        "diff, UTF-8, secret, and contract checks"
+      ],
+      "dependencies": [
+        "S41A_release_version_sync",
+        "A00 acceptance of S41A"
+      ],
+      "forbidden": [
+        "files outside the declared mayEdit list",
+        "product, version, test, package, governance, or accepted handoff changes",
+        "current or production data, cloud, deployment, service, backup, restore, rollback, or physical cleanup",
+        "all Git write operations"
+      ],
+      "requirements": []
+    },
+    {
+      "id": "S42_git_publish",
+      "agent": "A51_GitPublisher",
+      "roleNote": "Git 发布执行：精确暂存、提交并推送已验收的新版本候选",
+      "status": "next",
+      "purpose": "Publish V2.5.3+20260807-0001 to the existing origin/main with exact staging and no production operations.",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json",
+        "docs/release-git-gate-20260730.md",
+        "docs/git-staging-plan-20260730.md",
+        "docs/codex-workline/slices/S41B_release_git_gate_reverification_handoff.md",
+        "docs/codex-workline/slices/S42_git_publish_handoff.md",
+        "agents/A51_GitPublisher/brief.md"
+      ],
+      "mayEdit": [
+        "docs/release-git-gate-20260730.md",
+        "docs/git-staging-plan-20260730.md",
+        "docs/codex-workline/slices/S42_git_publish_handoff.md"
+      ],
+      "outputs": [
+        "A51-aware final path partition",
+        "exact staged candidate",
+        "V2.5.3 release commit",
+        "origin/main push evidence"
+      ],
+      "verification": [
+        "live and staged set equality",
+        "npm.cmd run check:version",
+        "npm.cmd run test:batch-regression",
+        "cached diff, UTF-8, secret, contract, upstream, and push checks"
+      ],
+      "dependencies": [
+        "S41B_release_git_gate_reverification",
+        "A00 acceptance of S41B",
+        "Owner authorization to execute Git with a new version"
+      ],
+      "forbidden": [
+        "files outside the declared mayEdit list",
+        "broad staging or any excluded path",
+        "product, version, feature, test, package, migration, or accepted handoff changes",
+        "production, cloud, service, data, credential, backup, restore, rollback, or physical cleanup",
+        "branch creation, remote mutation, force push, or destructive Git"
+      ],
+      "requirements": []
     }
   ],
   "nextDecision": {
-    "agents": [],
-    "decision": "A00 accepted S28 after the complete worktree inventory, explicit future staging plan, and release gate review passed. The automatic queue is complete; Git, production, and S29 remain closed pending explicit Owner authority.",
+    "agents": [
+      "A51_GitPublisher"
+    ],
+    "decision": "A00 accepted S41B after 37/37 regression, exact 309-path classification, strict UTF-8, diff, secret, empty-index, and 961/0/0 contract checks. Execute only exact Git publication for V2.5.3+20260807-0001; production remains closed.",
     "shortPrompts": [
-      "Agent 00 Project Director（项目导演：负责顺序、门禁和下一步裁决）：请进入 E:\\Project\\2607-LarkixWeb，运行 npm.cmd run codex:handoff 核验路由，然后执行 agents\\A00_ProjectDirector\\brief.md；使用中文交接，遵守 AGENTS.md 门禁。"
+      "Agent 51 Git Publisher（Git 发布执行：精确暂存、提交并推送已验收的新版本候选）：请进入 E:\\Project\\2607-LarkixWeb，运行 npm.cmd run codex:handoff 核验路由，然后执行 agents\\A51_GitPublisher\\brief.md；使用中文交接，完成后直接回传 A00。"
     ]
   }
 }

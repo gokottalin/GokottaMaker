@@ -6,9 +6,9 @@
     <title>LarkixMaker 管理端</title>
     <meta name="robots" content="noindex,nofollow" />
     <link rel="icon" type="image/svg+xml" href="../assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524" />
-    <link rel="stylesheet" href="../styles.css?v=20260730-0012" />
-    <link rel="stylesheet" href="./admin.css?v=20260729-s20-a00d" />
-    <link rel="stylesheet" href="./admin-dark.css?v=20260729-s26" />
+    <link rel="stylesheet" href="../styles.css?v=20260807-0001" />
+    <link rel="stylesheet" href="./admin.css?v=20260730-s38" />
+    <link rel="stylesheet" href="./admin-dark.css?v=20260730-s38" />
   </head>
   <body>
     <main class="admin-shell">
@@ -102,26 +102,7 @@
               <h1>内容管理</h1>
             </div>
           </header>
-          <p class="notice admin-notice" id="adminNotice" role="status" aria-live="polite"></p>
-
-          <section class="focus-mode-gate" id="focusModeGate" aria-labelledby="focusModeGateTitle">
-            <div class="focus-mode-gate-copy">
-              <p class="poster-kicker poster-kicker-small"><span>全站范围</span><em>Global Focus</em></p>
-              <h2 id="focusModeGateTitle">聚焦模式</h2>
-              <p id="focusModeGateState" role="status" aria-live="polite">正在读取全站状态。</p>
-              <p class="focus-mode-gate-warning" id="focusModeGateWarning">
-                关闭后，所有原本已发布的非聚焦内容会立即重新公开；轮播缓冲项除外且不会自动恢复，草稿仍保持草稿。
-              </p>
-            </div>
-            <div class="focus-mode-gate-control">
-              <label class="focus-mode-switch">
-                <input id="focusModeToggle" type="checkbox" role="switch" aria-describedby="focusModeGateWarning" />
-                <span aria-hidden="true"></span>
-                <strong>启用全站聚焦</strong>
-              </label>
-              <button class="button primary" id="saveFocusModeButton" type="button">保存全站状态</button>
-            </div>
-          </section>
+          <p class="notice admin-notice" id="adminNotice" hidden></p>
 
           <section class="editor-dock admin-view" id="editor" data-admin-view="editor">
             <button class="editor-dock-handle" id="editorDockHandle" type="button" aria-expanded="true">
@@ -342,7 +323,7 @@
                     <h2>内容编辑器</h2>
                   </div>
                   <div class="editor-toolbar-actions">
-                    <button class="button primary" type="submit">保存内容</button>
+                    <button class="button primary" id="nonArticleSaveButton" type="submit">保存内容</button>
                     <button class="button secondary" id="resetButton" type="button">新建空白</button>
                     <button class="button secondary" id="editorDockToggle" type="button">收起</button>
                   </div>
@@ -580,6 +561,43 @@
                 </div>
               </div>
             </div>
+            <section class="formula-repair-manager" aria-labelledby="formulaRepairTitle">
+              <div class="section-heading compact">
+                <div>
+                  <p class="eyebrow">Relation Recovery</p>
+                  <h3 id="formulaRepairTitle">关系待修复队列</h3>
+                </div>
+                <span id="formulaRepairSummary">暂无待修复项。</span>
+              </div>
+              <div class="formula-repair-toolbar">
+                <label>
+                  处理状态
+                  <select id="formulaRepairStatus">
+                    <option value="pending">待处理</option>
+                    <option value="resolved">已结案</option>
+                    <option value="all">全部</option>
+                  </select>
+                </label>
+                <label>
+                  问题类型
+                  <select id="formulaRepairIssue">
+                    <option value="">全部类型</option>
+                    <option value="ambiguous_target">目标歧义</option>
+                    <option value="missing_source">来源缺失</option>
+                    <option value="missing_target">目标缺失</option>
+                    <option value="duplicate_dependency">重复依赖</option>
+                    <option value="self_reference">自环</option>
+                    <option value="evidence_conflict">证据冲突</option>
+                    <option value="cycle">成环</option>
+                    <option value="archived_target">目标已归档</option>
+                    <option value="invalid_shortcode">短码无效</option>
+                    <option value="relation_without_revision">来源无修订</option>
+                  </select>
+                </label>
+                <button class="button secondary" id="formulaRepairRefresh" type="button">刷新队列</button>
+              </div>
+              <div class="formula-repair-list" id="formulaRepairList"></div>
+            </section>
             <form class="formula-card-editor" id="formulaCardEditor" hidden>
               <div class="section-heading compact">
                 <div>
@@ -672,7 +690,6 @@
                 <button class="button secondary" id="formulaPublishButton" type="button" hidden>发布公式卡</button>
                 <button class="button primary" type="submit">保存公式卡</button>
               </div>
-              <div class="formula-field-help-popover" id="formulaFieldHelpPopover" role="tooltip" hidden></div>
               <section class="formula-derivation-panel" id="formulaDerivationPanel" hidden>
                 <div class="section-heading compact">
                   <div>
@@ -743,6 +760,16 @@
               </div>
               <div id="featuredSlots" class="featured-slot-grid"></div>
             </section>
+            <section class="carousel-conflict-manager" aria-labelledby="carouselConflictTitle">
+              <div class="section-heading compact">
+                <div>
+                  <p class="eyebrow">Migration Audit</p>
+                  <h3 id="carouselConflictTitle">历史槽位冲突报告</h3>
+                </div>
+                <span>迁移不会替任何重复候选决定胜者；冲突槽位保持为空，需手动重新安排。</span>
+              </div>
+              <div id="carouselConflictReport" class="carousel-conflict-report" aria-live="polite"></div>
+            </section>
             <section class="carousel-buffer-manager" aria-labelledby="carouselBufferTitle">
               <div class="section-heading compact">
                 <div>
@@ -766,6 +793,24 @@
               </div>
               <span class="library-note">可记录首页、分类页、项目页、小程序页和详情页各区块的顺序、大小与显示状态。</span>
             </div>
+            <section class="focus-mode-gate" id="focusModeGate" aria-labelledby="focusModeGateTitle">
+              <div class="focus-mode-gate-copy">
+                <p class="poster-kicker poster-kicker-small"><span>全站范围</span><em>Global Focus</em></p>
+                <h2 id="focusModeGateTitle">聚焦模式</h2>
+                <p id="focusModeGateState" role="status" aria-live="polite">正在读取全站状态。</p>
+                <p class="focus-mode-gate-warning" id="focusModeGateWarning">
+                  关闭后，所有原本已发布的非聚焦内容会立即重新公开；轮播缓冲项除外且不会自动恢复，草稿仍保持草稿。
+                </p>
+              </div>
+              <div class="focus-mode-gate-control">
+                <label class="focus-mode-switch">
+                  <input id="focusModeToggle" type="checkbox" role="switch" aria-describedby="focusModeGateWarning" />
+                  <span aria-hidden="true"></span>
+                  <strong>启用全站聚焦</strong>
+                </label>
+                <button class="button primary" id="saveFocusModeButton" type="button">保存全站状态</button>
+              </div>
+            </section>
             <div id="layoutPanel" class="layout-editor-panel"></div>
           </section>
 
@@ -784,6 +829,48 @@
         </div>
       </section>
     </main>
+
+    <section class="article-publish-dock" id="articlePublishDock" aria-label="文章保存与发布" hidden>
+      <button
+        class="article-publish-dock-rail"
+        id="articlePublishDockExpand"
+        type="button"
+        aria-label="展开文章发布栏"
+        title="展开文章发布栏"
+        hidden
+      >
+        <span aria-hidden="true">&#8593;</span>
+      </button>
+      <div class="article-publish-dock-body" id="articlePublishDockBody">
+        <div class="article-publish-dock-heading">
+          <div>
+            <strong>文章发布</strong>
+            <span id="articlePublishDockStatus" role="status">当前内容已保存</span>
+          </div>
+          <button
+            class="article-publish-dock-collapse"
+            id="articlePublishDockCollapse"
+            type="button"
+            aria-label="折叠文章发布栏"
+            title="折叠文章发布栏"
+          >
+            <span aria-hidden="true">&#8722;</span>
+          </button>
+        </div>
+        <div class="article-publish-dock-actions">
+          <button class="button secondary" id="articleSaveDraftButton" type="button">保存草稿</button>
+          <button class="button primary" id="articlePublishButton" type="button">发布文章</button>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="cms-toast-region"
+      id="cmsToastRegion"
+      aria-label="CMS 操作反馈"
+      aria-live="polite"
+      aria-relevant="additions text"
+    ></section>
 
     <aside class="formula-authoring-drawer is-collapsed" id="formulaAuthoringPopover" aria-labelledby="formulaAuthoringTitle" hidden>
       <button
@@ -843,37 +930,65 @@
         </section>
 
         <section class="formula-authoring-pane" id="formulaCreatePane" hidden>
-          <div class="formula-selection-preview" id="formulaSelectionPreview">请先在 Markdown 正文中框选一个完整公式。</div>
+          <div class="formula-create-latex-field">
+            <span class="formula-field-label">LaTeX 公式（自动识别，必填）
+              <button class="formula-field-help-button" type="button" data-formula-help="必填且只读。请完整框选 $...$、$$...$$、\(...\) 或 \[...\]；系统仅去除外层定界符，原文和公式含义均不改写。示例：\frac{V_{out}}{R}。" aria-label="查看选中 LaTeX 说明">?</button>
+            </span>
+            <div class="formula-selection-preview" id="formulaSelectionPreview">请先在 Markdown 正文中框选一个完整公式。</div>
+          </div>
           <div class="formula-authoring-create-fields">
             <label>
-              公式名称
+              <span class="formula-field-label">公式名称（必填）
+                <button class="formula-field-help-button" type="button" data-formula-help="必填。用于 CMS、文章跳转和访客页标题；系统会清理多余空格并据此生成稳定 slug。示例：BOOST 输出功率。" aria-label="查看公式名称说明">?</button>
+              </span>
               <input id="formulaCreateName" maxlength="160" required />
             </label>
             <label>
-              所属模块
-              <input id="formulaCreateModule" list="formulaModuleOptions" maxlength="64" placeholder="power-electronics" required />
+              <span class="formula-field-label">所属模块（必填，单选）
+                <button class="formula-field-help-button" type="button" data-formula-help="必填且单选。输入关键词搜索已有模块；新名称必须点击“新增模块”明确登记，系统返回规范化 slug。示例：power-electronics。" aria-label="查看所属模块说明">?</button>
+              </span>
+              <span class="formula-classification-input">
+                <input id="formulaCreateModule" list="formulaModuleOptions" maxlength="64" placeholder="搜索或输入模块名称" autocomplete="off" required />
+                <button class="button secondary" id="formulaCreateModuleButton" type="button">新增模块</button>
+              </span>
             </label>
-            <label>
-              自定义分类
-              <input id="formulaCreateCategory" list="formulaCategoryOptions" maxlength="240" placeholder="文章公式/主题" required />
+            <label class="formula-create-wide">
+              <span class="formula-field-label">主分类（必填，单选）
+                <button class="formula-field-help-button" type="button" data-formula-help="必填且单选。按当前模块搜索已有主分类；新名称必须点击“新增主分类”明确登记。示例：计算书/BOOST。" aria-label="查看主分类说明">?</button>
+              </span>
+              <span class="formula-classification-input">
+                <input id="formulaCreateCategory" list="formulaCategoryOptions" maxlength="240" placeholder="搜索或输入主分类" autocomplete="off" required />
+                <button class="button secondary" id="formulaCreateCategoryButton" type="button">新增主分类</button>
+              </span>
             </label>
-            <label>
-              用途说明（选填）
+            <label class="formula-create-wide">
+              <span class="formula-field-label">用途说明（选填）
+                <button class="formula-field-help-button" type="button" data-formula-help="选填。简要说明公式解决的问题和适用条件，不重复完整推导。示例：计算连续导通模式下的 BOOST 输出功率。" aria-label="查看用途说明">?</button>
+              </span>
               <textarea id="formulaCreatePurpose" rows="2" maxlength="500"></textarea>
             </label>
             <label class="formula-create-wide">
-              标签（选填，namespace:value）
-              <textarea id="formulaCreateTags" rows="2" placeholder="module:power-electronics&#10;unit:V"></textarea>
+              <span class="formula-field-label">标签（选填，多选）
+                <button class="formula-field-help-button" type="button" data-formula-help="选填且可多选。搜索已有标签，或输入 namespace:value 后点击“添加标签”明确登记；重复项自动复用。示例：unit:W、mode:CCM。" aria-label="查看标签说明">?</button>
+              </span>
+              <span class="formula-tag-picker">
+                <input id="formulaCreateTagPicker" list="formulaTagOptions" autocomplete="off" placeholder="搜索或输入 namespace:value" />
+                <button class="button secondary" id="formulaCreateTagAddButton" type="button">添加标签</button>
+              </span>
+              <span class="formula-selected-tags" id="formulaCreateSelectedTags"></span>
+              <textarea id="formulaCreateTags" hidden></textarea>
             </label>
             <label class="formula-create-wide">
               Markdown 推导正文（选填）
               <textarea id="formulaCreateMarkdown" rows="5" placeholder="## 推导&#10;&#10;我采用..."></textarea>
             </label>
           </div>
-          <button class="button primary" id="formulaCreateAndBindButton" type="button">创建公式卡并保存文章</button>
+          <p class="formula-create-intent">保存后新公式卡保持草稿；原公式逐字保留，仅追加统一绑定标记。</p>
+          <button class="button primary" id="formulaCreateAndBindButton" type="button">保存草稿公式卡并原子绑定</button>
         </section>
       </div>
     </aside>
+    <div class="formula-field-help-popover" id="formulaFieldHelpPopover" role="tooltip" hidden></div>
 
     <div class="crop-modal" id="coverCropModal" hidden>
       <section class="crop-dialog" role="dialog" aria-modal="true" aria-labelledby="coverCropTitle">
@@ -909,15 +1024,18 @@
       </section>
     </div>
 
-    <script src="../data/posts.js?v=20260730-0012"></script>
-    <script src="../data/seed.js?v=20260730-0012"></script>
-    <script src="../api/content.js?v=20260730-0012"></script>
-    <script src="../data/content-store.js?v=20260730-0012"></script>
+    <script src="../data/posts.js?v=20260807-0001"></script>
+    <script src="../data/seed.js?v=20260807-0001"></script>
+    <script src="../api/content.js?v=20260807-0001"></script>
+    <script src="../data/content-store.js?v=20260807-0001"></script>
+    <link rel="stylesheet" href="/assets/vendor/katex/katex.min.css?v=0.16.22" />
+    <script src="/assets/vendor/katex/katex.min.js?v=0.16.22"></script>
+    <script src="/data/math-renderer.js?v=20260730-s30"></script>
     <script src="../data/markdown-renderer.js?v=20260728-s19"></script>
     <script src="../assets/vendor/cytoscape.min.js?v=3.34.0"></script>
     <script src="../formula-graph.js?v=20260728-s19"></script>
-    <script src="./admin.js?v=20260729-s20-a00c"></script>
-    <script src="../data/site-meta.js?v=20260730-0012"></script>
-    <script src="../data/footer.js?v=20260730-0012"></script>
+    <script src="./admin.js?v=20260730-s38"></script>
+    <script src="../data/site-meta.js?v=20260807-0001"></script>
+    <script src="../data/footer.js?v=20260807-0001"></script>
   </body>
 </html>

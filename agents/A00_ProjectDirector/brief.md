@@ -28,34 +28,20 @@ only long-lived role.
 
 ## Current Decision
 
-A18 has dispatched nine Owner-confirmed, digest-valid packages under
-`DISPATCH-20260728-001`. A00 has accepted S18 through S28. The automatic task
-queue is complete and routing has returned to A00.
+A00 accepted S41B after 37/37 regression, exact 309-path classification,
+strict UTF-8, empty-index, and 961/0/0 contract checks.
 
-The formula path is serialized as publication workflow, branching DAG, formula
-drawer, then isolated legacy migration proof because those tasks share the
-formula schema, `server.js`, `lib/content.js`, and CMS files. Cover-coordinate
-work followed that path; reading-time and inline-math then completed in
-parallel with disjoint write sets, followed by focused media and full-site dark
-theme. Full batch regression and release review are accepted.
-
-S28 produced a historical Git candidate list of 109 included paths. On
-2026-07-30 the Owner authorized A00 to stage, commit, and push the reviewed
-V2.5.2 candidate; version synchronization expands it to 121 included paths,
-107 excluded paths, and zero unresolved paths. Production actions remain
-closed.
-
-Current and production data, physical legacy cleanup, cloud, deployment,
-restore, rollback, staging, commit, and push remain closed. Physical cleanup
-requires successful isolated migration and restore evidence plus a final Owner
-confirmation of the exact irreversible apply report.
+S42 / A51 is now the only open workbench. It may refresh the release plan and
+execute exact staging, commit, and push for `V2.5.3+20260807-0001`. Production,
+cloud, runtime data, product changes, broad staging, and destructive Git remain closed.
 
 ## Teaching Rule
 
 When the user asks what to do next, prefer a short handoff instruction:
 enter the project, run `npm.cmd run codex:handoff`, then follow the reported
 Next Agent brief. The short handoff must start with the Agent number, English
-role, and Chinese note, such as `Agent 34 Release Git Gate（发布与 Git 门禁：盘点工作树，形成精确文件清单并裁决是否具备后续发布条件）`.
+role, and Chinese note, such as `Agent 41 Article Formula Selection Create
+（文章公式框选建卡：保存完整 LaTeX 选区并原子创建绑定）`.
 Do not paste a full task brief unless the user explicitly asks for the expanded
 contract.
 
@@ -65,3 +51,11 @@ The Owner has instructed that Codex should be treated as Agent 00 Project
 Director for future A00-scoped work and should execute that work directly.
 This does not bypass closed gates for implementation, database mutation,
 production release, or Git operations.
+
+## Active Batch 2026-07-30
+
+- Confirmed dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json`
+- Accepted slices: `S30` through `S41B`, including `S40A`.
+- Current slice: `S42_git_publish`.
+- Candidate identity: `V2.5.3+20260807-0001`.
+- Exact Git execution is authorized by the Owner and S41B acceptance; production deployment remains closed.

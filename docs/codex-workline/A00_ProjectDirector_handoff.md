@@ -1,12 +1,12 @@
 # A00 Project Director Handoff
 
-Status: `S28 accepted; automatic queue complete; Owner gate active`.
+Status: `S41B accepted; S42 is the only Wave 11 Git publication task`.
 
 ## Authority
 
-Nine Owner-confirmed requirement packages passed digest validation. The
+Twelve Owner-confirmed requirement packages passed digest validation. The
 authoritative batch manifest is
-`docs/codex-workline/requirements/dispatch/DISPATCH-20260728-001.json`.
+`docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json`.
 
 A00 owns sequence, single-writer contracts, gates, acceptance, and automatic
 cross-session dispatch. Functional Agents return handoffs directly to A00.
@@ -87,30 +87,42 @@ S28 final A00 evidence:
 
 ## Current Gate
 
-The automatic queue is complete. A00 holds the Owner gate. A new short task may
-open only from a confirmed requirement package or explicit authority.
+S42 / A51 is the only open workbench. It owns the refreshed release plan,
+exact candidate staging, release commit, and push to the existing `origin/main`.
+Production, cloud, data, version, product, branch, and remote changes remain closed.
 
 ## Closed Boundaries
 
 - Current/production data and physical legacy cleanup.
 - All product, CMS, server, migration, style, content, package, accepted
   handoff, and governance files.
-- Cloud, deployment, restore, rollback, staging, commit, push, and
+- Cloud, deployment, restore, rollback, broad staging, destructive Git, and
   branch/remote changes.
 
 ## Queue
 
-1. S27 / A33 batch regression evidence. Accepted.
-2. S28 / A34 release and Git gate. Accepted.
-3. No automatic task is open.
-
-S29 / A35 physical legacy cleanup remains outside the automatic queue. It is
-blocked until a fresh current/production backup and independent restore
-rehearsal pass, A00 presents the exact report digest and affected rows, and the
-Owner explicitly authorizes the irreversible apply operation.
+1. S30-S41B. Accepted.
+2. S42 / A51 exact Git publication. Current.
+3. Production deployment. Closed.
 
 ## Current Handoff
 
 ```text
-Agent 00 Project Director（项目导演：负责顺序、门禁和下一步裁决）：请进入 E:\Project\2607-LarkixWeb，运行 npm.cmd run codex:handoff 核验路由，然后执行 agents\A00_ProjectDirector\brief.md；使用中文交接，遵守 AGENTS.md 门禁。
+Agent 51 Git Publisher（Git 发布执行：精确暂存、提交并推送已验收的新版本候选）：请进入 E:\Project\2607-LarkixWeb，运行 npm.cmd run codex:handoff 核验路由，然后执行 agents\A51_GitPublisher\brief.md；使用中文交接，完成后直接回传 A00。
 ```
+
+## 2026-07-30 Confirmed Batch
+
+### status
+
+`wave11_s42_git_publish`
+
+### scope_completed
+
+- Accepted S41B at `V2.5.3+20260807-0001`.
+- Confirmed 37/37 regression, exact 309-path classification, empty index, strict encoding, and 961/0/0 contract.
+- Opened A51 as the only exact Git publication workbench; production remains closed.
+
+### next_handoff
+
+`A51_GitPublisher` returns Git commit and push evidence directly to `A00_ProjectDirector`.

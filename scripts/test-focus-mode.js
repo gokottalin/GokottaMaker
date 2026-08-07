@@ -226,7 +226,18 @@ async function run() {
     assert.equal(hiddenApi.payload.reasonCode, "FOCUS_HIDDEN_OR_NOT_PUBLIC");
     assert.equal((await request(`/post.html?id=${hiddenPublished.id}`)).response.status, 404);
     assert.equal((await request("/category.html?category=analog")).response.status, 404);
-    assert.equal((await request("/miniapps.html")).response.status, 404);
+    assert.equal((await request("/miniapps.html")).response.status, 200);
+    assert.equal((await request("/tools/md2doc.html")).response.status, 200);
+    assert.equal((await request("/tools/md2doc.js")).response.status, 200);
+    assert.equal((await request("/tools/larkix-elec.html")).response.status, 404);
+    assert.equal((await request("/tools/assets/larkix-elec-icon.png")).response.status, 404);
+    assert.equal((await request("/api/md2doc/convert", { method: "POST", body: JSON.stringify({ markdown: "# blocked" }) })).response.status, 404);
+    const md2fileConversion = await request("/api/md2file/convert", {
+      method: "POST",
+      body: JSON.stringify({ markdown: "# Focus MD2File", title: "Focus MD2File", filename: "focus-md2file" })
+    });
+    assert.equal(md2fileConversion.response.status, 200);
+    assert.match(md2fileConversion.response.headers.get("content-type") || "", /application\/vnd\.openxmlformats/);
     assert.equal((await request("/category.html?category=power-electronics")).response.status, 200);
     assert.equal((await request("/category.html?category=electronics-basics")).response.status, 200);
 
@@ -242,7 +253,9 @@ async function run() {
     assert.match(sitemap.payload, /derive\.html/);
     assert.match(sitemap.payload, /projects\.html/);
     assert.doesNotMatch(sitemap.payload, /category\.html\?category=(?:analog|stm32|esp32|all)/);
-    assert.doesNotMatch(sitemap.payload, /miniapps\.html|focus-hidden-published/);
+    assert.match(sitemap.payload, /miniapps\.html/);
+    assert.match(sitemap.payload, /tools\/md2doc\.html/);
+    assert.doesNotMatch(sitemap.payload, /focus-hidden-published|tools\/larkix-elec\.html/);
     const rss = await request("/rss.xml");
     assert.equal(rss.response.status, 200);
     assert.doesNotMatch(rss.payload, /focus-hidden-published/);
@@ -283,29 +296,11 @@ async function run() {
     assert.match(adminJs, /\/api\/admin\/focus-mode/);
     assert.match(adminJs, /FOCUS|聚焦模式/);
     assert.match(adminCss, /@media \(max-width: 640px\)[\s\S]*\.focus-mode-gate/);
-    const focusHeroFallbackStart = mainJs.indexOf("const focusHeroFallback");
-    const electronicsIndex = mainJs.indexOf(
-      '"electronics-basics"',
-      focusHeroFallbackStart
-    );
-    const derivationsIndex = mainJs.indexOf(
-      '"derivations"',
-      focusHeroFallbackStart
-    );
-    const projectsIndex = mainJs.indexOf(
-      '"projects"',
-      focusHeroFallbackStart
-    );
-    assert.ok(
-      focusHeroFallbackStart >= 0 &&
-        electronicsIndex > focusHeroFallbackStart &&
-        derivationsIndex > electronicsIndex &&
-        projectsIndex > derivationsIndex
-    );
-    assert.match(
-      mainJs,
-      /featuredItems = focusModeEnabled\(\)[\s\S]*?\[focusHeroFallback\[0\], \.\.\.eligibleFeaturedItems\]/
-    );
+    assert.match(mainJs, /const heroCarousel = window\.LarkixContent\.getHeroCarousel\(\)/);
+    assert.match(mainJs, /featuredItems = heroCarousel/);
+    assert.doesNotMatch(mainJs, /focusHeroFallback|eligibleFeaturedItems/);
+    assert.doesNotMatch(mainJs, /function focusRouteItem/);
+    assert.match(adminHtml, /data-admin-view="layout"[\s\S]*id="focusModeToggle"/);
     assert.match(
       mainJs,
       /\.hero-actions a\[href="\.\/admin\/index\.html"\][\s\S]*?link\.style\.display = "none"/

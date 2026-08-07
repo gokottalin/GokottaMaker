@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260730-009",
+  "title": "文章编辑器右下角可折叠悬浮发布栏",
+  "status": "dispatched",
+  "priority": "normal",
+  "createdAt": "2026-07-30T11:39:33.767+08:00",
+  "updatedAt": "2026-07-30T11:53:27.440+08:00",
+  "intent": {
+    "problem": "文章保存和发布按钮位于长编辑页面中间，作者滚动后难以快速执行主要操作。",
+    "desiredOutcome": "文章编辑器提供始终可达、可手动折叠并清楚显示未保存状态的右下角悬浮发布栏。",
+    "targetUsers": ["Owner/幕后作者"]
+  },
+  "scope": {
+    "in": [
+      "把文章保存与发布主要操作移至视口右下角悬浮栏",
+      "悬浮栏包含保存草稿和发布或更新发布按钮",
+      "显示存在未保存修改的状态",
+      "作者可手动缩起，缩起后只保留固定图标",
+      "悬浮栏不会自动消失，滚动长文章时持续可达",
+      "移除页面中间重复的主要保存和发布按钮",
+      "与公式抽屉、悬浮提示和移动端安全区域协调"
+    ],
+    "out": [
+      "自动隐藏导致作者无法找到操作",
+      "增加第二套相互独立的保存状态",
+      "改变文章草稿与发布业务规则",
+      "遮挡 Markdown 正文、公式抽屉或字段错误"
+    ]
+  },
+  "behavior": {
+    "current": ["保存文章和发布文章按钮位于页面内容中间，长文章编辑时不便使用。"],
+    "expected": [
+      "无论滚动到文章任何位置，保存和发布都在右下角可访问。",
+      "折叠后界面简洁，但固定图标可立即恢复完整栏。",
+      "未保存状态与实际编辑脏状态一致。"
+    ],
+    "edgeCases": [
+      "新文章与已发布文章。",
+      "发布被草稿公式、缺少栏目或其他规则阻断。",
+      "公式抽屉同时展开。",
+      "移动端软键盘、窄屏和安全区域。",
+      "导航离开存在未保存修改的文章。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.fixed-actions",
+      "statement": "保存草稿和发布或更新发布按钮固定在文章编辑器右下角，页面滚动不影响可达性。",
+      "verification": "在短文章和超长文章顶部、中部、底部执行操作。"
+    },
+    {
+      "id": "ac.collapse",
+      "statement": "作者可手动折叠悬浮栏，折叠后只保留固定图标且不会自动消失。",
+      "verification": "折叠、滚动、恢复并刷新编辑状态检查行为。"
+    },
+    {
+      "id": "ac.dirty-state",
+      "statement": "任何文章字段或正文修改都会显示未保存状态，保存成功后清除；失败时保持未保存。",
+      "verification": "修改正文、分类和封面后分别保存成功及制造失败。"
+    },
+    {
+      "id": "ac.single-primary-location",
+      "statement": "页面中间不再保留重复的主要保存和发布按钮，所有入口共享同一状态。",
+      "verification": "检查文章编辑器 DOM 与键盘焦点顺序。"
+    },
+    {
+      "id": "ac.non-overlap",
+      "statement": "悬浮栏在桌面和移动端不遮挡正文、公式抽屉、toast、软键盘和安全区域。",
+      "verification": "执行响应式截图及公式抽屉、toast 同时出现的组合测试。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN"],
+    "platforms": ["Larkix CMS"],
+    "compatibility": ["保持现有保存、发布和更新发布规则", "兼容公式抽屉和悬浮提示"],
+    "data": ["不得因折叠或展开丢失编辑内容"],
+    "security": [],
+    "operations": ["需要长文章、移动端和组合浮层回归"],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.floating-overlap",
+      "severity": "medium",
+      "statement": "多个固定浮层可能在窄屏互相覆盖。",
+      "mitigation": "定义统一浮层层级和响应式停靠规则，并执行组合状态验收。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-30T11:51:02.563+08:00",
+    "confirmationText": "确认无误，开始执行",
+    "digest": "sha256:a46588979ae49245683ed63075d79b2db63a0c3bd6887750b3c3ab699f87719d"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-07-30T11:53:27.440+08:00"
+  }
+}

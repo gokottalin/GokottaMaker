@@ -11,7 +11,7 @@ const { createContentStore, focusScopeForContent, isContentInFocusScope } = requ
 const { createDatabase } = require("./lib/db");
 const { createSeo } = require("./lib/seo");
 const { createUploadStore } = require("./lib/uploads");
-const { markdownToDocx } = require("./lib/md2doc");
+const { inspectMarkdown, markdownToDocx } = require("./lib/md2doc");
 const {
   validatePostPayload,
   validateProjectPayload,
@@ -23,7 +23,10 @@ const {
   validateFocusModePayload,
   validateCarouselBufferRestorePayload,
   validateFormulaCatalogPackage,
+  validateFormulaRelationRepairEventPayload,
+  formulaSelectionIdentity,
   validateLatexSelection,
+  validateSourceHash,
   validateUploadPayload
 } = require("./lib/validators");
 const { writeSnapshotFile } = require("./tools/calculation-book/formula-catalog");
@@ -54,8 +57,8 @@ const contentStore = createContentStore(db);
 const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword });
 const uploadStore = createUploadStore(uploadDir);
 
-const siteVersion = "V2.5.2";
-const siteBuild = "20260730-0012";
+const siteVersion = "V2.5.3";
+const siteBuild = "20260807-0001";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "https://www.larkix.com").replace(/\/$/, "");
 const elecVersion = "V1.3";
@@ -86,6 +89,11 @@ function seedContent() {
       INSERT INTO posts (id, slug, title, category, category_key, recommendation_priority, excerpt, cover, markdown, read_time, date, publish_status, featured, featured_order, tags, created_at, published_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', ?, ?, ?, CURRENT_TIMESTAMP, ?)
     `);
+    const insertHeroSlot = db.prepare(`
+      INSERT INTO hero_carousel_slots
+        (slot, content_type, content_id, content_title, assignment_source)
+      VALUES (?, 'post', ?, ?, 'seed')
+    `);
     seed.posts.forEach((post, index) => {
       insertPost.run(
         post.id,
@@ -104,6 +112,7 @@ function seedContent() {
         post.tags || "",
         post.date || new Date().toISOString()
       );
+      if (index < 4) insertHeroSlot.run(index, post.id, post.title || "");
     });
   }
 
@@ -300,6 +309,8 @@ const {
   withTransaction,
   allPosts: allStoredPosts,
   allProjects: allStoredProjects,
+  listHeroCarouselSlots,
+  listHeroCarouselSlotConflicts,
   listCarouselFocusBuffer,
   carouselFocusBufferById,
   reconcileCarouselFocusBuffer,
@@ -312,6 +323,8 @@ const {
   resolveLegacyFormulaRedirect,
   adminFormulaCard,
   listFormulaReferenceDecisions: listStoredFormulaReferenceDecisions,
+  listFormulaRelationRepairs,
+  appendFormulaRelationRepairEvent,
   saveFormulaDerivation,
   saveFormulaClassification,
   saveFormulaCard,
@@ -459,12 +472,15 @@ function carouselBufferPayload() {
 function carouselAdminPayload() {
   const activeItems = carouselItems();
   const buffered = carouselBufferPayload();
+  const conflicts = listHeroCarouselSlotConflicts();
   return {
     activeItems,
     buffered,
+    conflicts,
     summary: {
       activeCount: activeItems.length,
       bufferedCount: buffered.length,
+      conflictCount: conflicts.length,
       focusEnabled: focusModeEnabled()
     }
   };
@@ -495,6 +511,8 @@ function focusedSitemap(res) {
     { loc: `${siteUrl}/category.html?category=electronics-basics`, priority: "0.9" },
     { loc: `${siteUrl}/derive.html`, priority: "0.85" },
     { loc: `${siteUrl}/projects.html`, priority: "0.8" },
+    { loc: `${siteUrl}/miniapps.html`, priority: "0.75" },
+    { loc: `${siteUrl}/tools/md2doc.html`, priority: "0.7" },
     ...allPosts(false).map((post) => ({
       loc: `${siteUrl}/post.html?id=${encodeURIComponent(post.id)}`,
       priority: "0.7",
@@ -861,6 +879,11 @@ const defaultSiteLayout = {
   ]
 };
 
+const requiredPublicLayoutSections = {
+  home: new Set(["miniapps"]),
+  miniappsPage: new Set(["miniappsHeader", "miniappRegistry"])
+};
+
 const defaultPublicFocusMode = {
   enabled: true,
   ownerConfigured: false,
@@ -868,7 +891,7 @@ const defaultPublicFocusMode = {
   visibleScopes: ["electronics-basics", "derivations", "projects"],
   scopeAliases: { "power-electronics": "electronics-basics" },
   homepageOrder: ["electronics-basics", "derivations", "projects"],
-  hideMiniappsFromPrimaryNav: true,
+  hideMiniappsFromPrimaryNav: false,
   hideAdminFromPublicNav: true,
   noindexHiddenLandingPages: true,
   noindexHiddenDetailPages: true,
@@ -903,7 +926,7 @@ function normalizeSiteLayout(payload = {}) {
           return {
             ...base,
             order: Math.max(1, Math.min(99, Number(item.order || base.order))),
-            visible: item.visible !== false,
+            visible: requiredPublicLayoutSections[pageKey]?.has(base.key) ? true : item.visible !== false,
             size: layoutSize(item.size || base.size)
           };
         })
@@ -921,7 +944,8 @@ function publicFocusMode() {
   return {
     ...defaultPublicFocusMode,
     enabled: stored.enabled !== false,
-    ownerConfigured: stored.ownerConfigured === true
+    ownerConfigured: stored.ownerConfigured === true,
+    hideMiniappsFromPrimaryNav: false
   };
 }
 
@@ -955,6 +979,7 @@ function publicContentPayload() {
   return {
     posts: allPosts(false),
     projects: allProjects(false),
+    heroCarousel: publicCarouselItems(),
     projectDirectory: publicProjectDirectory(),
     siteLayout: siteLayout(),
     publicFocusMode: {
@@ -1073,7 +1098,7 @@ function safeDownloadName(value, fallback) {
 
 function md2docResponse(res, status, payload) {
   return json(res, status, {
-    version: "V0.3",
+    version: "V0.4",
     diagnostics: [],
     ...payload
   });
@@ -1106,10 +1131,39 @@ function md2docConvert(res, body) {
   const fileBase = safeDownloadName(body.filename || title, "md2file").replace(/\.docx$/i, "") || "md2file";
   const filename = `${fileBase}.docx`;
   const options = body && typeof body.options === "object" && body.options ? body.options : {};
-  const docx = markdownToDocx({ markdown, title, options });
+  const inspection = inspectMarkdown(markdown);
+  if (!inspection.valid) {
+    return md2docResponse(res, 422, {
+      ok: false,
+      diagnostics: inspection.diagnostics.map((item) => ({
+        ...item,
+        level: String(item.severity || "error").toUpperCase()
+      }))
+    });
+  }
+  let docx;
+  try {
+    docx = markdownToDocx({ markdown, title, options });
+  } catch (error) {
+    if (Array.isArray(error.diagnostics)) {
+      return md2docResponse(res, 422, {
+        ok: false,
+        diagnostics: error.diagnostics.map((item) => ({
+          ...item,
+          level: String(item.severity || "error").toUpperCase()
+        }))
+      });
+    }
+    throw error;
+  }
+  const asciiFilename =
+    filename
+      .normalize("NFKD")
+      .replace(/[^\x20-\x7e]+/g, "_")
+      .replace(/["\\]+/g, "-") || "md2file.docx";
   res.writeHead(200, {
     "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "Content-Disposition": `attachment; filename="${filename}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
+    "Content-Disposition": `attachment; filename="${asciiFilename}"; filename*=UTF-8''${encodeURIComponent(filename)}`,
     "Cache-Control": "no-store",
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "strict-origin-when-cross-origin",
@@ -1120,10 +1174,20 @@ function md2docConvert(res, body) {
 }
 
 function carouselItems() {
-  return [
-    ...allStoredPosts(true).map((item) => ({ ...item, contentType: "post" })),
-    ...allStoredProjects(true).map((item) => ({ ...item, contentType: "project" }))
-  ].filter((item) => item.featured && !item.deletedAt);
+  return listHeroCarouselSlots();
+}
+
+function publicCarouselItems() {
+  const visible = new Map([
+    ...allPosts(false).map((item) => [`post:${item.id}`, { ...item, contentType: "post" }]),
+    ...allProjects(false).map((item) => [`project:${item.id}`, { ...item, contentType: "project" }])
+  ]);
+  return carouselItems()
+    .map((slot) => {
+      const item = visible.get(`${slot.contentType}:${slot.id}`);
+      return item ? { ...item, featured: true, featuredOrder: slot.slot, slot: slot.slot } : null;
+    })
+    .filter(Boolean);
 }
 
 function assertCarouselSlot(payload, contentType) {
@@ -1139,11 +1203,15 @@ function assertCarouselSlot(payload, contentType) {
   const order = Number(payload.featuredOrder || 0);
   const existing = carouselItems().filter((item) => !(item.contentType === contentType && item.id === payload.id));
   if (existing.length >= 4) {
-    throw apiError(400, "首页轮播最多只能设置 4 个内容，请先取消一个已有轮播项");
+    const error = apiError(409, "首页轮播四个槽位均已占用，请先明确释放一个槽位");
+    error.reasonCode = "CAROUSEL_SLOTS_FULL";
+    throw error;
   }
-  const conflict = existing.find((item) => Number(item.featuredOrder || 0) === order);
+  const conflict = existing.find((item) => Number(item.slot) === order);
   if (conflict) {
-    throw apiError(400, `轮播排序 ${order} 已被《${conflict.title || "未命名内容"}》使用，请选择 0-3 中的空槽位`);
+    const error = apiError(409, `轮播槽位 ${order + 1} 已被《${conflict.title || "未命名内容"}》使用，请选择空槽位`);
+    error.reasonCode = "CAROUSEL_SLOT_CONFLICT";
+    throw error;
   }
 }
 
@@ -1531,6 +1599,7 @@ async function api(req, res, pathname) {
       projects: allProjects(true),
       knowledgeNodes: allKnowledgeNodes(true),
       formulaReferenceDecisions: listFormulaReferenceDecisions(),
+      formulaRelationRepairs: listFormulaRelationRepairs(),
       siteLayout: siteLayout(),
       publicFocusMode: publicFocusMode(),
       focusScopeCounts: focusScopeCounts(),
@@ -1726,6 +1795,45 @@ async function api(req, res, pathname) {
     );
   }
 
+  if (pathname === "/api/admin/formula-relation-repairs" && req.method === "GET") {
+    const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+    return json(res, 200, {
+      repairs: listFormulaRelationRepairs({
+        status: url.searchParams.get("status") || "pending",
+        issueCode: url.searchParams.get("issue") || ""
+      })
+    });
+  }
+
+  const formulaRelationRepairEvent = pathname.match(
+    /^\/api\/admin\/formula-relation-repairs\/([^/]+)\/events$/
+  );
+  if (formulaRelationRepairEvent && req.method === "POST") {
+    const repairId = decodeURIComponent(formulaRelationRepairEvent[1]);
+    const input = validateFormulaRelationRepairEventPayload(await readBody(req));
+    let repair;
+    withTransaction(() => {
+      repair = appendFormulaRelationRepairEvent(repairId, input, user);
+      logAudit(
+        db,
+        req,
+        user,
+        `formula_relation_repair_${input.eventType}`,
+        "formula_relation_repair",
+        repairId,
+        {
+          targetFormulaId: input.targetFormulaId || "",
+          sourceFormulaId: repair.sourceFormulaId,
+          sourceRevisionId: repair.sourceRevisionId
+        }
+      );
+    });
+    return json(res, 200, {
+      repair,
+      repairs: listFormulaRelationRepairs()
+    });
+  }
+
   const formulaDecisionResolve = pathname.match(/^\/api\/admin\/formula-decisions\/([^/]+)\/resolve$/);
   if (formulaDecisionResolve && req.method === "POST") {
     const decisionId = decodeURIComponent(formulaDecisionResolve[1]);
@@ -1795,7 +1903,14 @@ async function api(req, res, pathname) {
     const post = validatePostPayload(body.post || {});
     assertFocusWriteAllowed("post", post);
     const selection = validateLatexSelection(post.markdown, body.selectionStart, body.selectionEnd);
-    const identity = generatedFormulaIdentity();
+    const sourceHash = validateSourceHash(body.sourceHash, "sourceHash");
+    const baseSourceHash = validateSourceHash(body.baseSourceHash, "baseSourceHash", {
+      optional: true
+    });
+    const identity = formulaSelectionIdentity({
+      displayName: body.formula?.displayName,
+      latex: selection.latex
+    });
     const formula = validateFormulaCardPayload({
       ...(body.formula || {}),
       ...identity,
@@ -1805,9 +1920,13 @@ async function api(req, res, pathname) {
     assertCarouselSlot(post, "post");
     let created;
     withTransaction(() => {
-      created = createFormulaFromSelection({ post, formula, selection }, user);
+      created = createFormulaFromSelection(
+        { post, formula, selection, sourceHash, baseSourceHash },
+        user
+      );
       logAudit(db, req, user, "formula_card_create_from_article", "formula_card", created.card.formulaId, {
         postId: created.post.id,
+        sourceHash,
         revisionId: created.binding.revisionId,
         bindingId: created.binding.bindingId
       });
@@ -1817,7 +1936,7 @@ async function api(req, res, pathname) {
         bindingId: created.binding.bindingId
       });
     });
-    return json(res, 200, { ...created, posts: allPosts(true) });
+    return json(res, 200, { ...created, posts: allPosts(true), carousel: carouselAdminPayload() });
   }
 
   if (pathname === "/api/admin/formulas" && req.method === "POST") {
@@ -1985,7 +2104,7 @@ async function api(req, res, pathname) {
       savePost({ ...body, actor: user });
       logAudit(db, req, user, "post_save", "post", body.id, { publishStatus: body.publishStatus, featured: body.featured });
     });
-    return json(res, 200, { posts: allPosts(true) });
+    return json(res, 200, { posts: allPosts(true), carousel: carouselAdminPayload() });
   }
 
   if (pathname === "/api/projects" && req.method === "POST") {
@@ -1996,7 +2115,7 @@ async function api(req, res, pathname) {
       saveProject({ ...body, actor: user });
       logAudit(db, req, user, "project_save", "project", body.id, { visibilityStatus: body.visibilityStatus, statusKey: body.statusKey });
     });
-    return json(res, 200, { projects: allProjects(true) });
+    return json(res, 200, { projects: allProjects(true), carousel: carouselAdminPayload() });
   }
 
   if (pathname === "/api/uploads" && req.method === "POST") {
@@ -2023,22 +2142,37 @@ async function api(req, res, pathname) {
     const id = decodeURIComponent(postRevisionRestore[1]);
     assertFocusWriteAllowed("post", { ...(postById(id) || {}), id }, { requireExisting: true });
     const revisionId = Number(postRevisionRestore[2]);
+    let restored;
     withTransaction(() => {
-      restoreRevision("post", id, revisionId, { actor: user });
+      restored = restoreRevision("post", id, revisionId, { actor: user });
+      assertFocusWriteAllowed("post", restored, { requireExisting: true });
       logAudit(db, req, user, "post_revision_restore", "post", id, { revisionId });
     });
-    return json(res, 200, { posts: allPosts(true), revisions: listRevisions("post", id) });
+    return json(res, 200, {
+      restored,
+      posts: allPosts(true),
+      revisions: listRevisions("post", id),
+      carousel: carouselAdminPayload()
+    });
   }
 
   const projectRevisionRestore = pathname.match(/^\/api\/projects\/([^/]+)\/revisions\/(\d+)\/restore$/);
   if (projectRevisionRestore && req.method === "POST") {
     const id = decodeURIComponent(projectRevisionRestore[1]);
+    assertFocusWriteAllowed("project", { ...(projectById(id) || {}), id }, { requireExisting: true });
     const revisionId = Number(projectRevisionRestore[2]);
+    let restored;
     withTransaction(() => {
-      restoreRevision("project", id, revisionId, { actor: user });
+      restored = restoreRevision("project", id, revisionId, { actor: user });
+      assertFocusWriteAllowed("project", restored, { requireExisting: true });
       logAudit(db, req, user, "project_revision_restore", "project", id, { revisionId });
     });
-    return json(res, 200, { projects: allProjects(true), revisions: listRevisions("project", id) });
+    return json(res, 200, {
+      restored,
+      projects: allProjects(true),
+      revisions: listRevisions("project", id),
+      carousel: carouselAdminPayload()
+    });
   }
 
   const postRestore = pathname.match(/^\/api\/posts\/([^/]+)\/restore$/);
@@ -2049,17 +2183,18 @@ async function api(req, res, pathname) {
       restorePost(id, { actor: user });
       logAudit(db, req, user, "post_restore", "post", id);
     });
-    return json(res, 200, { posts: allPosts(true) });
+    return json(res, 200, { posts: allPosts(true), carousel: carouselAdminPayload() });
   }
 
   const projectRestore = pathname.match(/^\/api\/projects\/([^/]+)\/restore$/);
   if (projectRestore && req.method === "POST") {
     const id = decodeURIComponent(projectRestore[1]);
+    assertFocusWriteAllowed("project", { ...(projectById(id) || {}), id }, { requireExisting: true });
     withTransaction(() => {
       restoreProject(id, { actor: user });
       logAudit(db, req, user, "project_restore", "project", id);
     });
-    return json(res, 200, { projects: allProjects(true) });
+    return json(res, 200, { projects: allProjects(true), carousel: carouselAdminPayload() });
   }
 
   const hardDeletePostMatch = pathname.match(/^\/api\/posts\/([^/]+)\/hard$/);
@@ -2150,6 +2285,16 @@ const publicStaticFiles = new Set([
 
 const publicStaticPrefixes = ["/admin/", "/assets/", "/data/", "/styles/", "/tools/"];
 const blockedStaticSegments = new Set([".git", "database", "docs", "gokotta-elec-core", "lib", "node_modules", "scripts"]);
+const focusModePublicRouteExceptions = new Set([
+  "/miniapps.html",
+  "/tools/md2doc.html",
+  "/tools/md2doc.js",
+  "/api/md2file/convert"
+]);
+
+function isFocusModePublicRouteException(pathname) {
+  return focusModePublicRouteExceptions.has(pathname);
+}
 
 function isPublicStaticRequest(requested) {
   const normalized = requested.replace(/\\/g, "/");
@@ -2249,7 +2394,12 @@ const server = http.createServer(async (req, res) => {
       const redirect = resolveLegacyFormulaRedirect(url.searchParams.get("slug"));
       if (redirect) return servePermanentRedirect(req, res, redirect.location);
     }
-    if (url.pathname.startsWith("/api/")) return await api(req, res, url.pathname);
+    if (url.pathname.startsWith("/api/")) {
+      if (focusModeEnabled() && url.pathname.startsWith("/api/md2") && !isFocusModePublicRouteException(url.pathname)) {
+        return serveNotFound(res);
+      }
+      return await api(req, res, url.pathname);
+    }
     if (url.pathname === "/healthz") return json(res, 200, healthPayload());
     if (url.pathname === "/sitemap.xml") return focusModeEnabled() ? focusedSitemap(res) : seo.sitemap(res);
     if (url.pathname === "/robots.txt") return seo.robots(res);
@@ -2265,7 +2415,12 @@ const server = http.createServer(async (req, res) => {
         const category = String(url.searchParams.get("category") || "").toLowerCase();
         if (!["electronics-basics", "power-electronics", "projects"].includes(category)) return serveNotFound(res);
       }
-      if (url.pathname === "/miniapps.html" || url.pathname.startsWith("/tools/")) return serveNotFound(res);
+      if (
+        (url.pathname === "/miniapps.html" || url.pathname.startsWith("/tools/")) &&
+        !isFocusModePublicRouteException(url.pathname)
+      ) {
+        return serveNotFound(res);
+      }
     }
     serveStatic(res, url.pathname);
   } catch (error) {

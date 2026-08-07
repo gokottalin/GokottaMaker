@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260730-011",
+  "title": "恢复 MD2File 公开入口并作为唯一展示小程序",
+  "status": "dispatched",
+  "priority": "high",
+  "createdAt": "2026-07-30T11:48:04.011+08:00",
+  "updatedAt": "2026-07-30T11:53:27.440+08:00",
+  "intent": {
+    "problem": "Larkix 首页中的 MD2File 当前无法访问，LarkixMaker 缺少可用的小程序栏目，公开列表还可能展示不希望露出的其他小程序。",
+    "desiredOutcome": "在品牌首页、Maker 和小程序中心恢复可访问的 MD2File，并让它成为这些公开位置唯一展示的小程序。",
+    "targetUsers": ["游客", "Owner/幕后作者"]
+  },
+  "scope": {
+    "in": [
+      "统一使用正式名称 MD2File",
+      "Larkix 品牌首页只展示 MD2File 小程序入口",
+      "LarkixMaker 恢复网页小程序栏目且只展示 MD2File",
+      "小程序中心页面只展示 MD2File",
+      "三个位置的 MD2File 卡片均可进入同一个有效工具页面",
+      "MD2File 成为聚焦模式下唯一允许公开展示和访问的小程序例外",
+      "聚焦模式开启或关闭时 MD2File 均保持可见可访问",
+      "其他小程序不在首页、Maker 或小程序中心列表中展示",
+      "其他小程序代码、数据和历史资产保留，不执行删除"
+    ],
+    "out": [
+      "删除其他小程序代码、数据或历史资产",
+      "在公开列表中同时展示 MD2File 和其他小程序",
+      "因为聚焦模式开启而隐藏或阻断 MD2File",
+      "创建新的 MD2File 品牌名称或第二个工具副本"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "MD2File 首页入口无法正常访问。",
+      "聚焦模式可能隐藏 Maker 小程序栏目或阻断工具路由。",
+      "小程序中心可从同一注册表展示多个工具。"
+    ],
+    "expected": [
+      "品牌首页、Maker 小程序栏目和小程序中心均只显示 MD2File。",
+      "三个入口均能到达并使用同一 MD2File 工具。",
+      "聚焦模式开关不影响 MD2File 可见性和访问。",
+      "其他小程序仅从公开列表隐藏，底层数据不删除。"
+    ],
+    "edgeCases": [
+      "聚焦模式开启与关闭。",
+      "旧缓存仍包含其他小程序列表。",
+      "旧链接或书签直接访问其他小程序。",
+      "MD2File 卡片存在多个历史 URL 或版本号。",
+      "某个页面布局配置隐藏整个小程序区块。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.three-surfaces",
+      "statement": "Larkix 品牌首页、LarkixMaker 小程序栏目和小程序中心均只展示一个 MD2File 卡片。",
+      "verification": "分别在三个页面统计小程序卡片名称和数量。"
+    },
+    {
+      "id": "ac.route-access",
+      "statement": "三个 MD2File 入口均进入同一个可用工具页面，不返回 404、空白页或聚焦模式阻断页。",
+      "verification": "逐一点击入口并完成页面加载与基础交互检查。"
+    },
+    {
+      "id": "ac.focus-exception",
+      "statement": "聚焦模式开启和关闭时 MD2File 始终可见可访问，其他小程序始终不出现在三个公开列表。",
+      "verification": "切换聚焦模式并对三个页面执行显示与访问矩阵。"
+    },
+    {
+      "id": "ac.retain-hidden-data",
+      "statement": "其他小程序仅从公开列表隐藏，其注册数据、代码和资产未被删除。",
+      "verification": "变更前后核对非 MD2File 小程序记录和文件数量。"
+    },
+    {
+      "id": "ac.maker-column",
+      "statement": "LarkixMaker 页面存在清楚的网页小程序栏目，栏目中只有 MD2File 且响应式布局正常。",
+      "verification": "在桌面、半宽和移动视口检查栏目标题、卡片和入口。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN"],
+    "platforms": ["Larkix 品牌首页", "LarkixMaker", "Larkix 小程序中心"],
+    "compatibility": ["保留其他小程序代码和数据", "兼容聚焦模式全局规则并增加 MD2File 例外"],
+    "data": ["不得物理删除非 MD2File 小程序记录"],
+    "security": [],
+    "operations": ["需要三页面、双聚焦状态和多视口访问回归"],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.stale-registry",
+      "severity": "medium",
+      "statement": "多个页面直接读取完整小程序注册表或旧缓存，可能重新显示其他工具。",
+      "mitigation": "建立统一公开展示策略，并用三个页面和缓存刷新场景验收。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-30T11:51:02.563+08:00",
+    "confirmationText": "确认无误，开始执行",
+    "digest": "sha256:65586fd8747d3cf343eed2f8eb2ea94bea4ab020d41b04739e2b61d19052abd7"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-07-30T11:53:27.440+08:00"
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260730-002",
+  "title": "聚焦内容文章封面按卡片容器自动铺满",
+  "status": "dispatched",
+  "priority": "high",
+  "createdAt": "2026-07-30T11:39:33.767+08:00",
+  "updatedAt": "2026-07-30T11:53:27.440+08:00",
+  "intent": {
+    "problem": "聚焦内容文章卡片仍沿用 Hero 图片比例，导致封面留空、比例失真或构图不美观。",
+    "desiredOutcome": "聚焦内容封面按照文章卡片当前实际容器比例自动裁切并完整铺满图片区域。",
+    "targetUsers": ["游客", "Owner/幕后作者"]
+  },
+  "scope": {
+    "in": [
+      "聚焦内容文章卡片使用自身响应式容器比例",
+      "图片保持原始宽高比并以 cover 方式铺满，不拉伸",
+      "存在作者保存的裁剪坐标或焦点时优先使用",
+      "不存在裁剪信息时默认居中裁切",
+      "桌面、半宽和移动布局分别按实际容器重新计算",
+      "Hero 继续使用独立的比例与裁剪规则"
+    ],
+    "out": [
+      "把聚焦内容固定为 Hero 比例",
+      "强制使用 16:9",
+      "改变 Hero 自身的图片规则",
+      "覆盖或删除原图"
+    ]
+  },
+  "behavior": {
+    "current": ["聚焦内容文章封面显示为 Hero 比例，无法刚好填满文章示意区域。"],
+    "expected": [
+      "每张聚焦文章封面无空白地铺满卡片图片区域。",
+      "图片不变形，裁切随卡片响应式比例变化。",
+      "已有裁剪意图在可用时得到保留。"
+    ],
+    "edgeCases": [
+      "竖图、超宽图及低分辨率图片。",
+      "卡片跨断点改变宽高比。",
+      "裁剪坐标缺失或超出原图范围。",
+      "同一图片同时用于 Hero 和聚焦卡片。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.fill-container",
+      "statement": "聚焦内容封面在所有支持的卡片尺寸中铺满图片容器，无拉伸、留白或 Hero 比例残留。",
+      "verification": "使用竖图、横图和超宽图执行桌面、半宽及移动截图对照。"
+    },
+    {
+      "id": "ac.crop-priority",
+      "statement": "存在有效裁剪坐标或焦点时优先应用，否则采用居中 cover。",
+      "verification": "分别准备有裁剪信息和无裁剪信息的文章并比较构图。"
+    },
+    {
+      "id": "ac.hero-isolation",
+      "statement": "聚焦卡片修复不会改变 Hero 图片比例和已有轮播构图。",
+      "verification": "同一文章同时进入 Hero 与聚焦列表并核对两个容器独立显示。"
+    },
+    {
+      "id": "ac.responsive",
+      "statement": "容器跨响应式断点变化后，封面仍按新容器比例完整铺满。",
+      "verification": "改变视口宽度并检查重排前后图片边界。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN"],
+    "platforms": ["Larkix 游客网页"],
+    "compatibility": ["保留原图和既有可逆裁剪数据", "Hero 显示规则保持独立"],
+    "data": ["不得生成不可逆的新裁剪图片替换原图"],
+    "security": [],
+    "operations": ["需要响应式视觉回归证据"],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.double-crop",
+      "severity": "medium",
+      "statement": "错误叠加 Hero 裁剪与卡片 cover 可能造成二次裁切。",
+      "mitigation": "把原图、作者裁剪意图和各展示容器的最终适配分层处理并执行同图对照。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-30T11:51:02.563+08:00",
+    "confirmationText": "确认无误，开始执行",
+    "digest": "sha256:21606803c40f2b2305c0f9572eb3f33d690a9aed9962fcb7925b413213927bca"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-07-30T11:53:27.440+08:00"
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260730-007",
+  "title": "文章与公式编辑操作悬浮提示系统",
+  "status": "dispatched",
+  "priority": "normal",
+  "createdAt": "2026-07-30T11:39:33.767+08:00",
+  "updatedAt": "2026-07-30T11:53:27.440+08:00",
+  "intent": {
+    "problem": "保存、发布、失败和栏目调整提示显示在页面顶部，长页面中作者难以及时看到反馈。",
+    "desiredOutcome": "文章和公式编辑操作使用清晰、分级且不依赖页面滚动位置的悬浮提示。",
+    "targetUsers": ["Owner/幕后作者"]
+  },
+  "scope": {
+    "in": [
+      "覆盖文章保存、文章发布、公式保存、公式发布及相关校验反馈",
+      "提示以悬浮 toast 显示，不再依赖页面顶部固定信息区",
+      "成功和普通提醒显示三秒后渐出",
+      "提示进入和离开均采用渐入渐出",
+      "发布失败、循环依赖、缺少栏目和其他阻断错误持续显示，直到关闭或问题修正",
+      "不同状态具有可区分的文字、图标和颜色",
+      "支持连续操作时的队列、合并或替换，不相互遮挡",
+      "桌面和移动端均不遮挡主要操作按钮"
+    ],
+    "out": [
+      "把所有错误都强制在三秒后消失",
+      "只改变颜色而保留页面顶部作为唯一反馈",
+      "用 toast 代替字段旁的精确校验说明"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "操作状态显示在页面最上方，作者在编辑长文章时可能看不到。",
+      "成功、失败和需要调整的状态缺少统一停留策略。"
+    ],
+    "expected": [
+      "无论滚动位置如何，作者都能立即看到操作结果。",
+      "短暂成功信息自动消失，必须处理的错误不会过早消失。",
+      "字段错误仍能定位到具体栏目。"
+    ],
+    "edgeCases": [
+      "短时间连续保存和发布。",
+      "多个字段同时失败。",
+      "网络超时、重复提交和后台返回未知错误。",
+      "移动端软键盘打开。",
+      "夜间模式及减少动画系统设置。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.operation-coverage",
+      "statement": "文章与公式的保存、发布、失败和调整反馈均通过统一悬浮提示出现。",
+      "verification": "逐项触发成功、普通提醒、字段错误和发布阻断。"
+    },
+    {
+      "id": "ac.timing",
+      "statement": "成功与普通提醒三秒后渐出，阻断错误保持显示直到关闭或状态被修正。",
+      "verification": "计时检查提示停留，并修正错误验证自动解除。"
+    },
+    {
+      "id": "ac.no-scroll-dependency",
+      "statement": "提示在长页面任意滚动位置均可见，不要求返回页面顶部。",
+      "verification": "滚动到文章底部执行保存和发布操作。"
+    },
+    {
+      "id": "ac.concurrent-feedback",
+      "statement": "连续操作提示不会重叠遮挡、丢失关键错误或出现过期成功状态。",
+      "verification": "快速连续触发保存、发布和失败并检查顺序。"
+    },
+    {
+      "id": "ac.accessibility",
+      "statement": "提示可被辅助技术识别，阻断提示可键盘关闭，并尊重减少动画偏好。",
+      "verification": "执行可访问名称、键盘和 reduced-motion 检查。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN"],
+    "platforms": ["Larkix CMS"],
+    "compatibility": ["覆盖日间和夜间主题", "保留字段级校验定位"],
+    "data": [],
+    "security": [],
+    "operations": ["需要计时、并发提示和长页面回归"],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.hidden-blocker",
+      "severity": "medium",
+      "statement": "错误若被普通 toast 替换或自动消失，作者可能误以为操作成功。",
+      "mitigation": "阻断错误采用持久状态，并保持字段级定位和明确成功条件。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-30T11:51:02.563+08:00",
+    "confirmationText": "确认无误，开始执行",
+    "digest": "sha256:94ac66992a7e0040490bb3725a98eddce6c29191689573dbefe0bf4bbc66094f"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-07-30T11:53:27.440+08:00"
+  }
+}

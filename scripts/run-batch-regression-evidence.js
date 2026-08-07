@@ -8,81 +8,97 @@ const path = require("path");
 const { spawnSync } = require("child_process");
 
 const root = path.resolve(__dirname, "..");
-const runnerDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "larkix-s27-runner-"));
+const runnerDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "larkix-s40-runner-"));
 const npmCommand = process.platform === "win32" ? (process.env.ComSpec || "cmd.exe") : "npm";
 const npmPrefix = process.platform === "win32" ? ["/d", "/s", "/c", "npm.cmd"] : [];
 const powershellCommand = process.platform === "win32" ? "powershell.exe" : "pwsh";
-const runSecret = `s27-${crypto.randomBytes(18).toString("hex")}`;
+const runSecret = `s40-${crypto.randomBytes(18).toString("hex")}`;
 const maxFailureOutput = 12000;
 const checkTimeoutMs = 15 * 60 * 1000;
 
-const protectedHashes = new Map([
-  ["styles/20-content.css", "c201a6eca1a6d2d1ce4d7a105d4530571c869c84dcb17a3db2b82900c3dd0752"],
-  ["admin/admin.css", "8ca8a5b700e43bccd2169057d71817de0c7a342c405cfb166a366f8e22c35c01"],
-  ["styles/10-hero.css", "d2589f70e9e1d2145ebdc5dca95c499ad21e896ad15479a8dfbe4aa460418fe5"],
-  ["styles/26-inline-math.css", "e257580e25fd9e9ec52eb0a55d9ad992da5d5b953e2db49bfde390d22b5f3d12"],
-  ["styles/27-focused-content-media.css", "8424b6a8c99b7ce7a431ea8cc4e744f5befbe9aef439a2b3e56c7d3c316b8a30"],
-]);
-
-const acceptedImplementationFiles = [
-  "migrations/020_formula_publication_workflow.js",
-  "migrations/021_branching_derivation_graph.js",
-  "migrations/022_formula_revision_presentation_snapshot.js",
-  "migrations/023_legacy_formula_migration_support.js",
-  "migrations/024_post_cover_coordinates.js",
-  "migrations/025_post_reading_minutes.js",
-  "lib/content.js",
-  "lib/validators.js",
-  "lib/legacy-formula-migration.js",
-  "server.js",
-  "data/markdown-renderer.js",
-  "data/media.js",
-  "data/posts.js",
-  "admin/index.html",
-  "admin/course-paths.html",
-  "admin/admin.js",
-  "admin/admin.css",
-  "admin/admin-dark.css",
-  "derive.html",
-  "maker.html",
-  "post.js",
-  "main.js",
-  "category-page.js",
-  "formula-graph.js",
-  "styles.css",
-  "styles/25-cover-crop.css",
-  "styles/26-inline-math.css",
-  "styles/27-focused-content-media.css",
-  "styles/28-full-site-dark.css",
-  "scripts/migrate-legacy-formulas.js",
-  "scripts/test-formula-publication-workflow.js",
-  "scripts/test-branching-derivation-graph.js",
-  "scripts/test-formula-authoring-drawer.js",
-  "scripts/test-legacy-formula-migration.js",
-  "scripts/test-post-cover-coordinates.js",
-  "scripts/test-post-reading-minutes.js",
-  "scripts/test-inline-math-layout.js",
-  "scripts/test-focused-content-media.js",
-  "scripts/test-full-site-dark-theme.js",
-  "docs/calculation-book-authoring-guide.md",
-  "docs/legacy-formula-migration.md",
-  "docs/post-cover-coordinates.md",
-  "docs/post-reading-minutes.md",
-  "docs/inline-math-layout.md",
-  "docs/focused-content-media.md",
-  "docs/full-site-dark-theme.md",
+const s40OutputFiles = [
   "package.json",
+  "scripts/run-batch-regression-evidence.js",
+  "docs/batch-regression-evidence.md",
+  "docs/codex-workline/slices/S40_batch_regression_evidence_handoff.md",
 ];
 
-const syntaxFiles = acceptedImplementationFiles.filter((file) => file.endsWith(".js"));
+const s40aAcceptedFiles = [
+  "scripts/verify-api.ps1",
+  "scripts/test-api-verify-redirected-output.js",
+  "docs/codex-workline/slices/S40A_api_verify_redirected_output_handoff.md",
+];
+
+const protectedHashes = new Map([
+  ["styles/20-content.css", "c201a6eca1a6d2d1ce4d7a105d4530571c869c84dcb17a3db2b82900c3dd0752"],
+  ["lib/seo.js", "c80df366fbf9292d63951b57a2188bc0390c3282e4aaaf213202e0dd050e410f"],
+  ["styles/10-hero.css", "d2589f70e9e1d2145ebdc5dca95c499ad21e896ad15479a8dfbe4aa460418fe5"],
+]);
+
 const inheritedBomAllowlist = new Set(["admin/admin.js", "styles.css"]);
+const textExtensions = new Set([
+  ".css", ".html", ".js", ".json", ".lock", ".md", ".ps1", ".sh",
+  ".svg", ".toml", ".txt", ".xml", ".yaml", ".yml",
+]);
+const auditState = { changedPaths: 0, classifiedPaths: 0, stagedPaths: 0 };
+
+function normalize(file) {
+  return file.replaceAll("\\", "/").replace(/^\.\//, "");
+}
 
 function npmCheck(id, label, script) {
   return { id, label, command: npmCommand, args: [...npmPrefix, "run", script] };
 }
 
+function nodeCheck(id, label, file, experimentalSqlite = false) {
+  const args = experimentalSqlite ? ["--experimental-sqlite", file] : [file];
+  return { id, label, command: process.execPath, args };
+}
+
 function sha256(file) {
   return crypto.createHash("sha256").update(fs.readFileSync(path.join(root, file))).digest("hex");
+}
+
+function readJson(file) {
+  return JSON.parse(fs.readFileSync(path.join(root, file), "utf8"));
+}
+
+function walkFiles(directory) {
+  if (!fs.existsSync(directory)) return [];
+  const files = [];
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    const absolute = path.join(directory, entry.name);
+    if (entry.isDirectory()) files.push(...walkFiles(absolute));
+    else if (entry.isFile()) files.push(normalize(path.relative(root, absolute)));
+  }
+  return files;
+}
+
+function expandPattern(pattern) {
+  const normalized = normalize(pattern);
+  if (normalized.endsWith("/**")) {
+    return walkFiles(path.join(root, normalized.slice(0, -3)));
+  }
+  if (!normalized.includes("*")) return [normalized];
+  throw new Error(`Unsupported scope glob: ${normalized}`);
+}
+
+function sliceScope(first, last) {
+  const registry = readJson("docs/codex-workline/implementation_slices.json");
+  const patterns = registry.slices
+    .filter((slice) => {
+      const match = /^S(\d+)_/.exec(slice.id);
+      const number = match ? Number(match[1]) : -1;
+      return number >= first && number <= last;
+    })
+    .flatMap((slice) => slice.mayEdit || []);
+  return [...new Set(patterns.flatMap(expandPattern))];
+}
+
+function acceptedTextFiles() {
+  return [...new Set([...sliceScope(30, 39), ...s40aAcceptedFiles, ...s40OutputFiles])]
+    .filter((file) => fs.existsSync(path.join(root, file)))
+    .filter((file) => textExtensions.has(path.extname(file).toLowerCase()));
 }
 
 function assertProtectedHashes() {
@@ -94,35 +110,60 @@ function assertProtectedHashes() {
   if (mismatches.length) throw new Error(mismatches.join("\n"));
 }
 
-function assertEncodingAndArtifacts() {
-  const files = [...acceptedImplementationFiles, "scripts/run-batch-regression-evidence.js"]
-    .filter((file, index, list) => list.indexOf(file) === index)
-    .filter((file) => fs.existsSync(path.join(root, file)));
+function assertRequirementMappings() {
+  const dispatch = readJson("docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json");
+  const expected = Array.from({ length: 12 }, (_, index) => `REQ-20260730-${String(index + 1).padStart(3, "0")}`);
+  const source = new Set(dispatch.sourceRequirements.map((item) => item.requirementId));
+  const mapped = new Set(
+    dispatch.executionOrder
+      .filter((item) => /^S3\d_/.test(item.slice))
+      .flatMap((item) => item.requirements || [])
+  );
+  const s40 = dispatch.executionOrder.find((item) => item.slice === "S40_batch_regression_evidence");
   const failures = [];
-  for (const file of files) {
+  if (dispatch.dispatchId !== "DISPATCH-20260730-001") failures.push("dispatch id mismatch");
+  for (const id of expected) {
+    if (!source.has(id)) failures.push(`${id}: missing source package`);
+    if (!mapped.has(id)) failures.push(`${id}: missing S30-S39 mapping`);
+    if (!s40 || !(s40.requirements || []).includes(id)) failures.push(`${id}: missing S40 coverage`);
+    const active = path.join(root, "docs/codex-workline/requirements/active", `${id}.json`);
+    if (!fs.existsSync(active)) failures.push(`${id}: active brief missing`);
+  }
+  for (let number = 30; number <= 39; number += 1) {
+    const item = dispatch.executionOrder.find((entry) => entry.slice.startsWith(`S${number}_`));
+    if (!item || item.status !== "completed") failures.push(`S${number}: not completed in dispatch`);
+    const handoff = item && path.join(root, "docs/codex-workline/slices", `${item.slice}_handoff.md`);
+    if (!handoff || !fs.existsSync(handoff)) failures.push(`S${number}: accepted handoff missing`);
+  }
+  const s40a = dispatch.executionOrder.find((entry) => entry.slice === "S40A_api_verify_redirected_output");
+  if (!s40a || s40a.status !== "completed") failures.push("S40A: not completed in dispatch");
+  if (!fs.existsSync(path.join(root, "docs/codex-workline/slices/S40A_api_verify_redirected_output_handoff.md"))) {
+    failures.push("S40A: accepted handoff missing");
+  }
+  if (failures.length) throw new Error(failures.join("\n"));
+}
+
+function assertEncodingAndArtifacts() {
+  const failures = [];
+  for (const file of acceptedTextFiles()) {
     const buffer = fs.readFileSync(path.join(root, file));
     const hasBom = buffer.length >= 3 && buffer[0] === 0xef && buffer[1] === 0xbb && buffer[2] === 0xbf;
-    if (hasBom && !inheritedBomAllowlist.has(file)) {
-      failures.push(`${file}: UTF-8 BOM detected`);
-    }
-    let text = "";
+    if (hasBom && !inheritedBomAllowlist.has(file)) failures.push(`${file}: UTF-8 BOM detected`);
     try {
-      text = new TextDecoder("utf-8", { fatal: true }).decode(buffer);
+      new TextDecoder("utf-8", { fatal: true }).decode(buffer);
     } catch {
       failures.push(`${file}: invalid UTF-8`);
       continue;
     }
+    const text = buffer.toString("utf8");
     if (/\r(?!\n)/.test(text)) failures.push(`${file}: bare CR line ending detected`);
   }
   if (failures.length) throw new Error(failures.join("\n"));
 }
 
 function assertWhitespace() {
-  const files = [...acceptedImplementationFiles, "scripts/run-batch-regression-evidence.js"]
-    .filter((file, index, list) => list.indexOf(file) === index)
-    .filter((file) => fs.existsSync(path.join(root, file)));
   const failures = [];
-  for (const file of files) {
+  for (const file of acceptedTextFiles()) {
     const lines = fs.readFileSync(path.join(root, file), "utf8").split(/\r?\n/);
     for (let index = 0; index < lines.length; index += 1) {
       if (/[ \t]+$/.test(lines[index])) failures.push(`${file}:${index + 1}: trailing whitespace`);
@@ -131,6 +172,81 @@ function assertWhitespace() {
       }
     }
   }
+  if (failures.length) throw new Error(failures.join("\n"));
+}
+
+function assertNoSecrets() {
+  const patterns = [
+    ["private key", /-----BEGIN (?:RSA |EC |OPENSSH |PGP )?PRIVATE KEY-----/],
+    ["AWS access key", /\bAKIA[0-9A-Z]{16}\b/],
+    ["GitHub token", /\bgh[ps]_[A-Za-z0-9]{30,}\b/],
+    ["OpenAI-style key", /\bsk-[A-Za-z0-9_-]{20,}\b/],
+    ["Google API key", /\bAIza[0-9A-Za-z_-]{35}\b/],
+  ];
+  const failures = [];
+  for (const file of acceptedTextFiles()) {
+    const text = fs.readFileSync(path.join(root, file), "utf8");
+    for (const [label, pattern] of patterns) {
+      if (pattern.test(text)) failures.push(`${file}: possible ${label}`);
+    }
+  }
+  if (failures.length) throw new Error(failures.join("\n"));
+}
+
+function globMatches(file, pattern) {
+  const normalized = normalize(pattern);
+  if (normalized.endsWith("/**")) return file.startsWith(normalized.slice(0, -3));
+  if (!normalized.includes("*")) return file === normalized;
+  const regex = normalized
+    .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
+    .replaceAll("**", ".*")
+    .replaceAll("*", "[^/]*");
+  return new RegExp(`^${regex}$`).test(file);
+}
+
+function gitPaths(args) {
+  const result = spawnSync("git", ["-c", "core.quotepath=false", ...args], {
+    cwd: root,
+    encoding: "utf8",
+    windowsHide: true,
+  });
+  if (result.error || result.status !== 0) {
+    throw new Error([result.error && result.error.message, result.stderr].filter(Boolean).join("\n"));
+  }
+  return result.stdout.split(/\r?\n/).map(normalize).filter(Boolean);
+}
+
+function assertChangedPathAudit() {
+  const tracked = gitPaths(["diff", "--name-only", "--relative"]);
+  const untracked = gitPaths(["ls-files", "--others", "--exclude-standard"]);
+  const staged = gitPaths(["diff", "--cached", "--name-only", "--relative"]);
+  const changed = [...new Set([...tracked, ...untracked])];
+  const slices = readJson("docs/codex-workline/implementation_slices.json");
+  const patterns = slices.slices.flatMap((slice) => slice.mayEdit || []).map(normalize);
+  const exactGovernance = new Set([
+    "AGENTS.md",
+    "PROJECT_WINDOW.md",
+    "README.md",
+    ".codex/larkix-governance.json",
+    "docs/prompts/next_agents.md",
+    "docs/codex-workline/task_registry.json",
+    "docs/codex-workline/implementation_slices.json",
+    "docs/codex-workline/A00_ProjectDirector_handoff.md",
+    "agents/A00_ProjectDirector/brief.md",
+    "lib/seo.js",
+    "styles/20-content.css",
+  ]);
+  const classified = (file) => patterns.some((pattern) => globMatches(file, pattern))
+    || exactGovernance.has(file)
+    || file.startsWith("docs/codex-workline/requirements/")
+    || file.startsWith("agents/A")
+    || file.startsWith(".codex/agents/")
+    || file.startsWith("docs/Agent");
+  const failures = changed.filter((file) => !classified(file));
+  auditState.changedPaths = changed.length;
+  auditState.classifiedPaths = changed.length - failures.length;
+  auditState.stagedPaths = staged.length;
+  if (staged.length) failures.unshift(`staged paths are forbidden: ${staged.join(", ")}`);
   if (failures.length) throw new Error(failures.join("\n"));
 }
 
@@ -162,17 +278,14 @@ function runCommand(check) {
     timeout: check.timeoutMs || checkTimeoutMs,
     killSignal: "SIGTERM",
   });
-  const durationMs = Date.now() - startedAt;
-  const passed = !result.error && result.status === 0;
-  const output = [result.stdout, result.stderr].filter(Boolean).join("\n");
   return {
     id: check.id,
     label: check.label,
-    passed,
-    durationMs,
+    passed: !result.error && result.status === 0,
+    durationMs: Date.now() - startedAt,
     exitCode: result.status,
     error: result.error ? result.error.message : "",
-    output,
+    output: [result.stdout, result.stderr].filter(Boolean).join("\n"),
   };
 }
 
@@ -211,7 +324,8 @@ function safeRemoveRunnerData() {
   const resolved = path.resolve(runnerDataDir);
   const tempRoot = path.resolve(os.tmpdir());
   const relative = path.relative(tempRoot, resolved);
-  if (!relative || relative.startsWith("..") || path.isAbsolute(relative) || !path.basename(resolved).startsWith("larkix-s27-runner-")) {
+  if (!relative || relative.startsWith("..") || path.isAbsolute(relative)
+      || !path.basename(resolved).startsWith("larkix-s40-runner-")) {
     throw new Error(`Refusing to remove non-runner DATA_DIR: ${resolved}`);
   }
   fs.rmSync(resolved, { recursive: true, force: true, maxRetries: 20, retryDelay: 100 });
@@ -219,8 +333,12 @@ function safeRemoveRunnerData() {
 
 async function main() {
   const apiPort = await findFreePort();
+  const syntaxFiles = [...new Set([...sliceScope(30, 39), ...s40aAcceptedFiles])]
+    .filter((file) => file.endsWith(".js") && fs.existsSync(path.join(root, file)));
   const checks = [
+    npmCheck("version", "Version contract", "check:version"),
     npmCheck("markdown", "Markdown renderer", "test:markdown"),
+    npmCheck("math-rendering", "Shared math rendering", "test:math-rendering"),
     npmCheck("calculation-book", "Calculation book", "test:calculation-book"),
     npmCheck("formula-catalog", "Formula catalog", "test:formula-catalog"),
     npmCheck("article-formula", "Article formula authoring", "test:article-formula-authoring"),
@@ -234,30 +352,30 @@ async function main() {
     npmCheck("reading-minutes", "Post reading minutes", "test:post-reading-minutes"),
     npmCheck("focus-mode", "Focus mode", "test:focus-mode"),
     npmCheck("carousel-buffer", "Carousel focus buffer", "test:carousel-focus-buffer"),
-    { id: "inline-math", label: "Inline math layout", command: process.execPath, args: ["scripts/test-inline-math-layout.js"] },
-    { id: "focused-media", label: "Focused content media", command: process.execPath, args: ["scripts/test-focused-content-media.js"] },
-    { id: "dark-theme", label: "Full-site dark theme", command: process.execPath, args: ["scripts/test-full-site-dark-theme.js"] },
+    nodeCheck("inline-math", "Inline math layout", "scripts/test-inline-math-layout.js"),
+    nodeCheck("focused-media", "Focused content media", "scripts/test-focused-content-media.js"),
+    nodeCheck("dark-theme", "Full-site dark theme", "scripts/test-full-site-dark-theme.js"),
+    nodeCheck("formula-binding", "Formula binding marker", "scripts/test-formula-binding-marker.js"),
+    nodeCheck("md2file-semantics", "MD2File DOCX semantics", "scripts/test-md2file-docx-semantics.js"),
+    nodeCheck("carousel-authority", "Hero carousel slot authority", "scripts/test-hero-carousel-authority.js", true),
+    nodeCheck("formula-selection", "Article selected-formula creation", "scripts/test-article-formula-selection-create.js", true),
+    nodeCheck("relation-recovery", "Legacy formula relation recovery", "scripts/test-legacy-formula-relation-migration.js", true),
+    nodeCheck("formula-map", "Formula map flow layout", "scripts/test-formula-map-flow-layout.js"),
+    nodeCheck("cms-feedback", "CMS feedback and publish dock", "scripts/test-cms-floating-feedback-publish-bar.js"),
+    nodeCheck("md2file-public", "MD2File public entry", "scripts/test-md2file-public-entry.js", true),
+    nodeCheck("api-redirect", "Redirected PowerShell API verification", "scripts/test-api-verify-redirected-output.js"),
     {
       id: "api",
       label: "Isolated API and CMS boundary",
       command: powershellCommand,
       args: [
-        "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "scripts/verify-api.ps1",
-        "-Port",
-        String(apiPort),
-        "-AdminUsername",
-        "Larkix",
-        "-AdminPassword",
-        runSecret,
+        "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/verify-api.ps1",
+        "-Port", String(apiPort), "-AdminUsername", "Larkix", "-AdminPassword", runSecret,
       ],
     },
     {
       id: "syntax",
-      label: "JavaScript syntax",
+      label: "S30-S40A JavaScript syntax",
       command: process.execPath,
       args: [
         "-e",
@@ -268,13 +386,17 @@ async function main() {
       ],
     },
     { id: "protected-hashes", label: "Protected file hashes", execute: assertProtectedHashes },
+    { id: "requirement-map", label: "Twelve-requirement dispatch mapping", execute: assertRequirementMappings },
     { id: "encoding", label: "UTF-8, BOM, and line endings", execute: assertEncodingAndArtifacts },
     { id: "whitespace", label: "Whitespace and conflict-marker audit", execute: assertWhitespace },
+    { id: "secrets", label: "Credential and private-key scan", execute: assertNoSecrets },
+    { id: "changed-paths", label: "Complete changed-path classification", execute: assertChangedPathAudit },
     npmCheck("contract", "Codex contract", "codex:contract"),
   ];
 
   const results = [];
-  console.log(`S27 batch regression evidence: ${checks.length} checks`);
+  console.log(`S40 batch regression evidence: ${checks.length} checks`);
+  console.log(`Isolated DATA_DIR: ${runnerDataDir}`);
   for (const check of checks) {
     const result = check.execute ? runInternal(check) : runCommand(check);
     results.push(result);
@@ -288,7 +410,8 @@ async function main() {
 
   const passed = results.filter((result) => result.passed).length;
   const failed = results.length - passed;
-  console.log(`S27 summary: ${passed} passed, ${failed} failed`);
+  console.log(`Changed-path audit: ${auditState.classifiedPaths}/${auditState.changedPaths} classified, ${auditState.stagedPaths} staged`);
+  console.log(`S40 summary: ${passed} passed, ${failed} failed`);
   if (failed) process.exitCode = 1;
 }
 

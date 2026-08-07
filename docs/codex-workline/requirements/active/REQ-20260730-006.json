@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260730-006",
+  "title": "文章框选 LaTeX 新建并绑定公式卡工作流修复",
+  "status": "dispatched",
+  "priority": "high",
+  "createdAt": "2026-07-30T11:39:33.767+08:00",
+  "updatedAt": "2026-07-30T11:53:27.440+08:00",
+  "intent": {
+    "problem": "文章编辑器无法可靠地把已框选公式新增为公式卡，现有悬浮窗口也不能完整新增模块和分类，且缺少字段说明。",
+    "desiredOutcome": "作者可从文章 Markdown 中完整选中公式，直接创建分类清楚、可继续维护并立即绑定原公式的草稿公式卡。",
+    "targetUsers": ["Owner/幕后作者"]
+  },
+  "scope": {
+    "in": [
+      "完整选中 $...$、\\(...\\) 或 \\[...\\] 公式后出现添加为公式卡的悬浮入口",
+      "打开创建窗口时去除外层定界符并预填 LaTeX 公式本体",
+      "公式名称、所属模块和主分类必填，用途与标签选填",
+      "模块和主分类各选一个，标签允许多选",
+      "模块、主分类和标签均可在下拉框内搜索",
+      "模块和主分类允许输入新名称并明确保存后新增",
+      "系统清理空格、统一格式并生成稳定 slug",
+      "每个字段提供问号说明、示例与必填或选填状态",
+      "创建成功后新卡为草稿，并把原文章中的已选公式绑定到该卡",
+      "绑定后正文只增加右上角紫色跳转图标，不重复插入公式内容"
+    ],
+    "out": [
+      "在没有明确作者操作时自动把所有公式加入公式库",
+      "根据任意普通文本猜测并创建公式卡",
+      "跳过草稿、发布和文章发布阻断规则",
+      "自动创建未被作者明确保存的新模块或分类"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "框选新增公式入口不可用或不能完成创建。",
+      "悬浮窗口无法新增所需模块、分类等选项。",
+      "字段缺少问号说明，作者不知道需要填写什么。"
+    ],
+    "expected": [
+      "选中完整公式后可以不中断文章写作地创建公式卡。",
+      "创建窗口字段、校验、分类新建和帮助信息完整。",
+      "新公式卡与原公式位置建立绑定且保持文章文本不变。",
+      "草稿公式卡会阻止文章发布，直到作者发布公式卡。"
+    ],
+    "edgeCases": [
+      "只选择部分公式、选择多个公式或同时选择普通文本。",
+      "选择包含换行的 \\[...\\]。",
+      "新模块或分类与现有名称仅空格、大小写或格式不同。",
+      "公式名称或 slug 冲突。",
+      "创建公式卡成功但文章保存失败，或反之。",
+      "已归档公式卡不得作为新绑定目标。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.selection-entry",
+      "statement": "完整框选受支持的 LaTeX 公式后出现创建入口，部分选择或普通文本不会被误创建。",
+      "verification": "分别选择完整行内、完整块级、部分公式和普通文本检查入口。"
+    },
+    {
+      "id": "ac.prefill",
+      "statement": "创建窗口自动去除外层定界符并准确预填公式本体，不改变 LaTeX 含义。",
+      "verification": "用三种定界符创建并比较保存前后的 LaTeX。"
+    },
+    {
+      "id": "ac.classification-create",
+      "statement": "模块和主分类均可单选已有项或输入新名称明确保存；标签可多选和新增，规范化后无重复类目。",
+      "verification": "创建已有、新增和近似重名分类并核对 slug 与后台分类列表。"
+    },
+    {
+      "id": "ac.field-help",
+      "statement": "名称、模块、主分类、用途、标签和 LaTeX 字段均有问号帮助，清楚标注必填或选填并提供有效示例。",
+      "verification": "逐项打开帮助并检查内容和键盘可访问性。"
+    },
+    {
+      "id": "ac.create-bind",
+      "statement": "创建后生成草稿公式卡并绑定原公式位置，文章不重复新增公式，只显示统一跳转图标。",
+      "verification": "完成一次创建，核对公式卡、文章源文本、绑定记录和预览。"
+    },
+    {
+      "id": "ac.publish-gate",
+      "statement": "文章引用新建草稿公式卡时不能发布，并明确提示先发布该公式卡。",
+      "verification": "保持新卡为草稿并尝试发布文章，再发布公式卡后重试。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN"],
+    "platforms": ["Larkix CMS"],
+    "compatibility": ["遵守公式卡草稿、已发布、已归档状态", "保留文章编辑光标、选区和本地草稿"],
+    "data": ["公式卡创建与文章绑定失败时不得留下不一致的半完成状态"],
+    "security": [],
+    "operations": ["需要编辑器选区、分类规范化和发布门禁回归"],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.partial-transaction",
+      "severity": "high",
+      "statement": "公式卡创建与文章绑定分步失败可能留下孤立卡或丢失选区。",
+      "mitigation": "提供可恢复的原子流程或明确回滚，并保留文章草稿与选区。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-30T11:51:02.563+08:00",
+    "confirmationText": "确认无误，开始执行",
+    "digest": "sha256:fb32b8f46d1acbda6dc60fc7b283ff7b92b946e5784ab5fc4caffc85f12f1e0f"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-07-30T11:53:27.440+08:00"
+  }
+}

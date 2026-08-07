@@ -7,8 +7,9 @@
     <meta name="description" content="把 Markdown 转换为可下载文件，当前支持 Word DOCX，后续可扩展 PDF。" />
     <link rel="manifest" href="../site.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="../assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524" />
-    <link rel="stylesheet" href="../styles.css?v=20260730-0012" />
-    <link rel="stylesheet" href="../styles/md2doc.css?v=20260730-0012" />
+    <link rel="stylesheet" href="../assets/vendor/katex/katex.min.css?v=0.16.22" />
+    <link rel="stylesheet" href="../styles.css?v=20260807-0001" />
+    <link rel="stylesheet" href="../styles/md2doc.css?v=20260807-0001" />
   </head>
   <body class="md2doc-page">
     <a class="skip-link" href="#mainContent">跳到工具</a>
@@ -28,7 +29,7 @@
 
     <main class="md2doc-shell" id="mainContent">
       <header class="md2doc-header">
-        <img class="md2doc-icon" src="../assets/logo/md2file/md2file-miniapp-icon.svg?v=20260730-0012" alt="MD2File" />
+        <img class="md2doc-icon" src="../assets/logo/md2file/md2file-miniapp-icon.svg?v=20260807-0001" alt="MD2File" />
         <div>
           <h1>MD2File Markdown 转换器</h1>
           <p>Markdown 输入、HTML 预览、当前导出 DOCX，后续可扩展 PDF。</p>
@@ -116,9 +117,11 @@
       <pre class="md2doc-log" id="diagnosticsLog">等待转换。</pre>
     </main>
 
-    <script src="../data/markdown-renderer.js?v=20260730-0012"></script>
-    <script src="./md2doc.js?v=20260730-0012"></script>
-    <script src="../data/site-meta.js?v=20260730-0012"></script>
-    <script src="../data/footer.js?v=20260730-0012"></script>
+    <script src="../assets/vendor/katex/katex.min.js?v=0.16.22"></script>
+    <script src="../data/math-renderer.js?v=20260730-s30"></script>
+    <script src="../data/markdown-renderer.js?v=20260730-s34"></script>
+    <script src="./md2doc.js?v=20260807-0001"></script>
+    <script src="../data/site-meta.js?v=20260807-0001"></script>
+    <script src="../data/footer.js?v=20260807-0001"></script>
   </body>
 </html>

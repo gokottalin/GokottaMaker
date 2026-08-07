@@ -2,6 +2,7 @@
   const posts = window.LarkixContent.getPosts();
   const publicProjects = window.LarkixContent.getProjects();
   const projects = window.LarkixContent.getProjectDirectory();
+  const heroCarousel = window.LarkixContent.getHeroCarousel();
   const list = document.querySelector("#articleList");
   const hero = document.querySelector(".hero");
   const heroCards = document.querySelector("#heroCards");
@@ -10,7 +11,11 @@
   const coursePathList = document.querySelector("#coursePathList");
   const recentLessonFeature = document.querySelector("#recentLessonFeature");
   const search = document.querySelector("#siteSearch");
-  const miniapps = window.LARKIX_MINIAPPS || [];
+  const storedMiniapps = Array.isArray(window.LARKIX_MINIAPPS) ? window.LARKIX_MINIAPPS : [];
+  const miniapps = window.LarkixMiniapps?.publicList?.(storedMiniapps) || storedMiniapps
+    .filter((app) => app?.id === "md2file")
+    .slice(0, 1)
+    .map((app) => ({ ...app, name: "MD2File", href: "./tools/md2doc.html" }));
   const courseMeta = window.LarkixCourseMeta || {};
   let siteLayout = window.LARKIX_SERVER_CONTENT?.siteLayout || {};
   let siteLayoutSignature = JSON.stringify(siteLayout);
@@ -64,7 +69,7 @@
   function normalizePublicFocusMode(value) {
     const fallback = {
       enabled: true,
-      hideMiniappsFromPrimaryNav: true,
+      hideMiniappsFromPrimaryNav: false,
       hideAdminFromPublicNav: true
     };
     if (!value || typeof value !== "object") return fallback;
@@ -91,7 +96,8 @@
         { href: "./maker.html", label: "首页" },
         { href: "./category.html?category=electronics-basics", label: "电子基础" },
         { href: "./derive.html", label: "公式推导" },
-        { href: "./projects.html", label: "开源项目" }
+        { href: "./projects.html", label: "开源项目" },
+        { href: "./miniapps.html", label: "MD2File" }
       ];
       nav.innerHTML = links
         .map((link) => `<a href="${link.href}"${isCurrentHref(link.href) ? ' aria-current="page"' : ""}>${link.label}</a>`)
@@ -124,23 +130,6 @@
     if (/(?:^|[\s,，、])module:(?:electronics-basics|power-electronics|projects|derivations)(?:$|[\s,，、])/.test(tags)) return true;
     if (String(item.tags || "").split(/[,，、]/).some((tag) => tag.trim().startsWith("公式"))) return true;
     return /\{\{(?:formula|derive):/.test(String(item.markdown || ""));
-  }
-
-  function focusRouteItem(id, title, summary, href, label) {
-    return {
-      id,
-      type: "focus",
-      title,
-      excerpt: summary,
-      category: label,
-      readTime: "公开入口",
-      date: "LarkixMaker",
-      cover: "./assets/covers/analog-cover.png",
-      href,
-      featured: true,
-      featuredOrder: id === "electronics-basics" ? 0 : id === "derivations" ? 1 : 2,
-      recommendationPriority: id === "electronics-basics" ? 1 : id === "derivations" ? 2 : 3
-    };
   }
 
   function articleCard(post) {
@@ -229,7 +218,7 @@
   function miniappUpdateCard(app) {
     const appToken = safeToken(app.id || app.name);
     return `
-      <article class="miniapp-card home-miniapp-card miniapp-card-${appToken}">
+      <article class="miniapp-card home-miniapp-card miniapp-card-${appToken}" data-public-miniapp-card="${appToken}">
         <img class="miniapp-icon miniapp-icon-${appToken}" src="${safe(app.icon)}" alt="" loading="lazy" />
         <div class="miniapp-card-body">
           <div class="miniapp-card-kicker">
@@ -314,8 +303,12 @@
 
   function renderFeatured(index = 0) {
     index = normalizeHeroIndex(index);
-    const featured = featuredItems[index] || posts[0];
-    if (!featured) return;
+    const featured = featuredItems[index];
+    if (!featured) {
+      if (hero) hero.hidden = true;
+      return;
+    }
+    if (hero) hero.hidden = false;
     const copy = document.querySelector("#heroCopy");
     const bgA = document.querySelector("#heroBgA");
     const bgB = document.querySelector("#heroBgB");
@@ -484,7 +477,7 @@
       })
       .forEach((section) => {
         const config = orderMap.get(section.dataset.layoutSection);
-        section.hidden = config?.visible === false;
+        section.hidden = section.dataset.layoutSection === "miniapps" ? false : config?.visible === false;
         section.dataset.layoutSize = config?.size || "standard";
         main.appendChild(section);
       });
@@ -568,7 +561,7 @@
     const focusSection = ensureFocusSection();
     if (focusSection) renderFocusDerivations(focusSection);
     if (projectList?.closest("[data-layout-section]")) projectList.closest("[data-layout-section]").hidden = true;
-    if (miniappUpdateList?.closest("[data-layout-section]")) miniappUpdateList.closest("[data-layout-section]").hidden = true;
+    if (miniappUpdateList?.closest("[data-layout-section]")) miniappUpdateList.closest("[data-layout-section]").hidden = false;
     const recommendedTitle = document.querySelector("#homeRecommended h2");
     const recommendedTitleEn = document.querySelector("#homeRecommended .section-title-block span");
     if (recommendedTitle) recommendedTitle.textContent = "聚焦内容";
@@ -681,45 +674,7 @@
 
   const focusPosts = focusModeEnabled() ? sortByRecommendation(posts.filter(isPowerElectronicsItem)) : posts;
   const focusProjects = focusModeEnabled() ? sortByRecommendation(publicProjects.filter(isPowerElectronicsItem)) : publicProjects;
-  const focusHeroFallback = [
-    focusRouteItem(
-      "electronics-basics",
-      "电子基础学习路径",
-      "从电路变量、基础公式和可复现工程验证开始整理公开内容。",
-      "./category.html?category=electronics-basics",
-      "电子基础"
-    ),
-    focusRouteItem(
-      "derivations",
-      "公式推导节点",
-      "文章中的公式变量会打开对应推导页，节点内容可继续串联到更多变量。",
-      "./derive.html",
-      "公式推导"
-    ),
-    focusRouteItem(
-      "projects",
-      "开源项目",
-      "从原理图、PCB、BOM、固件与调试记录进入可复现工程项目。",
-      "./projects.html",
-      "开源项目"
-    )
-  ];
-
-  const eligibleFeaturedItems = [...(focusModeEnabled() ? focusPosts : posts), ...(focusModeEnabled() ? focusProjects : publicProjects)]
-    .filter((item) => item.featured)
-    .sort((a, b) => Number(a.featuredOrder || 0) - Number(b.featuredOrder || 0))
-    .slice(0, 4);
-  featuredItems = focusModeEnabled()
-    ? [focusHeroFallback[0], ...eligibleFeaturedItems].slice(0, 4)
-    : eligibleFeaturedItems;
-  if (!featuredItems.length) {
-    featuredItems = [
-      posts.find((post) => post.id === "stm32-adc-dma-precision") || posts[0],
-      posts.find((post) => post.id === "analog-active-filter") || posts[1],
-      posts.find((post) => post.id === "esp32-low-power-node") || posts[2],
-      posts.find((post) => post.id === "opensource-power-amplifier") || posts[3]
-    ].filter(Boolean);
-  }
+  featuredItems = heroCarousel;
 
   renderArticles(sortByRecommendation(focusModeEnabled() ? focusPosts : posts));
   renderCoursePaths();
@@ -728,7 +683,7 @@
   bindHeroSwipe();
   restartHeroTimer();
   renderProjects(focusModeEnabled() ? [] : projects);
-  renderMiniappUpdates(focusModeEnabled() ? [] : miniapps);
+  renderMiniappUpdates(miniapps);
   applyFocusedNavigation();
   applySiteLayout();
   applyFocusedHome();

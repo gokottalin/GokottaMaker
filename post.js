@@ -567,27 +567,38 @@
   }
 
   function renderFormulaDerivationSection(card) {
-    const derivation = card.derivation || { incoming: [], next: null };
+    const derivation = card.derivation || { incoming: [], dependencies: [] };
     const incoming = derivation.incoming || [];
+    const dependencies = derivation.dependencies || [];
+    const unavailableDependencyCount = Number(derivation.unavailableDependencyCount || 0);
     return `
       <section class="formula-derivation-public" aria-labelledby="formulaDerivationTitle">
-        <h2 id="formulaDerivationTitle">推导关系</h2>
-        <p>每张公式卡最多只有一个下一阶；不同来源可以汇入同一张公式卡。</p>
+        <h2 id="formulaDerivationTitle">逐步推导</h2>
+        <p>关系方向统一为“来源公式 → 依赖公式”；这里仅展示两端均已发布且未归档的修订。</p>
         <div class="formula-derivation-public-grid">
           <section aria-labelledby="formulaPreviousTitle">
-            <h3 id="formulaPreviousTitle">上一阶来源</h3>
+            <h3 id="formulaPreviousTitle">引用本式的来源</h3>
             <div class="formula-derivation-public-list">
               ${
                 incoming.length
                   ? incoming.map((source) => renderFormulaRelationItem(source, "")).join("")
-                  : renderFormulaRelationItem(null, "这张公式卡暂无上一阶来源。")
+                  : renderFormulaRelationItem(null, "暂无已发布公式引用本式。")
               }
             </div>
           </section>
           <section aria-labelledby="formulaNextStepTitle">
-            <h3 id="formulaNextStepTitle">唯一下一阶</h3>
+            <h3 id="formulaNextStepTitle">本式依赖</h3>
             <div class="formula-derivation-public-list">
-              ${renderFormulaRelationItem(derivation.next, "这张公式卡暂无下一阶，是当前路径的终点。")}
+              ${
+                dependencies.length
+                  ? dependencies.map((target) => renderFormulaRelationItem(target, "")).join("")
+                  : renderFormulaRelationItem(null, "暂无可继续访问的已发布依赖。")
+              }
+              ${
+                unavailableDependencyCount
+                  ? `<div class="formula-derivation-empty">另有未公开或已归档依赖，游客端不继续遍历。</div>`
+                  : ""
+              }
             </div>
           </section>
         </div>
@@ -668,6 +679,7 @@
       const formulaRendered = window.LarkixMarkdown.renderFormulaCard(card);
       content.innerHTML = `
         ${renderFormulaGraphSection(card)}
+        ${renderFormulaDerivationSection(card)}
         ${formulaRendered.html}
         <section aria-labelledby="formulaCardInfo">
           <h2 id="formulaCardInfo">公式信息</h2>
@@ -685,7 +697,8 @@
         });
       }
       if (toc) {
-        toc.innerHTML = `<a class="toc-level-2" data-level="2" href="#formulaGraphTitle">推导网络</a>${(formulaRendered.headings || [])
+        toc.innerHTML = `<a class="toc-level-2" data-level="2" href="#formulaGraphTitle">推导网络</a>
+          <a class="toc-level-2" data-level="2" href="#formulaDerivationTitle">逐步推导</a>${(formulaRendered.headings || [])
           .map((heading) => {
             const level = Math.max(2, Math.min(Number(heading.level || 2), 3));
             return `<a class="toc-level-${level}" data-level="${level}" href="#${escapeHtml(heading.id)}">${escapeHtml(

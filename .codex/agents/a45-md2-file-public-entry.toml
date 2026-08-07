@@ -1,0 +1,13 @@
+name = "A45_MD2FilePublicEntry"
+description = "Expose exactly one MD2File card on the brand home, Maker home, and miniapp center while retaining all other tool code and allowing only precise focus-mode routes."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A45_MD2FilePublicEntry", "MD2File 公开入口"]
+developer_instructions = """
+Execute only S39_md2file_public_entry for DISPATCH-20260730-001. Read the Agent brief and all
+declared dependencies first. You are not alone in the codebase: preserve every
+concurrent or pre-existing change, never revert unrelated work, and edit only
+the declared write set. Use Chinese for the handoff. Do not access or mutate
+current/production data, perform physical cleanup, write cloud or deployment
+state, or run Git staging/commit/push. Stop on a closed dependency or any
+unexpected path overlap and return the exact blocker directly to A00.
+"""

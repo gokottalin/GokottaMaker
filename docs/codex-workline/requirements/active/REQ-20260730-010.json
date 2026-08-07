@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260730-010",
+  "title": "CMS 聚焦模式开关与状态仅保留在排布页面",
+  "status": "dispatched",
+  "priority": "normal",
+  "createdAt": "2026-07-30T11:39:33.767+08:00",
+  "updatedAt": "2026-07-30T11:53:27.440+08:00",
+  "intent": {
+    "problem": "CMS 多个页面重复显示聚焦模式是否开启，增加界面噪声并削弱全局唯一开关的清晰位置。",
+    "desiredOutcome": "CMS 只在排布页面显示并操作全局聚焦模式，其他页面保持简洁但继续执行聚焦规则。",
+    "targetUsers": ["Owner/幕后作者"]
+  },
+  "scope": {
+    "in": [
+      "排布页面保留全局唯一的聚焦模式开关",
+      "排布页面显示当前聚焦模式状态及必要说明",
+      "其他 CMS 页面移除重复开关、状态文字、徽标和提示条",
+      "其他页面仍在后台执行聚焦分类过滤、编辑限制和发布限制",
+      "聚焦模式开启时文章创作仍只能选择允许范围",
+      "通过排布页面切换后全站立即采用统一状态"
+    ],
+    "out": [
+      "从排布页面移除聚焦模式控制",
+      "因为隐藏提示而停用聚焦模式业务规则",
+      "在其他页面增加第二个可写开关",
+      "改变聚焦模式默认开启和关闭后展示规则"
+    ]
+  },
+  "behavior": {
+    "current": ["CMS 多个页面显示聚焦模式开启状态或重复控制，造成界面杂乱。"],
+    "expected": [
+      "作者只需前往排布页面查看和切换聚焦模式。",
+      "其他页面不重复展示状态，但筛选、编辑和发布行为与全局状态一致。",
+      "不存在多个开关显示不同状态的情况。"
+    ],
+    "edgeCases": [
+      "作者在其他 CMS 页面停留时由排布页面改变状态。",
+      "聚焦开启后当前表单已选择不允许类目。",
+      "多标签页同时打开 CMS。",
+      "关闭聚焦后草稿恢复可见但保持未发布。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.single-location",
+      "statement": "CMS 只有排布页面显示聚焦开关和当前状态，其他页面不存在重复开关、徽标、状态文字或提示条。",
+      "verification": "按 CMS 页面清单搜索并执行视觉检查。"
+    },
+    {
+      "id": "ac.rules-remain",
+      "statement": "隐藏其他页面的聚焦状态后，允许类目过滤、编辑限制和发布门禁继续正确生效。",
+      "verification": "开启聚焦模式并在文章与公式编辑页面尝试选择或发布不允许内容。"
+    },
+    {
+      "id": "ac.global-sync",
+      "statement": "在排布页面切换一次后，游客端和全部 CMS 页面使用同一全局状态。",
+      "verification": "在多个 CMS 标签页及游客页验证状态切换。"
+    },
+    {
+      "id": "ac.draft-safety",
+      "statement": "关闭聚焦模式后被隐藏草稿重新可见但保持草稿，不因状态切换自动发布。",
+      "verification": "准备非聚焦草稿并执行开关往返检查。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN"],
+    "platforms": ["Larkix CMS", "Larkix 游客网页"],
+    "compatibility": ["保持聚焦模式默认开启", "保持既有允许类目和草稿安全规则"],
+    "data": ["开关切换不得更改文章或公式的发布状态"],
+    "security": [],
+    "operations": ["需要多页面和多标签页状态同步回归"],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.hidden-context",
+      "severity": "low",
+      "statement": "移除其他页面状态后，作者可能不理解某类目为何不可选。",
+      "mitigation": "仅在具体操作被聚焦规则阻止时显示原因和前往排布页面的定位提示，不常驻显示状态。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-30T11:51:02.563+08:00",
+    "confirmationText": "确认无误，开始执行",
+    "digest": "sha256:72327eade6c9acab8a67bf96f9c4e5b75b36467e3dd40a1d2b46265bd8af3386"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-07-30T11:53:27.440+08:00"
+  }
+}

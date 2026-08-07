@@ -1,0 +1,13 @@
+name = "A42_DerivationWorkflowRecovery"
+description = "Restore the complete formula authoring-to-public derivation workflow and migrate unambiguous legacy relations on isolated copies while queuing unresolved evidence."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A42_DerivationWorkflowRecovery", "推导关系恢复"]
+developer_instructions = """
+Execute only S36_derivation_workflow_recovery for DISPATCH-20260730-001. Read the Agent brief and all
+declared dependencies first. You are not alone in the codebase: preserve every
+concurrent or pre-existing change, never revert unrelated work, and edit only
+the declared write set. Use Chinese for the handoff. Do not access or mutate
+current/production data, perform physical cleanup, write cloud or deployment
+state, or run Git staging/commit/push. Stop on a closed dependency or any
+unexpected path overlap and return the exact blocker directly to A00.
+"""

@@ -463,12 +463,23 @@ function testSupportOnlyStartup() {
     migrationSource,
     /DELETE\s+FROM\s+(?:knowledge_nodes|knowledge_node_revisions|knowledge_links)/i
   );
+  const relationMigrationSource = fs.readFileSync(
+    path.join(root, "migrations", "027_formula_relation_repairs.js"),
+    "utf8"
+  );
+  assert.doesNotMatch(
+    relationMigrationSource,
+    /DELETE\s+FROM\s+(?:knowledge_nodes|knowledge_node_revisions|knowledge_links|legacy_formula_mappings)/i
+  );
   const fixture = fixtureDatabase();
   const before = sourceInventory(fixture.db).selectedCounts;
   assert.ok(tableExists(fixture.db, "legacy_formula_backup_manifests"));
   assert.ok(tableExists(fixture.db, "legacy_formula_mappings"));
   assert.ok(tableExists(fixture.db, "legacy_formula_redirects"));
   assert.ok(tableExists(fixture.db, "legacy_formula_migration_reports"));
+  assert.ok(tableExists(fixture.db, "formula_relation_repair_queue"));
+  assert.ok(tableExists(fixture.db, "formula_relation_repair_events"));
+  assert.ok(tableExists(fixture.db, "formula_relation_migration_reports"));
   fixture.db.close();
   const reopened = createDatabase({
     root,

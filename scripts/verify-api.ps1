@@ -58,14 +58,21 @@ function Invoke-CurlJson {
     [object]$Body
   )
 
-  $tmp = [System.IO.Path]::GetTempFileName()
+  $requestFile = [System.IO.Path]::GetTempFileName()
+  $responseFile = [System.IO.Path]::GetTempFileName()
   try {
-    [System.IO.File]::WriteAllText($tmp, ($Body | ConvertTo-Json -Depth 8 -Compress), [System.Text.UTF8Encoding]::new($false))
-    $result = & curl.exe -sS -H "Content-Type: application/json" --data-binary "@$tmp" -w "`nHTTPSTATUS:%{http_code}" $Uri
-    $statusLine = ($result | Select-Object -Last 1)
-    $contentLines = @($result | Select-Object -SkipLast 1)
-    $statusCode = [int](($statusLine -replace '^HTTPSTATUS:', ''))
-    $bodyText = ($contentLines -join "`n")
+    [System.IO.File]::WriteAllText($requestFile, ($Body | ConvertTo-Json -Depth 8 -Compress), [System.Text.UTF8Encoding]::new($false))
+    $statusOutput = & curl.exe -sS -H "Content-Type: application/json" --data-binary "@$requestFile" --output $responseFile --write-out "%{http_code}" $Uri
+    $curlExitCode = $LASTEXITCODE
+    if ($curlExitCode -ne 0) {
+      throw "curl request failed with exit code $curlExitCode"
+    }
+    $statusText = (($statusOutput | ForEach-Object { [string]$_ }) -join "").Trim()
+    $statusCode = 0
+    if (-not [int]::TryParse($statusText, [ref]$statusCode)) {
+      throw "curl returned an invalid HTTP status: $statusText"
+    }
+    $bodyText = [System.IO.File]::ReadAllText($responseFile, [System.Text.UTF8Encoding]::new($false, $true))
     $bodyJson = $null
     if ($bodyText) {
       try { $bodyJson = $bodyText | ConvertFrom-Json } catch { }
@@ -76,7 +83,9 @@ function Invoke-CurlJson {
       Json = $bodyJson
     }
   } finally {
-    if (Test-Path -LiteralPath $tmp) { Remove-Item -LiteralPath $tmp -Force }
+    foreach ($tmp in @($requestFile, $responseFile)) {
+      if (Test-Path -LiteralPath $tmp) { Remove-Item -LiteralPath $tmp -Force }
+    }
   }
 }
 
@@ -489,6 +498,22 @@ $zhParagraph
     $emptyMarkdownBlocked = $true
   }
   if (-not $emptyMarkdownBlocked) { throw "API verify failed: empty markdown was not blocked" }
+
+  $invalidMathResponse = Invoke-CurlJson -Uri "$base/api/md2file/convert" -Body @{
+    markdown = '$$' + "`n" + '\frac{a}{b}'
+    format = "docx"
+  }
+  $invalidMathDiagnostic = if ($invalidMathResponse.Json -and $invalidMathResponse.Json.diagnostics -and $invalidMathResponse.Json.diagnostics.Count -gt 0) {
+    $invalidMathResponse.Json.diagnostics[0]
+  } else {
+    $null
+  }
+  if ($invalidMathResponse.StatusCode -ne 422 -or -not $invalidMathDiagnostic -or $invalidMathDiagnostic.code -ne "math.delimiter.unclosed") {
+    throw "API verify failed: invalid md2file math was not blocked with located diagnostics"
+  }
+  if ([int]$invalidMathDiagnostic.range.line -ne 1) {
+    throw "API verify failed: invalid md2file diagnostic did not preserve source line"
+  }
 
   $unsupportedFormatBlocked = $false
   $unsupportedFormatResponse = Invoke-CurlJson -Uri "$base/api/md2file/convert" -Body @{ markdown = "# ok"; format = "pdf" }

@@ -1,0 +1,11 @@
+name = "A50_ReleaseGitGateReverification"
+description = "Rebuild the final Git candidate plan after release version synchronization."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A50_ReleaseGitGateReverification", "发布门禁复核"]
+developer_instructions = """
+Execute only S41B_release_git_gate_reverification for DISPATCH-20260730-001.
+Read the Agent brief first, preserve all accepted changes, and edit only the
+three declared planning files. Use Chinese for the handoff. Do not run Git
+writes, deployment, cloud, service, backup, restore, rollback, or data actions.
+Return the result directly to A00.
+"""

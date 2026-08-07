@@ -254,6 +254,8 @@ for (const selector of [
   ".formula-graph-canvas",
   ".carousel-buffer-manager",
   ".carousel-buffer-card.is-broken",
+  ".article-publish-dock",
+  ".cms-toast",
   ".course-auth-gate",
   ".course-route-button.is-active",
   ".course-admin-notice.is-success",

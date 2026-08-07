@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260730-012",
+  "title": "MD2File 接入最新 Markdown 与 LaTeX 解析规则",
+  "status": "dispatched",
+  "priority": "high",
+  "createdAt": "2026-07-30T11:48:04.011+08:00",
+  "updatedAt": "2026-07-30T11:53:27.440+08:00",
+  "intent": {
+    "problem": "MD2File 当前无法保证使用站点最新 Markdown 和数学解析规则，实时预览与 DOCX 导出可能出现语义、公式或排版不一致。",
+    "desiredOutcome": "MD2File 的导入、粘贴、实时预览和 DOCX 导出统一遵守当前最新 Markdown 与 LaTeX 契约。",
+    "targetUsers": ["游客", "Owner/幕后作者"]
+  },
+  "scope": {
+    "in": [
+      "Markdown 文件导入使用最新共享解析规则",
+      "编辑器粘贴和手动输入使用相同规则",
+      "浏览器实时预览使用站点最新 Markdown 渲染器",
+      "DOCX 导出与浏览器预览保持相同内容语义和层级",
+      "覆盖标题、段落、列表、表格、图片、链接和代码块",
+      "覆盖 $...$、\\(...\\)、\\[...\\]、根号、复杂分式和紧凑 \\boxed{...}",
+      "\\[...\\] 在网页预览中不显示无意义外框",
+      "\\boxed{...} 仅紧密包围公式内容",
+      "根号范围、上下标和复杂分式垂直布局正确",
+      "有效公式在预览和导出中不得退化为原始 LaTeX 文本",
+      "无效 Markdown 或 LaTeX 给出可定位提示并阻止产生误导性导出"
+    ],
+    "out": [
+      "为 MD2File 维护一套与文章不同的旧解析器",
+      "要求 LaTeX 原始输入区域变成所见即所得",
+      "把网页专用的公式卡数据库跳转关系写入独立 DOCX",
+      "在解析失败时静默丢弃公式或正文"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "MD2File 无法访问或使用的解析规则可能落后于当前文章与公式渲染。",
+      "浏览器预览与 DOCX 导出缺少最新规则的一致性保证。"
+    ],
+    "expected": [
+      "同一 Markdown 在文章预览与 MD2File 预览中使用相同核心解析语义。",
+      "DOCX 的标题层级、列表、表格、图片、代码和公式与网页预览一致。",
+      "复杂数学表达不会显示为源码或错误的普通文本。",
+      "解析失败会阻止错误导出并指出问题位置。"
+    ],
+    "edgeCases": [
+      "大型 Markdown 文件、混合换行和 UTF-8 中文文件名。",
+      "图片使用相对路径、数据 URL 或不可访问 URL。",
+      "表格中包含行内公式，列表中包含块级公式。",
+      "\\frac{\\sqrt{a}}{b} 与 \\sqrt{\\frac{a}{b}}。",
+      "代码块内出现美元符号或 LaTeX 字样，不应误判为公式。",
+      "不完整定界符、未知命令和错误括号。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.shared-parser",
+      "statement": "MD2File 导入、粘贴和实时预览使用与当前文章系统相同版本的 Markdown 与数学解析规则。",
+      "verification": "使用同一固定 Markdown 样例比较文章预览与 MD2File 预览的结构和公式。"
+    },
+    {
+      "id": "ac.docx-parity",
+      "statement": "DOCX 导出的标题、段落、列表、表格、图片、代码和公式与浏览器预览保持相同语义和顺序。",
+      "verification": "导出完整样例并逐节与网页预览对账。"
+    },
+    {
+      "id": "ac.math-quality",
+      "statement": "三类定界符、根号、复杂分式、上下标和紧凑 boxed 在预览及 DOCX 中正确表达，不显示原始 LaTeX。",
+      "verification": "运行固定数学样例并检查网页截图与 DOCX 渲染。"
+    },
+    {
+      "id": "ac.code-isolation",
+      "statement": "代码块和普通代码片段中的美元符号或 LaTeX 字样不会被错误转换为数学公式。",
+      "verification": "在代码块中放入公式样式文本并比较预览和导出。"
+    },
+    {
+      "id": "ac.invalid-input",
+      "statement": "无法解析的 Markdown 或 LaTeX 显示可定位错误并阻止生成误导性 DOCX，不静默丢失内容。",
+      "verification": "导入含不完整定界符和错误括号的文件并尝试导出。"
+    },
+    {
+      "id": "ac.long-document",
+      "statement": "包含长文、表格、图片和多类公式的 Markdown 可完成预览与导出，内容数量和顺序不丢失。",
+      "verification": "运行长文回归样例并对账标题、图片、表格、代码块和公式数量。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN"],
+    "platforms": ["MD2File 网页工具", "DOCX 导出"],
+    "compatibility": ["沿用站点最新共享 Markdown 和 LaTeX 契约", "保持原始 Markdown 可编辑"],
+    "data": ["文件解析失败不得生成缺失内容的成功导出"],
+    "security": ["导入内容不得执行脚本或不受信任 HTML"],
+    "operations": ["需要网页预览、DOCX 输出和长文固定样例回归"],
+    "deadline": null
+  },
+  "evidence": [],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.preview-export-drift",
+      "severity": "high",
+      "statement": "网页渲染器与服务端 DOCX 转换各自实现规则会再次产生漂移。",
+      "mitigation": "建立共享契约样例和双端结果对账，解析规则升级必须同时通过预览与导出回归。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-07-30T11:51:02.563+08:00",
+    "confirmationText": "确认无误，开始执行",
+    "digest": "sha256:49cbfbf2fc8fa69b72e1f8ce4e10f03557b4b37b1a1f93c13c17f9e436a0795a"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-07-30T11:53:27.440+08:00"
+  }
+}

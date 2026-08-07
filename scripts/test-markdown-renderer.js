@@ -2,13 +2,16 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
+const katex = require("katex");
 const { markdownToDocx } = require("../lib/md2doc");
 
 function loadRenderer() {
-  const source = fs.readFileSync(path.join(__dirname, "..", "data", "markdown-renderer.js"), "utf8");
-  const sandbox = { window: {} };
+  const mathSource = fs.readFileSync(path.join(__dirname, "..", "data", "math-renderer.js"), "utf8");
+  const markdownSource = fs.readFileSync(path.join(__dirname, "..", "data", "markdown-renderer.js"), "utf8");
+  const sandbox = { window: { katex } };
   vm.createContext(sandbox);
-  vm.runInContext(source, sandbox);
+  vm.runInContext(mathSource, sandbox);
+  vm.runInContext(markdownSource, sandbox);
   return sandbox.window.LarkixMarkdown;
 }
 
@@ -55,14 +58,16 @@ f(x)=\\int_0^x \\frac{1}{\\sqrt{1+t^2}}dt
 \\]
 `);
   assertIncludes(rendered.html, "markdown-math-inline", "inline math span");
-  assertIncludes(rendered.html, "<sub>i</sub>", "inline math subscript markup");
-  assertIncludes(rendered.html, "<sup>2</sup>", "inline math superscript markup");
+  assertIncludes(rendered.html, 'class="msupsub"', "inline math script markup");
   assert.equal(countMatches(rendered.html, /markdown-math-display/g), 2, "display math block count");
-  assertIncludes(rendered.html, "math-frac", "fraction markup");
-  assertIncludes(rendered.html, "math-limit-op", "integral limit markup");
-  assertIncludes(rendered.html, "math-root", "root markup");
+  assertIncludes(rendered.html, 'class="mfrac"', "KaTeX fraction markup");
+  assertIncludes(rendered.html, 'class="mop"', "KaTeX integral operator markup");
+  assertIncludes(rendered.html, "sqrt", "KaTeX root markup");
   assertIncludes(rendered.html, "\u222e", "closed integral glyph");
+  assertIncludes(rendered.html, 'class="katex-mathml"', "accessible MathML output");
   assert.ok(!rendered.html.includes("\ufffd"), "rendered math must not contain replacement characters");
+  assert.equal(rendered.valid, true, "valid Markdown math is publishable");
+  assert.deepEqual(Array.from(rendered.diagnostics), [], "valid Markdown math has no diagnostics");
 }
 
 {
@@ -95,8 +100,25 @@ VBAT ---- R1 ----+---- ADC_INx
   assert.equal(countMatches(rendered.html, /markdown-math-inline/g), 1, "formula-like inline code renders as inline math");
   assert.equal(countMatches(rendered.html, /markdown-math-display/g), 1, "formula-like text fence renders as display math");
   assert.equal(countMatches(rendered.html, /<pre /g), 1, "ASCII circuit text fence stays a code block");
-  assertIncludes(rendered.html, "<sub>IN</sub>", "plain formula identifiers render subscripts");
-  assertIncludes(rendered.html, "<sup>12</sup>", "plain formula powers render superscripts");
+  assertIncludes(rendered.html, 'class="katex"', "formula-like plain text uses the shared engine");
+  assertIncludes(rendered.html, 'class="msupsub"', "plain formula powers use KaTeX scripts");
+}
+
+{
+  const invalidBrace = markdown.render("Valid text before $x_{$ and after.");
+  assert.equal(invalidBrace.valid, false, "invalid brace blocks publication");
+  assert.equal(invalidBrace.canPublish, false, "invalid brace exposes the publication gate");
+  assert.equal(invalidBrace.diagnostics[0].code, "math.syntax.invalid", "invalid brace diagnostic code");
+  assert.equal(invalidBrace.diagnostics[0].blocking, true, "invalid brace diagnostic is blocking");
+  assert.ok(invalidBrace.diagnostics[0].range.column >= 1, "invalid brace has a located range");
+  assertIncludes(invalidBrace.html, "公式暂不可用", "invalid formula has a safe public placeholder");
+  assert.ok(!invalidBrace.html.includes("x_{"), "invalid public output does not expose raw LaTeX");
+
+  const invalidDelimiter = markdown.render("$$\n\\frac{1}{2}");
+  assert.equal(invalidDelimiter.valid, false, "unclosed display delimiter blocks publication");
+  assert.equal(invalidDelimiter.diagnostics[0].code, "math.delimiter.unclosed", "delimiter diagnostic code");
+  assert.equal(invalidDelimiter.diagnostics[0].range.line, 1, "delimiter diagnostic locates the opening line");
+  assert.ok(!invalidDelimiter.html.includes("\\frac"), "unclosed public output does not expose raw LaTeX");
 }
 
 {
@@ -216,6 +238,59 @@ $$
     0,
     "derive shortcodes inside code and math regions are ignored"
   );
+}
+
+{
+  const binding = {
+    bindingId: "bind.marker",
+    formulaId: "formula.marker",
+    revisionId: "rev.marker",
+    displayMode: "inline",
+    slug: "marker-target",
+    displayName: "占空比公式",
+    latex: "z_{database}",
+    archiveState: "active"
+  };
+  const decorated = markdown.render(
+    `作者原式 $x_{author}^2$ {{formula:bind.marker|formula.marker|rev.marker|inline}}；普通 $y_{plain}$.`,
+    { formulaBindings: [binding] }
+  );
+  assert.equal(countMatches(decorated.html, /class="formula-binding-marker /g), 1, "bound author formula has one marker");
+  assertIncludes(decorated.html, "x_{author}^2", "bound source formula remains unchanged");
+  assert.ok(!decorated.html.includes("z_{database}"), "adjacent binding does not repeat database formula");
+  assertIncludes(decorated.html, 'title="占空比公式详细推导"', "binding marker exposes target tooltip");
+  assertIncludes(decorated.html, 'aria-label="查看 占空比公式详细推导"', "binding marker has accessible name");
+  assertIncludes(decorated.html, "derive.html?formula=marker-target", "binding marker navigates to stable formula slug");
+}
+
+{
+  const displayBinding = {
+    bindingId: "bind.display",
+    formulaId: "formula.display",
+    revisionId: "rev.display",
+    displayMode: "display",
+    slug: "display-target",
+    displayName: "纹波公式",
+    latex: "z_{legacy}",
+    archiveState: "active"
+  };
+  const decorated = markdown.render(`$$
+\\boxed{\\Delta I_L=\\frac{V_{in}D}{Lf_s}}
+$$
+{{formula:bind.display|formula.display|rev.display|display}}`, { formulaBindings: [displayBinding] });
+  assert.equal(countMatches(decorated.html, /markdown-math markdown-math-display/g), 1, "display source formula is not duplicated");
+  assert.equal(countMatches(decorated.html, /class="formula-binding-marker /g), 1, "display formula has one marker");
+  assert.ok(
+    /class="markdown-math markdown-math-display[\s\S]*class="formula-binding-marker formula-binding-marker--display"[\s\S]*<\/div>/.test(
+      decorated.html
+    ),
+    "display marker is attached inside the source formula host"
+  );
+  const unresolved = markdown.render(
+    `$x$ {{formula:bind.missing|formula.missing|rev.missing|inline}}`,
+    { formulaBindings: [] }
+  );
+  assert.equal(countMatches(unresolved.html, /formula-binding-marker/g), 0, "unresolved binding does not mark ordinary source math");
 }
 
 {

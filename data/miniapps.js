@@ -1,4 +1,5 @@
-window.LARKIX_MINIAPPS = [
+(() => {
+  const miniapps = [
   {
     id: "larkix-elec",
     name: "LarkixElec",
@@ -18,9 +19,29 @@ window.LARKIX_MINIAPPS = [
     summary: "把 Markdown 文档转换为可下载文件，当前支持 Word DOCX，并为 PDF 等格式预留扩展。",
     category: "文档转换",
     status: "新增设计",
-    version: "V0.3",
+    version: "V0.4",
     href: "./tools/md2doc.html",
-    icon: "./assets/logo/md2file/md2file-miniapp-icon.svg?v=20260730-0012",
+    icon: "./assets/logo/md2file/md2file-miniapp-icon.svg?v=20260807-0001",
     capabilities: ["Markdown 输入", "实时预览", "DOCX 导出", "PDF 预留"]
   }
-];
+  ];
+  const md2filePublicIdentity = Object.freeze({
+    id: "md2file",
+    name: "MD2File",
+    version: "V0.4",
+    href: "./tools/md2doc.html"
+  });
+
+  function publicList(source = miniapps) {
+    const entries = Array.isArray(source) ? source : [];
+    const md2file = entries.find((app) => app && app.id === md2filePublicIdentity.id);
+    return md2file ? [{ ...md2file, ...md2filePublicIdentity }] : [];
+  }
+
+  window.LARKIX_MINIAPPS = miniapps;
+  window.LARKIX_PUBLIC_MINIAPPS = publicList();
+  window.LarkixMiniapps = Object.freeze({
+    canonicalHref: md2filePublicIdentity.href,
+    publicList
+  });
+})();

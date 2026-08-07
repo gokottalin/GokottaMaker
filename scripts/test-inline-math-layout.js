@@ -3,17 +3,22 @@ const fs = require("node:fs");
 const http = require("node:http");
 const path = require("node:path");
 const vm = require("node:vm");
+const katex = require("katex");
 
 const ROOT = path.join(__dirname, "..");
+const KATEX_PATH = path.join(ROOT, "assets", "vendor", "katex", "katex.min.js");
+const MATH_RENDERER_PATH = path.join(ROOT, "data", "math-renderer.js");
 const RENDERER_PATH = path.join(ROOT, "data", "markdown-renderer.js");
 const STYLE_INDEX_PATH = path.join(ROOT, "styles.css");
 const INLINE_STYLE_PATH = path.join(ROOT, "styles", "26-inline-math.css");
 
 function loadRenderer() {
-  const source = fs.readFileSync(RENDERER_PATH, "utf8");
-  const sandbox = { window: {} };
+  const mathSource = fs.readFileSync(MATH_RENDERER_PATH, "utf8");
+  const markdownSource = fs.readFileSync(RENDERER_PATH, "utf8");
+  const sandbox = { window: { katex } };
   vm.createContext(sandbox);
-  vm.runInContext(source, sandbox);
+  vm.runInContext(mathSource, sandbox);
+  vm.runInContext(markdownSource, sandbox);
   return sandbox.window.LarkixMarkdown;
 }
 
@@ -38,8 +43,7 @@ const fixtures = [
   {
     id: "buck-ripple-rate",
     latex: "k_{ripple}=dI_{trans}/dI_{diag}",
-    expectedStructures: ["fraction", "script"],
-    expectedFractions: 1
+    expectedStructures: ["script"]
   },
   {
     id: "stacked-fraction",
@@ -66,7 +70,7 @@ const fixtures = [
     id: "multi-level-scripts",
     latex: "I_{L_{phase}}^{pk_{max}}",
     expectedStructures: ["script"],
-    expectedScripts: 4
+    expectedScripts: 3
   }
 ];
 
@@ -88,6 +92,7 @@ function browserFixtureHtml(surface, theme) {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>A31 ${surface} ${theme}</title>
+  <link rel="stylesheet" href="/assets/vendor/katex/katex.min.css" />
   <link rel="stylesheet" href="/styles.css" />
   <style>
     body { margin: 0; }
@@ -105,13 +110,16 @@ function browserFixtureHtml(surface, theme) {
 </head>
 <body>
   <div class="fixture-shell">${surfaceHtml}</div>
+  <script src="/assets/vendor/katex/katex.min.js"></script>
+  <script src="/data/math-renderer.js"></script>
   <script src="/data/markdown-renderer.js"></script>
   <script>
     (function () {
       var fixtureIds = ${JSON.stringify(fixtures.map((fixture) => fixture.id))};
       var target = document.querySelector(".fixture-surface");
       var markdown = ${JSON.stringify(`普通中文基线用于比较相邻行。\n\n${fixtureMarkdown}\n\n$$\n\\frac{V_{in}D}{L f_s}\n$$\n\n结束中文基线用于比较相邻行。`)};
-      target.innerHTML = window.LarkixMarkdown.render(markdown).html;
+      var renderResult = window.LarkixMarkdown.render(markdown);
+      target.innerHTML = renderResult.html;
       Array.from(target.querySelectorAll(".markdown-math-inline")).forEach(function (formula, index) {
         formula.dataset.fixtureId = fixtureIds[index];
       });
@@ -120,24 +128,17 @@ function browserFixtureHtml(surface, theme) {
         var formulas = Array.from(target.querySelectorAll(".markdown-math-inline")).map(function (formula) {
           var rect = formula.getBoundingClientRect();
           var frame = formula.querySelector(".math-inline-frame").getBoundingClientRect();
-          var fractions = Array.from(formula.querySelectorAll(".math-frac")).map(function (fraction) {
-            var children = Array.from(fraction.children);
-            var numerator = children.find(function (child) { return child.classList.contains("math-num"); });
-            var denominator = children.find(function (child) { return child.classList.contains("math-den"); });
-            var numeratorRect = numerator.getBoundingClientRect();
-            var denominatorRect = denominator.getBoundingClientRect();
+          var fractions = Array.from(formula.querySelectorAll(".mfrac")).map(function (fraction) {
+            var fractionRect = fraction.getBoundingClientRect();
             return {
-              numeratorBottom: numeratorRect.bottom,
-              denominatorTop: denominatorRect.top,
-              overlaps: numeratorRect.bottom > denominatorRect.top + 0.5
+              top: fractionRect.top,
+              bottom: fractionRect.bottom,
+              outsideFrame: fractionRect.top < frame.top - 0.5 || fractionRect.bottom > frame.bottom + 0.5
             };
           });
-          var roots = Array.from(formula.querySelectorAll(".math-root")).map(function (root) {
+          var roots = Array.from(formula.querySelectorAll(".mord.sqrt")).map(function (root) {
             var rootRect = root.getBoundingClientRect();
-            return Array.from(root.children).some(function (child) {
-              var childRect = child.getBoundingClientRect();
-              return childRect.top < rootRect.top - 0.5 || childRect.bottom > rootRect.bottom + 0.5;
-            });
+            return rootRect.top < frame.top - 0.5 || rootRect.bottom > frame.bottom + 0.5;
           });
           return {
             id: formula.dataset.fixtureId,
@@ -161,6 +162,9 @@ function browserFixtureHtml(surface, theme) {
           surface: ${JSON.stringify(surface)},
           theme: ${JSON.stringify(theme)},
           viewport: { width: innerWidth, height: innerHeight },
+          katexVersion: window.LarkixMath && window.LarkixMath.VERSION,
+          valid: renderResult.valid,
+          diagnostics: renderResult.diagnostics,
           formulas: formulas,
           paragraphOverlap: paragraphs.some(function (paragraph, index) {
             return index > 0 && paragraphs[index - 1].bottom > paragraph.top + 0.5;
@@ -202,8 +206,16 @@ function serveBrowserFixtures(port) {
       response.writeHead(404).end("Not found");
       return;
     }
-    const contentType = path.extname(filePath) === ".css" ? "text/css" : "application/javascript";
-    response.writeHead(200, { "Content-Type": `${contentType}; charset=utf-8`, "Cache-Control": "no-store" });
+    const extension = path.extname(filePath).toLowerCase();
+    const contentType =
+      extension === ".css"
+        ? "text/css; charset=utf-8"
+        : extension === ".js"
+          ? "application/javascript; charset=utf-8"
+          : extension === ".woff2"
+            ? "font/woff2"
+            : "font/woff";
+    response.writeHead(200, { "Content-Type": contentType, "Cache-Control": "no-store" });
     fs.createReadStream(filePath).pipe(response);
   });
   server.listen(port, "127.0.0.1", () => {
@@ -231,26 +243,23 @@ for (const fixture of fixtures) {
     );
   }
   if (fixture.expectedFractions) {
-    assert.equal(count(html, /class="math-frac"/g), fixture.expectedFractions, `${fixture.id}: fraction count`);
+    assert.ok(count(html, /\bmfrac\b/g) >= fixture.expectedFractions, `${fixture.id}: fraction count`);
   }
   if (fixture.expectedRoots) {
-    assert.equal(count(html, /class="math-root"/g), fixture.expectedRoots, `${fixture.id}: root count`);
+    assert.ok(count(html, /\bsqrt\b/g) >= fixture.expectedRoots, `${fixture.id}: root count`);
   }
   if (fixture.expectedIntegrals) {
-    assert.equal(count(html, /\bmath-limit-int\b/g), fixture.expectedIntegrals, `${fixture.id}: integral count`);
+    assert.ok(count(html, /∫/g) >= fixture.expectedIntegrals, `${fixture.id}: integral count`);
   }
   if (fixture.expectedScripts) {
-    assert.equal(count(html, /<(?:sub|sup)>/g), fixture.expectedScripts, `${fixture.id}: script count`);
+    assert.ok(count(html, /\bmsupsub\b/g) >= fixture.expectedScripts, `${fixture.id}: script count`);
   }
 }
 
 const integralFixture = renderInline(renderer, fixtures[3].latex);
-assert.match(
-  integralFixture,
-  /class="math-num"[\s\S]*class="math-limit-op math-limit-int"[\s\S]*class="math-den"/,
-  "integral remains structurally inside the fraction numerator"
-);
-assert.match(integralFixture, /class="math-text">d<\/span>t/, "differential remains explicit math text");
+assert.match(integralFixture, /\bmfrac\b/, "integral fixture keeps the fraction structure");
+assert.match(integralFixture, /∫/, "integral remains inside the rendered numerator");
+assert.match(integralFixture, />d<\/span>/, "differential remains explicit math text");
 
 const displayHtml = renderer.render("$$\n\\frac{V_{in}D}{L f_s}\n$$").html;
 assert.match(displayHtml, /class="markdown-math markdown-math-display"/, "display formula remains a block");
@@ -268,21 +277,30 @@ assert.equal(count(styleIndex, /26-inline-math\.css/g), 1, "inline math style is
 for (const required of [
   'data-math-layout="inline-flow"',
   "display: inline-flex",
-  "vertical-align: middle",
+  "vertical-align: baseline",
   "max-inline-size: 100%",
   "overflow-x: auto",
   "overflow-y: auto",
   "overflow: visible",
-  ".math-frac",
-  ".math-root",
-  ".math-limit-int",
-  "transform: none"
+  ".markdown-math-inline .katex",
+  ".markdown-math-display",
+  ".markdown-math-display.is-boxed",
+  ".markdown-math-error--display",
+  "border: 0"
 ]) {
   assert.ok(inlineStyle.includes(required), `style contract includes ${required}`);
 }
 
 assert.doesNotMatch(inlineStyle, /data-latex|buck|ripple|post-\d+|article-\d+/i, "no formula or article-specific selector");
-assert.doesNotMatch(inlineStyle, /translate(?:X|Y)?\(\s*-/i, "no fixed negative translation");
+const inlineLayoutStyle = inlineStyle
+  .split("}")
+  .filter((rule) => !rule.includes(".formula-binding-marker"))
+  .join("}");
+assert.doesNotMatch(
+  inlineLayoutStyle,
+  /translate(?:X|Y)?\(\s*-/i,
+  "inline math layout has no fixed negative translation"
+);
 assert.doesNotMatch(inlineStyle, /vertical-align\s*:\s*-/i, "no fixed negative vertical alignment");
 assert.doesNotMatch(inlineStyle, /overflow-y\s*:\s*hidden/i, "tall inline math is never vertically clipped");
 

@@ -321,11 +321,27 @@ body.md2doc-page .md2doc-preview .markdown-math-display {
   justify-content: center;
   gap: 0.18em;
   max-width: 100%;
-  overflow-x: auto;
-  border-color: #e9d5ff !important;
-  background: #fcfaff !important;
+  overflow: visible;
+  padding: 0;
+  border: 0 !important;
+  background: transparent !important;
   color: #18181b !important;
   line-height: 1.65;
+}
+
+body.md2doc-page .md2doc-preview .markdown-math-display .katex-display {
+  box-sizing: border-box;
+  width: 100%;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  margin: 0;
+  padding-block: 0.35em;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+body.md2doc-page .md2doc-preview .markdown-math-display.is-boxed .fbox {
+  box-sizing: border-box;
 }
 
 .md2doc-log {

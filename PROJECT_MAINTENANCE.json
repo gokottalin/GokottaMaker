@@ -1490,7 +1490,7 @@
     "codeImplementationAllowedNow": false,
     "databaseMutationAllowedNow": false,
     "productionReleaseAllowedNow": false,
-    "gitStagingAllowedNow": false,
+    "gitStagingAllowedNow": true,
     "resumeRequires": [
       "Owner explicitly asks Agent0 to resume Batch1",
       "Agent0 publishes a separate Batch1 open dispatch",

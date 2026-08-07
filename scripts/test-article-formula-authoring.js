@@ -11,9 +11,11 @@ const { createContentStore, formulaBindingShortcode } = require("../lib/content"
 const { createDatabase } = require("../lib/db");
 const {
   validateFormulaCardPayload,
+  validateFormulaClassificationPayload,
   validateFormulaReferenceShortcodes,
   validateLatexSelection,
-  validatePostPayload
+  validatePostPayload,
+  sourceTextHash
 } = require("../lib/validators");
 
 const ROOT = path.resolve(__dirname, "..");
@@ -222,10 +224,21 @@ async function apiChecks(tempRoot) {
       markdown: selectionMarkdown,
       publishStatus: "draft"
     });
+    const createdCategory = await request("/api/admin/formula-classifications", {
+      method: "POST",
+      body: JSON.stringify({
+        kind: "category",
+        displayName: "文章公式/功率",
+        parentSlug: "power-electronics"
+      })
+    });
+    assert.equal(createdCategory.response.status, 201);
     const atomic = await request("/api/admin/formulas/from-selection", {
       method: "POST",
       body: JSON.stringify({
         post: atomicPost,
+        sourceHash: sourceTextHash(selectionMarkdown),
+        baseSourceHash: "",
         selectionStart,
         selectionEnd: selectionStart + selectedText.length,
         formula: {
@@ -242,7 +255,14 @@ async function apiChecks(tempRoot) {
     assert.equal(atomic.payload.binding.formulaId, atomic.payload.card.formulaId);
     assert.equal(atomic.payload.binding.revisionId, atomic.payload.card.currentRevisionId);
     assert.equal(atomic.payload.binding.displayMode, "display");
-    assert.equal(atomic.payload.post.markdown, selectionMarkdown.replace(selectedText, atomic.payload.shortcode));
+    assert.equal(
+      atomic.payload.post.markdown,
+      selectionMarkdown.replace(
+        selectedText,
+        () => `${selectedText}\n${atomic.payload.shortcode}`
+      )
+    );
+    assert.equal(atomic.payload.card.publishStatus, "draft");
 
     const beforeFailure = (await request("/api/admin/formulas/export")).payload.cards.length;
     const invalidSelection = await request("/api/admin/formulas/from-selection", {
@@ -253,6 +273,8 @@ async function apiChecks(tempRoot) {
           slug: "api-invalid-selection",
           markdown: "正文和 $x$ 混合选区"
         }),
+        sourceHash: sourceTextHash("正文和 $x$ 混合选区"),
+        baseSourceHash: "",
         selectionStart: 0,
         selectionEnd: 8,
         formula: {
@@ -344,11 +366,27 @@ async function main() {
         tags: [],
         latex: selection.latex
       });
-      const atomic = store.createFormulaFromSelection({ post: atomicPost, formula: atomicFormula, selection });
+      store.saveFormulaClassification(
+        validateFormulaClassificationPayload({
+          kind: "category",
+          displayName: atomicFormula.categoryPath,
+          parentSlug: atomicFormula.moduleKey
+        })
+      );
+      const atomic = store.createFormulaFromSelection({
+        post: atomicPost,
+        formula: atomicFormula,
+        selection,
+        sourceHash: sourceTextHash(displaySource),
+        baseSourceHash: ""
+      });
       assert.equal(atomic.binding.formulaId, atomicFormula.formulaId);
       assert.equal(atomic.binding.revisionId, atomic.card.currentRevisionId);
       assert.equal(atomic.binding.displayMode, "display");
-      assert.equal(atomic.post.markdown, displaySource.replace(selectedText, atomic.shortcode));
+      assert.equal(
+        atomic.post.markdown,
+        displaySource.replace(selectedText, () => `${selectedText}\n${atomic.shortcode}`)
+      );
       assert.equal(atomic.post.formulaBindings.length, 1);
 
       const beforeImmutableFailure = store.postById(savedBound.id);
@@ -412,6 +450,8 @@ async function main() {
     assert.match(adminHtml, /id="openFormulaAuthoringButton"/);
     assert.match(adminJs, /contextmenu/);
     assert.match(adminJs, /from-selection/);
+    assert.match(adminJs, /sourceHash/);
+    assert.match(adminJs, /baseSourceHash/);
     assert.match(adminJs, /Shift \+ 右键/);
     assert.match(adminHtml, /id="formulaAuthoringQuickPreview"/);
     assert.match(adminHtml, /id="formulaAuthoringWorkbenchButton"/);
