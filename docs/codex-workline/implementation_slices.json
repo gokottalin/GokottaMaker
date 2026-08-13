@@ -10,7 +10,7 @@
   "lastReplannedBy": "A00_ProjectDirector",
   "requirementDispatch": "docs/codex-workline/requirements/dispatch/DISPATCH-20260813-002.json",
   "currentGate": {
-    "batch1": "dispatch_20260813_active_s55_release",
+    "batch1": "dispatch_20260813_complete_returned_a00",
     "businessImplementationAllowed": true,
     "databaseMutationAllowed": false,
     "migrationFileImplementationAllowed": false,
@@ -69,7 +69,7 @@
     "crossComputerBootstrapAllowed": false,
     "encryptedDataHandoffAllowed": false,
     "finalCandidateGateAllowed": false,
-    "finalGitPublicationAllowed": true
+    "finalGitPublicationAllowed": false
   },
   "repairFinding": {
     "problem": "A05 was declared in task_registry.json but remained blocked and had no active brief, implementation_slices.json, or handoff in the current workspace.",
@@ -2905,7 +2905,7 @@
       "id": "S55_git_publish_and_remote_clone",
       "agent": "A64_FinalGitPublisher",
       "roleNote": "最终 Git 发布：按显式清单提交、普通推送并从远程 SHA 干净克隆复验",
-      "status": "next",
+      "status": "completed",
       "purpose": "Publish exactly the accepted candidate to existing origin/main and prove the pushed SHA from a clean remote clone.",
       "reads": ["AGENTS.md", "docs/final-git-manifest-20260813.json", "docs/final-git-staging-plan-20260813.md", "docs/codex-workline/slices/S54_final_candidate_gate_handoff.md", "agents/A64_FinalGitPublisher/brief.md"],
       "mayEdit": ["Git index through exact accepted pathspecs", "one release commit", "one optional governance closure commit", "docs/codex-workline/slices/S55_git_publish_and_remote_clone_handoff.md", "A00-authorized closure files"],
@@ -2917,10 +2917,10 @@
     }
   ],
   "nextDecision": {
-    "agents": ["A64_FinalGitPublisher"],
-    "decision": "S51 through S54 are accepted. S55 has limited exact-path Git authority; production deployment remains closed.",
+    "agents": ["A00_ProjectDirector"],
+    "decision": "S51 through S55 are complete. Control returned to A00; Git and production deployment remain closed.",
     "shortPrompts": [
-      "Agent 64 Final Git Publisher（最终 Git 发布：按显式清单提交、普通推送并从远程 SHA 干净克隆复验）：请按 agents\\A64_FinalGitPublisher\\brief.md 执行 S55；禁止 broad git add、force push、历史重写和生产部署。"
+      "Agent 00 Project Director（项目导演：验收最终 Git 发布并裁决下一步）：请运行 npm.cmd run codex:handoff，读取 S55 交接；等待下一份用户确认需求，生产部署和 Git 写入保持关闭。"
     ]
   }
 }

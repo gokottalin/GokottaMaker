@@ -1,7 +1,7 @@
 {
   "schemaVersion": "larkix.requirement-dispatch.v1",
   "dispatchId": "DISPATCH-20260813-002",
-  "status": "in_progress",
+  "status": "complete",
   "createdAt": "2026-08-13T23:55:00+08:00",
   "owner": "A00_ProjectDirector",
   "requirements": [
@@ -20,9 +20,9 @@
     "S55_git_publish_and_remote_clone",
     "A00_acceptance"
   ],
-  "acceptedSlices": ["S51_final_repository_manifest", "S52_cross_computer_bootstrap", "S53_encrypted_data_handoff", "S54_final_candidate_gate"],
-  "currentSlice": "S55_git_publish_and_remote_clone",
-  "currentAgent": "A64_FinalGitPublisher",
+  "acceptedSlices": ["S51_final_repository_manifest", "S52_cross_computer_bootstrap", "S53_encrypted_data_handoff", "S54_final_candidate_gate", "S55_git_publish_and_remote_clone"],
+  "currentSlice": "A00_acceptance",
+  "currentAgent": "A00_ProjectDirector",
   "writePolicy": "single_writer_per_declared_file",
   "gates": {
     "manifestPlanning": false,
@@ -30,7 +30,7 @@
     "encryptedDataWorkflowWrites": false,
     "versionChange": false,
     "candidateVerification": false,
-    "gitWrites": true,
+    "gitWrites": false,
     "productionDeployment": false,
     "currentOrProductionDataMutation": false,
     "secretMaterial": false,

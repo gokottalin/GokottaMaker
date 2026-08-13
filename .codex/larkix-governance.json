@@ -248,13 +248,13 @@
     },
     "projectWindowRequiredText": [
       "# Project Window",
-      "Current phase: `DISPATCH-20260813-002_S55_Release_Active`",
+      "Current phase: `DISPATCH-20260813-002_Complete_Returned_A00`",
       "Current controller: `agents/A00_ProjectDirector/brief.md`",
-      "Next agent: `agents/A64_FinalGitPublisher/brief.md`",
+      "Next agent: `agents/A00_ProjectDirector/brief.md`",
       "Confirmed requirement dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260813-002.json`",
-      "Current work target: S55 must refresh the exact manifest, stage only accepted paths, commit and fast-forward push the V2.5.4 candidate, then verify the remote SHA from a fresh clone",
-      "Current gate: A64 has limited Git authority for exact pathspec staging, one release commit and one optional governance-closure commit; force push, history rewrite, branch/remote changes, data, deployment and secrets remain closed",
-      "Confirmed queue: A64 now; then A00 final acceptance. Production deployment remains separate"
+      "Current work target: V2.5.4 release commit `2ef409b` is published to `origin/main`; S55 closure returns control to A00",
+      "Current gate: Git writes, production deployment, current/production data, services, secrets, cloud, migrations, restore and rollback are closed",
+      "Confirmed queue: A00 final acceptance and the next Owner-confirmed requirement. Production deployment remains separate"
     ],
     "agentsGuideRequiredText": [
       "Recommended handoff and coordination language: Chinese",
@@ -277,9 +277,9 @@
       "run `npm.cmd run codex:contract`"
     ],
     "nextAgentsRequiredText": [
-      "Agent 64 Final Git Publisher",
+      "Agent 00 Project Director",
       "DISPATCH-20260813-002",
-      "A64_FinalGitPublisher",
+      "A00_ProjectDirector",
       "npm.cmd run codex:handoff"
     ],
     "a01Completion": {
@@ -644,7 +644,7 @@
       "continueUntilQueueComplete": true,
       "stopOnClosedGateOrNewAuthority": true
     },
-    "expectedNextTaskCount": 1,
+    "expectedNextTaskCount": 0,
     "agentRoleNotes": {
       "A00_ProjectDirector": "项目导演：负责顺序、门禁和下一步裁决",
       "A01_ProjectStateRetriever": "项目状态检索器：只读取资料并建立来源索引",
@@ -773,7 +773,7 @@
       "A61_CrossComputerBootstrap": "completed",
       "A62_EncryptedDataHandoff": "completed",
       "A63_FinalCandidateGate": "completed",
-      "A64_FinalGitPublisher": "next"
+      "A64_FinalGitPublisher": "completed"
     }
   },
   "temporaryExperts": [

@@ -4,11 +4,11 @@ Candidate identity: `2.5.4` / `V2.5.4+20260814-0001`.
 
 ## Gate State
 
-- S54 status: `accepted_by_a00`; S55 status: `pre_publish_reverification`.
+- S54 status: `accepted_by_a00`; S55 status: `complete_returned_to_a00`.
 - S55 live status partition: `228 = 123 include + 105 exclude + 0 review`; manifest ID `FINAL-GIT-20260813-S55`.
 - Exact staging plan: 123 pathspecs, equal to the include set. One prior `styles/20-content.css` status entry normalized to the unchanged HEAD blob during exact staging and was therefore removed from the refreshed live manifest.
 - Outside-repository candidate: passed.
-- Git staging, commit, and push: not yet performed; exact S55 authority is active. Deployment, current data, service, and secret operations remain forbidden.
+- Release commit `2ef409b397d9f96bf2e3f80c78767c3f06f5084f` was ordinarily pushed to existing `origin/main`. The single authorized closure commit remains; deployment, current data, service, and secret operations remain forbidden.
 
 ## Verification Result
 
@@ -32,4 +32,4 @@ Candidate identity: `2.5.4` / `V2.5.4+20260814-0001`.
 
 ## S55 Execution Boundary
 
-A00 accepted S54 and opened S55 for `A64_FinalGitPublisher`. A64 must refresh and revalidate live status before staging, use only the exact pathspec plan, and keep all 105 excluded historical paths unstaged. Only one release commit, one optional governance-closure commit, and ordinary fast-forward pushes to the existing `origin/main` are authorized. Production deployment remains closed.
+A00 accepted S54 and opened S55 for `A64_FinalGitPublisher`. The release commit is published. The closure commit may contain only the authorized governance, handoff, manifest, audit, staging-plan and gate files, after which all Git authority closes and control returns to A00. Production deployment remains closed.

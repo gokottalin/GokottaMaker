@@ -1,11 +1,11 @@
 {
   "schemaVersion": "larkix.final-git-manifest.v2",
   "manifestId": "FINAL-GIT-20260813-S55",
-  "generatedAt": "2026-08-13T17:09:51.017Z",
+  "generatedAt": "2026-08-13T17:16:49.418Z",
   "repository": {
     "root": "E:/Project/2607-LarkixWeb",
     "branch": "main",
-    "head": "50386e92330a997e77111dee49d4081ddfd77702",
+    "head": "2ef409b397d9f96bf2e3f80c78767c3f06f5084f",
     "remote": "https://github.com/gokottalin/GokottaMaker.git"
   },
   "policy": {
@@ -18,267 +18,15 @@
     "gitWriteBoundary": "Only A64 exact pathspec staging, one release commit, one optional governance-closure commit, and ordinary fast-forward push to the existing origin/main are authorized."
   },
   "counts": {
-    "liveStatus": 228,
-    "include": 123,
+    "liveStatus": 116,
+    "include": 11,
     "exclude": 105,
     "review": 0
   },
   "include": [
     {
-      "status": "??",
-      "path": ".codex/agents/a52-formula-identity-automation.toml",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": ".codex/agents/a53-public-content-freshness.toml",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": ".codex/agents/a54-public-surface-minimization.toml",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": ".codex/agents/a55-private-cms-gateway.toml",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": ".codex/agents/a56-formula-binding-authority.toml",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": ".codex/agents/a57-formula-relationship-projection.toml",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": ".codex/agents/a58-formula-marker-graph-ui.toml",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": ".codex/agents/a59-security-regression-evidence.toml",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": ".codex/agents/a60-final-repository-manifest.toml",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": ".codex/agents/a61-cross-computer-bootstrap.toml",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": ".codex/agents/a62-encrypted-data-handoff.toml",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": ".codex/agents/a63-final-candidate-gate.toml",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": ".codex/agents/a64-final-git-publisher.toml",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
       "status": " M",
       "path": ".codex/larkix-governance.json",
-      "owner": "A00-governance",
-      "reason": "active project governance and handoff state"
-    },
-    {
-      "status": " M",
-      "path": ".env.example",
-      "owner": "operations-template",
-      "reason": "secret-free environment or deployment template"
-    },
-    {
-      "status": " M",
-      "path": "404.html",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "admin/admin.css",
-      "owner": "CMS",
-      "reason": "accepted CMS implementation"
-    },
-    {
-      "status": " M",
-      "path": "admin/admin.js",
-      "owner": "CMS",
-      "reason": "accepted CMS implementation"
-    },
-    {
-      "status": " M",
-      "path": "admin/course-paths.html",
-      "owner": "CMS",
-      "reason": "accepted CMS implementation"
-    },
-    {
-      "status": " M",
-      "path": "admin/index.html",
-      "owner": "CMS",
-      "reason": "accepted CMS implementation"
-    },
-    {
-      "status": " M",
-      "path": "AGENTS.md",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": "??",
-      "path": "agents/A52_FormulaIdentityAutomation/brief.md",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": "agents/A53_PublicContentFreshness/brief.md",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": "agents/A54_PublicSurfaceMinimization/brief.md",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": "agents/A55_PrivateCmsGateway/brief.md",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": "agents/A56_FormulaBindingAuthority/brief.md",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": "agents/A57_FormulaRelationshipProjection/brief.md",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": "agents/A58_FormulaMarkerGraphUI/brief.md",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": "agents/A59_SecurityRegressionEvidence/brief.md",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": "agents/A60_FinalRepositoryManifest/brief.md",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": "agents/A61_CrossComputerBootstrap/brief.md",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": "agents/A62_EncryptedDataHandoff/brief.md",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": "agents/A63_FinalCandidateGate/brief.md",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": "??",
-      "path": "agents/A64_FinalGitPublisher/brief.md",
-      "owner": "Codex-workline",
-      "reason": "active temporary Agent contract"
-    },
-    {
-      "status": " M",
-      "path": "category-page.js",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "category.html",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "data/content-store.js",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "data/markdown-renderer.js",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "data/miniapps.js",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "data/site-meta.js",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "deploy/nginx-gokottamaker.conf",
-      "owner": "operations-template",
-      "reason": "secret-free environment or deployment template"
-    },
-    {
-      "status": " M",
-      "path": "derive.html",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "docs/codex-workline/A00_ProjectDirector_handoff.md",
       "owner": "A00-governance",
       "reason": "active project governance and handoff state"
     },
@@ -289,133 +37,13 @@
       "reason": "active project governance and handoff state"
     },
     {
-      "status": "??",
-      "path": "docs/codex-workline/requirements/active/REQ-20260812-001.json",
-      "owner": "requirements",
-      "reason": "confirmed requirement or dispatch package"
-    },
-    {
-      "status": "??",
-      "path": "docs/codex-workline/requirements/active/REQ-20260812-002.json",
-      "owner": "requirements",
-      "reason": "confirmed requirement or dispatch package"
-    },
-    {
-      "status": "??",
-      "path": "docs/codex-workline/requirements/active/REQ-20260812-003.json",
-      "owner": "requirements",
-      "reason": "confirmed requirement or dispatch package"
-    },
-    {
-      "status": "??",
-      "path": "docs/codex-workline/requirements/active/REQ-20260812-004.json",
-      "owner": "requirements",
-      "reason": "confirmed requirement or dispatch package"
-    },
-    {
-      "status": "??",
-      "path": "docs/codex-workline/requirements/active/REQ-20260813-001.json",
-      "owner": "requirements",
-      "reason": "confirmed requirement or dispatch package"
-    },
-    {
-      "status": "??",
-      "path": "docs/codex-workline/requirements/dispatch/DISPATCH-20260812-001.json",
-      "owner": "requirements",
-      "reason": "confirmed requirement or dispatch package"
-    },
-    {
-      "status": "??",
-      "path": "docs/codex-workline/requirements/dispatch/DISPATCH-20260812-002.json",
-      "owner": "requirements",
-      "reason": "confirmed requirement or dispatch package"
-    },
-    {
-      "status": "??",
-      "path": "docs/codex-workline/requirements/dispatch/DISPATCH-20260813-001.json",
-      "owner": "requirements",
-      "reason": "confirmed requirement or dispatch package"
-    },
-    {
-      "status": "??",
+      "status": " M",
       "path": "docs/codex-workline/requirements/dispatch/DISPATCH-20260813-002.json",
       "owner": "requirements",
       "reason": "confirmed requirement or dispatch package"
     },
     {
-      "status": "??",
-      "path": "docs/codex-workline/slices/S43_formula_identity_automation_handoff.md",
-      "owner": "A00-governance",
-      "reason": "active project governance and handoff state"
-    },
-    {
-      "status": "??",
-      "path": "docs/codex-workline/slices/S44_public_content_freshness_handoff.md",
-      "owner": "A00-governance",
-      "reason": "active project governance and handoff state"
-    },
-    {
-      "status": "??",
-      "path": "docs/codex-workline/slices/S45_public_surface_minimization_handoff.md",
-      "owner": "A00-governance",
-      "reason": "active project governance and handoff state"
-    },
-    {
-      "status": "??",
-      "path": "docs/codex-workline/slices/S46_private_cms_gateway_handoff.md",
-      "owner": "A00-governance",
-      "reason": "active project governance and handoff state"
-    },
-    {
-      "status": "??",
-      "path": "docs/codex-workline/slices/S47_formula_binding_authority_handoff.md",
-      "owner": "A00-governance",
-      "reason": "active project governance and handoff state"
-    },
-    {
-      "status": "??",
-      "path": "docs/codex-workline/slices/S48_formula_relationship_projection_handoff.md",
-      "owner": "A00-governance",
-      "reason": "active project governance and handoff state"
-    },
-    {
-      "status": "??",
-      "path": "docs/codex-workline/slices/S49_formula_marker_graph_ui_handoff.md",
-      "owner": "A00-governance",
-      "reason": "active project governance and handoff state"
-    },
-    {
-      "status": "??",
-      "path": "docs/codex-workline/slices/S50_security_regression_evidence_handoff.md",
-      "owner": "A00-governance",
-      "reason": "active project governance and handoff state"
-    },
-    {
-      "status": "??",
-      "path": "docs/codex-workline/slices/S51_final_repository_manifest_handoff.md",
-      "owner": "A00-governance",
-      "reason": "active project governance and handoff state"
-    },
-    {
-      "status": "??",
-      "path": "docs/codex-workline/slices/S52_cross_computer_bootstrap_handoff.md",
-      "owner": "A00-governance",
-      "reason": "active project governance and handoff state"
-    },
-    {
-      "status": "??",
-      "path": "docs/codex-workline/slices/S53_encrypted_data_handoff.md",
-      "owner": "A00-governance",
-      "reason": "active project governance and handoff state"
-    },
-    {
-      "status": "??",
-      "path": "docs/codex-workline/slices/S54_final_candidate_gate_handoff.md",
-      "owner": "A00-governance",
-      "reason": "active project governance and handoff state"
-    },
-    {
-      "status": "??",
+      "status": " M",
       "path": "docs/codex-workline/slices/S55_git_publish_and_remote_clone_handoff.md",
       "owner": "A00-governance",
       "reason": "active project governance and handoff state"
@@ -427,43 +55,25 @@
       "reason": "active project governance and handoff state"
     },
     {
-      "status": "??",
-      "path": "docs/cross-computer-bootstrap.md",
-      "owner": "documentation",
-      "reason": "release, deployment, security, or repository documentation"
-    },
-    {
       "status": " M",
-      "path": "docs/deployment.md",
-      "owner": "documentation",
-      "reason": "release, deployment, security, or repository documentation"
-    },
-    {
-      "status": "??",
-      "path": "docs/encrypted-data-handoff.md",
-      "owner": "documentation",
-      "reason": "release, deployment, security, or repository documentation"
-    },
-    {
-      "status": "??",
       "path": "docs/final-git-manifest-20260813.json",
       "owner": "documentation",
       "reason": "release, deployment, security, or repository documentation"
     },
     {
-      "status": "??",
+      "status": " M",
       "path": "docs/final-git-staging-plan-20260813.md",
       "owner": "documentation",
       "reason": "release, deployment, security, or repository documentation"
     },
     {
-      "status": "??",
+      "status": " M",
       "path": "docs/final-release-gate-20260813.md",
       "owner": "documentation",
       "reason": "release, deployment, security, or repository documentation"
     },
     {
-      "status": "??",
+      "status": " M",
       "path": "docs/final-repository-audit-20260813.md",
       "owner": "documentation",
       "reason": "release, deployment, security, or repository documentation"
@@ -475,292 +85,10 @@
       "reason": "release, deployment, security, or repository documentation"
     },
     {
-      "status": "??",
-      "path": "docs/security-formula-regression-evidence.md",
-      "owner": "documentation",
-      "reason": "release, deployment, security, or repository documentation"
-    },
-    {
-      "status": " M",
-      "path": "formula-graph.js",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "index.html",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "lib/content.js",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "lib/seo.js",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "lib/validators.js",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "main.js",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "maker.html",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": "??",
-      "path": "migrations/028_formula_content_bindings.js",
-      "owner": "database-schema",
-      "reason": "accepted additive migration"
-    },
-    {
-      "status": " M",
-      "path": "miniapps.html",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "package-lock.json",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "package.json",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "post.html",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "post.js",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
       "status": " M",
       "path": "PROJECT_WINDOW.md",
       "owner": "A00-governance",
       "reason": "active project governance and handoff state"
-    },
-    {
-      "status": " M",
-      "path": "project.html",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "projects.html",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "README.md",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": "??",
-      "path": "scripts/export-encrypted-handoff.ps1",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "scripts/gokottamaker.env.example",
-      "owner": "operations-template",
-      "reason": "secret-free environment or deployment template"
-    },
-    {
-      "status": "??",
-      "path": "scripts/restore-encrypted-handoff.ps1",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": "??",
-      "path": "scripts/run-security-formula-regression.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": " M",
-      "path": "scripts/test-article-formula-authoring.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": " M",
-      "path": "scripts/test-branching-derivation-graph.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": " M",
-      "path": "scripts/test-carousel-focus-buffer.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": " M",
-      "path": "scripts/test-focus-mode.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": "??",
-      "path": "scripts/test-formula-binding-authority.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": " M",
-      "path": "scripts/test-formula-catalog.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": "??",
-      "path": "scripts/test-formula-identity-automation.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": " M",
-      "path": "scripts/test-formula-map-flow-layout.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": "??",
-      "path": "scripts/test-formula-marker-graph-ui.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": " M",
-      "path": "scripts/test-formula-reference-versioning.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": "??",
-      "path": "scripts/test-formula-relationship-projection.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": " M",
-      "path": "scripts/test-legacy-formula-relation-migration.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": " M",
-      "path": "scripts/test-linear-derivation-graph.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": " M",
-      "path": "scripts/test-md2file-public-entry.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": " M",
-      "path": "scripts/test-post-reading-minutes.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": "??",
-      "path": "scripts/test-private-cms-gateway.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": "??",
-      "path": "scripts/test-public-content-freshness.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": "??",
-      "path": "scripts/test-public-surface-minimization.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": " M",
-      "path": "scripts/verify-api.ps1",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": "??",
-      "path": "scripts/verify-clean-clone.ps1",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": "??",
-      "path": "scripts/verify-final-git-candidate.js",
-      "owner": "QA",
-      "reason": "accepted test or release verifier"
-    },
-    {
-      "status": " M",
-      "path": "server.js",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "site-layout.js",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "tools/gokotta-elec.html",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "tools/larkix-elec.html",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
-    },
-    {
-      "status": " M",
-      "path": "tools/md2doc.html",
-      "owner": "product",
-      "reason": "accepted product or release identity file"
     }
   ],
   "exclude": [
@@ -1453,6 +781,6 @@
     "uniqueStatusPaths": true,
     "partitionCountMatches": true,
     "reviewEmpty": true,
-    "manifestSha256": "664c331b908b62884c85d206bd8c056b406920af3763ca7bc75c7078e181fe59"
+    "manifestSha256": "862972304eb8027c7572006dd834ae9127f522db9f8eebe4726d6cc829f27f2f"
   }
 }

@@ -4,7 +4,7 @@
   "operatingModel": "project_director_plus_short_task_agents",
   "legacyAgentDocsMode": "historical_reference_only",
   "currentGate": {
-    "batch1": "dispatch_20260813_active_s55_release",
+    "batch1": "dispatch_20260813_complete_returned_a00",
     "businessImplementationAllowed": true,
     "databaseMutationAllowed": false,
     "migrationFileImplementationAllowed": false,
@@ -63,7 +63,7 @@
     "crossComputerBootstrapAllowed": false,
     "encryptedDataHandoffAllowed": false,
     "finalCandidateGateAllowed": false,
-    "finalGitPublicationAllowed": true
+    "finalGitPublicationAllowed": false
   },
   "longLivedRoles": [
     {
@@ -2411,7 +2411,7 @@
     },
     {
       "id": "A64_FinalGitPublisher",
-      "status": "next",
+      "status": "completed",
       "scope": "Publish only the accepted explicit candidate to existing origin/main and verify the remote SHA from a fresh clone.",
       "reads": ["AGENTS.md", "docs/final-git-manifest-20260813.json", "docs/final-git-staging-plan-20260813.md", "docs/codex-workline/slices/S54_final_candidate_gate_handoff.md", "agents/A64_FinalGitPublisher/brief.md"],
       "mayEdit": ["Git index through exact accepted pathspecs", "one release commit", "one optional governance closure commit", "docs/codex-workline/slices/S55_git_publish_and_remote_clone_handoff.md", "A00-authorized closure files"],
