@@ -2,18 +2,19 @@
 
 ## Automatic Dispatch
 
-A00 dispatches the current short task directly. The Owner does not need to copy or relay this prompt.
+S54 is accepted. A64 is the only current writer and has limited release Git authority.
 
 ```text
-Agent 00 Project Director（项目导演：负责顺序、门禁和下一步裁决）：请进入 E:\Project\2607-LarkixWeb，运行 npm.cmd run codex:handoff 核验当前已回到 A00；使用中文交接，等待新的已确认需求后再分派短任务 Agent。
+Agent 64 Final Git Publisher（最终 Git 发布：按显式清单提交、普通推送并从远程 SHA 干净克隆复验）：请进入 E:\Project\2607-LarkixWeb，运行 npm.cmd run codex:handoff，然后按 agents\A64_FinalGitPublisher\brief.md 执行 S55；先刷新精确清单，禁止 broad git add、force push、历史重写和生产部署。
 ```
 
-Current controller: `A00_ProjectDirector`. Confirmed dispatch: `DISPATCH-20260730-001`.
+Current controller: `A00_ProjectDirector`. Active dispatch: `DISPATCH-20260813-002`.
 
-S42 published `V2.5.3+20260807-0001` as commit `450b041` to `origin/main`. Post-commit regression is 37/37 and local/remote relation is 0/0. Production remains closed.
+S51 through S54 are accepted. A64 may perform only the exact Git operations
+authorized by S55. Production deployment, services, data and secrets remain closed.
 
 ## Queue
 
-1. S30-S42. Completed and accepted.
-2. A00 requirement intake and sequencing. Current.
-3. Production deployment. Closed.
+1. A64 / S55 final Git publication and remote-clone verification. Current.
+2. A00 final acceptance. Queued after S55 evidence.
+3. Production deployment. Separate Owner-authorized task.

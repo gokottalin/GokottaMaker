@@ -88,7 +88,8 @@ function startServer({ port, dataDir }) {
       PORT: String(port),
       DATA_DIR: dataDir,
       ADMIN_USERNAME: "ReadingMinutesTester",
-      ADMIN_PASSWORD: "reading-minutes-test-password"
+      ADMIN_PASSWORD: "reading-minutes-test-password",
+      ALLOW_LEGACY_CMS_LOOPBACK: "true"
     },
     stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true

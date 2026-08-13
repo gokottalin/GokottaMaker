@@ -25,6 +25,33 @@
     return `<button type="button" data-graph-action="${action}" title="${label}" aria-label="${label}"><span aria-hidden="true">${icon}</span></button>`;
   }
 
+  function nodeType(node) {
+    return node?.nodeType === "article" ? "article" : "formula";
+  }
+
+  function hrefForNode(node, options = {}) {
+    if (nodeType(node) === "article") {
+      const identity = String(node.postId || node.slug || "");
+      if (options.articleHrefPrefix) {
+        return `${String(options.articleHrefPrefix)}${encodeURIComponent(identity)}`;
+      }
+      return String(node.route || `./post.html?id=${encodeURIComponent(identity)}`);
+    }
+    return `${String(options.hrefPrefix || "./derive.html?formula=")}${encodeURIComponent(
+      String(node.slug || "")
+    )}`;
+  }
+
+  function publishStateLabel(value) {
+    return (
+      {
+        draft: "草稿",
+        published: "已发布",
+        archived: "已归档"
+      }[String(value || "")] || ""
+    );
+  }
+
   function stableNodeOrder(left, right) {
     return (
       Number(left.rank || 0) - Number(right.rank || 0) ||
@@ -277,10 +304,15 @@
     }
 
     function hrefFor(node) {
-      return `${String(options.hrefPrefix || "./derive.html?formula=")}${encodeURIComponent(String(node.slug || ""))}`;
+      return hrefForNode(node, options);
     }
 
     function renderMath(mathHost, node) {
+      if (nodeType(node) === "article") {
+        mathHost.classList.add("is-article-summary");
+        mathHost.textContent = `${Number(node.referenceCount || 1)} 处公式引用`;
+        return;
+      }
       const result = global.LarkixMath?.render?.(String(node.latex || ""), { displayMode: true });
       if (result && result.valid) {
         mathHost.innerHTML = result.html;
@@ -370,6 +402,7 @@
       const overlay = global.document.createElement(navigable ? "a" : "button");
       overlay.className = [
         "formula-graph-node",
+        `is-${nodeType(node)}`,
         node.current ? "is-current" : "",
         node.direction ? `is-${node.direction}` : "",
         node.publishStatus ? `is-${node.publishStatus}` : "",
@@ -378,6 +411,7 @@
         .filter(Boolean)
         .join(" ");
       overlay.dataset.nodeId = String(node.id);
+      overlay.dataset.nodeType = nodeType(node);
       overlay.dataset.depth = String(depthResult.depthById[String(node.id)] || 0);
       if (!navigable) overlay.type = "button";
       overlay.draggable = false;
@@ -386,10 +420,21 @@
 
       const title = global.document.createElement("span");
       title.className = "formula-graph-node-title";
+      const kind = global.document.createElement("span");
+      kind.className = "formula-graph-node-kind";
+      kind.textContent = nodeType(node) === "article" ? "文章引用" : "公式推导";
+      const stateLabel = publishStateLabel(node.publishStatus);
+      const state = stateLabel ? global.document.createElement("span") : null;
+      if (state) {
+        state.className = "formula-graph-node-state";
+        state.textContent = stateLabel;
+      }
       title.textContent = String(node.displayName || "公式");
       const math = global.document.createElement("span");
       math.className = "formula-graph-node-math";
       renderMath(math, node);
+      overlay.append(kind);
+      if (state) overlay.append(state);
       overlay.append(title, math);
       bindOverlayInteractions(overlay, node);
       return overlay;
@@ -716,6 +761,7 @@
   global.LarkixFormulaGraph = Object.freeze({
     mount,
     computeDepths,
-    computeLayout
+    computeLayout,
+    hrefForNode
   });
 })(typeof window !== "undefined" ? window : globalThis);

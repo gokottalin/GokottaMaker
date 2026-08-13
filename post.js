@@ -679,7 +679,6 @@
       const formulaRendered = window.LarkixMarkdown.renderFormulaCard(card);
       content.innerHTML = `
         ${renderFormulaGraphSection(card)}
-        ${renderFormulaDerivationSection(card)}
         ${formulaRendered.html}
         <section aria-labelledby="formulaCardInfo">
           <h2 id="formulaCardInfo">公式信息</h2>
@@ -698,7 +697,7 @@
       }
       if (toc) {
         toc.innerHTML = `<a class="toc-level-2" data-level="2" href="#formulaGraphTitle">推导网络</a>
-          <a class="toc-level-2" data-level="2" href="#formulaDerivationTitle">逐步推导</a>${(formulaRendered.headings || [])
+          ${(formulaRendered.headings || [])
           .map((heading) => {
             const level = Math.max(2, Math.min(Number(heading.level || 2), 3));
             return `<a class="toc-level-${level}" data-level="${level}" href="#${escapeHtml(heading.id)}">${escapeHtml(
@@ -842,12 +841,15 @@
   };
 
   if (document.querySelector("#postContent")) {
-    window.renderMarkdownPage({
-      collection: window.LarkixContent.getPosts(),
-      heroId: "postHero",
-      contentId: "postContent",
-      tocId: "tocList"
-    });
+    const renderPublicPost = () =>
+      window.renderMarkdownPage({
+        collection: window.LarkixContent.getPosts(),
+        heroId: "postHero",
+        contentId: "postContent",
+        tocId: "tocList"
+      });
+    renderPublicPost();
+    window.addEventListener("larkix:public-content-updated", renderPublicPost);
   }
   window.addEventListener("DOMContentLoaded", applyFocusedNavigation);
 })();

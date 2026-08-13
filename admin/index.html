@@ -6,7 +6,7 @@
     <title>LarkixMaker 管理端</title>
     <meta name="robots" content="noindex,nofollow" />
     <link rel="icon" type="image/svg+xml" href="../assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524" />
-    <link rel="stylesheet" href="../styles.css?v=20260807-0001" />
+    <link rel="stylesheet" href="../styles.css?v=20260814-0001" />
     <link rel="stylesheet" href="./admin.css?v=20260730-s38" />
     <link rel="stylesheet" href="./admin-dark.css?v=20260730-s38" />
   </head>
@@ -45,7 +45,7 @@
           <span class="board-hand board-hand-left"></span>
           <span class="board-hand board-hand-right"></span>
         </div>
-        <a class="brand admin-login-brand" href="../index.html">
+        <a class="brand admin-login-brand" href="/index.html">
           <img class="brand-symbol" src="../assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524" alt="" aria-hidden="true" /><span class="brand-wordmark">Larki<span>x</span></span>
           <span class="brand-product">Maker</span>
         </a>
@@ -71,7 +71,7 @@
       <section class="dashboard" id="dashboard" hidden>
         <aside class="admin-sidebar">
           <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="收缩侧栏" aria-pressed="false">‹</button>
-          <a class="brand" href="../index.html">
+          <a class="brand" href="/index.html">
             <img class="brand-symbol" src="../assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524" alt="" aria-hidden="true" /><span class="brand-wordmark">Larki<span>x</span></span>
             <span class="brand-product">Maker</span>
           </a>
@@ -89,7 +89,7 @@
             <div class="nav-group">
               <span>系统与访问</span>
               <a href="#health" data-admin-nav="health" data-short="状">系统状态</a>
-              <a href="../maker.html" data-short="首">访客首页</a>
+              <a href="/maker.html" data-short="首">访客首页</a>
             </div>
           </nav>
           <button class="theme-toggle admin-theme-toggle" type="button" data-theme-toggle aria-label="切换夜间模式" title="切换夜间模式"><span class="theme-toggle-icon" aria-hidden="true"></span></button>
@@ -499,7 +499,7 @@
                 <button class="button primary" id="newFormulaButton" type="button">新建公式卡</button>
               </div>
             </div>
-            <p class="library-note">按模块和自定义分类查看公式卡；默认不一次列出全部公式。formulaId 与路由 slug 建立后保持不变。</p>
+            <p class="library-note">按模块和自定义分类查看公式卡；默认不一次列出全部公式。技术标识由系统生成，建立后保持不变。</p>
             <div class="formula-catalog-toolbar">
               <label>
                 搜索
@@ -609,14 +609,6 @@
               </div>
               <div class="formula-card-fields">
                 <label>
-                  公式标识 formulaId
-                  <input name="formulaId" required maxlength="128" placeholder="formula.module.name" />
-                </label>
-                <label>
-                  访客路径 slug
-                  <input name="slug" required maxlength="80" placeholder="module-name" />
-                </label>
-                <label>
                   <span class="formula-field-label">公式名称
                     <button class="formula-field-help-button" type="button" data-formula-help="用于 CMS 列表、文章引用和访客页标题。示例：CCM 反激变压器匝比。" aria-label="查看公式名称说明">?</button>
                   </span>
@@ -674,6 +666,25 @@
                   <input name="revisionReason" maxlength="64" value="manual-save" />
                 </label>
               </div>
+              <section class="formula-technical-info" id="formulaTechnicalInfo" aria-labelledby="formulaTechnicalInfoTitle" hidden>
+                <div class="formula-technical-heading">
+                  <div>
+                    <strong id="formulaTechnicalInfoTitle">技术信息</strong>
+                    <span>由系统生成，建立后不可修改。</span>
+                  </div>
+                  <span class="formula-copy-status" id="formulaCopyStatus" role="status" aria-live="polite"></span>
+                </div>
+                <div class="formula-technical-row">
+                  <span>formulaId</span>
+                  <code id="formulaTechnicalId" tabindex="0"></code>
+                  <button class="button secondary" type="button" data-formula-copy="formulaId">复制</button>
+                </div>
+                <div class="formula-technical-row">
+                  <span>slug</span>
+                  <code id="formulaTechnicalSlug" tabindex="0"></code>
+                  <button class="button secondary" type="button" data-formula-copy="slug">复制</button>
+                </div>
+              </section>
               <div class="formula-editor-preview-grid">
                 <section>
                   <strong>结论公式预览</strong>
@@ -686,7 +697,7 @@
               </div>
               <div class="formula-editor-footer">
                 <span class="formula-publication-hint" id="formulaPublicationHint">新卡保存后为草稿。</span>
-                <a class="button secondary" id="formulaVisitorPreview" href="../derive.html" target="_blank" rel="noopener" hidden>访客预览</a>
+                <a class="button secondary" id="formulaVisitorPreview" href="/derive.html" target="_blank" rel="noopener noreferrer" hidden>访客预览</a>
                 <button class="button secondary" id="formulaPublishButton" type="button" hidden>发布公式卡</button>
                 <button class="button primary" type="submit">保存公式卡</button>
               </div>
@@ -1024,10 +1035,10 @@
       </section>
     </div>
 
-    <script src="../data/posts.js?v=20260807-0001"></script>
-    <script src="../data/seed.js?v=20260807-0001"></script>
-    <script src="../api/content.js?v=20260807-0001"></script>
-    <script src="../data/content-store.js?v=20260807-0001"></script>
+    <script src="../data/posts.js?v=20260814-0001"></script>
+    <script src="../data/seed.js?v=20260814-0001"></script>
+    <script src="../api/content.js?v=20260814-0001"></script>
+    <script src="../data/content-store.js?v=20260814-0001"></script>
     <link rel="stylesheet" href="/assets/vendor/katex/katex.min.css?v=0.16.22" />
     <script src="/assets/vendor/katex/katex.min.js?v=0.16.22"></script>
     <script src="/data/math-renderer.js?v=20260730-s30"></script>
@@ -1035,7 +1046,7 @@
     <script src="../assets/vendor/cytoscape.min.js?v=3.34.0"></script>
     <script src="../formula-graph.js?v=20260728-s19"></script>
     <script src="./admin.js?v=20260730-s38"></script>
-    <script src="../data/site-meta.js?v=20260807-0001"></script>
-    <script src="../data/footer.js?v=20260807-0001"></script>
+    <script src="../data/site-meta.js?v=20260814-0001"></script>
+    <script src="../data/footer.js?v=20260814-0001"></script>
   </body>
 </html>

@@ -1,0 +1,231 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260813-001",
+  "title": "最终 Git 完整项目交付与跨电脑 Codex 无缝接续",
+  "status": "dispatched",
+  "priority": "urgent",
+  "createdAt": "2026-08-13T22:42:38.229+08:00",
+  "updatedAt": "2026-08-13T23:45:24.347+08:00",
+  "intent": {
+    "problem": "当前项目仍在多需求、多 Agent 的连续实施阶段，工作区存在大量未收口变更。Owner 需要最终获得一个完整、可验证、可从另一台电脑克隆并由 Codex 无缝接续最后任务的 Git 项目，同时不能把生产秘密和运行数据提交到仓库。",
+    "desiredOutcome": "A00 统筹完成全部已确认需求、回归与发布前收口，生成经过安全审计和可复现验证的最终 Git 提交并推送到项目远程仓库；根目录 AGENTS.md 内嵌跨电脑接续契约，使另一台电脑的 Codex 克隆仓库后能够定位当前状态、恢复环境、运行验证并继续最后任务。",
+    "targetUsers": ["Owner", "其他电脑上的 Codex", "后续项目维护者"]
+  },
+  "scope": {
+    "in": [
+      "A00 将当前已确认但尚未完成的需求、缺陷修复、实施切片和验收门禁全部执行并收口后再进入最终 Git 交付",
+      "A00 盘点当前已跟踪和未跟踪文件，按来源、归属、必要性和敏感性决定最终纳入清单，不遗漏本轮正式产品代码、测试、迁移、部署模板、Agent 契约和需求交接",
+      "最终 Git 项目包含源码、依赖锁定文件、非秘密配置模板、迁移脚本、测试、部署模板、必要静态资产、需求包、实施切片、当前治理指针和 Agent 工作契约",
+      "根目录 AGENTS.md 作为跨电脑 Codex 第一入口，内嵌简洁但完整的接续说明，并继续指向 PROJECT_WINDOW.md、任务注册表、当前派发、A00 brief 和最近验收交接",
+      "AGENTS.md 明确新电脑的克隆、运行时版本、依赖安装、环境模板复制、数据库初始化或迁移、开发启动、完整验证、当前任务恢复和继续工作命令",
+      "AGENTS.md 明确新 Codex 必须先读取哪些文件、如何识别当前 Agent/切片、何时运行 contract/requirement/handoff 检查、哪些操作需要 Owner 明确授权",
+      "提供无秘密的环境变量示例文件和配置说明；每个必需变量说明用途、格式和获取方式，不填写生产值",
+      "提供可执行的全新克隆验证流程，在隔离临时目录或等价干净环境中证明项目能够安装、初始化、启动并通过声明的核心测试",
+      "在最终 Git 前执行秘密、隐私、大文件、运行数据、构建垃圾、编码、依赖锁、许可证和路径可移植性审计",
+      "最终 Git 提交必须来源清晰、提交信息明确、工作树收口；推送后记录分支、提交 SHA、远程 URL、验证结果和新电脑接续起点",
+      "默认交付到现有 origin 的主项目；具体提交拆分、分支策略、合并顺序和 Git 操作由 A00 在最终门禁中决定",
+      "如需迁移生产数据库、上传内容或其他运行数据，A00 只设计并验证独立加密备份/恢复流程，不把备份或解密秘密放入 Git",
+      "最终交接文件说明 Git 仓库与独立加密数据备份的边界、校验方式、恢复顺序和责任归属",
+      "在另一台电脑上只依赖 Git 仓库、外部安全提供的秘密和可选加密数据备份即可恢复，不依赖当前电脑的绝对路径、浏览器会话或隐藏本地文件"
+    ],
+    "out": [
+      "把 .env、口令、令牌、私有 CMS 入口、密钥、证书私钥或生产连接信息提交到 Git",
+      "把生产数据库、SQLite WAL/SHM、用户上传、运行日志、浏览器状态、会话、缓存或未加密数据备份提交到 Git",
+      "在已确认需求、核心测试或安全审计尚未通过时把当前脏工作树直接整体提交",
+      "通过 git add . 无审计地纳入全部未跟踪历史文件",
+      "使用强制推送、重写共享历史或破坏现有远程项目",
+      "把本机绝对路径、用户名或临时目录作为新电脑必须依赖的运行配置",
+      "在仓库中存放生产加密备份本体或其解密材料"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "仓库当前位于 main，远程 origin 指向项目 GitHub 仓库。",
+      "工作区同时存在正式产品改动、Agent/需求/切片文件和大量历史未跟踪文件，不能无审计整体提交。",
+      "根目录已有 AGENTS.md 与 PROJECT_WINDOW.md，但当前窗口仍指向正在执行的 S45，Git 写入门禁处于关闭状态。",
+      ".gitignore 已排除 .env、数据库、上传、运行数据、日志和部署状态，但仍需验证历史跟踪和未跟踪文件没有敏感内容。"
+    ],
+    "expected": [
+      "全部已确认需求完成、验收通过且 A00 宣布最终 Git 门禁开启后，才执行最终提交与推送。",
+      "最终仓库能够在另一台电脑干净克隆，不依赖当前机器残留状态即可安装、初始化、启动和验证。",
+      "新 Codex 首先读取 AGENTS.md，即可找到唯一当前状态指针并继续最后任务，不需要 Owner 重述长历史。",
+      "仓库只包含可共享、可复现、无秘密的项目资产；生产数据和秘密通过仓库外安全流程提供。",
+      "推送完成后 Owner 获得明确的远程分支、提交 SHA、版本/验证摘要和接续命令。"
+    ],
+    "edgeCases": [
+      "Windows 与 Linux 的路径、换行、脚本调用和文件名编码差异。",
+      "新电脑未安装正确 Node.js、Python、Git 或系统依赖。",
+      "项目依赖安装需要锁文件但锁文件与 package.json 不一致。",
+      "环境变量缺失、生产秘密不可用或私有 CMS 入口需要新电脑重新配置。",
+      "数据库为空、需要从迁移初始化，或 Owner 选择另行恢复加密生产数据。",
+      "未跟踪历史文档数量很大，其中部分是正式证据、重复旧稿、生成物或潜在敏感文件。",
+      "GitHub 远程权限、分支保护或推送认证阻止最终发布。",
+      "最终实施结束时仍有并行 Agent 或文件写入者，导致提交快照不稳定。",
+      "秘密曾被历史提交跟踪，仅从当前工作树删除不足以消除泄露。",
+      "新电脑上的 Codex 读取到过时 PROJECT_WINDOW 或已完成的 Agent 指针。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.requirements-closed",
+      "statement": "最终 Git 门禁开启前，当前所有已确认需求、活动实施切片和 A00 验收项均已完成或以 Owner 明确接受的已知限制收口，不存在仍在写同一文件的 Agent。",
+      "verification": "A00 核对需求派发表、任务注册表、implementation_slices、各 handoff、活动 Agent 和回归结果，并生成最终关闭矩阵。"
+    },
+    {
+      "id": "ac.intentional-file-manifest",
+      "statement": "最终提交基于显式文件清单，所有已跟踪修改和纳入的未跟踪文件均有归属与理由；运行数据、重复旧稿、生成垃圾和敏感文件不被误提交。",
+      "verification": "对 git status、git diff、未跟踪文件、忽略文件和大文件执行清单审计；只按显式路径分批暂存并复核 staged diff。"
+    },
+    {
+      "id": "ac.secret-data-exclusion",
+      "statement": "最终 Git 历史和待推送提交不包含 .env、凭据、私有 CMS 入口、密钥、生产数据库、用户上传、日志、会话或未加密备份。",
+      "verification": "运行秘密扫描、敏感路径审计、Git 历史检查和大文件检查；对发现项执行轮换或清理后重新扫描。"
+    },
+    {
+      "id": "ac.agents-entrypoint",
+      "statement": "根目录 AGENTS.md 是另一台电脑 Codex 的完整第一入口，包含项目目标、读取顺序、状态指针、环境准备、安装、初始化、启动、验证、接续命令、安全边界和停机条件。",
+      "verification": "让一个无本任务上下文的 Codex 或等价审阅者仅从 AGENTS.md 开始，能够定位当前最后任务并给出正确的下一步命令和禁止操作。"
+    },
+    {
+      "id": "ac.pointer-consistency",
+      "statement": "AGENTS.md、PROJECT_WINDOW.md、任务注册表、当前派发、A00 brief、实现切片和最后交接指向同一最终状态，不包含已经完成或不存在的下一 Agent。",
+      "verification": "运行 codex:contract 及专门的指针一致性检查，并逐项解析引用路径确保文件存在、状态一致。"
+    },
+    {
+      "id": "ac.clean-clone-bootstrap",
+      "statement": "从最终提交进行全新克隆后，按照 AGENTS.md 和配置模板能够安装依赖、初始化空数据、启动服务并通过声明的核心验证。",
+      "verification": "在仓库外新临时目录执行 clone、依赖安装、配置模板、数据库初始化/迁移、启动、健康检查和完整或门禁测试，保存命令与结果摘要。"
+    },
+    {
+      "id": "ac.cross-platform-portability",
+      "statement": "项目和接续文档不依赖当前电脑绝对路径；Windows 为主要验证平台，同时明确 Linux/生产环境差异和对应命令。",
+      "verification": "扫描硬编码本机路径和用户名，执行 Windows 干净克隆验证，并静态或实际验证生产脚本的 Linux 路径。"
+    },
+    {
+      "id": "ac.environment-template",
+      "statement": "仓库提供完整无秘密环境配置模板，覆盖启动、数据库、认证、私有 CMS 网关、部署和可选功能所需变量，并说明安全获取与轮换方式。",
+      "verification": "从模板生成隔离配置完成启动；扫描模板确认无真实秘密、真实私有入口或生产值。"
+    },
+    {
+      "id": "ac.encrypted-data-handoff",
+      "statement": "若 Owner 需要迁移生产数据，则另行提供经过验证的加密备份与恢复流程；Git 只包含脚本和说明，不包含备份本体或解密材料。",
+      "verification": "在隔离样本数据上执行一次备份、校验、恢复和数量核对，并检查 Git 文件清单无备份与密钥。"
+    },
+    {
+      "id": "ac.final-git-publish",
+      "statement": "最终提交通过所有门禁并成功推送到现有项目远程，提交 SHA 可从远程读取，工作树达到 A00 声明的干净或仅含明确排除项状态。",
+      "verification": "推送后从远程查询目标分支 SHA，与本地提交一致；重新克隆该 SHA 并执行冒烟验证。"
+    },
+    {
+      "id": "ac.owner-handoff",
+      "statement": "最终交付向 Owner 提供远程仓库、分支、提交 SHA、验证结果、排除的数据类别、可选加密备份位置/校验信息和新电脑最短接续步骤。",
+      "verification": "逐项核对最终交付摘要，并在新电脑场景中模拟从克隆到 Codex 读取 AGENTS.md 的接续。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN"],
+    "platforms": ["Git", "GitHub", "Codex", "Windows 开发环境", "Linux 生产环境"],
+    "compatibility": ["使用现有 origin 项目并保留共享历史", "保持既有项目治理和需求摘要可追溯", "另一台电脑不依赖当前电脑绝对路径或浏览器会话"],
+    "data": ["Git 排除生产数据库、上传、日志、会话和未加密备份", "生产数据迁移使用独立加密备份", "提交前显式文件清单和历史敏感信息审计"],
+    "security": ["不得提交任何秘密或私有 CMS 入口", "环境模板只包含占位值", "发现历史秘密需先轮换并按安全流程处理", "Git 推送不得使用强制覆盖共享历史"],
+    "operations": ["A00 在全部需求验收后单独开启最终 Git 门禁", "需执行干净克隆端到端验证", "推送后记录远程 SHA 和接续起点"],
+    "deadline": null
+  },
+  "evidence": [
+    {
+      "id": "evidence.owner-final-git",
+      "kind": "observation",
+      "locator": "Owner request 2026-08-13",
+      "note": "Owner 要求项目管理最终交付完整 Git 项目，并内嵌 AGENTS.md，使另一台电脑的 Codex 无缝衔接最后任务。",
+      "status": "provided"
+    },
+    {
+      "id": "evidence.owner-security-boundary",
+      "kind": "observation",
+      "locator": "Owner confirmation 2026-08-13",
+      "note": "Owner 同意 Git 包含可复现项目资产但排除秘密和生产运行数据；生产数据另做不入 Git 的加密备份。",
+      "status": "provided"
+    },
+    {
+      "id": "evidence.current-git-state",
+      "kind": "observation",
+      "locator": "git status --short at E:/Project/2607-LarkixWeb",
+      "note": "当前 main 工作区包含大量已修改和未跟踪文件，必须由 A00 完成归属、安全和必要性审计后显式纳入。",
+      "status": "verified"
+    },
+    {
+      "id": "evidence.current-agents",
+      "kind": "file",
+      "locator": "AGENTS.md",
+      "note": "仓库已有根级 Agent 入口和交接规则，可扩展为跨电脑 Codex 启动契约。",
+      "status": "verified"
+    },
+    {
+      "id": "evidence.current-window",
+      "kind": "file",
+      "locator": "PROJECT_WINDOW.md",
+      "note": "当前项目窗口仍指向 S45 且 Git 门禁关闭，说明最终交付必须等待现有队列收口并更新最终指针。",
+      "status": "verified"
+    },
+    {
+      "id": "evidence.current-ignore",
+      "kind": "file",
+      "locator": ".gitignore",
+      "note": "现有规则已排除 .env、数据库、上传、运行数据、日志和部署状态，但仍需扫描 Git 历史和全部候选文件。",
+      "status": "verified"
+    }
+  ],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.dirty-tree-overcapture",
+      "severity": "critical",
+      "statement": "当前大量未跟踪历史文件与正式改动混在一起，若整体暂存会把重复、无关或敏感内容带入最终项目。",
+      "mitigation": "由 A00 建立显式文件归属清单，按路径分批暂存并审阅 staged diff，禁止 git add .。"
+    },
+    {
+      "id": "risk.secret-commit",
+      "severity": "critical",
+      "statement": "私有 CMS 网关、生产环境或历史文件可能包含秘密，提交后即使删除也可能保留在 Git 历史。",
+      "mitigation": "提交前扫描工作树、暂存区和历史；发现秘密立即轮换并按受控方式清理，复扫通过后再推送。"
+    },
+    {
+      "id": "risk.incomplete-handoff",
+      "severity": "high",
+      "statement": "若 AGENTS.md 或 PROJECT_WINDOW 指向过时 Agent，新电脑 Codex 会重复已完成工作或误改当前文件。",
+      "mitigation": "把指针一致性设为最终门禁，并用无上下文接续演练验证。"
+    },
+    {
+      "id": "risk.nonreproducible-clone",
+      "severity": "high",
+      "statement": "项目可能隐式依赖当前机器的环境变量、数据库、上传或绝对路径，导致克隆后无法运行。",
+      "mitigation": "提供无秘密模板和初始化流程，并以仓库外干净克隆完成端到端验证。"
+    },
+    {
+      "id": "risk.git-permission",
+      "severity": "high",
+      "statement": "远程认证、分支保护或权限不足可能阻止最终推送。",
+      "mitigation": "在最终门禁前只读检查远程与权限；若受阻，保留已验证本地提交和明确推送命令，向 Owner 报告唯一外部阻塞。"
+    },
+    {
+      "id": "risk.data-backup-loss",
+      "severity": "high",
+      "statement": "把运行数据排除 Git 后，如果没有独立备份，另一台电脑只能恢复空系统而不能恢复现有内容。",
+      "mitigation": "将生产数据迁移作为可选独立加密备份流程，执行备份、校验和隔离恢复演练，并明确它不属于 Git。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-08-13T23:44:54.502+08:00",
+    "confirmationText": "确认最终 Git 交付需求包，我需要线上测试",
+    "digest": "sha256:03a8d38aaf00d6ea2e1ae0e99efd96ee6d1c557d1bfd3cabc47739d56d12a4c5"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": ["REQ-20260812-001", "REQ-20260812-002", "REQ-20260812-003", "REQ-20260812-004"],
+    "dispatchedAt": "2026-08-13T23:45:24.347+08:00"
+  }
+}

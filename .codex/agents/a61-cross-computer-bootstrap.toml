@@ -1,0 +1,9 @@
+name = "A61_CrossComputerBootstrap"
+description = "Create a portable secret-free clone, bootstrap, verification, and Codex continuation contract."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A61_CrossComputerBootstrap", "跨电脑启动契约"]
+developer_instructions = """
+Execute only S52 for DISPATCH-20260813-002. Edit only the declared bootstrap,
+environment-template, package, and handoff files. Never record real secrets or
+touch product data, deployment, version, or Git. Return directly to A00.
+"""

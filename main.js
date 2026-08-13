@@ -1,8 +1,7 @@
 (function () {
-  const posts = window.LarkixContent.getPosts();
-  const publicProjects = window.LarkixContent.getProjects();
-  const projects = window.LarkixContent.getProjectDirectory();
-  const heroCarousel = window.LarkixContent.getHeroCarousel();
+  let posts = window.LarkixContent.getPosts();
+  let publicProjects = window.LarkixContent.getProjects();
+  let projects = window.LarkixContent.getProjectDirectory();
   const list = document.querySelector("#articleList");
   const hero = document.querySelector(".hero");
   const heroCards = document.querySelector("#heroCards");
@@ -11,11 +10,7 @@
   const coursePathList = document.querySelector("#coursePathList");
   const recentLessonFeature = document.querySelector("#recentLessonFeature");
   const search = document.querySelector("#siteSearch");
-  const storedMiniapps = Array.isArray(window.LARKIX_MINIAPPS) ? window.LARKIX_MINIAPPS : [];
-  const miniapps = window.LarkixMiniapps?.publicList?.(storedMiniapps) || storedMiniapps
-    .filter((app) => app?.id === "md2file")
-    .slice(0, 1)
-    .map((app) => ({ ...app, name: "MD2File", href: "./tools/md2doc.html" }));
+  const miniapps = Array.isArray(window.LARKIX_PUBLIC_MINIAPPS) ? window.LARKIX_PUBLIC_MINIAPPS : [];
   const courseMeta = window.LarkixCourseMeta || {};
   let siteLayout = window.LARKIX_SERVER_CONTENT?.siteLayout || {};
   let siteLayoutSignature = JSON.stringify(siteLayout);
@@ -69,14 +64,13 @@
   function normalizePublicFocusMode(value) {
     const fallback = {
       enabled: true,
-      hideMiniappsFromPrimaryNav: false,
-      hideAdminFromPublicNav: true
+      hideMiniappsFromPrimaryNav: false
     };
     if (!value || typeof value !== "object") return fallback;
     return { ...fallback, ...value };
   }
 
-  const focusMode = normalizePublicFocusMode(window.LARKIX_SERVER_CONTENT?.publicFocusMode);
+  let focusMode = normalizePublicFocusMode(window.LARKIX_SERVER_CONTENT?.publicFocusMode);
 
   function focusModeEnabled() {
     return focusMode.enabled !== false;
@@ -103,15 +97,6 @@
         .map((link) => `<a href="${link.href}"${isCurrentHref(link.href) ? ' aria-current="page"' : ""}>${link.label}</a>`)
         .join("");
     });
-    if (focusMode.hideAdminFromPublicNav) {
-      document.querySelectorAll(
-        '.site-header .admin-link[href="./admin/index.html"], .site-header .admin-link[href$="/admin/index.html"], .hero-actions a[href="./admin/index.html"], .hero-actions a[href$="/admin/index.html"]'
-      ).forEach((link) => {
-        link.hidden = true;
-        link.setAttribute("aria-hidden", "true");
-        link.style.display = "none";
-      });
-    }
   }
 
   function focusCorpus(item) {
@@ -227,11 +212,7 @@
           </div>
           <h3><a href="${safe(app.href)}">${safe(app.name || app.title)}</a></h3>
           <p>${safe(app.summary)}</p>
-          <div class="miniapp-capabilities">
-            ${(app.capabilities || []).map((item) => `<span>${safe(item)}</span>`).join("")}
-          </div>
           <div class="miniapp-card-footer">
-            <span>${safe(app.status)}</span>
             <a class="card-link" href="${safe(app.href)}">打开工具</a>
           </div>
         </div>
@@ -568,26 +549,6 @@
     if (recommendedTitleEn) recommendedTitleEn.textContent = "Focused Picks";
   }
 
-  function startSiteLayoutPolling() {
-    if (!window.LARKIX_SERVER_CONTENT || !window.fetch) return;
-    window.setInterval(async () => {
-      try {
-        const response = await fetch("./api/content", { cache: "no-store" });
-        if (!response.ok) return;
-        const payload = await response.json();
-        const nextLayout = payload.siteLayout || {};
-        const nextSignature = JSON.stringify(nextLayout);
-        if (nextSignature === siteLayoutSignature) return;
-        siteLayout = nextLayout;
-        siteLayoutSignature = nextSignature;
-        applySiteLayout();
-        applyFocusedHome();
-      } catch {
-        return;
-      }
-    }, 3000);
-  }
-
   function resolveRecommended(ids) {
     return ids
       .map((id) => posts.find((item) => item.id === id) || projects.find((item) => item.id === id) || publicProjects.find((item) => item.id === id))
@@ -672,9 +633,9 @@
       .map((entry) => entry.item);
   }
 
-  const focusPosts = focusModeEnabled() ? sortByRecommendation(posts.filter(isPowerElectronicsItem)) : posts;
-  const focusProjects = focusModeEnabled() ? sortByRecommendation(publicProjects.filter(isPowerElectronicsItem)) : publicProjects;
-  featuredItems = heroCarousel;
+  let focusPosts = focusModeEnabled() ? sortByRecommendation(posts.filter(isPowerElectronicsItem)) : posts;
+  let focusProjects = focusModeEnabled() ? sortByRecommendation(publicProjects.filter(isPowerElectronicsItem)) : publicProjects;
+  featuredItems = window.LarkixContent.getHeroCarousel();
 
   renderArticles(sortByRecommendation(focusModeEnabled() ? focusPosts : posts));
   renderCoursePaths();
@@ -687,7 +648,29 @@
   applyFocusedNavigation();
   applySiteLayout();
   applyFocusedHome();
-  startSiteLayoutPolling();
+
+  window.addEventListener("larkix:public-content-updated", () => {
+    posts = window.LarkixContent.getPosts();
+    publicProjects = window.LarkixContent.getProjects();
+    projects = window.LarkixContent.getProjectDirectory();
+    focusMode = normalizePublicFocusMode(window.LARKIX_SERVER_CONTENT?.publicFocusMode);
+    siteLayout = window.LARKIX_SERVER_CONTENT?.siteLayout || {};
+    siteLayoutSignature = JSON.stringify(siteLayout);
+    focusPosts = focusModeEnabled() ? sortByRecommendation(posts.filter(isPowerElectronicsItem)) : posts;
+    focusProjects = focusModeEnabled() ? sortByRecommendation(publicProjects.filter(isPowerElectronicsItem)) : publicProjects;
+    featuredItems = window.LarkixContent.getHeroCarousel();
+    activeHeroIndex = Math.min(activeHeroIndex, Math.max(0, featuredItems.length - 1));
+    renderArticles(sortByRecommendation(focusPosts));
+    renderCoursePaths();
+    renderHeroCards();
+    renderFeatured(activeHeroIndex);
+    restartHeroTimer();
+    renderProjects(focusModeEnabled() ? [] : projects);
+    applyFocusedNavigation();
+    applySiteLayout();
+    applyFocusedHome();
+    if (search?.value.trim()) search.dispatchEvent(new Event("input"));
+  });
 
   if (search) {
     search.addEventListener("input", () => {

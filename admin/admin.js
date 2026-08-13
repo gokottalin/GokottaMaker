@@ -6,6 +6,13 @@
   const articlePublishDockStateKey = "larkixmaker_admin_article_publish_dock_collapsed";
   const autosaveDelay = 900;
   const operationTimeoutMs = 20_000;
+  const adminPathMarker = "/admin/";
+  const adminPathIndex = window.location.pathname.indexOf(adminPathMarker);
+  const privateCmsBase = adminPathIndex > 0 ? window.location.pathname.slice(0, adminPathIndex) : "";
+
+  function privateApiPath(path) {
+    return privateCmsBase && String(path || "").startsWith("/api/") ? `${privateCmsBase}${path}` : path;
+  }
 
   const loginPanel = document.querySelector("#loginPanel");
   const dashboard = document.querySelector("#dashboard");
@@ -140,6 +147,10 @@
   const formulaPublicationHint = document.querySelector("#formulaPublicationHint");
   const formulaPublishButton = document.querySelector("#formulaPublishButton");
   const formulaVisitorPreview = document.querySelector("#formulaVisitorPreview");
+  const formulaTechnicalInfo = document.querySelector("#formulaTechnicalInfo");
+  const formulaTechnicalId = document.querySelector("#formulaTechnicalId");
+  const formulaTechnicalSlug = document.querySelector("#formulaTechnicalSlug");
+  const formulaCopyStatus = document.querySelector("#formulaCopyStatus");
   const formulaClassificationKind = document.querySelector("#formulaClassificationKind");
   const formulaClassificationParentField = document.querySelector("#formulaClassificationParentField");
   const formulaClassificationParent = document.querySelector("#formulaClassificationParent");
@@ -749,7 +760,7 @@ $$
     }
     const { timeoutMs: _timeoutMs, ...fetchOptions } = options;
     try {
-      const response = await fetch(path, {
+      const response = await fetch(privateApiPath(path), {
         credentials: "same-origin",
         headers,
         ...fetchOptions,
@@ -794,6 +805,18 @@ $$
       renderFormulaRelationRepairs();
     }
     renderFocusModeGate();
+  }
+
+  async function confirmPublicPostProjection(postId) {
+    const [content, detail] = await Promise.all([
+      request(`/api/content?verify=${Date.now()}`),
+      request(`/api/public/posts/${encodeURIComponent(postId)}?verify=${Date.now()}`)
+    ]);
+    const listed = (content.posts || []).find((post) => post.id === postId);
+    if (!listed || detail.post?.id !== postId || listed.publishStatus !== "published") {
+      throw new Error("文章已写入但公开投影尚未确认，请稍后重试发布检查");
+    }
+    return listed;
   }
 
   function focusModeEnabled() {
@@ -1929,6 +1952,7 @@ $$
   function adminSrc(src) {
     if (!src) return "";
     if (src.startsWith("data:") || src.startsWith("http")) return src;
+    if (privateCmsBase && src.startsWith("/uploads/")) return `${privateCmsBase}${src}`;
     if (src.startsWith("./")) return `../${src.slice(2)}`;
     return src;
   }
@@ -4202,6 +4226,39 @@ $$
     return formulaCardEditor?.elements?.namedItem(name);
   }
 
+  function renderFormulaTechnicalInfo(card = null) {
+    if (!formulaTechnicalInfo) return;
+    const visible = Boolean(card?.formulaId && card?.slug);
+    formulaTechnicalInfo.hidden = !visible;
+    if (formulaTechnicalId) formulaTechnicalId.textContent = visible ? card.formulaId : "";
+    if (formulaTechnicalSlug) formulaTechnicalSlug.textContent = visible ? card.slug : "";
+    if (formulaCopyStatus) formulaCopyStatus.textContent = "";
+  }
+
+  function selectFormulaTechnicalText(element) {
+    const selection = window.getSelection?.();
+    if (!selection || !element) return;
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    element.focus();
+  }
+
+  async function copyFormulaTechnicalValue(key) {
+    const element = key === "formulaId" ? formulaTechnicalId : formulaTechnicalSlug;
+    const value = String(element?.textContent || "").trim();
+    if (!value) return;
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error("clipboard unavailable");
+      await navigator.clipboard.writeText(value);
+      if (formulaCopyStatus) formulaCopyStatus.textContent = `${key} 已复制`;
+    } catch {
+      selectFormulaTechnicalText(element);
+      if (formulaCopyStatus) formulaCopyStatus.textContent = `${key} 已选中，请按 Ctrl+C 复制`;
+    }
+  }
+
   function renderFormulaRevisions(revisions = []) {
     if (!formulaRevisionList) return;
     formulaRevisionList.innerHTML =
@@ -4315,7 +4372,15 @@ $$
         card.graph,
         {
           hrefPrefix: "../derive.html?formula=",
-          navigation: false
+          articleHrefPrefix: "/post.html?id=",
+          onNavigate(href, slug) {
+            const node = card.graph?.nodes?.find((candidate) => candidate.slug === slug);
+            if (node?.nodeType === "formula" && node.formulaId) {
+              editFormulaCard(node.formulaId).catch((error) => setNotice(error.message, "error"));
+              return;
+            }
+            window.open(href, "_blank", "noopener,noreferrer");
+          }
         }
       );
     }
@@ -4390,7 +4455,7 @@ $$
 
   async function insertFormulaDependencyShortcode() {
     const targetFormulaId = String(formulaNextTarget?.value || "").trim();
-    const sourceFormulaId = String(formulaFormField("formulaId")?.value || "");
+    const sourceFormulaId = String(formulaEditingCard?.formulaId || "");
     if (!sourceFormulaId) throw new Error("请先保存公式卡，再插入依赖。");
     if (!targetFormulaId) throw new Error("请输入依赖公式的 formulaId。");
     if (targetFormulaId === sourceFormulaId) throw new Error("公式卡不能依赖自身。");
@@ -4456,8 +4521,6 @@ $$
     formulaCardEditor.reset();
     const editing = Boolean(card);
     formulaEditorTitle.textContent = editing ? `编辑：${card.displayName}` : "新建公式卡";
-    formulaFormField("formulaId").value = card?.formulaId || "";
-    formulaFormField("slug").value = card?.slug || "";
     formulaFormField("displayName").value = card?.displayName || "";
     formulaFormField("moduleKey").value = card?.moduleKey || formulaCatalogState.selection.moduleKey || "";
     formulaFormField("categoryPath").value = card?.categoryPath || formulaCatalogState.selection.categoryPath || "";
@@ -4466,8 +4529,8 @@ $$
     formulaFormField("latex").value = card?.latex || "";
     formulaFormField("markdownDerivation").value = card?.markdownDerivation || "";
     formulaFormField("revisionReason").value = "manual-save";
-    formulaFormField("formulaId").readOnly = editing;
-    formulaFormField("slug").readOnly = editing;
+    formulaEditingCard = card;
+    renderFormulaTechnicalInfo(card);
     const status = card?.publishStatus || "draft";
     formulaEditorStatus.textContent = editing ? formulaStatusLabel(card) : "草稿";
     formulaEditorStatus.className = `formula-status-badge is-${status}`;
@@ -4484,7 +4547,7 @@ $$
       !editing || status === "archived" || (status === "published" && !card.pendingPublication);
     formulaPublishButton.textContent = status === "published" ? "发布当前修订" : "发布公式卡";
     formulaVisitorPreview.hidden = !editing || status !== "published";
-    formulaVisitorPreview.href = editing ? `../derive.html?formula=${encodeURIComponent(card.slug)}` : "../derive.html";
+    formulaVisitorPreview.href = editing ? `/derive.html?formula=${encodeURIComponent(card.slug)}` : "/derive.html";
     renderFormulaRevisions(card?.revisions || []);
     renderFormulaDerivation(card);
     renderFormulaClassificationOptions();
@@ -4499,6 +4562,7 @@ $$
 
   function closeFormulaEditor() {
     if (formulaCardEditor) formulaCardEditor.hidden = true;
+    renderFormulaTechnicalInfo();
     formulaAdminGraphInstance?.destroy();
     formulaAdminGraphInstance = null;
     formulaDependencyPreview.clear();
@@ -4533,8 +4597,6 @@ $$
     );
     if (unregisteredTag) throw new Error(`标签 ${unregisteredTag} 尚未登记，请通过标签输入框点击“添加”。`);
     const payload = {
-      formulaId: formulaFormField("formulaId")?.value,
-      slug: formulaFormField("slug")?.value,
       displayName: formulaFormField("displayName")?.value,
       moduleKey,
       categoryPath,
@@ -4544,7 +4606,14 @@ $$
       markdownDerivation: formulaFormField("markdownDerivation")?.value,
       revisionReason: formulaFormField("revisionReason")?.value || "manual-save"
     };
-    const result = await request("/api/admin/formulas", { method: "POST", body: JSON.stringify(payload) });
+    const editingId = formulaEditingCard?.formulaId || "";
+    const endpoint = editingId
+      ? `/api/admin/formulas/${encodeURIComponent(editingId)}`
+      : "/api/admin/formulas";
+    const result = await request(endpoint, {
+      method: editingId ? "PUT" : "POST",
+      body: JSON.stringify(payload)
+    });
     formulaCatalogState.selection.moduleKey = result.card.moduleKey;
     formulaCatalogState.selection.categoryPath = result.card.categoryPath;
     formulaCatalogState.pagination.page = 1;
@@ -5214,6 +5283,11 @@ $$
     setFormulaSelectedTags(formulaSelectedTagValues().filter((tag) => tag !== button.dataset.formulaRemoveTag));
   });
   formulaCardEditor?.addEventListener("click", (event) => {
+    const copyButton = event.target.closest("[data-formula-copy]");
+    if (copyButton) {
+      copyFormulaTechnicalValue(copyButton.dataset.formulaCopy);
+      return;
+    }
     const createButton = event.target.closest("[data-formula-create-classification]");
     if (!createButton) return;
     withBusy(createButton, "新建中...", () =>
@@ -5625,6 +5699,9 @@ $$
         const result = await request(endpoint, { method: "POST", body: JSON.stringify(payload) });
         serverContent = { ...serverContent, [collectionKey]: resultCollection(result, collectionKey) };
         if (collectionKey === "posts") await loadServerContent();
+        if (collectionKey === "posts" && action === "publish") {
+          await confirmPublicPostProjection(payload.id);
+        }
         clearDraft();
         if (collectionKey === "knowledgeNodes") {
           applyItemToForm("knowledge_node", result.node, { confirm: false });

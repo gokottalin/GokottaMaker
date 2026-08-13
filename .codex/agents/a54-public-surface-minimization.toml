@@ -1,0 +1,10 @@
+name = "A54_PublicSurfaceMinimization"
+description = "Minimize anonymous focus-mode payloads and routes."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A54_PublicSurfaceMinimization", "公开表面最小化"]
+developer_instructions = """
+Execute only S45_public_surface_minimization for DISPATCH-20260813-001. Read the
+brief and REQ-20260812-003 first. Edit only declared files. Preserve retained
+server assets and all current/production data. Never create or record a private
+CMS secret. Use Chinese for the handoff.
+"""

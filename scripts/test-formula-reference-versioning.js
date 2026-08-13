@@ -49,6 +49,11 @@ function cardPayload(overrides = {}) {
   });
 }
 
+function ordinaryFormulaPayload(payload) {
+  const { formulaId, formula_id, slug, ...business } = payload;
+  return business;
+}
+
 function postPayload(id, markdown, publishStatus = "published") {
   return validatePostPayload({
     id,
@@ -128,7 +133,8 @@ async function apiChecks(tempRoot) {
       DATA_DIR: path.join(tempRoot, "api-data"),
       FORMULA_BACKUP_DIR: path.join(tempRoot, "api-backups"),
       ADMIN_USERNAME: "FormulaVersionTester",
-      ADMIN_PASSWORD: "formula-version-test-password"
+      ADMIN_PASSWORD: "formula-version-test-password",
+      ALLOW_LEGACY_CMS_LOOPBACK: "true"
     },
     stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true
@@ -166,7 +172,7 @@ async function apiChecks(tempRoot) {
 
     const created = await request("/api/admin/formulas", {
       method: "POST",
-      body: JSON.stringify(cardPayload({ formulaId: "formula.api.version", slug: "api-version" }))
+      body: JSON.stringify(ordinaryFormulaPayload(cardPayload()))
     });
     assert.equal(created.response.status, 200);
     const oldRevisionId = created.payload.card.currentRevisionId;
@@ -193,15 +199,13 @@ async function apiChecks(tempRoot) {
       assert.equal(saved.response.status, 200);
     }
 
-    const revised = await request("/api/admin/formulas", {
-      method: "POST",
+    const revised = await request(`/api/admin/formulas/${encodeURIComponent(created.payload.card.formulaId)}`, {
+      method: "PUT",
       body: JSON.stringify(
-        cardPayload({
-          formulaId: "formula.api.version",
-          slug: "api-version",
+        ordinaryFormulaPayload(cardPayload({
           latex: "V=2",
           revisionReason: "api-update"
-        })
+        }))
       )
     });
     assert.equal(revised.response.status, 200);

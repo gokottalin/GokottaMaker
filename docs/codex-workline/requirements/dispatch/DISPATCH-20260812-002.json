@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "larkix.requirement-dispatch.v1",
+  "dispatchId": "DISPATCH-20260812-002",
+  "status": "completed",
+  "createdAt": "2026-08-12T23:40:00+08:00",
+  "owner": "A00_ProjectDirector",
+  "requirements": [
+    {
+      "requirementId": "REQ-20260812-002",
+      "briefPath": "docs/codex-workline/requirements/active/REQ-20260812-002.json",
+      "digest": "sha256:903271dea93c0f603eb5e2758d2f1d9087ae5312ba08c127ce78effe965847df",
+      "validation": "passed"
+    }
+  ],
+  "sequence": ["S44_public_content_freshness", "A00_acceptance"],
+  "completedAt": "2026-08-12T23:59:00+08:00",
+  "currentSlice": null,
+  "currentAgent": "A00_ProjectDirector",
+  "result": "accepted",
+  "writePolicy": "single_writer",
+  "gates": {
+    "localProductAndTestWrites": true,
+    "isolatedDataVerification": true,
+    "productionEquivalentNginxVerification": true,
+    "currentOrProductionDataMutation": false,
+    "productionDeployment": false,
+    "gitWrites": false,
+    "versionChange": false
+  }
+}

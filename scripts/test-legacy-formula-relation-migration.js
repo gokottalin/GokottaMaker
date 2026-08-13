@@ -266,7 +266,8 @@ async function startFixtureServer(fixtureDir, dbPath) {
       DB_PATH: dbPath,
       PORT: String(port),
       HOST: "127.0.0.1",
-      ADMIN_PASSWORD: "fixture-only-password"
+      ADMIN_PASSWORD: "fixture-only-password",
+      ALLOW_LEGACY_CMS_LOOPBACK: "true"
     },
     stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true

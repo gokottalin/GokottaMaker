@@ -16,6 +16,7 @@ const {
   validatePostPayload,
   validateProjectPayload,
   validateKnowledgeNodePayload,
+  validateFormulaBusinessPayload,
   validateFormulaCardPayload,
   validateFormulaClassificationPayload,
   validateFormulaDecisionPayload,
@@ -24,7 +25,6 @@ const {
   validateCarouselBufferRestorePayload,
   validateFormulaCatalogPackage,
   validateFormulaRelationRepairEventPayload,
-  formulaSelectionIdentity,
   validateLatexSelection,
   validateSourceHash,
   validateUploadPayload
@@ -43,6 +43,8 @@ const host = process.env.HOST || "";
 const adminUsername = process.env.ADMIN_USERNAME || "Larkix";
 const adminPassword = process.env.ADMIN_PASSWORD || "change-this-before-public-deploy";
 const resetAdminPassword = process.env.ADMIN_RESET_PASSWORD_ON_START === "true";
+const privateCmsPath = String(process.env.PRIVATE_CMS_PATH || "").trim().replace(/^\/+|\/+$/g, "");
+const allowInsecurePrivateCmsLoopback = process.env.ALLOW_INSECURE_PRIVATE_CMS_LOOPBACK === "true";
 const allowHardDelete = process.env.ALLOW_HARD_DELETE === "true";
 const maxBackupAgeHours = Number(process.env.MAX_BACKUP_AGE_HOURS || 26);
 const offsiteBackupTarget = process.env.OFFSITE_BACKUP_TARGET || "";
@@ -52,13 +54,26 @@ if (!process.env.ADMIN_PASSWORD) {
   console.warn("WARNING: ADMIN_PASSWORD is not set. Use a strong password in production.");
 }
 
+function validPrivateCmsPath(value) {
+  if (!/^[A-Za-z0-9_-]{48,128}$/.test(value)) return false;
+  const characterClasses = [/[a-z]/, /[A-Z]/, /[0-9]/, /[_-]/].filter((pattern) => pattern.test(value)).length;
+  return characterClasses >= 2 && new Set(value).size >= 12;
+}
+
+if (privateCmsPath && !validPrivateCmsPath(privateCmsPath)) {
+  throw new Error("PRIVATE_CMS_PATH must be a 48-128 character high-entropy URL-safe segment.");
+}
+if (process.env.NODE_ENV === "production" && !privateCmsPath) {
+  throw new Error("PRIVATE_CMS_PATH is required in production.");
+}
+
 const db = createDatabase({ root, dataDir, dbDir, dbPath, uploadDir });
 const contentStore = createContentStore(db);
 const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword });
 const uploadStore = createUploadStore(uploadDir);
 
-const siteVersion = "V2.5.3";
-const siteBuild = "20260807-0001";
+const siteVersion = "V2.5.4";
+const siteBuild = "20260814-0001";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "https://www.larkix.com").replace(/\/$/, "");
 const elecVersion = "V1.3";
@@ -201,7 +216,9 @@ function json(res, status, payload) {
   const body = JSON.stringify(payload);
   res.writeHead(status, {
     "Content-Type": "application/json; charset=utf-8",
-    "Cache-Control": "no-store",
+    "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+    "Pragma": "no-cache",
+    "Expires": "0",
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
@@ -270,7 +287,7 @@ function cookies(req) {
 }
 
 function currentUser(req) {
-  return auth.currentUser(cookies(req).gokottamaker_session);
+  return auth.currentUser(cookies(req)[sessionCookieName]);
 }
 
 function publicUser(user) {
@@ -280,7 +297,8 @@ function publicUser(user) {
 function requireUser(req, res) {
   const user = currentUser(req);
   if (!user) {
-    json(res, 401, { error: "unauthorized" });
+    if (req.privateCmsRequest) serveNotFound(res);
+    else json(res, 401, { error: "unauthorized" });
     return null;
   }
   return user;
@@ -297,12 +315,43 @@ function requireCsrf(req, res, user) {
 }
 
 function isHttps(req) {
-  return req.headers["x-forwarded-proto"] === "https";
+  const forwardedProtocol = String(req.headers["x-forwarded-proto"] || "").split(",")[0].trim();
+  return req.socket.encrypted === true || (isLoopbackAddress(req.socket.remoteAddress) && forwardedProtocol === "https");
+}
+
+function isLoopbackAddress(value) {
+  const address = String(value || "").replace(/^::ffff:/, "");
+  return address === "127.0.0.1" || address === "::1";
+}
+
+function privateCmsTransportAllowed(req) {
+  return isHttps(req) || (
+    allowInsecurePrivateCmsLoopback &&
+    isLoopbackAddress(req.socket.remoteAddress) &&
+    isLoopbackAddress(req.socket.localAddress)
+  );
+}
+
+function privateCmsBasePath() {
+  return privateCmsPath ? `/${privateCmsPath}` : "";
+}
+
+const sessionCookieName = privateCmsPath
+  ? `gokottamaker_session_${crypto.createHash("sha256").update(privateCmsPath).digest("hex").slice(0, 12)}`
+  : "gokottamaker_session";
+
+function privateCmsRoute(pathname) {
+  const base = privateCmsBasePath();
+  if (!base || (pathname !== base && !pathname.startsWith(`${base}/`))) return null;
+  const requested = pathname.slice(base.length) || "/";
+  if (requested === "/") return { type: "not_found" };
+  if (requested.startsWith("/api/")) return { type: "api", pathname: requested };
+  return { type: "static", pathname: requested };
 }
 
 function cookieHeader(token, req) {
   const secure = isHttps(req) ? "; Secure" : "";
-  return `gokottamaker_session=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${60 * 60 * 24 * 30}${secure}`;
+  return `${sessionCookieName}=${token}; HttpOnly; SameSite=Strict; Path=${privateCmsBasePath() || "/"}; Max-Age=${60 * 60 * 24 * 30}${secure}`;
 }
 
 const {
@@ -328,6 +377,8 @@ const {
   saveFormulaDerivation,
   saveFormulaClassification,
   saveFormulaCard,
+  createFormulaCard,
+  updateFormulaCard,
   publishFormulaCard,
   archiveFormulaCard,
   restoreFormulaCard,
@@ -375,18 +426,22 @@ function focusAccessDecision(item, contentType = item?.type || "") {
 
 function allPosts(admin = false) {
   const items = allStoredPosts(admin);
-  return focusModeEnabled() ? items.filter((item) => focusAccessDecision(item, "post").allowed) : items;
+  if (admin) return items;
+  const visible = focusModeEnabled() ? items.filter((item) => focusAccessDecision(item, "post").allowed) : items;
+  return visible.map(publicPostPayload);
 }
 
 function allProjects(admin = false) {
   const items = allStoredProjects(admin);
-  return focusModeEnabled() ? items.filter((item) => focusAccessDecision(item, "project").allowed) : items;
+  if (admin) return items;
+  const visible = focusModeEnabled() ? items.filter((item) => focusAccessDecision(item, "project").allowed) : items;
+  return visible.map(publicProjectPayload);
 }
 
 function listFormulaReferenceDecisions(filters = {}) {
   const decisions = listStoredFormulaReferenceDecisions(filters);
   if (!focusModeEnabled()) return decisions;
-  const visiblePostIds = new Set(allPosts(true).map((post) => post.id));
+  const visiblePostIds = new Set(allPosts(false).map((post) => post.id));
   return decisions.filter((decision) => visiblePostIds.has(decision.postId));
 }
 
@@ -414,8 +469,8 @@ function focusScopeCounts() {
   const rawPosts = allStoredPosts(true);
   const rawProjects = allStoredProjects(true);
   return {
-    posts: { visible: allPosts(true).length, stored: rawPosts.length },
-    projects: { visible: allProjects(true).length, stored: rawProjects.length },
+    posts: { visible: allPosts(false).length, stored: rawPosts.length },
+    projects: { visible: allProjects(false).length, stored: rawProjects.length },
     knowledgeNodes: { visible: allKnowledgeNodes(true).length, stored: allKnowledgeNodes(true).length }
   };
 }
@@ -543,7 +598,12 @@ function focusedSitemap(res) {
 
 function contentScript(res) {
   const body = `window.LARKIX_SERVER_CONTENT = ${JSON.stringify(publicContentPayload())};`;
-  res.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8", "Cache-Control": "no-store" });
+  res.writeHead(200, {
+    "Content-Type": "application/javascript; charset=utf-8",
+    "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+    "Pragma": "no-cache",
+    "Expires": "0"
+  });
   res.end(body);
 }
 
@@ -570,6 +630,17 @@ function apiError(status, message) {
   const error = new Error(message);
   error.status = status;
   return error;
+}
+
+function rejectFormulaIdentityOverride(payload) {
+  const input = payload && typeof payload === "object" ? payload : {};
+  const forbidden = ["formulaId", "formula_id", "slug"].find((key) =>
+    Object.prototype.hasOwnProperty.call(input, key)
+  );
+  if (!forbidden) return;
+  const error = apiError(400, `公式技术标识由服务端生成，普通创建或编辑请求不能提交 ${forbidden}`);
+  error.reasonCode = "FORMULA_IDENTITY_SERVER_OWNED";
+  throw error;
 }
 
 function formulaSnapshotPath(filename) {
@@ -839,15 +910,76 @@ function publicProjectPreview(project) {
   };
 }
 
+function publicFormulaBindingPayload(binding) {
+  return {
+    bindingId: binding.bindingId,
+    formulaId: binding.formulaId,
+    revisionId: binding.revisionId,
+    displayMode: binding.displayMode,
+    ordinal: Number(binding.ordinal || 0),
+    slug: binding.slug || "",
+    displayName: binding.displayName || "",
+    latex: binding.latex || ""
+  };
+}
+
+function publicPostPayload(post) {
+  return {
+    id: post.id,
+    slug: post.slug || post.id,
+    type: "post",
+    title: post.title,
+    category: post.category || "",
+    categoryKey: post.categoryKey || "",
+    recommendationPriority: Number(post.recommendationPriority || 0),
+    excerpt: post.excerpt || "",
+    cover: post.cover || "",
+    coverCrop: post.coverCrop || null,
+    markdown: post.markdown || "",
+    readingMinutes: post.readingMinutes == null ? null : Number(post.readingMinutes),
+    date: post.date || "",
+    featured: Boolean(post.featured),
+    featuredOrder: Number(post.featuredOrder || 0),
+    formulaBindings: (post.formulaBindings || []).map(publicFormulaBindingPayload)
+  };
+}
+
+function publicProjectPayload(project) {
+  return {
+    ...publicProjectPreview(project),
+    markdown: project.markdown || "",
+    repoUrl: project.repoUrl || "",
+    bomUrl: project.bomUrl || "",
+    docsUrl: project.docsUrl || "",
+    featured: Boolean(project.featured),
+    featuredOrder: Number(project.featuredOrder || 0)
+  };
+}
+
 function publicProjectDirectory() {
+  if (focusModeEnabled()) return allProjects(false).map(publicProjectPreview);
   const seedProjects = loadSeedData().projects || [];
   const projectMap = new Map(seedProjects.map((project) => [project.id, publicProjectPreview(project)]));
-  for (const project of allProjects(true)) {
+  for (const project of allProjects(false)) {
     if (project.deletedAt) continue;
     if (!projectMap.has(project.id)) continue;
     projectMap.set(project.id, publicProjectPreview(project));
   }
   return [...projectMap.values()];
+}
+
+function publicUploadPaths() {
+  return new Set(
+    [
+      ...allPosts(false).map((item) => item.cover),
+      ...allProjects(false).map((item) => item.cover),
+      ...allKnowledgeNodes(false).map((item) => item.cover),
+      ...publicCarouselItems().map((item) => item.cover)
+    ]
+      .map((value) => String(value || "").split(/[?#]/)[0])
+      .filter((value) => value.startsWith("/uploads/") || value.startsWith("./uploads/"))
+      .map((value) => value.replace(/^\./, ""))
+  );
 }
 
 const defaultSiteLayout = {
@@ -939,6 +1071,20 @@ function siteLayout() {
   return normalizeSiteLayout(siteSetting("site_layout", defaultSiteLayout));
 }
 
+function publicSiteLayout() {
+  return Object.fromEntries(
+    Object.entries(siteLayout()).map(([pageKey, sections]) => [
+      pageKey,
+      sections.map((section) => ({
+        key: section.key,
+        order: section.order,
+        visible: section.visible,
+        size: section.size
+      }))
+    ])
+  );
+}
+
 function publicFocusMode() {
   const stored = siteSetting("public_focus_mode", defaultPublicFocusMode);
   return {
@@ -981,11 +1127,8 @@ function publicContentPayload() {
     projects: allProjects(false),
     heroCarousel: publicCarouselItems(),
     projectDirectory: publicProjectDirectory(),
-    siteLayout: siteLayout(),
-    publicFocusMode: {
-      ...focusMode,
-      reasonCode: focusMode.enabled ? "FOCUS_MODE_ENABLED" : "FOCUS_MODE_DISABLED"
-    }
+    siteLayout: publicSiteLayout(),
+    publicFocusMode: { enabled: focusMode.enabled }
   };
 }
 
@@ -1479,6 +1622,81 @@ function publicFormulaCardPayload(card) {
   const derivation = card.derivation || {};
   const dependencies = (derivation.dependencies || []).map(publicReference).filter(Boolean);
   const incoming = (derivation.incoming || []).map(publicReference).filter(Boolean);
+  const articleReferrers = (derivation.articleReferrers || [])
+    .map((reference) => {
+      const post = publicPostByIdentity(reference.postId || reference.slug);
+      if (!post) return null;
+      return {
+        slug: post.slug || post.id,
+        title: post.title || "",
+        route: `./post.html?id=${encodeURIComponent(post.id)}`,
+        referenceCount: Number(reference.referenceCount || 0)
+      };
+    })
+    .filter(Boolean);
+  const graph = (() => {
+    if (!card.graph || !Array.isArray(card.graph.nodes) || !Array.isArray(card.graph.edges)) {
+      return null;
+    }
+    const idMap = new Map();
+    const nodes = card.graph.nodes
+      .map((node) => {
+        if (node.nodeType !== "article") {
+          idMap.set(node.id, node.id);
+          return {
+            id: node.id,
+            nodeType: "formula",
+            slug: node.slug || node.id,
+            displayName: node.displayName || "",
+            latex: node.latex || "",
+            rank: Number(node.rank || 0),
+            direction: node.direction || "dependency",
+            current: Boolean(node.current),
+            initiallyVisible: Boolean(node.initiallyVisible)
+          };
+        }
+        const post = publicPostByIdentity(node.slug || String(node.id || "").replace(/^article:/, ""));
+        if (!post) return null;
+        const publicId = `article:${post.slug || post.id}`;
+        idMap.set(node.id, publicId);
+        return {
+          id: publicId,
+          nodeType: "article",
+          slug: post.slug || post.id,
+          displayName: post.title || "",
+          route: `./post.html?id=${encodeURIComponent(post.id)}`,
+          referenceCount: Number(node.referenceCount || 0),
+          rank: Number(node.rank || 0),
+          direction: "article",
+          current: false,
+          initiallyVisible: Boolean(node.initiallyVisible)
+        };
+      })
+      .filter(Boolean);
+    const nodeIds = new Set(nodes.map((node) => node.id));
+    const edges = card.graph.edges
+      .map((edge) => ({
+        id: edge.id,
+        edgeType: edge.edgeType === "article_reference" ? "article_reference" : "formula_dependency",
+        source: idMap.get(edge.source),
+        target: idMap.get(edge.target),
+        referenceCount:
+          edge.edgeType === "article_reference" ? Number(edge.referenceCount || 0) : undefined,
+        initiallyVisible: Boolean(edge.initiallyVisible)
+      }))
+      .filter((edge) => nodeIds.has(edge.source) && nodeIds.has(edge.target));
+    return {
+      mode: "published",
+      currentNodeId: idMap.get(card.graph.currentNodeId) || card.graph.currentNodeId || "",
+      nodes,
+      edges,
+      initialNodeIds: (card.graph.initialNodeIds || []).map((id) => idMap.get(id)).filter((id) => nodeIds.has(id)),
+      expandableNodeIds: (card.graph.expandableNodeIds || []).map((id) => idMap.get(id) || id).filter((id) => nodeIds.has(id)),
+      hiddenNodeCount: Math.max(0, Number(card.graph.hiddenNodeCount || 0)),
+      truncated: Boolean(card.graph.truncated),
+      limits: card.graph.limits || null
+    };
+  })();
   const dependencySlugByFormulaId = new Map(
     (derivation.dependencies || [])
       .filter((reference) => reference?.formulaId && reference?.slug)
@@ -1507,12 +1725,13 @@ function publicFormulaCardPayload(card) {
     derivation: {
       incoming,
       dependencies,
+      articleReferrers,
       next: publicReference(derivation.next),
       dependencyCount: Number(derivation.dependencyCount || 0),
       unavailableDependencyCount: Number(derivation.unavailableDependencyCount || 0),
       brokenCount: Number(derivation.brokenCount || 0)
     },
-    graph: card.graph || null
+    graph
   };
 }
 
@@ -1522,13 +1741,13 @@ async function api(req, res, pathname) {
   const publicPost = pathname.match(/^\/api\/public\/posts\/([^/]+)$/);
   if (publicPost && req.method === "GET") {
     const post = publicPostByIdentity(decodeURIComponent(publicPost[1]));
-    if (!post) return json(res, 404, { error: "not found", reasonCode: "FOCUS_HIDDEN_OR_NOT_PUBLIC" });
+    if (!post) return json(res, 404, { error: "not found" });
     return json(res, 200, { post });
   }
   const publicProject = pathname.match(/^\/api\/public\/projects\/([^/]+)$/);
   if (publicProject && req.method === "GET") {
     const project = publicProjectByIdentity(decodeURIComponent(publicProject[1]));
-    if (!project) return json(res, 404, { error: "not found", reasonCode: "FOCUS_HIDDEN_OR_NOT_PUBLIC" });
+    if (!project) return json(res, 404, { error: "not found" });
     return json(res, 200, { project });
   }
   if (pathname === "/api/knowledge-nodes" && req.method === "GET") return json(res, 200, { nodes: allKnowledgeNodes(false) });
@@ -1582,10 +1801,11 @@ async function api(req, res, pathname) {
     const user = requireUser(req, res);
     if (!user) return;
     if (!requireCsrf(req, res, user)) return;
-    const token = cookies(req).gokottamaker_session;
+    const token = cookies(req)[sessionCookieName];
     auth.deleteSession(token);
-    res.setHeader("Set-Cookie", "gokottamaker_session=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0");
-    logAudit(db, req, user, "logout", "session", token ? token.slice(0, 8) : "");
+    const secure = isHttps(req) ? "; Secure" : "";
+    res.setHeader("Set-Cookie", `${sessionCookieName}=; HttpOnly; SameSite=Strict; Path=${privateCmsBasePath() || "/"}; Max-Age=0${secure}`);
+    logAudit(db, req, user, "logout", "session", "current");
     return json(res, 200, { ok: true });
   }
 
@@ -1907,13 +2127,9 @@ async function api(req, res, pathname) {
     const baseSourceHash = validateSourceHash(body.baseSourceHash, "baseSourceHash", {
       optional: true
     });
-    const identity = formulaSelectionIdentity({
-      displayName: body.formula?.displayName,
-      latex: selection.latex
-    });
-    const formula = validateFormulaCardPayload({
+    rejectFormulaIdentityOverride(body.formula);
+    const formula = validateFormulaBusinessPayload({
       ...(body.formula || {}),
-      ...identity,
       latex: selection.latex,
       revisionReason: "article-selection-create"
     });
@@ -1940,11 +2156,31 @@ async function api(req, res, pathname) {
   }
 
   if (pathname === "/api/admin/formulas" && req.method === "POST") {
-    const body = validateFormulaCardPayload(await readBody(req));
+    const input = await readBody(req);
+    rejectFormulaIdentityOverride(input);
+    const body = validateFormulaBusinessPayload(input);
     let saved;
     withTransaction(() => {
-      saved = saveFormulaCard({ ...body, actor: user });
-      logAudit(db, req, user, "formula_card_save", "formula_card", saved.card.formulaId, {
+      saved = createFormulaCard({ ...body, actor: user });
+      logAudit(db, req, user, "formula_card_create", "formula_card", saved.card.formulaId, {
+        slug: saved.card.slug,
+        revisionCreated: saved.revisionCreated,
+        decisionCount: saved.decisionCount || 0
+      });
+    });
+    return json(res, 200, saved);
+  }
+
+  const formulaUpdate = pathname.match(/^\/api\/admin\/formulas\/([^/]+)$/);
+  if (formulaUpdate && req.method === "PUT") {
+    const id = decodeURIComponent(formulaUpdate[1]);
+    const input = await readBody(req);
+    rejectFormulaIdentityOverride(input);
+    const body = validateFormulaBusinessPayload(input);
+    let saved;
+    withTransaction(() => {
+      saved = updateFormulaCard(id, { ...body, actor: user });
+      logAudit(db, req, user, "formula_card_update", "formula_card", saved.card.formulaId, {
         slug: saved.card.slug,
         revisionCreated: saved.revisionCreated,
         decisionCount: saved.decisionCount || 0
@@ -2283,7 +2519,7 @@ const publicStaticFiles = new Set([
   "/post.js"
 ]);
 
-const publicStaticPrefixes = ["/admin/", "/assets/", "/data/", "/styles/", "/tools/"];
+const publicStaticPrefixes = ["/assets/", "/data/", "/styles/", "/tools/"];
 const blockedStaticSegments = new Set([".git", "database", "docs", "gokotta-elec-core", "lib", "node_modules", "scripts"]);
 const focusModePublicRouteExceptions = new Set([
   "/miniapps.html",
@@ -2294,6 +2530,86 @@ const focusModePublicRouteExceptions = new Set([
 
 function isFocusModePublicRouteException(pathname) {
   return focusModePublicRouteExceptions.has(pathname);
+}
+
+const focusModePublicDataFiles = new Set([
+  "/data/content-store.js",
+  "/data/footer.js",
+  "/data/markdown-renderer.js",
+  "/data/math-renderer.js",
+  "/data/media.js",
+  "/data/miniapps.js",
+  "/data/site-meta.js"
+]);
+const focusModePublicAssetPrefixes = [
+  "/assets/covers/",
+  "/assets/hero/",
+  "/assets/logo/larkix/rocket-bird-final/",
+  "/assets/logo/md2file/",
+  "/assets/vendor/katex/"
+];
+const focusModePublicStyleFiles = new Set([
+  "/styles/00-base.css",
+  "/styles/10-hero.css",
+  "/styles/20-content.css",
+  "/styles/25-cover-crop.css",
+  "/styles/26-inline-math.css",
+  "/styles/27-focused-content-media.css",
+  "/styles/28-full-site-dark.css",
+  "/styles/30-accessibility-print.css",
+  "/styles/40-responsive.css",
+  "/styles/larkix-brand-theme.css",
+  "/styles/larkix-home.css",
+  "/styles/md2doc.css"
+]);
+const publicApiExactPaths = new Set([
+  "/api/content",
+  "/api/content.js",
+  "/api/health",
+  "/api/knowledge-nodes",
+  "/api/md2file/convert"
+]);
+
+function isFocusModePublicStaticPath(pathname) {
+  if (pathname.startsWith("/uploads/")) return publicUploadPaths().has(pathname);
+  if (focusModePublicDataFiles.has(pathname) || focusModePublicStyleFiles.has(pathname)) return true;
+  if (focusModePublicAssetPrefixes.some((prefix) => pathname.startsWith(prefix))) return true;
+  return !pathname.startsWith("/data/") && !pathname.startsWith("/assets/") && !pathname.startsWith("/styles/");
+}
+
+function isPublicApiPath(pathname) {
+  if (publicApiExactPaths.has(pathname)) return true;
+  return /^\/api\/(?:public\/(?:posts|projects)|knowledge-nodes|formulas)\/[^/]+$/.test(pathname);
+}
+
+function isLegacyAuthApiPath(pathname) {
+  return ["/api/session", "/api/login", "/api/logout"].includes(pathname);
+}
+
+function legacyCmsLoopbackAllowed(req) {
+  return process.env.ALLOW_LEGACY_CMS_LOOPBACK === "true" &&
+    !privateCmsPath &&
+    process.env.NODE_ENV !== "production" &&
+    isLoopbackAddress(req.socket.remoteAddress) &&
+    isLoopbackAddress(req.socket.localAddress);
+}
+
+const privateCmsStaticFiles = new Set([
+  "/admin/index.html",
+  "/admin/course-paths.html",
+  "/admin/admin.css",
+  "/admin/admin-dark.css",
+  "/admin/admin.js",
+  "/styles.css",
+  "/formula-graph.js",
+  "/maker.html",
+  "/derive.html",
+  "/index.html"
+]);
+const privateCmsStaticPrefixes = ["/assets/", "/data/", "/styles/", "/uploads/"];
+
+function isPrivateCmsStaticPath(pathname) {
+  return privateCmsStaticFiles.has(pathname) || privateCmsStaticPrefixes.some((prefix) => pathname.startsWith(prefix));
 }
 
 function isPublicStaticRequest(requested) {
@@ -2325,6 +2641,22 @@ function serveNotFound(res) {
   res.end("Not found");
 }
 
+function serveFocusedStylesheet(req, res) {
+  const body = fs
+    .readFileSync(path.join(root, "styles.css"), "utf8")
+    .replace(/^@import\s+["']\.\/styles\/larkix-elec\.css["'];\s*$/m, "");
+  res.writeHead(200, {
+    "Content-Type": mime[".css"],
+    "Cache-Control": "no-cache",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    "Content-Length": Buffer.byteLength(body)
+  });
+  if (req.method === "HEAD") return res.end();
+  res.end(body);
+}
+
 function servePermanentRedirect(req, res, location) {
   res.writeHead(308, {
     Location: location,
@@ -2337,26 +2669,18 @@ function servePermanentRedirect(req, res, location) {
   res.end(`Permanent Redirect: ${location}`);
 }
 
-function serveStatic(res, pathname) {
+function serveStatic(req, res, pathname) {
   let requested = decodeURIComponent(pathname === "/" ? "/index.html" : pathname);
   if (requested.endsWith("/")) requested += "index.html";
   if (!isPublicStaticRequest(requested)) {
-    res.writeHead(403, {
-      "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": "no-cache",
-      "X-Content-Type-Options": "nosniff"
-    });
-    res.end("Forbidden");
-    return;
+    return serveNotFound(res);
   }
   const staticRoot = requested.startsWith("/uploads/") ? uploadDir : root;
   const relativeRequest = requested.startsWith("/uploads/") ? requested.slice("/uploads/".length) : requested.replace(/^\/+/, "");
   let target = path.normalize(path.join(staticRoot, relativeRequest));
   const relativeTarget = path.relative(staticRoot, target);
   if (relativeTarget.startsWith("..") || path.isAbsolute(relativeTarget)) {
-    res.writeHead(403);
-    res.end("Forbidden");
-    return;
+    return serveNotFound(res);
   }
   if (fs.existsSync(target) && fs.statSync(target).isDirectory()) {
     target = path.join(target, "index.html");
@@ -2375,6 +2699,31 @@ function serveStatic(res, pathname) {
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()"
   });
+  if (req.method === "HEAD") return res.end();
+  fs.createReadStream(target).pipe(res);
+}
+
+function servePrivateCmsStatic(req, res, pathname) {
+  let requested = decodeURIComponent(pathname);
+  if (requested.endsWith("/")) requested += "index.html";
+  if (!isPrivateCmsStaticPath(requested)) return serveNotFound(res);
+  const staticRoot = requested.startsWith("/uploads/") ? uploadDir : root;
+  const relativeRequest = requested.startsWith("/uploads/") ? requested.slice("/uploads/".length) : requested.replace(/^\/+/, "");
+  const target = path.normalize(path.join(staticRoot, relativeRequest));
+  const relativeTarget = path.relative(staticRoot, target);
+  if (relativeTarget.startsWith("..") || path.isAbsolute(relativeTarget)) return serveNotFound(res);
+  if (!fs.existsSync(target) || !fs.statSync(target).isFile()) return serveNotFound(res);
+  const ext = path.extname(target).toLowerCase();
+  res.writeHead(200, {
+    "Content-Type": mime[ext] || "application/octet-stream",
+    "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+    "Pragma": "no-cache",
+    "Expires": "0",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "no-referrer",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()"
+  });
+  if (req.method === "HEAD") return res.end();
   fs.createReadStream(target).pipe(res);
 }
 
@@ -2385,6 +2734,16 @@ if (focusModeEnabled()) {
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, `http://${req.headers.host}`);
+    const cmsRoute = privateCmsRoute(url.pathname);
+    if (cmsRoute) {
+      if (!privateCmsTransportAllowed(req)) return serveNotFound(res);
+      if (cmsRoute.type === "not_found") return serveNotFound(res);
+      if (cmsRoute.type === "api") {
+        req.privateCmsRequest = true;
+        return await api(req, res, cmsRoute.pathname);
+      }
+      return servePrivateCmsStatic(req, res, cmsRoute.pathname);
+    }
     if (
       (req.method === "GET" || req.method === "HEAD") &&
       url.pathname === "/derive.html" &&
@@ -2395,15 +2754,18 @@ const server = http.createServer(async (req, res) => {
       if (redirect) return servePermanentRedirect(req, res, redirect.location);
     }
     if (url.pathname.startsWith("/api/")) {
-      if (focusModeEnabled() && url.pathname.startsWith("/api/md2") && !isFocusModePublicRouteException(url.pathname)) {
-        return serveNotFound(res);
-      }
+      if (!isPublicApiPath(url.pathname) && !legacyCmsLoopbackAllowed(req)) return serveNotFound(res);
+      if (
+        focusModeEnabled() &&
+        (url.pathname.startsWith("/api/elec/") || url.pathname.startsWith("/api/md2doc/"))
+      ) return serveNotFound(res);
       return await api(req, res, url.pathname);
     }
     if (url.pathname === "/healthz") return json(res, 200, healthPayload());
     if (url.pathname === "/sitemap.xml") return focusModeEnabled() ? focusedSitemap(res) : seo.sitemap(res);
     if (url.pathname === "/robots.txt") return seo.robots(res);
     if (url.pathname === "/rss.xml") return seo.rss(res);
+    if (focusModeEnabled() && url.pathname === "/styles.css") return serveFocusedStylesheet(req, res);
     if (focusModeEnabled()) {
       if (url.pathname === "/post.html" && url.searchParams.get("id") && !publicPostByIdentity(url.searchParams.get("id"))) {
         return serveNotFound(res);
@@ -2421,8 +2783,9 @@ const server = http.createServer(async (req, res) => {
       ) {
         return serveNotFound(res);
       }
+      if (!isFocusModePublicStaticPath(url.pathname)) return serveNotFound(res);
     }
-    serveStatic(res, url.pathname);
+    serveStatic(req, res, url.pathname);
   } catch (error) {
     console.error(error);
     json(res, error.status || 500, {

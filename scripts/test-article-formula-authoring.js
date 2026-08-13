@@ -74,6 +74,11 @@ function cardPayload(overrides = {}) {
   });
 }
 
+function ordinaryFormulaPayload(payload) {
+  const { formulaId, formula_id, slug, ...business } = payload;
+  return business;
+}
+
 function loadRenderer() {
   const source = fs.readFileSync(path.join(ROOT, "data/markdown-renderer.js"), "utf8");
   const sandbox = { window: {} };
@@ -137,7 +142,8 @@ async function apiChecks(tempRoot) {
       DATA_DIR: dataDir,
       FORMULA_BACKUP_DIR: path.join(tempRoot, "api-backups"),
       ADMIN_USERNAME: "ArticleFormulaTester",
-      ADMIN_PASSWORD: "article-formula-test-password"
+      ADMIN_PASSWORD: "article-formula-test-password",
+      ALLOW_LEGACY_CMS_LOOPBACK: "true"
     },
     stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true
@@ -174,19 +180,23 @@ async function apiChecks(tempRoot) {
     csrfToken = login.payload.csrfToken;
 
     const card = cardPayload();
-    const createdCard = await request("/api/admin/formulas", { method: "POST", body: JSON.stringify(card) });
-    assert.equal(createdCard.response.status, 200);
+    const createdCard = await request("/api/admin/formulas", {
+      method: "POST",
+      body: JSON.stringify(ordinaryFormulaPayload(card))
+    });
+    assert.equal(createdCard.response.status, 200, JSON.stringify(createdCard.payload));
+    const createdFormulaId = createdCard.payload.card.formulaId;
     const currentRevisionId = createdCard.payload.card.currentRevisionId;
-    const publishedCard = await request(`/api/admin/formulas/${encodeURIComponent(card.formulaId)}/publish`, {
+    const publishedCard = await request(`/api/admin/formulas/${encodeURIComponent(createdFormulaId)}/publish`, {
       method: "POST",
       body: "{}"
     });
     assert.equal(publishedCard.response.status, 200);
 
-    const globalSearch = await request("/api/admin/formulas?authoring=1&q=output-voltage&pageSize=6");
+    const globalSearch = await request(`/api/admin/formulas?authoring=1&q=${encodeURIComponent(card.displayName)}&pageSize=6`);
     assert.equal(globalSearch.response.status, 200);
     assert.equal(globalSearch.payload.items.length, 1);
-    assert.equal(globalSearch.payload.items[0].formulaId, card.formulaId);
+    assert.equal(globalSearch.payload.items[0].formulaId, createdFormulaId);
     const tagSearch = await request("/api/admin/formulas?authoring=1&tag=unit%3AV&pageSize=6");
     assert.equal(tagSearch.payload.items.length, 1);
 
@@ -199,7 +209,7 @@ async function apiChecks(tempRoot) {
 
     const existingBinding = {
       bindingId: "bind.api-existing",
-      formulaId: card.formulaId,
+      formulaId: createdFormulaId,
       revisionId: currentRevisionId,
       displayMode: "inline"
     };
@@ -380,7 +390,7 @@ async function main() {
         sourceHash: sourceTextHash(displaySource),
         baseSourceHash: ""
       });
-      assert.equal(atomic.binding.formulaId, atomicFormula.formulaId);
+      assert.equal(atomic.binding.formulaId, atomic.card.formulaId);
       assert.equal(atomic.binding.revisionId, atomic.card.currentRevisionId);
       assert.equal(atomic.binding.displayMode, "display");
       assert.equal(

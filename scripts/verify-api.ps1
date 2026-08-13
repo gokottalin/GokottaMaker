@@ -2,10 +2,19 @@ param(
   [int]$Port = 5497,
   [string]$AdminUsername = "Larkix",
   [string]$AdminPassword = "change-this-before-public-deploy",
+  [string]$PrivateCmsPath = "VerifyApi_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_abcdef",
   [switch]$UseCurrentData
 )
 
 $ErrorActionPreference = "Stop"
+
+function Resolve-PrivateApiUri {
+  param([string]$Uri)
+  if ($script:privateBase -and $Uri -match '/api/(?:admin(?:/|$)|login$|logout$|session$|posts(?:/|$)|projects(?:/|$)|uploads(?:/|$))') {
+    return $Uri.Replace("$script:base/api/", "$script:privateBase/api/")
+  }
+  return $Uri
+}
 
 function Invoke-Json {
   param(
@@ -16,6 +25,7 @@ function Invoke-Json {
     [hashtable]$Headers = @{}
   )
 
+  $Uri = Resolve-PrivateApiUri -Uri $Uri
   $options = @{
     Uri = $Uri
     Method = $Method
@@ -146,6 +156,7 @@ function Remove-IsolatedDataDir {
 
 $root = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $base = "http://127.0.0.1:$Port"
+$privateBase = "$base/$PrivateCmsPath"
 $testData = Join-Path $root ".verify-api-data"
 $serverProcess = $null
 $previousEnv = @{
@@ -153,6 +164,8 @@ $previousEnv = @{
   DATA_DIR = $env:DATA_DIR
   ADMIN_USERNAME = $env:ADMIN_USERNAME
   ADMIN_PASSWORD = $env:ADMIN_PASSWORD
+  PRIVATE_CMS_PATH = $env:PRIVATE_CMS_PATH
+  ALLOW_INSECURE_PRIVATE_CMS_LOOPBACK = $env:ALLOW_INSECURE_PRIVATE_CMS_LOOPBACK
 }
 
 try {
@@ -163,6 +176,8 @@ try {
   $env:PORT = [string]$Port
   $env:ADMIN_USERNAME = $AdminUsername
   $env:ADMIN_PASSWORD = $AdminPassword
+  $env:PRIVATE_CMS_PATH = $PrivateCmsPath
+  $env:ALLOW_INSECURE_PRIVATE_CMS_LOOPBACK = "true"
 
   $serverProcess = Start-Process -FilePath "node" -ArgumentList @("--experimental-sqlite", "server.js") -WorkingDirectory $root -PassThru -WindowStyle Hidden
 
@@ -185,9 +200,10 @@ try {
   if ($publicContent.posts.Count -lt 1) { throw "API verify failed: public posts are empty" }
   if ($null -eq $publicContent.publicFocusMode) { throw "API verify failed: public content missing publicFocusMode" }
   if ($publicContent.publicFocusMode.enabled -ne $true) { throw "API verify failed: public focus mode must be enabled by default" }
-  if ($publicContent.publicFocusMode.ownerConfigured -ne $false) { throw "API verify failed: fresh focus mode must not be marked owner-configured" }
-  if ((@($publicContent.publicFocusMode.visibleScopes) -join ",") -ne "electronics-basics,derivations,projects") {
-    throw "API verify failed: public focus mode scopes are not canonical"
+  if ($publicContent.publicFocusMode.PSObject.Properties.Name -contains "ownerConfigured" -or
+      $publicContent.publicFocusMode.PSObject.Properties.Name -contains "visibleScopes" -or
+      $publicContent.publicFocusMode.PSObject.Properties.Name -contains "reasonCode") {
+    throw "API verify failed: public focus mode leaked management metadata"
   }
 
   $contentResponse = Invoke-WebRequest -Uri "$base/api/content" -TimeoutSec 10
@@ -200,14 +216,14 @@ try {
   }
 
   $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
-  $login = Invoke-Json -Uri "$base/api/login" -Method "POST" -Session $session -Body @{
+  $login = Invoke-Json -Uri "$privateBase/api/login" -Method "POST" -Session $session -Body @{
     username = $AdminUsername
     password = $AdminPassword
   }
   if (-not $login.csrfToken) { throw "API verify failed: login did not return csrfToken" }
   $csrfHeaders = @{ "X-CSRF-Token" = $login.csrfToken }
 
-  $adminContent = Invoke-Json -Uri "$base/api/admin/content" -Session $session
+  $adminContent = Invoke-Json -Uri "$privateBase/api/admin/content" -Session $session
   if ($null -eq $adminContent.knowledgeNodes) { throw "API verify failed: admin content missing knowledgeNodes" }
   if ($null -eq $adminContent.publicFocusMode) { throw "API verify failed: admin content missing publicFocusMode" }
   if ($adminContent.publicFocusMode.enabled -ne $publicContent.publicFocusMode.enabled) {
@@ -618,6 +634,8 @@ $zhParagraph
   $env:DATA_DIR = $previousEnv.DATA_DIR
   $env:ADMIN_USERNAME = $previousEnv.ADMIN_USERNAME
   $env:ADMIN_PASSWORD = $previousEnv.ADMIN_PASSWORD
+  $env:PRIVATE_CMS_PATH = $previousEnv.PRIVATE_CMS_PATH
+  $env:ALLOW_INSECURE_PRIVATE_CMS_LOOPBACK = $previousEnv.ALLOW_INSECURE_PRIVATE_CMS_LOOPBACK
   if (-not $UseCurrentData -and (Test-Path -LiteralPath $testData)) {
     Remove-IsolatedDataDir -PathToRemove $testData -RootPath $root
   }

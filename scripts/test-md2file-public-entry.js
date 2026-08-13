@@ -45,7 +45,8 @@ function startServer(port, dataDir) {
       PORT: String(port),
       DATA_DIR: dataDir,
       ADMIN_USERNAME: "Md2fileEntryTester",
-      ADMIN_PASSWORD: "md2file-entry-test-password"
+      ADMIN_PASSWORD: "md2file-entry-test-password",
+      ALLOW_LEGACY_CMS_LOOPBACK: "true"
     },
     stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true
@@ -92,14 +93,14 @@ function assertStaticContract() {
   const stored = context.window.LARKIX_MINIAPPS;
   const projected = context.window.LARKIX_PUBLIC_MINIAPPS;
 
-  assert.ok(stored.length > 1, "private registry records remain stored");
-  assert.ok(stored.some((app) => app.id === "larkix-elec"), "LarkixElec registry data is retained");
+  assert.equal(stored.length, 1, "browser registry contains only the public miniapp");
+  assert.doesNotMatch(registrySource, /larkix-elec|LarkixElec/, "private miniapp identity is not serialized");
   assert.equal(projected.length, 1, "public projection has exactly one miniapp");
   assert.equal(projected[0].id, "md2file");
   assert.equal(projected[0].name, "MD2File");
   assert.equal(projected[0].version, "V0.4", "public projection matches the MD2File protocol version");
   assert.equal(projected[0].href, CANONICAL_HREF);
-  assert.equal(context.window.LarkixMiniapps.publicList([...stored, stored[1]]).length, 1, "duplicates are collapsed");
+  assert.equal(context.window.LarkixMiniapps.publicList([...stored, stored[0]]).length, 1, "duplicates are collapsed");
 
   const indexHtml = source("index.html");
   const makerHtml = source("maker.html");
@@ -112,10 +113,10 @@ function assertStaticContract() {
   assert.equal((indexHtml.match(/href="\.\/tools\/md2doc\.html"/g) || []).length, 1);
   assert.doesNotMatch(indexHtml, /href="\.\/tools\/larkix-elec\.html"/);
   assert.match(makerHtml, /data-layout-section="miniapps"/);
-  assert.match(mainJs, /LarkixMiniapps\?\.publicList/);
+  assert.match(mainJs, /LARKIX_PUBLIC_MINIAPPS/);
   assert.match(mainJs, /renderMiniappUpdates\(miniapps\)/);
   assert.doesNotMatch(mainJs, /renderMiniappUpdates\(focusModeEnabled\(\) \? \[\] : miniapps\)/);
-  assert.match(miniappsHtml, /LarkixMiniapps\?\.publicList/);
+  assert.match(miniappsHtml, /LARKIX_PUBLIC_MINIAPPS/);
   assert.match(miniappsHtml, /data-public-miniapp-card=/);
   assert.match(siteLayoutJs, /requiredPublicEntry \? false/);
   assert.match(serverJs, /requiredPublicLayoutSections/);

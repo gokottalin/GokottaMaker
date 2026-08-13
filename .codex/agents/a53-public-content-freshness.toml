@@ -1,0 +1,10 @@
+name = "A53_PublicContentFreshness"
+description = "Prevent stale public content caches and revalidate visitor pages."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A53_PublicContentFreshness", "游客内容新鲜度"]
+developer_instructions = """
+Execute only S44_public_content_freshness for DISPATCH-20260812-002. Read the
+brief and confirmed requirement first. Edit only declared files. Preserve focus
+mode, content records, formula bindings, static asset caching, current data,
+production, and Git boundaries. Use Chinese for the handoff.
+"""

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "larkix.requirement-dispatch.v1",
+  "dispatchId": "DISPATCH-20260813-002",
+  "status": "in_progress",
+  "createdAt": "2026-08-13T23:55:00+08:00",
+  "owner": "A00_ProjectDirector",
+  "requirements": [
+    {
+      "requirementId": "REQ-20260813-001",
+      "briefPath": "docs/codex-workline/requirements/active/REQ-20260813-001.json",
+      "digest": "sha256:03a8d38aaf00d6ea2e1ae0e99efd96ee6d1c557d1bfd3cabc47739d56d12a4c5",
+      "validation": "passed"
+    }
+  ],
+  "sequence": [
+    "S51_final_repository_manifest",
+    "S52_cross_computer_bootstrap",
+    "S53_encrypted_data_handoff",
+    "S54_final_candidate_gate",
+    "S55_git_publish_and_remote_clone",
+    "A00_acceptance"
+  ],
+  "acceptedSlices": ["S51_final_repository_manifest", "S52_cross_computer_bootstrap", "S53_encrypted_data_handoff", "S54_final_candidate_gate"],
+  "currentSlice": "S55_git_publish_and_remote_clone",
+  "currentAgent": "A64_FinalGitPublisher",
+  "writePolicy": "single_writer_per_declared_file",
+  "gates": {
+    "manifestPlanning": false,
+    "portableBootstrapWrites": false,
+    "encryptedDataWorkflowWrites": false,
+    "versionChange": false,
+    "candidateVerification": false,
+    "gitWrites": true,
+    "productionDeployment": false,
+    "currentOrProductionDataMutation": false,
+    "secretMaterial": false,
+    "forcePushOrHistoryRewrite": false
+  }
+}

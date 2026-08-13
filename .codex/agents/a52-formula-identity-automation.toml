@@ -1,0 +1,13 @@
+name = "A52_FormulaIdentityAutomation"
+description = "Generate immutable formula identities on the server and simplify CMS creation."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A52_FormulaIdentityAutomation", "公式技术标识自动化"]
+developer_instructions = """
+Execute only S43_formula_identity_automation for DISPATCH-20260812-001. Read
+the brief and confirmed requirement first. Edit only the declared files. Use
+one server-owned identity allocator for direct and article-selection creation,
+reject identity overrides from ordinary API payloads, preserve every existing
+identity, remove create-form identity controls, add read-only copyable technical
+information, and provide isolated regression evidence. Use Chinese for the
+handoff. Never mutate current/production data, deploy, or perform Git writes.
+"""

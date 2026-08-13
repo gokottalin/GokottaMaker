@@ -3,11 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>小程序 | LarkixMaker</title>
-    <meta name="description" content="LarkixMaker 小程序中心，集中管理在线电路、工具和后续可扩展的小应用。" />
+    <title>MD2File | LarkixMaker</title>
+    <meta name="description" content="MD2File Markdown 文档转换入口。" />
     <link rel="manifest" href="./site.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="./assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524" />
-    <link rel="stylesheet" href="./styles.css?v=20260807-0001" />
+    <link rel="stylesheet" href="./styles.css?v=20260814-0001" />
   </head>
   <body class="themed-page miniapp-page" data-page-theme="projects" data-layout-page="miniappsPage">
     <a class="skip-link" href="#mainContent">跳到主要内容</a>
@@ -15,13 +15,13 @@
       <div class="header-inner">
         <a class="brand" href="./index.html"><img class="brand-symbol" src="./assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524" alt="" aria-hidden="true" /><span class="brand-wordmark">Larki<span>x</span></span><span class="brand-product">Maker</span></a>
         <nav class="main-nav" aria-label="主导航">
-          <a href="./category.html?category=analog">模拟电子</a>
-          <a href="./category.html?category=stm32">STM32</a>
-          <a href="./category.html?category=esp32">ESP32</a>
+          <a href="./maker.html">首页</a>
+          <a href="./category.html?category=electronics-basics">电子基础</a>
+          <a href="./derive.html">公式推导</a>
           <a href="./projects.html">开源项目</a>
-          <a href="./miniapps.html" aria-current="page">小程序</a>
+          <a href="./miniapps.html" aria-current="page">MD2File</a>
         </nav>
-        <div class="header-actions"><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换夜间模式" title="切换夜间模式"><span class="theme-toggle-icon" aria-hidden="true"></span></button><a class="admin-link" href="./admin/index.html">管理端</a></div>
+        <div class="header-actions"><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换夜间模式" title="切换夜间模式"><span class="theme-toggle-icon" aria-hidden="true"></span></button></div>
       </div>
     </header>
 
@@ -29,10 +29,10 @@
       <div class="section-heading miniapp-heading" data-layout-section="miniappsHeader">
         <div class="section-title-block split-title">
           <div class="section-title-line">
-            <h1>小程序中心</h1>
-            <span>Mini Apps</span>
+            <h1>MD2File</h1>
+            <span>Markdown Converter</span>
           </div>
-          <p class="category-summary">收纳可直接使用的网页小工具。每个工具保持独立页面、样式与 API 契约，便于后续扩展。</p>
+          <p class="category-summary">将 Markdown 转换为可下载的 Word 文档，并保留标题、列表、表格与公式。</p>
         </div>
         <a class="return-link" href="./maker.html">返回首页</a>
       </div>
@@ -42,11 +42,7 @@
 
     <script src="./data/miniapps.js?v=20260801-s39"></script>
     <script>
-      const storedMiniapps = Array.isArray(window.LARKIX_MINIAPPS) ? window.LARKIX_MINIAPPS : [];
-      const miniapps = window.LarkixMiniapps?.publicList?.(storedMiniapps) || storedMiniapps
-        .filter((app) => app?.id === "md2file")
-        .slice(0, 1)
-        .map((app) => ({ ...app, name: "MD2File", href: "./tools/md2doc.html" }));
+      const miniapps = Array.isArray(window.LARKIX_PUBLIC_MINIAPPS) ? window.LARKIX_PUBLIC_MINIAPPS : [];
       const safe = (value) => String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#039;" })[char]);
       document.querySelector("#miniappRegistry").innerHTML = miniapps
         .map((app) => `
@@ -59,11 +55,7 @@
               </div>
               <h2>${safe(app.title)}</h2>
               <p>${safe(app.summary)}</p>
-              <div class="miniapp-capabilities">
-                ${(app.capabilities || []).map((item) => `<span>${safe(item)}</span>`).join("")}
-              </div>
               <div class="miniapp-card-footer">
-                <span>${safe(app.status)}</span>
                 <a class="card-link" href="${safe(app.href)}">打开工具</a>
               </div>
             </div>
@@ -71,8 +63,8 @@
         `)
         .join("") || `<div class="empty-state">当前还没有可用小程序。</div>`;
     </script>
-    <script src="./site-layout.js?v=20260807-0001"></script>
-    <script src="./data/site-meta.js?v=20260807-0001"></script>
-    <script src="./data/footer.js?v=20260807-0001"></script>
+    <script src="./site-layout.js?v=20260814-0001"></script>
+    <script src="./data/site-meta.js?v=20260814-0001"></script>
+    <script src="./data/footer.js?v=20260814-0001"></script>
   </body>
 </html>

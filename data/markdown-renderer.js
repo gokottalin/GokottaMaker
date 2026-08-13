@@ -917,7 +917,7 @@
       const body = resolved
         ? renderDisplayMath(binding.latex)
         : `<div class="formula-reference-unresolved">公式卡引用：<code>${escapeHtml(formulaId)}</code></div>`;
-      return `<section class="formula-reference formula-reference--display ${resolved ? "" : "is-unresolved"}" ${attributes}>${body}<span class="formula-reference-meta">${escapeHtml(label)}${archive}</span>${marker}</section>`;
+      return `<section class="formula-reference formula-reference--display ${resolved ? "" : "is-unresolved"}" ${attributes}>${body}${archive}${marker}</section>`;
     }
     const body = resolved ? renderInlineMath(binding.latex) : `<code>${escapeHtml(formulaId)}</code>`;
     return `<span class="formula-reference formula-reference--inline ${resolved ? "" : "is-unresolved"}" ${attributes}>${body}${archive}${marker}</span>`;

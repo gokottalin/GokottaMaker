@@ -489,6 +489,12 @@ async function browserChecks() {
     const desktopShot = await client.send("Page.captureScreenshot", { format: "png" });
     assert.ok(Buffer.from(desktopShot.data, "base64").length > 12000);
 
+    await installFixture(client, 768, 900, "light");
+    const halfWidth = await visualMetrics(client);
+    assertVisualMetrics(halfWidth, 736);
+    const halfWidthShot = await client.send("Page.captureScreenshot", { format: "png" });
+    assert.ok(Buffer.from(halfWidthShot.data, "base64").length > 9000);
+
     await installFixture(client, 390, 844, "dark");
     const mobile = await visualMetrics(client);
     assertVisualMetrics(mobile, 358);
@@ -513,7 +519,7 @@ async function main() {
   staticContractChecks();
   await browserChecks();
   console.log(
-    "formula map flow layout checks passed: branch, merge, long math, nested fraction, deep path, measurement, edge direction, desktop/mobile pixels, pan, zoom, drag, click, dark theme and accessibility contracts"
+    "formula map flow layout checks passed: branch, merge, long math, nested fraction, deep path, measurement, edge direction, desktop/half-width/mobile pixels, pan, zoom, drag, click, dark theme and accessibility contracts"
   );
 }
 

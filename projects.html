@@ -7,7 +7,7 @@
     <meta name="description" content="浏览 LarkixMaker 的开源硬件项目、规划项目与已上线项目。" />
     <link rel="manifest" href="./site.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="./assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524" />
-    <link rel="stylesheet" href="./styles.css?v=20260807-0001" />
+    <link rel="stylesheet" href="./styles.css?v=20260814-0001" />
   </head>
   <body class="themed-page" data-page-theme="projects" data-layout-page="projectsPage">
     <a class="skip-link" href="#mainContent">跳到主要内容</a>
@@ -15,13 +15,13 @@
       <div class="header-inner">
         <a class="brand" href="./index.html"><img class="brand-symbol" src="./assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524" alt="" aria-hidden="true" /><span class="brand-wordmark">Larki<span>x</span></span><span class="brand-product">Maker</span></a>
         <nav class="main-nav" aria-label="主导航">
-          <a href="./category.html?category=analog">模拟电子</a>
-          <a href="./category.html?category=stm32">STM32</a>
-          <a href="./category.html?category=esp32">ESP32</a>
+          <a href="./maker.html">首页</a>
+          <a href="./category.html?category=electronics-basics">电子基础</a>
+          <a href="./derive.html">公式推导</a>
           <a href="./projects.html">开源项目</a>
-          <a href="./miniapps.html">小程序</a>
+          <a href="./miniapps.html">MD2File</a>
         </nav>
-        <div class="header-actions"><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换夜间模式" title="切换夜间模式"><span class="theme-toggle-icon" aria-hidden="true"></span></button><a class="admin-link" href="./admin/index.html">管理端</a></div>
+        <div class="header-actions"><button class="theme-toggle" type="button" data-theme-toggle aria-label="切换夜间模式" title="切换夜间模式"><span class="theme-toggle-icon" aria-hidden="true"></span></button></div>
       </div>
     </header>
     <main class="site-shell section-row" id="mainContent" data-layout-container>
@@ -37,10 +37,9 @@
       </div>
       <div class="project-grid" id="projectList" data-layout-section="projectList"></div>
     </main>
-    <script src="./data/posts.js?v=20260807-0001"></script>
-    <script src="./api/content.js?v=20260807-0001"></script>
-    <script src="./data/content-store.js?v=20260807-0001"></script>
-    <script src="./data/media.js?v=20260807-0001"></script>
+    <script src="./api/content.js?v=20260814-0001"></script>
+    <script src="./data/content-store.js?v=20260814-0001"></script>
+    <script src="./data/media.js?v=20260814-0001"></script>
     <script>
       const escapeHtml = window.LarkixMedia.escapeHtml;
       const projectUrl = (project) => `./project.html?id=${encodeURIComponent(project.id)}`;
@@ -63,8 +62,8 @@
         })
         .join("");
     </script>
-    <script src="./site-layout.js?v=20260807-0001"></script>
-    <script src="./data/site-meta.js?v=20260807-0001"></script>
-    <script src="./data/footer.js?v=20260807-0001"></script>
+    <script src="./site-layout.js?v=20260814-0001"></script>
+    <script src="./data/site-meta.js?v=20260814-0001"></script>
+    <script src="./data/footer.js?v=20260814-0001"></script>
   </body>
 </html>

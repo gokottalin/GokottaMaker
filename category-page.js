@@ -53,10 +53,10 @@
         }
       : courseMeta[key] || courseMeta.all || {};
   const contentApi = window.LarkixContent;
-  const allPosts = contentApi.getPosts();
-  const allProjects = contentApi.getProjectDirectory();
-  const postMap = new Map(allPosts.map((item) => [item.id, item]));
-  const projectMap = new Map(allProjects.map((item) => [item.id, item]));
+  let allPosts = contentApi.getPosts();
+  let allProjects = contentApi.getProjectDirectory();
+  let postMap = new Map(allPosts.map((item) => [item.id, item]));
+  let projectMap = new Map(allProjects.map((item) => [item.id, item]));
   const escapeHtml = window.LarkixMedia.escapeHtml;
 
   function readingMinutesLabel(value) {
@@ -80,16 +80,28 @@
   const searchLabelNode = document.querySelector(".category-search-box span");
   const returnLinkNode = document.querySelector(".category-heading-actions .return-link");
 
-  const items = sortByRecommendation(
-    key === "all"
-      ? allPosts
-      : allPosts.filter((post) => {
-          const postKey = post.categoryKey === "power-electronics" ? "electronics-basics" : post.categoryKey;
-          return postKey === key || post.category === category || (key === "electronics-basics" && post.category === "电力电子");
-        })
-  );
-  const routeProjects = buildRouteProjects();
-  const recommended = buildRecommendedItems();
+  let items = [];
+  let routeProjects = [];
+  let recommended = [];
+
+  function rebuildPublicCollections() {
+    allPosts = contentApi.getPosts();
+    allProjects = contentApi.getProjectDirectory();
+    postMap = new Map(allPosts.map((item) => [item.id, item]));
+    projectMap = new Map(allProjects.map((item) => [item.id, item]));
+    items = sortByRecommendation(
+      key === "all"
+        ? allPosts
+        : allPosts.filter((post) => {
+            const postKey = post.categoryKey === "power-electronics" ? "electronics-basics" : post.categoryKey;
+            return postKey === key || post.category === category || (key === "electronics-basics" && post.category === "电力电子");
+          })
+    );
+    routeProjects = buildRouteProjects();
+    recommended = buildRecommendedItems();
+  }
+
+  rebuildPublicCollections();
 
   function itemUrl(post) {
     return `./post.html?id=${encodeURIComponent(post.id)}`;
@@ -513,4 +525,10 @@
       renderPage(searchNode?.value.trim() || initialKeyword);
     });
   }
+
+  window.addEventListener("larkix:public-content-updated", () => {
+    rebuildPublicCollections();
+    summaryNode.textContent = `${description} 当前共 ${items.length} 篇内容。`;
+    renderPage(searchNode?.value.trim() || initialKeyword);
+  });
 })();

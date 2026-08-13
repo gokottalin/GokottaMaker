@@ -5,8 +5,7 @@
   let layoutSignature = JSON.stringify(siteLayout);
   const focusFallback = {
     enabled: true,
-    hideMiniappsFromPrimaryNav: false,
-    hideAdminFromPublicNav: true
+    hideMiniappsFromPrimaryNav: false
   };
 
   function publicFocusMode() {
@@ -39,11 +38,6 @@
         .map((link) => `<a href="${link.href}"${isCurrentHref(link.href) ? ' aria-current="page"' : ""}>${link.label}</a>`)
         .join("");
     });
-    if (publicFocusMode().hideAdminFromPublicNav) {
-      document.querySelectorAll('.site-header .admin-link[href="./admin/index.html"], .site-header .admin-link[href$="/admin/index.html"]').forEach((link) => {
-        link.hidden = true;
-      });
-    }
   }
 
   function applyPowerElectronicsPlaceholder() {
@@ -149,28 +143,18 @@
       });
   }
 
-  function startPolling() {
-    if (!window.LARKIX_SERVER_CONTENT || !window.fetch) return;
-    window.setInterval(async () => {
-      try {
-        const response = await fetch("./api/content", { cache: "no-store" });
-        if (!response.ok) return;
-        const payload = await response.json();
-        const nextLayout = payload.siteLayout || {};
-        const nextSignature = JSON.stringify(nextLayout);
-        if (nextSignature === layoutSignature) return;
-        siteLayout = nextLayout;
-        layoutSignature = nextSignature;
-        applyLayout();
-      } catch {
-        return;
-      }
-    }, 3000);
+  function syncPublicLayout() {
+    const nextLayout = window.LARKIX_SERVER_CONTENT?.siteLayout || {};
+    const nextSignature = JSON.stringify(nextLayout);
+    if (nextSignature === layoutSignature) return;
+    siteLayout = nextLayout;
+    layoutSignature = nextSignature;
+    applyLayout();
   }
 
   window.LarkixSiteLayout = { apply: applyLayout, applyFocusedNavigation };
   applyFocusedNavigation();
   applyPowerElectronicsPlaceholder();
   applyLayout();
-  startPolling();
+  window.addEventListener("larkix:public-content-updated", syncPublicLayout);
 })();

@@ -3368,8 +3368,55 @@ button:disabled {
   font-weight: 500;
 }
 
-.formula-card-editor input[readonly] {
-  opacity: 0.72;
+.formula-technical-info {
+  display: grid;
+  gap: 9px;
+  margin-top: 14px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.formula-technical-info[hidden] {
+  display: none;
+}
+
+.formula-technical-heading,
+.formula-technical-row {
+  display: grid;
+  grid-template-columns: minmax(92px, auto) minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.formula-technical-heading > div {
+  display: flex;
+  grid-column: 1 / 3;
+  gap: 8px;
+  align-items: baseline;
+  min-width: 0;
+}
+
+.formula-technical-heading span,
+.formula-technical-row > span,
+.formula-copy-status {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.formula-copy-status {
+  min-height: 1.2em;
+  text-align: right;
+}
+
+.formula-technical-row code {
+  min-width: 0;
+  padding: 7px 9px;
+  overflow-wrap: anywhere;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface-2);
+  user-select: text;
 }
 
 .formula-editor-preview-grid {
@@ -3636,6 +3683,36 @@ button.formula-graph-node {
   box-shadow: 0 5px 16px rgba(179, 92, 0, 0.2);
 }
 
+.formula-graph-node.is-article {
+  min-width: 196px;
+  border-color: #7c3aed;
+  border-radius: 3px;
+  color: #3b176a;
+  background: #f5f3ff;
+}
+
+.formula-graph-node-kind {
+  color: #64748b;
+  font-size: 0.68rem;
+  font-weight: 750;
+}
+
+.formula-graph-node.is-article .formula-graph-node-kind {
+  color: #6d28d9;
+}
+
+.formula-graph-node-state {
+  display: inline-block;
+  margin-bottom: 0.16rem;
+  color: #8a5d00;
+  font-size: 0.66rem;
+  font-weight: 750;
+}
+
+.formula-graph-node.is-archived .formula-graph-node-state {
+  color: #64748b;
+}
+
 .formula-graph-node.is-draft {
   border-style: dashed;
   border-color: #8a5d00;
@@ -3678,6 +3755,13 @@ button.formula-graph-node {
   white-space: normal;
 }
 
+.formula-graph-node-math.is-article-summary {
+  width: auto;
+  color: #6d28d9;
+  font-size: 0.78rem;
+  white-space: normal;
+}
+
 .formula-graph-node-layer.is-measuring .formula-graph-node {
   visibility: hidden;
   transform: none !important;
@@ -3706,6 +3790,12 @@ button.formula-graph-node {
   border-color: #fbbf24;
   color: #fff7d6;
   background: #53330d;
+}
+
+[data-theme="dark"] .formula-graph-node.is-article {
+  border-color: #c4b5fd;
+  color: #f5f3ff;
+  background: #2e1751;
 }
 
 [data-theme="dark"] .formula-graph-node-math.is-invalid {
@@ -4503,6 +4593,16 @@ button.formula-graph-node {
   .formula-decision-clone-fields,
   .formula-editor-preview-grid {
     grid-template-columns: 1fr;
+  }
+
+  .formula-technical-heading,
+  .formula-technical-row {
+    grid-template-columns: 1fr auto;
+  }
+
+  .formula-technical-heading > div,
+  .formula-technical-row > span {
+    grid-column: 1 / -1;
   }
 
   .formula-graph-canvas {

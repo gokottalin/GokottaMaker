@@ -1,0 +1,11 @@
+name = "A56_FormulaBindingAuthority"
+description = "Create the single durable content-to-formula binding authority."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A56_FormulaBindingAuthority", "公式绑定权威模型"]
+developer_instructions = """
+Execute only S47_formula_binding_authority after S46 acceptance. The new
+migration is 028_formula_content_bindings.js and migrations are auto-loaded by
+lib/db.js; do not create an index file. Work only on the schema, content layer,
+validators, and isolated tests in the allowlist.
+Do not mutate current data or implement UI/API projections. Use Chinese handoff.
+"""

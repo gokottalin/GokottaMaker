@@ -1,0 +1,10 @@
+name = "A55_PrivateCmsGateway"
+description = "Add a rotatable private CMS gateway without relying on obscurity."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A55_PrivateCmsGateway", "私有 CMS 网关"]
+developer_instructions = """
+Execute only S46_private_cms_gateway after A00 accepts S45. Never write a real
+secret. Edit only the brief allowlist. Keep authentication, authorization,
+session, CSRF, rate-limit, and audit defenses active behind the private path.
+Use Chinese for the handoff.
+"""

@@ -8,7 +8,7 @@
     <link rel="manifest" href="./site.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="./assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524" />
     <link rel="stylesheet" href="./assets/vendor/katex/katex.min.css?v=0.16.22" />
-    <link rel="stylesheet" href="./styles.css?v=20260807-0001" />
+    <link rel="stylesheet" href="./styles.css?v=20260814-0001" />
     <style>
       .formula-card-public-meta {
         display: grid;
@@ -277,6 +277,36 @@
         box-shadow: 0 5px 16px color-mix(in srgb, #b35c00 22%, transparent);
       }
 
+      .formula-graph-node.is-article {
+        min-width: 196px;
+        border-color: #7c3aed;
+        border-radius: 3px;
+        color: #3b176a;
+        background: #f5f3ff;
+      }
+
+      .formula-graph-node-kind {
+        color: #64748b;
+        font-size: 0.68rem;
+        font-weight: 750;
+      }
+
+      .formula-graph-node.is-article .formula-graph-node-kind {
+        color: #6d28d9;
+      }
+
+      .formula-graph-node-state {
+        display: inline-block;
+        margin-bottom: 0.16rem;
+        color: #8a5d00;
+        font-size: 0.66rem;
+        font-weight: 750;
+      }
+
+      .formula-graph-node.is-archived .formula-graph-node-state {
+        color: #64748b;
+      }
+
       .formula-graph-node.is-draft {
         border-style: dashed;
         border-color: #8a5d00;
@@ -319,6 +349,13 @@
         white-space: normal;
       }
 
+      .formula-graph-node-math.is-article-summary {
+        width: auto;
+        color: #6d28d9;
+        font-size: 0.78rem;
+        white-space: normal;
+      }
+
       .formula-graph-node-layer.is-measuring .formula-graph-node {
         visibility: hidden;
         transform: none !important;
@@ -342,6 +379,12 @@
         border-color: #fbbf24;
         color: #fff7d6;
         background: color-mix(in srgb, #854d0e 52%, var(--theme-dark-surface-raised));
+      }
+
+      [data-theme="dark"] .formula-graph-node.is-article {
+        border-color: #c4b5fd;
+        color: #f5f3ff;
+        background: #2e1751;
       }
 
       [data-theme="dark"] .formula-graph-node-math.is-invalid {
@@ -414,11 +457,11 @@
           <span class="brand-product">Maker</span>
         </a>
         <nav class="main-nav" aria-label="主导航">
-          <a href="./category.html?category=analog">模拟电子</a>
-          <a href="./category.html?category=stm32">STM32</a>
-          <a href="./category.html?category=esp32">ESP32</a>
+          <a href="./maker.html">首页</a>
+          <a href="./category.html?category=electronics-basics">电子基础</a>
+          <a href="./derive.html">公式推导</a>
           <a href="./projects.html">开源项目</a>
-          <a href="./miniapps.html">小程序</a>
+          <a href="./miniapps.html">MD2File</a>
         </nav>
         <div class="header-actions">
           <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换夜间模式" title="切换夜间模式"><span class="theme-toggle-icon" aria-hidden="true"></span></button>
@@ -438,8 +481,8 @@
       </section>
     </main>
 
-    <script src="./api/content.js?v=20260807-0001"></script>
-    <script src="./data/media.js?v=20260807-0001"></script>
+    <script src="./api/content.js?v=20260814-0001"></script>
+    <script src="./data/media.js?v=20260814-0001"></script>
     <script src="./assets/vendor/katex/katex.min.js?v=0.16.22"></script>
     <script src="./data/math-renderer.js?v=20260730-s30"></script>
     <script src="./data/markdown-renderer.js?v=20260728-s19"></script>
@@ -453,8 +496,8 @@
         tocId: "tocList"
       });
     </script>
-    <script src="./site-layout.js?v=20260807-0001"></script>
-    <script src="./data/site-meta.js?v=20260807-0001"></script>
-    <script src="./data/footer.js?v=20260807-0001"></script>
+    <script src="./site-layout.js?v=20260814-0001"></script>
+    <script src="./data/site-meta.js?v=20260814-0001"></script>
+    <script src="./data/footer.js?v=20260814-0001"></script>
   </body>
 </html>

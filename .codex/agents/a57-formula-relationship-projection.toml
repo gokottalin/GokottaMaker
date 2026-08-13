@@ -1,0 +1,9 @@
+name = "A57_FormulaRelationshipProjection"
+description = "Project authoritative formula bindings into admin and public relations."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A57_FormulaRelationshipProjection", "公式关系投影"]
+developer_instructions = """
+Execute only S48_formula_relationship_projection after S47 acceptance. Edit only
+the allowlist, preserve S45/S46 security boundaries, and ensure public payloads
+exclude all drafts before serialization. Use Chinese for the handoff.
+"""

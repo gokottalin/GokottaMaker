@@ -1,0 +1,184 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260812-002",
+  "title": "修复文章已发布但游客端被动态内容缓存阻断",
+  "status": "dispatched",
+  "priority": "urgent",
+  "createdAt": "2026-08-12T23:28:00+08:00",
+  "updatedAt": "2026-08-12T23:31:00+08:00",
+  "intent": {
+    "problem": "CMS 已将《反激变换器 Vₒᵣ 与伏秒平衡推导》保存为已发布，公开 API 也已经返回该文章，但游客分类页仍读取浏览器长期缓存的 /api/content.js，继续显示发布前的旧文章集合，形成后台已发布而客户端未发布的假象。",
+    "desiredOutcome": "CMS 发布文章后，游客端公开投影不得被静态 JS 缓存滞留；公开接口、分类列表和文章详情必须一致，普通刷新或重新进入即可看到新文章，已打开的游客页面也应自动或在重新获得焦点时更新，无需强制刷新或清理缓存。",
+    "targetUsers": ["Owner/幕后作者", "游客"]
+  },
+  "scope": {
+    "in": [
+      "修正线上 Nginx 对 /api/content.js 的静态 .js 七天缓存覆盖，确保 /api/ 动态路由优先于静态扩展名规则",
+      "确保 /api/content 与 /api/content.js 均使用 no-store 或等价的不可陈旧缓存策略，并在反向代理与浏览器最终响应头中保持一致",
+      "让分类页、首页和文章详情等游客内容入口在页面进入、普通刷新及重新获得焦点时读取当前公开内容",
+      "为已打开的游客列表提供有限频率的自动重新验证，使 CMS 发布成功后无需硬刷新即可出现新文章",
+      "发布成功提示必须以服务端已持久化且公开投影可读取为基础，不得只依据 CMS 本地状态",
+      "保持聚焦模式过滤；power-electronics 仍映射到 electronics-basics，并允许本文章公开",
+      "增加生产等价反向代理缓存回归，覆盖动态 .js API 与普通静态 .js 的不同缓存策略"
+    ],
+    "out": [
+      "修改目标文章正文、封面、公式绑定或推导内容",
+      "关闭聚焦模式",
+      "把所有静态 JS、CSS 或图片统一改成 no-store",
+      "要求作者重复发布、复制文章或手工改数据库",
+      "通过仅提升版本查询参数掩盖动态 API 缓存配置错误"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "CMS 最近编辑内容显示目标文章为已发布，分类为电力电子。",
+      "GET /api/content 返回目标文章，publishStatus=published，categoryKey=power-electronics，publishedAt=2026-08-12 15:07:55。",
+      "GET /api/public/posts/post-1786547216094 返回 200，证明服务端公开记录和聚焦门禁均已通过。",
+      "游客电子基础页已打开时仍显示 3 篇旧内容，不包含目标文章。",
+      "线上 /api/content.js?v=20260807-0001 最终响应头为 Cache-Control: max-age=604800,public，而应用路由代码原本设置 no-store。",
+      "deploy/nginx-gokottamaker.conf 的 .js 静态资源规则对 /api/content.js 同样设置 expires 7d 和 Cache-Control public，导致动态内容脚本被浏览器长期缓存。"
+    ],
+    "expected": [
+      "CMS 发布成功后，公开 JSON API、动态内容脚本、游客分类列表和文章详情使用同一份当前公开数据。",
+      "动态内容接口不被静态资源规则缓存，线上最终响应头明确禁止陈旧缓存。",
+      "新打开或普通刷新的游客页面立即显示目标文章，不需要 Ctrl+F5、无痕窗口或清理缓存。",
+      "发布前已经打开的游客列表在有限时间内自动更新，或在标签页重新获得焦点时立即更新。",
+      "修复后文章仍受已发布状态、聚焦范围和已发布公式修订门禁约束。"
+    ],
+    "edgeCases": [
+      "浏览器已有七天有效期的旧 /api/content.js 缓存。",
+      "发布后游客标签页一直保持打开但处于后台。",
+      "连续发布、撤回或更新多篇文章时客户端不得回退到更旧的数据快照。",
+      "聚焦模式开启时非聚焦文章仍应隐藏，允许范围内文章应及时出现。",
+      "动态 API 禁止缓存的同时，版本化静态 JS/CSS/图片仍可保持长期缓存。",
+      "网络暂时失败时保留现有列表并在下次重新验证成功后更新，不把空响应覆盖到页面。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.dynamic-cache-policy",
+      "statement": "生产等价 Nginx 下，/api/content 和 /api/content.js 的最终响应头均为 no-store 或严格等价策略，且不会命中七天静态 .js 缓存规则。",
+      "verification": "启动生产等价反向代理，分别请求两个接口并检查最终 Cache-Control、Expires、Age 及重复请求行为；同时确认普通版本化静态 JS 仍可长期缓存。"
+    },
+    {
+      "id": "ac.publish-projection-chain",
+      "statement": "发布《反激变换器 Vₒᵣ 与伏秒平衡推导》后，CMS 状态、/api/content、/api/content.js、电子基础列表与文章详情均显示同一 published 记录。",
+      "verification": "在隔离数据发布一篇 power-electronics 文章，按 CMS 响应、两个公开接口、分类页和详情页顺序核对 id、title、publishStatus、publishedAt 与可访问性。"
+    },
+    {
+      "id": "ac.normal-client-refresh",
+      "statement": "游客使用新标签进入或执行普通刷新即可看到刚发布文章，不需要硬刷新、无痕模式或清除缓存。",
+      "verification": "先访问分类页形成旧缓存，再从 CMS 发布文章，随后分别普通刷新和新开标签，确认两处均出现新文章。"
+    },
+    {
+      "id": "ac.open-tab-revalidation",
+      "statement": "发布前已打开的游客列表会在不超过 5 秒的有限重新验证周期内更新，或在标签页重新获得焦点时立即更新。",
+      "verification": "保持分类页打开，在另一标签页发布文章；检查前台标签在 5 秒内更新，再重复一次后台停留后回到标签页的焦点更新测试。"
+    },
+    {
+      "id": "ac.focus-gate-preserved",
+      "statement": "缓存与重新验证修复不绕过聚焦模式：power-electronics 文章继续映射到电子基础并公开，非聚焦已发布文章继续隐藏。",
+      "verification": "聚焦开启时同时发布允许与禁止类目文章，确认公开接口和页面只出现允许项；关闭聚焦后再确认既有规则。"
+    },
+    {
+      "id": "ac.no-stale-regression",
+      "statement": "连续发布、更新和撤回内容时，游客端不会被较旧响应覆盖，也不会重复渲染文章。",
+      "verification": "对同一文章执行发布、更新、撤回以及两篇文章连续发布，模拟响应乱序并检查列表的唯一性、最终状态和详情一致性。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN"],
+    "platforms": ["Larkix CMS", "Larkix 游客端", "Nginx 反向代理", "Larkix 内容 API"],
+    "compatibility": ["保持 V2.5.3+20260807-0001 现有公开路由与聚焦映射", "不破坏静态资源长期缓存与现有文章 URL", "兼容已有旧缓存用户的正常恢复"],
+    "data": ["不得改写或重建目标文章记录", "不得改变既有发布状态、公式绑定或文章 id"],
+    "security": ["游客端仍只能读取公开投影", "不得通过管理 API、凭据或客户端本地状态绕过公开门禁"],
+    "operations": ["需要生产等价 Nginx 配置测试", "修复上线后需要核对线上最终响应头和真实浏览器缓存行为"],
+    "deadline": null
+  },
+  "evidence": [
+    {
+      "id": "evidence.cms-published",
+      "kind": "observation",
+      "locator": "https://larkix.com/admin/",
+      "note": "2026-08-12 线上 CMS 最近编辑内容显示目标文章为“文章 / 已发布 / 电力电子”。",
+      "status": "verified"
+    },
+    {
+      "id": "evidence.public-content-api",
+      "kind": "url",
+      "locator": "https://larkix.com/api/content",
+      "note": "公开接口返回 post-1786547216094，publishStatus=published，categoryKey=power-electronics，目标文章包含在 5 篇公开文章中。",
+      "status": "verified"
+    },
+    {
+      "id": "evidence.public-post-api",
+      "kind": "url",
+      "locator": "https://larkix.com/api/public/posts/post-1786547216094",
+      "note": "公开详情接口返回 200，证明记录已公开且未被聚焦门禁拒绝。",
+      "status": "verified"
+    },
+    {
+      "id": "evidence.stale-category-tab",
+      "kind": "observation",
+      "locator": "https://larkix.com/category.html?category=electronics-basics",
+      "note": "已有游客标签仍显示“当前共 3 篇内容”，未列出目标文章，与实时公开 API 的 5 篇不一致。",
+      "status": "verified"
+    },
+    {
+      "id": "evidence.dynamic-script-cache-header",
+      "kind": "url",
+      "locator": "https://larkix.com/api/content.js?v=20260807-0001",
+      "note": "线上最终响应头为 Cache-Control: max-age=604800,public；响应正文当前已包含目标文章，但已有浏览器可继续使用发布前缓存。",
+      "status": "verified"
+    },
+    {
+      "id": "evidence.nginx-static-rule",
+      "kind": "file",
+      "locator": "deploy/nginx-gokottamaker.conf",
+      "note": ".js 静态匹配对所有 JS 路径设置 expires 7d 和 Cache-Control public，没有先排除 /api/content.js。",
+      "status": "verified"
+    },
+    {
+      "id": "evidence.upstream-no-store",
+      "kind": "file",
+      "locator": "server.js",
+      "note": "contentScript 本身设置 Cache-Control: no-store，证明最终七天缓存来自反向代理规则覆盖。",
+      "status": "verified"
+    }
+  ],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.cache-only-hotfix",
+      "severity": "high",
+      "statement": "如果只改查询参数或只让作者硬刷新，已有游客仍会长时间看到旧内容，下一次版本期间问题会再次出现。",
+      "mitigation": "从反向代理动态路由优先级和客户端重新验证两层修复，并以生产最终响应头作为发布门禁。"
+    },
+    {
+      "id": "risk.aggressive-polling",
+      "severity": "medium",
+      "statement": "无节制轮询可能增加服务器负载或引起列表频繁重绘。",
+      "mitigation": "使用有限频率、页面可见性和内容签名控制请求与渲染，只在公开内容版本变化时更新。"
+    },
+    {
+      "id": "risk.focus-regression",
+      "severity": "high",
+      "statement": "若客户端直接采用未过滤的管理数据或错误合并旧数据，可能重新显示非聚焦内容。",
+      "mitigation": "只读取公开 API 投影，保留服务端聚焦门禁，并加入允许/禁止类目矩阵回归。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-08-12T23:31:00+08:00",
+    "confirmationText": "反激变换器 Vₒᵣ 与伏秒平衡推导文章无法新建。CMS看到发布了，客户端未发布，找到原因，并通知A00解决问题",
+    "digest": "sha256:903271dea93c0f603eb5e2758d2f1d9087ae5312ba08c127ce78effe965847df"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-08-12T23:31:00+08:00"
+  }
+}

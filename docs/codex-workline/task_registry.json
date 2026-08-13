@@ -4,8 +4,8 @@
   "operatingModel": "project_director_plus_short_task_agents",
   "legacyAgentDocsMode": "historical_reference_only",
   "currentGate": {
-    "batch1": "dispatch_20260730_complete",
-    "businessImplementationAllowed": false,
+    "batch1": "dispatch_20260813_active_s55_release",
+    "businessImplementationAllowed": true,
     "databaseMutationAllowed": false,
     "migrationFileImplementationAllowed": false,
     "isolatedDataDirVerificationAllowed": true,
@@ -50,7 +50,20 @@
     "md2filePublicEntryAllowed": false,
     "apiVerifyRedirectedOutputAllowed": false,
     "releaseVersionSyncAllowed": false,
-    "releaseGitGateReverificationAllowed": false
+    "releaseGitGateReverificationAllowed": false,
+    "formulaIdentityAutomationAllowed": false,
+    "publicContentFreshnessAllowed": false,
+    "publicSurfaceMinimizationAllowed": false,
+    "privateCmsGatewayAllowed": false,
+    "formulaBindingAuthorityAllowed": false,
+    "formulaRelationshipProjectionAllowed": false,
+    "formulaMarkerGraphUiAllowed": false,
+    "securityRegressionEvidenceAllowed": false,
+    "finalRepositoryManifestAllowed": false,
+    "crossComputerBootstrapAllowed": false,
+    "encryptedDataHandoffAllowed": false,
+    "finalCandidateGateAllowed": false,
+    "finalGitPublicationAllowed": true
   },
   "longLivedRoles": [
     {
@@ -744,6 +757,7 @@
         "admin/admin.js",
         "admin/admin.css",
         "data/content-store.js",
+        "site-layout.js",
         "main.js",
         "post.js",
         "category-page.js",
@@ -2090,6 +2104,320 @@
       ],
       "brief": "agents/A51_GitPublisher/brief.md",
       "handoff": "docs/codex-workline/slices/S42_git_publish_handoff.md"
+    },
+    {
+      "id": "A52_FormulaIdentityAutomation",
+      "status": "completed",
+      "scope": "Generate immutable formula identities on the server, remove identity inputs from CMS creation, expose read-only copyable technical information, and verify conflicts and legacy protection in isolated data.",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/codex-workline/requirements/active/REQ-20260812-001.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260812-001.json",
+        "docs/codex-workline/implementation_slices.json",
+        "agents/A52_FormulaIdentityAutomation/brief.md",
+        "server.js",
+        "lib/validators.js",
+        "lib/content.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css"
+      ],
+      "mayEdit": [
+        "server.js",
+        "lib/validators.js",
+        "lib/content.js",
+        "admin/index.html",
+        "admin/admin.js",
+        "admin/admin.css",
+        "scripts/test-formula-identity-automation.js",
+        "scripts/test-article-formula-authoring.js",
+        "scripts/test-formula-reference-versioning.js",
+        "scripts/test-linear-derivation-graph.js",
+        "package.json",
+        "docs/codex-workline/slices/S43_formula_identity_automation_handoff.md"
+      ],
+      "doneWhen": [
+        "direct and article-selection creation use one server-owned deterministic allocator",
+        "ordinary create and update payloads cannot set formulaId or slug",
+        "existing identities and public URLs remain unchanged",
+        "create form has no identity controls and edit mode shows two copyable read-only values",
+        "isolated API, collision, injection, compatibility, DOM, and browser checks pass"
+      ],
+      "brief": "agents/A52_FormulaIdentityAutomation/brief.md",
+      "handoff": "docs/codex-workline/slices/S43_formula_identity_automation_handoff.md"
+    },
+    {
+      "id": "A53_PublicContentFreshness",
+      "status": "completed",
+      "scope": "Prevent stale public content caches, revalidate open visitor pages, and confirm CMS publication through the public projection.",
+      "reads": [
+        "AGENTS.md",
+        "PROJECT_WINDOW.md",
+        "docs/codex-workline/requirements/active/REQ-20260812-002.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260812-002.json",
+        "agents/A53_PublicContentFreshness/brief.md",
+        "deploy/nginx-gokottamaker.conf",
+        "server.js",
+        "data/content-store.js",
+        "site-layout.js",
+        "main.js",
+        "category-page.js",
+        "post.js",
+        "admin/admin.js"
+      ],
+      "mayEdit": [
+        "deploy/nginx-gokottamaker.conf",
+        "server.js",
+        "data/content-store.js",
+        "main.js",
+        "category-page.js",
+        "post.js",
+        "admin/admin.js",
+        "site-layout.js",
+        "maker.html",
+        "category.html",
+        "post.html",
+        "scripts/test-public-content-freshness.js",
+        "scripts/test-focus-mode.js",
+        "package.json",
+        "docs/codex-workline/slices/S44_public_content_freshness_handoff.md"
+      ],
+      "doneWhen": [
+        "dynamic content endpoints remain no-store through production-equivalent Nginx",
+        "visible and refocused visitor pages revalidate within five seconds without stale overwrite",
+        "homepage, category, and detail consume one current public projection",
+        "CMS publish success is confirmed by public list and detail visibility",
+        "focus mode and static asset caching remain unchanged"
+      ],
+      "brief": "agents/A53_PublicContentFreshness/brief.md",
+      "handoff": "docs/codex-workline/slices/S44_public_content_freshness_handoff.md"
+    },
+    {
+      "id": "A54_PublicSurfaceMinimization",
+      "status": "completed",
+      "scope": "Remove focus-forbidden content, miniapps, CMS links, and management metadata from anonymous payloads, sources, SEO, and routes while retaining server assets.",
+      "reads": [
+        "AGENTS.md", "PROJECT_WINDOW.md",
+        "docs/codex-workline/requirements/active/REQ-20260812-003.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260813-001.json",
+        "agents/A54_PublicSurfaceMinimization/brief.md",
+        "server.js", "lib/seo.js", "data/miniapps.js", "data/content-store.js",
+        "index.html", "maker.html", "category.html", "projects.html", "miniapps.html", "tools/md2doc.html"
+      ],
+      "mayEdit": [
+        "server.js", "lib/seo.js", "data/miniapps.js", "index.html", "maker.html",
+        "category.html", "projects.html", "miniapps.html", "post.html", "project.html",
+        "derive.html", "tools/md2doc.html",
+        "data/content-store.js", "site-layout.js", "main.js",
+        "scripts/test-public-surface-minimization.js", "scripts/test-focus-mode.js",
+        "scripts/test-md2file-public-entry.js", "scripts/test-public-content-freshness.js", "package.json",
+        "docs/codex-workline/slices/S45_public_surface_minimization_handoff.md"
+      ],
+      "doneWhen": [
+        "anonymous payloads and sources serialize only focus-allowed content",
+        "MD2File is the only public miniapp identity and retained private miniapp data is not assigned to browser globals",
+        "focus-forbidden known routes and random unknown routes share an anonymous 404 surface",
+        "public pages and SEO contain no CMS link or management capability metadata",
+        "retained code, data, and historical assets are not physically deleted"
+      ],
+      "brief": "agents/A54_PublicSurfaceMinimization/brief.md",
+      "handoff": "docs/codex-workline/slices/S45_public_surface_minimization_handoff.md"
+    },
+    {
+      "id": "A55_PrivateCmsGateway",
+      "status": "completed",
+      "scope": "Add an environment-configured rotatable private CMS namespace while preserving authentication, CSRF, session, rate-limit, audit, and constant anonymous 404 defenses.",
+      "reads": [
+        "AGENTS.md", "PROJECT_WINDOW.md",
+        "docs/codex-workline/requirements/active/REQ-20260812-003.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260813-001.json",
+        "docs/codex-workline/slices/S45_public_surface_minimization_handoff.md",
+        "agents/A55_PrivateCmsGateway/brief.md", "server.js", "admin/index.html",
+        "admin/admin.js", "deploy/nginx-gokottamaker.conf", ".env.example", "docs/deployment.md"
+      ],
+      "mayEdit": [
+        "server.js", "admin/admin.js", "admin/index.html", "deploy/nginx-gokottamaker.conf",
+        ".env.example", "docs/deployment.md", "scripts/test-private-cms-gateway.js",
+        "scripts/verify-api.ps1", "scripts/gokottamaker.env.example",
+        "scripts/test-article-formula-authoring.js", "scripts/test-carousel-focus-buffer.js",
+        "scripts/test-focus-mode.js", "scripts/test-formula-catalog.js",
+        "scripts/test-formula-identity-automation.js", "scripts/test-formula-reference-versioning.js",
+        "scripts/test-legacy-formula-relation-migration.js", "scripts/test-linear-derivation-graph.js",
+        "scripts/test-md2file-public-entry.js", "scripts/test-post-reading-minutes.js",
+        "scripts/test-public-content-freshness.js", "package.json",
+        "docs/codex-workline/slices/S46_private_cms_gateway_handoff.md"
+      ],
+      "doneWhen": [
+        "private CMS namespace comes only from protected deployment configuration and no real secret is recorded",
+        "standard admin, login, session, and management API paths remain anonymous 404 before and after login",
+        "correct private namespace still requires auth, authorization, CSRF, session protection, rate limiting, and audit",
+        "isolated rotation invalidates the old namespace without changing Owner account or CMS data",
+        "production access requires HTTPS with only an explicit loopback test exception"
+      ],
+      "brief": "agents/A55_PrivateCmsGateway/brief.md",
+      "handoff": "docs/codex-workline/slices/S46_private_cms_gateway_handoff.md"
+    },
+    {
+      "id": "A56_FormulaBindingAuthority",
+      "status": "completed",
+      "scope": "Create one durable article/formula-derivation to formula binding authority and idempotently migrate existing relations in isolated data.",
+      "reads": [
+        "AGENTS.md", "PROJECT_WINDOW.md",
+        "docs/codex-workline/requirements/active/REQ-20260812-004.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260813-001.json",
+        "docs/codex-workline/slices/S46_private_cms_gateway_handoff.md",
+        "agents/A56_FormulaBindingAuthority/brief.md", "lib/db.js", "lib/content.js", "lib/validators.js"
+      ],
+      "mayEdit": [
+        "migrations/028_formula_content_bindings.js", "lib/content.js",
+        "lib/validators.js", "scripts/test-formula-binding-authority.js",
+        "scripts/test-legacy-formula-relation-migration.js", "package.json",
+        "docs/codex-workline/slices/S47_formula_binding_authority_handoff.md"
+      ],
+      "doneWhen": [
+        "one stable binding record covers article and formula-derivation sources",
+        "article references do not participate in formula DAG checks",
+        "formula dependency bindings use transactional self and cycle validation",
+        "legacy bindings and edges migrate idempotently without duplicate authority or physical deletion",
+        "fresh, legacy, idempotency, backup, and rollback tests pass in isolated data"
+      ],
+      "brief": "agents/A56_FormulaBindingAuthority/brief.md",
+      "handoff": "docs/codex-workline/slices/S47_formula_binding_authority_handoff.md"
+    },
+    {
+      "id": "A57_FormulaRelationshipProjection",
+      "status": "completed",
+      "scope": "Route authoring through authoritative bindings and derive separate CMS and anonymous formula relationship projections with lifecycle synchronization.",
+      "reads": [
+        "AGENTS.md", "PROJECT_WINDOW.md",
+        "docs/codex-workline/requirements/active/REQ-20260812-004.json",
+        "docs/codex-workline/requirements/dispatch/DISPATCH-20260813-001.json",
+        "docs/codex-workline/slices/S47_formula_binding_authority_handoff.md",
+        "agents/A57_FormulaRelationshipProjection/brief.md", "server.js", "lib/content.js",
+        "lib/validators.js", "admin/admin.js", "admin/index.html"
+      ],
+      "mayEdit": [
+        "server.js", "lib/content.js", "lib/validators.js", "admin/admin.js", "admin/index.html",
+        "scripts/test-formula-relationship-projection.js", "scripts/test-article-formula-authoring.js",
+        "scripts/test-formula-publication-workflow.js", "scripts/test-branching-derivation-graph.js",
+        "package.json", "docs/codex-workline/slices/S48_formula_relationship_projection_handoff.md"
+      ],
+      "doneWhen": [
+        "authoring CRUD writes one binding authority and derived projections update automatically",
+        "CMS graph includes published and draft referrers with explicit state",
+        "anonymous graph excludes draft identity and inaccessible formula relations before serialization",
+        "formula derivation references preserve DAG rules while article references stay outside cycle checks",
+        "lifecycle and legacy compatibility tests pass without orphan edges"
+      ],
+      "brief": "agents/A57_FormulaRelationshipProjection/brief.md",
+      "handoff": "docs/codex-workline/slices/S48_formula_relationship_projection_handoff.md"
+    },
+    {
+      "id": "A58_FormulaMarkerGraphUI",
+      "status": "completed",
+      "scope": "Render one accessible upper-right formula marker per binding and distinguish clickable article and formula graph nodes without public draft leakage.",
+      "reads": [
+        "AGENTS.md", "PROJECT_WINDOW.md",
+        "docs/codex-workline/requirements/active/REQ-20260812-004.json",
+        "docs/codex-workline/slices/S48_formula_relationship_projection_handoff.md",
+        "agents/A58_FormulaMarkerGraphUI/brief.md", "data/markdown-renderer.js",
+        "data/math-renderer.js", "formula-graph.js", "post.js", "admin/admin.js"
+      ],
+      "mayEdit": [
+        "data/markdown-renderer.js", "data/math-renderer.js", "formula-graph.js", "post.js",
+        "derive.html", "post.html", "styles/20-content.css", "styles/40-formula.css",
+        "admin/admin.js", "admin/admin.css", "scripts/test-formula-marker-graph-ui.js",
+        "scripts/test-formula-binding-marker.js", "scripts/test-formula-map-flow-layout.js",
+        "package.json", "docs/codex-workline/slices/S49_formula_marker_graph_ui_handoff.md"
+      ],
+      "doneWhen": [
+        "each binding renders one accessible purple circular upper-right marker",
+        "markers navigate to the published derivation and expose the exact target name on hover and focus",
+        "duplicate paragraph links, child lists, and repeated formula cards are absent",
+        "article and formula graph nodes have distinct clickable visual and semantic types",
+        "complex math and responsive browser evidence shows no overlap or public draft leakage"
+      ],
+      "brief": "agents/A58_FormulaMarkerGraphUI/brief.md",
+      "handoff": "docs/codex-workline/slices/S49_formula_marker_graph_ui_handoff.md"
+    },
+    {
+      "id": "A59_SecurityRegressionEvidence",
+      "status": "completed",
+      "scope": "Produce isolated security, migration, API, CMS, public, graph, marker, and responsive evidence for REQ-003 and REQ-004 without product repairs.",
+      "reads": [
+        "AGENTS.md", "PROJECT_WINDOW.md",
+        "docs/codex-workline/requirements/active/REQ-20260812-003.json",
+        "docs/codex-workline/requirements/active/REQ-20260812-004.json",
+        "docs/codex-workline/slices/S45_public_surface_minimization_handoff.md",
+        "docs/codex-workline/slices/S46_private_cms_gateway_handoff.md",
+        "docs/codex-workline/slices/S47_formula_binding_authority_handoff.md",
+        "docs/codex-workline/slices/S48_formula_relationship_projection_handoff.md",
+        "docs/codex-workline/slices/S49_formula_marker_graph_ui_handoff.md"
+      ],
+      "mayEdit": [
+        "scripts/run-security-formula-regression.js", "docs/security-formula-regression-evidence.md",
+        "docs/codex-workline/slices/S50_security_regression_evidence_handoff.md", "package.json"
+      ],
+      "doneWhen": [
+        "public minimization and private gateway security matrices pass with no secret leakage",
+        "formula binding migration, lifecycle, DAG, public/admin split, and marker tests pass",
+        "representative desktop, half-width, and mobile browser checks pass",
+        "protected data, retained assets, version, production, and Git boundaries are proven unchanged",
+        "all limitations and release blockers are stated truthfully without product repair"
+      ],
+      "brief": "agents/A59_SecurityRegressionEvidence/brief.md",
+      "handoff": "docs/codex-workline/slices/S50_security_regression_evidence_handoff.md"
+    },
+    {
+      "id": "A60_FinalRepositoryManifest",
+      "status": "completed",
+      "scope": "Partition every live worktree path into an explicit final Git include, exclude, or review decision without Git writes.",
+      "reads": ["AGENTS.md", "PROJECT_WINDOW.md", "docs/codex-workline/requirements/active/REQ-20260813-001.json", "docs/codex-workline/requirements/dispatch/DISPATCH-20260813-002.json", "docs/codex-workline/slices/S50_security_regression_evidence_handoff.md", "docs/git-staging-plan-20260730.md", "docs/release-git-gate-20260730.md"],
+      "mayEdit": ["docs/final-git-manifest-20260813.json", "docs/final-repository-audit-20260813.md", "docs/codex-workline/slices/S51_final_repository_manifest_handoff.md"],
+      "doneWhen": ["every live status path appears exactly once in include, exclude, or review", "candidate coverage and exclusion reasons are explicit", "secrets, runtime data, ignored paths, large files, and absolute paths are audited", "Git index, product files, version, data, and services remain unchanged"],
+      "brief": "agents/A60_FinalRepositoryManifest/brief.md",
+      "handoff": "docs/codex-workline/slices/S51_final_repository_manifest_handoff.md"
+    },
+    {
+      "id": "A61_CrossComputerBootstrap",
+      "status": "completed",
+      "scope": "Create a secret-free clone, bootstrap, verification, and Codex continuation path for a new computer.",
+      "reads": ["AGENTS.md", "docs/final-git-manifest-20260813.json", "agents/A61_CrossComputerBootstrap/brief.md"],
+      "mayEdit": ["AGENTS.md", ".env.example", "scripts/gokottamaker.env.example", "docs/cross-computer-bootstrap.md", "scripts/verify-clean-clone.ps1", "package.json", "docs/codex-workline/slices/S52_cross_computer_bootstrap_handoff.md"],
+      "doneWhen": ["a fresh Windows checkout has one complete continuation path", "environment templates are secret-free and documented", "isolated install, start, health, test, and stop succeed", "Linux production differences remain documented and outside execution"],
+      "brief": "agents/A61_CrossComputerBootstrap/brief.md",
+      "handoff": "docs/codex-workline/slices/S52_cross_computer_bootstrap_handoff.md"
+    },
+    {
+      "id": "A62_EncryptedDataHandoff",
+      "status": "completed",
+      "scope": "Provide an executable encrypted database and upload handoff outside Git and verify it only with isolated sample data.",
+      "reads": ["AGENTS.md", "docs/final-git-manifest-20260813.json", "agents/A62_EncryptedDataHandoff/brief.md"],
+      "mayEdit": ["scripts/export-encrypted-handoff.ps1", "scripts/restore-encrypted-handoff.ps1", "docs/encrypted-data-handoff.md", "docs/codex-workline/slices/S53_encrypted_data_handoff.md"],
+      "doneWhen": ["isolated sample data encrypts, checksums, restores, and count-compares", "backup bodies and keys remain outside Git", "failure and ownership boundaries are documented", "current and production data remain untouched"],
+      "brief": "agents/A62_EncryptedDataHandoff/brief.md",
+      "handoff": "docs/codex-workline/slices/S53_encrypted_data_handoff.md"
+    },
+    {
+      "id": "A63_FinalCandidateGate",
+      "status": "completed",
+      "scope": "Synchronize a new release identity, eliminate manifest review paths, and verify an equivalent candidate outside the repository without Git writes.",
+      "reads": ["AGENTS.md", "docs/final-git-manifest-20260813.json", "docs/codex-workline/slices/S52_cross_computer_bootstrap_handoff.md", "docs/codex-workline/slices/S53_encrypted_data_handoff.md", "agents/A63_FinalCandidateGate/brief.md"],
+      "mayEdit": ["accepted S51 release identity files", "docs/final-git-manifest-20260813.json", "docs/final-repository-audit-20260813.md", "docs/final-release-gate-20260813.md", "docs/final-git-staging-plan-20260813.md", "scripts/verify-final-git-candidate.js", "package.json", "package-lock.json", "docs/codex-workline/slices/S54_final_candidate_gate_handoff.md"],
+      "doneWhen": ["new version and build identity are internally consistent", "manifest has zero review paths", "security, portability, encoding, dependency, license, and large-file audits pass", "outside-repository candidate install, initialize, start, health, and tests pass"],
+      "brief": "agents/A63_FinalCandidateGate/brief.md",
+      "handoff": "docs/codex-workline/slices/S54_final_candidate_gate_handoff.md"
+    },
+    {
+      "id": "A64_FinalGitPublisher",
+      "status": "next",
+      "scope": "Publish only the accepted explicit candidate to existing origin/main and verify the remote SHA from a fresh clone.",
+      "reads": ["AGENTS.md", "docs/final-git-manifest-20260813.json", "docs/final-git-staging-plan-20260813.md", "docs/codex-workline/slices/S54_final_candidate_gate_handoff.md", "agents/A64_FinalGitPublisher/brief.md"],
+      "mayEdit": ["Git index through exact accepted pathspecs", "one release commit", "one optional governance closure commit", "docs/codex-workline/slices/S55_git_publish_and_remote_clone_handoff.md", "A00-authorized closure files"],
+      "doneWhen": ["staged paths exactly equal the accepted include set", "fast-forward safety and full candidate checks pass", "ordinary push to existing origin/main succeeds", "fresh remote-SHA clone installs, starts, health-checks, and passes core verification"],
+      "brief": "agents/A64_FinalGitPublisher/brief.md",
+      "handoff": "docs/codex-workline/slices/S55_git_publish_and_remote_clone_handoff.md"
     }
   ],
   "onDemandWorkbenches": [

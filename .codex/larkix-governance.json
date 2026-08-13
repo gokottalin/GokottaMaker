@@ -1,7 +1,6 @@
 {
   "schemaVersion": 1,
   "project": "LarkixMaker",
-  "workspaceRoot": "E:/Project/2607-LarkixWeb",
   "contractChecker": {
     "expectedProjectState": "task0_complete_batch1_paused_by_owner_code_still_closed",
     "expectedImplementationGateStatus": "batch1_paused_by_owner_code_closed",
@@ -181,7 +180,55 @@
       "agents/A50_ReleaseGitGateReverification/brief.md",
       ".codex/agents/a50-release-git-gate-reverification.toml",
       "agents/A51_GitPublisher/brief.md",
-      ".codex/agents/a51-git-publisher.toml"
+      ".codex/agents/a51-git-publisher.toml",
+      "docs/codex-workline/requirements/active/REQ-20260812-001.json",
+      "docs/codex-workline/requirements/dispatch/DISPATCH-20260812-001.json",
+      "agents/A52_FormulaIdentityAutomation/brief.md",
+      ".codex/agents/a52-formula-identity-automation.toml",
+      "docs/codex-workline/slices/S43_formula_identity_automation_handoff.md",
+      "docs/codex-workline/requirements/active/REQ-20260812-002.json",
+      "docs/codex-workline/requirements/dispatch/DISPATCH-20260812-002.json",
+      "agents/A53_PublicContentFreshness/brief.md",
+      ".codex/agents/a53-public-content-freshness.toml",
+      "docs/codex-workline/slices/S44_public_content_freshness_handoff.md",
+      "docs/codex-workline/requirements/active/REQ-20260812-003.json",
+      "docs/codex-workline/requirements/active/REQ-20260812-004.json",
+      "docs/codex-workline/requirements/dispatch/DISPATCH-20260813-001.json",
+      "agents/A54_PublicSurfaceMinimization/brief.md",
+      ".codex/agents/a54-public-surface-minimization.toml",
+      "docs/codex-workline/slices/S45_public_surface_minimization_handoff.md",
+      "agents/A55_PrivateCmsGateway/brief.md",
+      ".codex/agents/a55-private-cms-gateway.toml",
+      "docs/codex-workline/slices/S46_private_cms_gateway_handoff.md",
+      "agents/A56_FormulaBindingAuthority/brief.md",
+      ".codex/agents/a56-formula-binding-authority.toml",
+      "docs/codex-workline/slices/S47_formula_binding_authority_handoff.md",
+      "agents/A57_FormulaRelationshipProjection/brief.md",
+      ".codex/agents/a57-formula-relationship-projection.toml",
+      "docs/codex-workline/slices/S48_formula_relationship_projection_handoff.md",
+      "agents/A58_FormulaMarkerGraphUI/brief.md",
+      ".codex/agents/a58-formula-marker-graph-ui.toml",
+      "docs/codex-workline/slices/S49_formula_marker_graph_ui_handoff.md",
+      "agents/A59_SecurityRegressionEvidence/brief.md",
+      ".codex/agents/a59-security-regression-evidence.toml",
+      "docs/codex-workline/slices/S50_security_regression_evidence_handoff.md",
+      "docs/codex-workline/requirements/active/REQ-20260813-001.json",
+      "docs/codex-workline/requirements/dispatch/DISPATCH-20260813-002.json",
+      "agents/A60_FinalRepositoryManifest/brief.md",
+      ".codex/agents/a60-final-repository-manifest.toml",
+      "docs/codex-workline/slices/S51_final_repository_manifest_handoff.md",
+      "agents/A61_CrossComputerBootstrap/brief.md",
+      ".codex/agents/a61-cross-computer-bootstrap.toml",
+      "docs/codex-workline/slices/S52_cross_computer_bootstrap_handoff.md",
+      "agents/A62_EncryptedDataHandoff/brief.md",
+      ".codex/agents/a62-encrypted-data-handoff.toml",
+      "docs/codex-workline/slices/S53_encrypted_data_handoff.md",
+      "agents/A63_FinalCandidateGate/brief.md",
+      ".codex/agents/a63-final-candidate-gate.toml",
+      "docs/codex-workline/slices/S54_final_candidate_gate_handoff.md",
+      "agents/A64_FinalGitPublisher/brief.md",
+      ".codex/agents/a64-final-git-publisher.toml",
+      "docs/codex-workline/slices/S55_git_publish_and_remote_clone_handoff.md"
     ],
     "pausedBooleanFields": {
       "batch1ReadyForOpenDecision": true,
@@ -201,13 +248,13 @@
     },
     "projectWindowRequiredText": [
       "# Project Window",
-      "Current phase: `DISPATCH-20260730-001_Complete`",
+      "Current phase: `DISPATCH-20260813-002_S55_Release_Active`",
       "Current controller: `agents/A00_ProjectDirector/brief.md`",
-      "Next agent: `agents/A00_ProjectDirector/brief.md`",
-      "Confirmed requirement dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json`",
-      "Current work target: await the next Owner-confirmed requirement package",
-      "Current gate: Git, production, cloud, data, and product writes are closed",
-      "Confirmed queue: A00 requirement intake and sequencing"
+      "Next agent: `agents/A64_FinalGitPublisher/brief.md`",
+      "Confirmed requirement dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260813-002.json`",
+      "Current work target: S55 must refresh the exact manifest, stage only accepted paths, commit and fast-forward push the V2.5.4 candidate, then verify the remote SHA from a fresh clone",
+      "Current gate: A64 has limited Git authority for exact pathspec staging, one release commit and one optional governance-closure commit; force push, history rewrite, branch/remote changes, data, deployment and secrets remain closed",
+      "Confirmed queue: A64 now; then A00 final acceptance. Production deployment remains separate"
     ],
     "agentsGuideRequiredText": [
       "Recommended handoff and coordination language: Chinese",
@@ -230,11 +277,9 @@
       "run `npm.cmd run codex:contract`"
     ],
     "nextAgentsRequiredText": [
-      "Agent 00 Project Director",
-      "项目导演：",
-      "DISPATCH-20260730-001",
-      "A00_ProjectDirector",
-      "A00_ProjectDirector",
+      "Agent 64 Final Git Publisher",
+      "DISPATCH-20260813-002",
+      "A64_FinalGitPublisher",
       "npm.cmd run codex:handoff"
     ],
     "a01Completion": {
@@ -599,7 +644,7 @@
       "continueUntilQueueComplete": true,
       "stopOnClosedGateOrNewAuthority": true
     },
-    "expectedNextTaskCount": 0,
+    "expectedNextTaskCount": 1,
     "agentRoleNotes": {
       "A00_ProjectDirector": "项目导演：负责顺序、门禁和下一步裁决",
       "A01_ProjectStateRetriever": "项目状态检索器：只读取资料并建立来源索引",
@@ -651,7 +696,20 @@
       "A48_ApiVerifyRedirectedOutput": "API 验证重定向兼容：修复 Node 捕获下 PowerShell/curl UTF-8 响应解析",
       "A49_ReleaseVersionSync": "发布版本同步：为已验收批次递增唯一版本与静态资源 build",
       "A50_ReleaseGitGateReverification": "发布门禁复核：在新版本同步后重建最终 Git 候选清单",
-      "A51_GitPublisher": "Git 发布执行：精确暂存、提交并推送已验收的新版本候选"
+      "A51_GitPublisher": "Git 发布执行：精确暂存、提交并推送已验收的新版本候选",
+      "A52_FormulaIdentityAutomation": "公式技术标识自动化：服务端生成唯一标识并简化 CMS 建卡表单",
+      "A53_PublicContentFreshness": "游客内容新鲜度：修复动态内容缓存并在公开页面有限重新验证",
+      "A54_PublicSurfaceMinimization": "公开表面最小化：从服务端公开投影、路由和页面源代码清除聚焦禁用信息",
+      "A55_PrivateCmsGateway": "私有 CMS 网关：实现可轮换入口、独立认证命名空间与恒定 404 边界",
+      "A56_FormulaBindingAuthority": "公式绑定权威模型：统一文章与推导正文的稳定绑定并迁移既有关系",
+      "A57_FormulaRelationshipProjection": "公式关系投影：从统一绑定派生公开与 CMS 反向引用、生命周期和图谱数据",
+      "A58_FormulaMarkerGraphUI": "公式角标与图谱界面：统一紫色右上角跳转并区分文章和公式节点",
+      "A59_SecurityRegressionEvidence": "安全与回归证据：复测私有入口、公开最小化、统一关系和响应式交互",
+      "A60_FinalRepositoryManifest": "最终仓库清单：逐项归类脏工作树并建立安全、完整、显式的 Git 候选清单",
+      "A61_CrossComputerBootstrap": "跨电脑启动契约：让新电脑 Codex 从 AGENTS.md 完成克隆后的启动、验证和接续",
+      "A62_EncryptedDataHandoff": "加密数据交接：在 Git 之外备份、校验和恢复可选数据库及上传文件",
+      "A63_FinalCandidateGate": "最终候选门禁：同步新版本、清零待裁决路径并在仓库外复验完整候选副本",
+      "A64_FinalGitPublisher": "最终 Git 发布：按显式清单提交、普通推送并从远程 SHA 干净克隆复验"
     },
     "expectedTaskStatuses": {
       "A01_ProjectStateRetriever": "completed",
@@ -702,7 +760,20 @@
       "A48_ApiVerifyRedirectedOutput": "completed",
       "A49_ReleaseVersionSync": "completed",
       "A50_ReleaseGitGateReverification": "completed",
-      "A51_GitPublisher": "completed"
+      "A51_GitPublisher": "completed",
+      "A52_FormulaIdentityAutomation": "completed",
+      "A53_PublicContentFreshness": "completed",
+      "A54_PublicSurfaceMinimization": "completed",
+      "A55_PrivateCmsGateway": "completed",
+      "A56_FormulaBindingAuthority": "completed",
+      "A57_FormulaRelationshipProjection": "completed",
+      "A58_FormulaMarkerGraphUI": "completed",
+      "A59_SecurityRegressionEvidence": "completed",
+      "A60_FinalRepositoryManifest": "completed",
+      "A61_CrossComputerBootstrap": "completed",
+      "A62_EncryptedDataHandoff": "completed",
+      "A63_FinalCandidateGate": "completed",
+      "A64_FinalGitPublisher": "next"
     }
   },
   "temporaryExperts": [
@@ -944,6 +1015,71 @@
     {
       "id": "A48_ApiVerifyRedirectedOutput",
       "file": ".codex/agents/a48-api-verify-redirected-output.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A52_FormulaIdentityAutomation",
+      "file": ".codex/agents/a52-formula-identity-automation.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A53_PublicContentFreshness",
+      "file": ".codex/agents/a53-public-content-freshness.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A54_PublicSurfaceMinimization",
+      "file": ".codex/agents/a54-public-surface-minimization.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A55_PrivateCmsGateway",
+      "file": ".codex/agents/a55-private-cms-gateway.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A56_FormulaBindingAuthority",
+      "file": ".codex/agents/a56-formula-binding-authority.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A57_FormulaRelationshipProjection",
+      "file": ".codex/agents/a57-formula-relationship-projection.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A58_FormulaMarkerGraphUI",
+      "file": ".codex/agents/a58-formula-marker-graph-ui.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A59_SecurityRegressionEvidence",
+      "file": ".codex/agents/a59-security-regression-evidence.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A60_FinalRepositoryManifest",
+      "file": ".codex/agents/a60-final-repository-manifest.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A61_CrossComputerBootstrap",
+      "file": ".codex/agents/a61-cross-computer-bootstrap.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A62_EncryptedDataHandoff",
+      "file": ".codex/agents/a62-encrypted-data-handoff.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A63_FinalCandidateGate",
+      "file": ".codex/agents/a63-final-candidate-gate.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A64_FinalGitPublisher",
+      "file": ".codex/agents/a64-final-git-publisher.toml",
       "mode": "workspace-write"
     }
   ]

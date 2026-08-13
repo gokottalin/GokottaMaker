@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "larkix.requirement-dispatch.v1",
+  "dispatchId": "DISPATCH-20260812-001",
+  "status": "in_progress",
+  "acceptedAt": "2026-08-12T23:02:15+08:00",
+  "controller": "A00_ProjectDirector",
+  "sourceRequirements": [
+    {
+      "requirementId": "REQ-20260812-001",
+      "digest": "sha256:49d942b8a4488242b7c5a62cdc62f6750fc519f0dc68a92a73fa8c6a92561c75"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "decision.server-authority",
+      "statement": "Formula identity is generated and collision-resolved by the server; ordinary create and update payloads cannot choose formulaId or slug."
+    },
+    {
+      "id": "decision.legacy-stability",
+      "statement": "Existing formulaId and slug values, import packages, public URLs, article bindings, and derivation relations remain unchanged."
+    },
+    {
+      "id": "decision.single-writer",
+      "statement": "The API, content store, CMS form, and dedicated regression test execute as one serialized workbench because they share the formula identity contract."
+    }
+  ],
+  "executionOrder": [
+    {
+      "wave": 1,
+      "slice": "S43_formula_identity_automation",
+      "agent": "A52_FormulaIdentityAutomation",
+      "status": "next",
+      "requirements": ["REQ-20260812-001"]
+    }
+  ],
+  "gates": {
+    "namedSourceAndTestEditsAllowed": true,
+    "isolatedDataDirVerificationAllowed": true,
+    "currentOrProductionDataMutationAllowed": false,
+    "migrationFileImplementationAllowed": false,
+    "productionDeploymentAllowed": false,
+    "gitStagingCommitPushAllowed": false,
+    "oneActiveWriterPerFile": true
+  },
+  "currentWave": {
+    "wave": 1,
+    "agents": ["A52_FormulaIdentityAutomation"],
+    "slices": ["S43_formula_identity_automation"]
+  },
+  "nextHandoffs": [
+    "docs/codex-workline/slices/S43_formula_identity_automation_handoff.md"
+  ]
+}

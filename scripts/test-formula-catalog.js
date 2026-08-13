@@ -101,7 +101,8 @@ async function apiChecks(tempRoot, catalog) {
       DATA_DIR: dataDir,
       FORMULA_BACKUP_DIR: backupDir,
       ADMIN_USERNAME: "FormulaTester",
-      ADMIN_PASSWORD: "formula-test-password"
+      ADMIN_PASSWORD: "formula-test-password",
+      ALLOW_LEGACY_CMS_LOOPBACK: "true"
     },
     stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true

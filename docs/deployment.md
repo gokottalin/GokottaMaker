@@ -362,6 +362,39 @@ uploads/
 /var/data/uploads/
 ```
 
+## 私有 CMS 入口
+
+生产 CMS 入口由 `/etc/gokottamaker.env` 中的 `PRIVATE_CMS_PATH` 控制。它是附加门禁，不能替代管理员密码、会话、CSRF、登录限速或审计。
+
+在服务器终端生成一个 URL-safe 随机值，不要把输出发到聊天、提交到 Git 或写入 Nginx 配置：
+
+```bash
+CMS_PATH="$(openssl rand -base64 48 | tr -d '=+/\n' | cut -c1-64)_A9"
+sudoedit /etc/gokottamaker.env
+```
+
+在受保护环境文件中设置：
+
+```text
+PRIVATE_CMS_PATH=<在服务器本地生成的 48-128 位高熵值>
+ALLOW_INSECURE_PRIVATE_CMS_LOOPBACK=false
+```
+
+确认 `/etc/gokottamaker.env` 仅 root 可读，然后重启并验证：
+
+```bash
+sudo chown root:root /etc/gokottamaker.env
+sudo chmod 600 /etc/gokottamaker.env
+sudo systemctl restart gokottamaker
+curl -fsS http://127.0.0.1:4173/healthz
+```
+
+浏览器只访问 `https://larkix.com/<私有值>/admin/index.html`。标准 `/admin/`、`/api/login`、`/api/session` 和管理 API 始终为 404。私有入口页面与 API 禁止缓存和 Referer，上线前仍须执行 `sudo nginx -t && sudo systemctl reload nginx`。
+
+轮换时先备份环境文件，在服务器本地生成新值，替换 `PRIVATE_CMS_PATH` 并重启服务。旧入口和旧入口作用域的会话 Cookie 会立即失效；Owner 账户与 CMS 数据不需要迁移。确认新入口可登录后，安全删除旧值记录。不要在 URL 分析、访问日志、截图或工单中记录入口。
+
+`ALLOW_INSECURE_PRIVATE_CMS_LOOPBACK=true` 只供绑定到 `127.0.0.1` 的隔离自动化测试使用，生产必须保持 `false`。
+
 ## 不推荐 GitHub Pages 的原因
 
 GitHub Pages 只能托管静态文件，无法运行 `server.js`，也无法稳定写入 SQLite 数据库和上传图片。强行静态化会导致管理端真实保存功能失效。

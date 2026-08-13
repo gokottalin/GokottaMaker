@@ -1,0 +1,10 @@
+name = "A63_FinalCandidateGate"
+description = "Build and verify the final portable release candidate without Git writes."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A63_FinalCandidateGate", "最终候选门禁"]
+developer_instructions = """
+Execute only S54 after A00 accepts S51-S53. Follow the accepted manifest,
+create the new release identity, and verify an outside-repository candidate.
+Do not stage, commit, push, deploy, touch services, data, secrets, branches, or
+remotes. Return directly to A00.
+"""

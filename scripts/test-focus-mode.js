@@ -40,7 +40,8 @@ function startServer({ port, dataDir }) {
       PORT: String(port),
       DATA_DIR: dataDir,
       ADMIN_USERNAME: "FocusModeTester",
-      ADMIN_PASSWORD: "focus-mode-test-password"
+      ADMIN_PASSWORD: "focus-mode-test-password",
+      ALLOW_LEGACY_CMS_LOOPBACK: "true"
     },
     stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true
@@ -148,15 +149,13 @@ async function run() {
     const fresh = await request("/api/content");
     assert.equal(fresh.response.status, 200);
     assert.equal(fresh.payload.publicFocusMode.enabled, true);
-    assert.equal(fresh.payload.publicFocusMode.ownerConfigured, false);
-    assert.deepEqual(fresh.payload.publicFocusMode.visibleScopes, ["electronics-basics", "derivations", "projects"]);
-    assert.equal(fresh.payload.publicFocusMode.scopeAliases["power-electronics"], "electronics-basics");
+    assert.deepEqual(Object.keys(fresh.payload.publicFocusMode), ["enabled"]);
 
     await login();
     const focusedAdmin = await request("/api/admin/content");
     assert.equal(focusedAdmin.payload.publicFocusMode.enabled, true);
     assert.ok(focusedAdmin.payload.projects.length >= 1);
-    assert.equal(focusedAdmin.payload.posts.some((post) => post.categoryKey === "stm32"), false);
+    assert.ok(focusedAdmin.payload.posts.some((post) => post.categoryKey === "stm32"));
 
     const allowed = postFixture("focus-allowed-published", "电子基础", "published");
     const allowedSaved = await request("/api/posts", { method: "POST", body: JSON.stringify(allowed) });
@@ -198,7 +197,7 @@ async function run() {
     await restart();
     const persistedDisabled = await request("/api/content");
     assert.equal(persistedDisabled.payload.publicFocusMode.enabled, false);
-    assert.equal(persistedDisabled.payload.publicFocusMode.ownerConfigured, true);
+    assert.deepEqual(Object.keys(persistedDisabled.payload.publicFocusMode), ["enabled"]);
 
     await login();
     const enabled = await request("/api/admin/focus-mode", {
@@ -217,13 +216,13 @@ async function run() {
 
     const refocusedAdmin = await request("/api/admin/content");
     assert.ok(refocusedAdmin.payload.posts.some((post) => post.id === allowed.id));
-    assert.equal(refocusedAdmin.payload.posts.some((post) => post.id === hiddenPublished.id), false);
-    assert.equal(refocusedAdmin.payload.posts.some((post) => post.id === hiddenDraft.id), false);
+    assert.ok(refocusedAdmin.payload.posts.some((post) => post.id === hiddenPublished.id));
+    assert.ok(refocusedAdmin.payload.posts.some((post) => post.id === hiddenDraft.id));
     assert.ok(refocusedAdmin.payload.focusScopeCounts.posts.stored > refocusedAdmin.payload.focusScopeCounts.posts.visible);
 
     const hiddenApi = await request(`/api/public/posts/${hiddenPublished.id}`);
     assert.equal(hiddenApi.response.status, 404);
-    assert.equal(hiddenApi.payload.reasonCode, "FOCUS_HIDDEN_OR_NOT_PUBLIC");
+    assert.deepEqual(hiddenApi.payload, { error: "not found" });
     assert.equal((await request(`/post.html?id=${hiddenPublished.id}`)).response.status, 404);
     assert.equal((await request("/category.html?category=analog")).response.status, 404);
     assert.equal((await request("/miniapps.html")).response.status, 200);
@@ -263,7 +262,7 @@ async function run() {
     await restart();
     const persistedEnabled = await request("/api/content");
     assert.equal(persistedEnabled.payload.publicFocusMode.enabled, true);
-    assert.equal(persistedEnabled.payload.publicFocusMode.ownerConfigured, true);
+    assert.deepEqual(Object.keys(persistedEnabled.payload.publicFocusMode), ["enabled"]);
 
     await stopServer(runtime.child);
     runtime = null;
@@ -296,15 +295,12 @@ async function run() {
     assert.match(adminJs, /\/api\/admin\/focus-mode/);
     assert.match(adminJs, /FOCUS|聚焦模式/);
     assert.match(adminCss, /@media \(max-width: 640px\)[\s\S]*\.focus-mode-gate/);
-    assert.match(mainJs, /const heroCarousel = window\.LarkixContent\.getHeroCarousel\(\)/);
-    assert.match(mainJs, /featuredItems = heroCarousel/);
+    assert.match(mainJs, /featuredItems = window\.LarkixContent\.getHeroCarousel\(\)/);
+    assert.match(mainJs, /larkix:public-content-updated/);
     assert.doesNotMatch(mainJs, /focusHeroFallback|eligibleFeaturedItems/);
     assert.doesNotMatch(mainJs, /function focusRouteItem/);
     assert.match(adminHtml, /data-admin-view="layout"[\s\S]*id="focusModeToggle"/);
-    assert.match(
-      mainJs,
-      /\.hero-actions a\[href="\.\/admin\/index\.html"\][\s\S]*?link\.style\.display = "none"/
-    );
+    assert.doesNotMatch(mainJs, /admin\/index\.html|hideAdminFromPublicNav/);
 
     console.log(
       "focus mode checks passed: default enabled, single switch, scoped public/CMS data, write rejection, direct 404, disable restore, re-enable preservation, restart persistence and SEO"

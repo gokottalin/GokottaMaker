@@ -42,7 +42,8 @@ function startServer({ port, dataDir }) {
       PORT: String(port),
       DATA_DIR: dataDir,
       ADMIN_USERNAME: USERNAME,
-      ADMIN_PASSWORD: PASSWORD
+      ADMIN_PASSWORD: PASSWORD,
+      ALLOW_LEGACY_CMS_LOOPBACK: "true"
     },
     stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true

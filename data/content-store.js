@@ -1,39 +1,10 @@
 (function () {
-  const postStorageKey = "larkixmaker_posts";
-  const projectStorageKey = "larkixmaker_projects";
-  const deletedStorageKey = "larkixmaker_deleted";
-
-  function read(key, fallback) {
-    try {
-      return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
-    } catch {
-      return fallback;
-    }
-  }
-
-  function write(key, value) {
-    localStorage.setItem(key, JSON.stringify(value));
-  }
-
-  function deleted(type) {
-    const data = read(deletedStorageKey, { posts: [], projects: [] });
-    return new Set(data[type] || []);
-  }
-
-  function setDeleted(type, ids) {
-    const data = read(deletedStorageKey, { posts: [], projects: [] });
-    data[type] = [...ids];
-    write(deletedStorageKey, data);
-  }
-
-  function mergeDefaults(defaults, localItems, deletedIds) {
-    const localMap = new Map(localItems.map((item) => [item.id, item]));
-    const merged = defaults
-      .filter((item) => !deletedIds.has(item.id))
-      .map((item) => ({ ...item, ...(localMap.get(item.id) || {}) }));
-    const additions = localItems.filter((item) => !defaults.some((base) => base.id === item.id) && !deletedIds.has(item.id));
-    return [...additions, ...merged];
-  }
+  const publicContentRefreshMs = 5000;
+  let publicContentRequest = null;
+  let publicContentRequestSequence = 0;
+  let publicContentAppliedSequence = 0;
+  let publicContentLastAttempt = 0;
+  let publicContentSignature = JSON.stringify(window.LARKIX_SERVER_CONTENT || {});
 
   function focusMode() {
     const value = window.LARKIX_SERVER_CONTENT?.publicFocusMode;
@@ -44,25 +15,12 @@
     return focusMode().enabled === true;
   }
 
-  function focusPostAllowed(post) {
-    const categoryKey = String(post?.categoryKey || "").toLowerCase();
-    const category = String(post?.category || "");
-    const tags = String(post?.tags || "").toLowerCase();
-    if (["electronics-basics", "power-electronics", "projects", "derivations"].includes(categoryKey)) return true;
-    if (["电子基础", "电力电子", "开源项目"].includes(category)) return true;
-    if (/(?:^|[\s,，、])module:(?:electronics-basics|power-electronics|projects|derivations)(?:$|[\s,，、])/.test(tags)) return true;
-    if (String(post?.tags || "").split(/[,，、]/).some((tag) => tag.trim().startsWith("公式"))) return true;
-    return /\{\{(?:formula|derive):/.test(String(post?.markdown || ""));
-  }
-
   function getPosts() {
-    const posts = window.LARKIX_SERVER_CONTENT?.posts || mergeDefaults(window.LARKIX_POSTS || [], read(postStorageKey, []), deleted("posts"));
-    return focusModeEnabled() ? posts.filter(focusPostAllowed) : posts;
+    return Array.isArray(window.LARKIX_SERVER_CONTENT?.posts) ? window.LARKIX_SERVER_CONTENT.posts : [];
   }
 
   function getProjects() {
-    if (window.LARKIX_SERVER_CONTENT?.projects) return window.LARKIX_SERVER_CONTENT.projects;
-    return mergeDefaults(window.LARKIX_PROJECTS || window.LARKIX_SEED?.projects || [], read(projectStorageKey, []), deleted("projects"));
+    return Array.isArray(window.LARKIX_SERVER_CONTENT?.projects) ? window.LARKIX_SERVER_CONTENT.projects : [];
   }
 
   function sanitizeProjectPreview(project) {
@@ -85,8 +43,9 @@
   }
 
   function getProjectDirectory() {
-    if (window.LARKIX_SERVER_CONTENT?.projectDirectory) return window.LARKIX_SERVER_CONTENT.projectDirectory;
-    return mergeDefaults(window.LARKIX_PROJECTS || window.LARKIX_SEED?.projects || [], read(projectStorageKey, []), deleted("projects")).map(sanitizeProjectPreview);
+    return Array.isArray(window.LARKIX_SERVER_CONTENT?.projectDirectory)
+      ? window.LARKIX_SERVER_CONTENT.projectDirectory.map(sanitizeProjectPreview)
+      : [];
   }
 
   function getHeroCarousel() {
@@ -96,6 +55,55 @@
       .slice()
       .sort((a, b) => Number(a.slot ?? a.featuredOrder ?? 0) - Number(b.slot ?? b.featuredOrder ?? 0))
       .slice(0, 4);
+  }
+
+  function applyPublicContent(payload, sequence) {
+    if (!payload || typeof payload !== "object" || sequence < publicContentAppliedSequence) return false;
+    publicContentAppliedSequence = sequence;
+    const nextSignature = JSON.stringify(payload);
+    if (nextSignature === publicContentSignature) return false;
+    publicContentSignature = nextSignature;
+    window.LARKIX_SERVER_CONTENT = payload;
+    window.dispatchEvent(
+      new CustomEvent("larkix:public-content-updated", {
+        detail: { sequence, signature: nextSignature }
+      })
+    );
+    return true;
+  }
+
+  async function revalidatePublicContent(options = {}) {
+    if (!window.fetch) return false;
+    if (publicContentRequest) return publicContentRequest;
+    const now = Date.now();
+    if (!options.force && now - publicContentLastAttempt < publicContentRefreshMs) return false;
+    publicContentLastAttempt = now;
+    const sequence = ++publicContentRequestSequence;
+    publicContentRequest = window.fetch("./api/content", {
+      cache: "no-store",
+      headers: { "Cache-Control": "no-cache" }
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json();
+      })
+      .then((payload) => applyPublicContent(payload, sequence))
+      .catch(() => false)
+      .finally(() => {
+        publicContentRequest = null;
+      });
+    return publicContentRequest;
+  }
+
+  function startPublicContentRevalidation() {
+    revalidatePublicContent({ force: true });
+    window.setInterval(() => {
+      if (document.visibilityState === "visible") revalidatePublicContent({ force: true });
+    }, publicContentRefreshMs);
+    window.addEventListener("focus", () => revalidatePublicContent({ force: true }));
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") revalidatePublicContent({ force: true });
+    });
   }
 
   function isCurrentHref(href) {
@@ -110,7 +118,8 @@
       { href: "./maker.html", label: "首页" },
       { href: "./category.html?category=electronics-basics", label: "电子基础" },
       { href: "./derive.html", label: "公式推导" },
-      { href: "./projects.html", label: "开源项目" }
+      { href: "./projects.html", label: "开源项目" },
+      { href: "./miniapps.html", label: "MD2File" }
     ];
     document.querySelectorAll(".site-header .main-nav").forEach((nav) => {
       nav.classList.add("focus-mode-nav");
@@ -118,37 +127,6 @@
         .map((link) => `<a href="${link.href}"${isCurrentHref(link.href) ? ' aria-current="page"' : ""}>${link.label}</a>`)
         .join("");
     });
-    if (focusMode().hideAdminFromPublicNav !== false) {
-      document.querySelectorAll('.site-header .admin-link[href="./admin/index.html"], .site-header .admin-link[href$="/admin/index.html"]').forEach((link) => {
-        link.hidden = true;
-      });
-    }
-  }
-
-  function savePost(post) {
-    const items = read(postStorageKey, []);
-    const next = items.some((item) => item.id === post.id) ? items.map((item) => (item.id === post.id ? post : item)) : [post, ...items];
-    write(postStorageKey, next);
-  }
-
-  function saveProject(project) {
-    const items = read(projectStorageKey, []);
-    const next = items.some((item) => item.id === project.id)
-      ? items.map((item) => (item.id === project.id ? project : item))
-      : [project, ...items];
-    write(projectStorageKey, next);
-  }
-
-  function remove(type, id) {
-    const key = type === "project" ? projectStorageKey : postStorageKey;
-    const deletedKey = type === "project" ? "projects" : "posts";
-    write(
-      key,
-      read(key, []).filter((item) => item.id !== id)
-    );
-    const ids = deleted(deletedKey);
-    ids.add(id);
-    setDeleted(deletedKey, ids);
   }
 
   window.LarkixContent = {
@@ -156,10 +134,13 @@
     getProjects,
     getProjectDirectory,
     getHeroCarousel,
-    savePost,
-    saveProject,
-    remove
+    revalidatePublicContent
   };
 
   window.addEventListener("DOMContentLoaded", applyFocusedNavigation);
+  if (document.readyState === "loading") {
+    window.addEventListener("DOMContentLoaded", startPublicContentRevalidation, { once: true });
+  } else {
+    startPublicContentRevalidation();
+  }
 })();

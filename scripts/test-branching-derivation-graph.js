@@ -205,6 +205,7 @@ function legacyMigrationChecks(tempRoot) {
     ).run("formula.legacy.parent", "formula.legacy.child");
 
     require("../migrations/021_branching_derivation_graph").up(db);
+    require("../migrations/028_formula_content_bindings").up(db);
     const imported = db
       .prepare(
         `SELECT target_formula_id AS targetFormulaId, provenance
@@ -766,10 +767,9 @@ function main() {
     );
     assert.ok(
       postSource.indexOf("${renderFormulaGraphSection(card)}") <
-        postSource.indexOf("${renderFormulaDerivationSection(card)}") &&
-        postSource.indexOf("${renderFormulaDerivationSection(card)}") <
-          postSource.indexOf("${formulaRendered.html}")
+        postSource.indexOf("${formulaRendered.html}")
     );
+    assert.doesNotMatch(postSource, /\$\{renderFormulaDerivationSection\(card\)\}/);
     assert.match(deriveSource, /assets\/vendor\/cytoscape\.min\.js/);
     assert.match(deriveSource, /formula-graph\.js/);
     assert.match(serverSource, /"\/formula-graph\.js"/);

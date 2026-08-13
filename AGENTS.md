@@ -4,7 +4,30 @@ This repository is the LarkixMaker site: a Node.js HTTP service, SQLite-backed
 content system, CMS, static visitor pages, miniapps, visual assets, deployment
 scripts, and Agent governance documents.
 
-Active project root: `E:/Project/2607-LarkixWeb`.
+Active project root: the current Git checkout containing this `AGENTS.md` file.
+
+## Fresh Windows Checkout
+
+On a new Windows computer, this file is the complete first entrypoint. Install
+Git, PowerShell 5.1 or newer, and Node.js 22 (`>=22.5.0`), then run:
+
+```powershell
+git clone https://github.com/gokottalin/GokottaMaker.git LarkixMaker
+Set-Location LarkixMaker
+Get-Content -Encoding UTF8 -Raw AGENTS.md
+npm.cmd run verify:clean-clone
+npm.cmd run codex:handoff
+```
+
+`verify:clean-clone` installs the locked dependencies, creates an isolated empty
+data directory under the Windows temporary folder, generates test-only random
+credentials in process memory, starts the service on an available loopback
+port, checks `/healthz`, stops it, runs the core and governance checks, and
+removes its temporary data even after a failure. It never reads `.env`, the
+current machine's database, or production data. After it passes, follow the
+`Next Agent brief` printed by `codex:handoff`; no historical conversation is
+required. See `docs/cross-computer-bootstrap.md` for prerequisites, environment
+variables, troubleshooting, and the separate Linux production boundary.
 
 ## Startup
 

@@ -1,0 +1,1458 @@
+{
+  "schemaVersion": "larkix.final-git-manifest.v2",
+  "manifestId": "FINAL-GIT-20260813-S55",
+  "generatedAt": "2026-08-13T17:09:51.017Z",
+  "repository": {
+    "root": "E:/Project/2607-LarkixWeb",
+    "branch": "main",
+    "head": "50386e92330a997e77111dee49d4081ddfd77702",
+    "remote": "https://github.com/gokottalin/GokottaMaker.git"
+  },
+  "policy": {
+    "statusCommand": "git status --porcelain=v1 -z -uall",
+    "partitionRule": "Every live status path appears exactly once in include, exclude, or review.",
+    "includeRule": "Include accepted product, CMS, tests, migrations, secret-free templates, confirmed requirements, active governance, Agent briefs/configs, handoffs, and final release evidence.",
+    "excludeRule": "Exclude only untracked pyramid-era docs/Agent* history in the live status set; do not delete it.",
+    "reviewRule": "Must be empty before release candidate staging.",
+    "gitWriteAuthorized": true,
+    "gitWriteBoundary": "Only A64 exact pathspec staging, one release commit, one optional governance-closure commit, and ordinary fast-forward push to the existing origin/main are authorized."
+  },
+  "counts": {
+    "liveStatus": 228,
+    "include": 123,
+    "exclude": 105,
+    "review": 0
+  },
+  "include": [
+    {
+      "status": "??",
+      "path": ".codex/agents/a52-formula-identity-automation.toml",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": ".codex/agents/a53-public-content-freshness.toml",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": ".codex/agents/a54-public-surface-minimization.toml",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": ".codex/agents/a55-private-cms-gateway.toml",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": ".codex/agents/a56-formula-binding-authority.toml",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": ".codex/agents/a57-formula-relationship-projection.toml",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": ".codex/agents/a58-formula-marker-graph-ui.toml",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": ".codex/agents/a59-security-regression-evidence.toml",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": ".codex/agents/a60-final-repository-manifest.toml",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": ".codex/agents/a61-cross-computer-bootstrap.toml",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": ".codex/agents/a62-encrypted-data-handoff.toml",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": ".codex/agents/a63-final-candidate-gate.toml",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": ".codex/agents/a64-final-git-publisher.toml",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": " M",
+      "path": ".codex/larkix-governance.json",
+      "owner": "A00-governance",
+      "reason": "active project governance and handoff state"
+    },
+    {
+      "status": " M",
+      "path": ".env.example",
+      "owner": "operations-template",
+      "reason": "secret-free environment or deployment template"
+    },
+    {
+      "status": " M",
+      "path": "404.html",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "admin/admin.css",
+      "owner": "CMS",
+      "reason": "accepted CMS implementation"
+    },
+    {
+      "status": " M",
+      "path": "admin/admin.js",
+      "owner": "CMS",
+      "reason": "accepted CMS implementation"
+    },
+    {
+      "status": " M",
+      "path": "admin/course-paths.html",
+      "owner": "CMS",
+      "reason": "accepted CMS implementation"
+    },
+    {
+      "status": " M",
+      "path": "admin/index.html",
+      "owner": "CMS",
+      "reason": "accepted CMS implementation"
+    },
+    {
+      "status": " M",
+      "path": "AGENTS.md",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": "??",
+      "path": "agents/A52_FormulaIdentityAutomation/brief.md",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": "agents/A53_PublicContentFreshness/brief.md",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": "agents/A54_PublicSurfaceMinimization/brief.md",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": "agents/A55_PrivateCmsGateway/brief.md",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": "agents/A56_FormulaBindingAuthority/brief.md",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": "agents/A57_FormulaRelationshipProjection/brief.md",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": "agents/A58_FormulaMarkerGraphUI/brief.md",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": "agents/A59_SecurityRegressionEvidence/brief.md",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": "agents/A60_FinalRepositoryManifest/brief.md",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": "agents/A61_CrossComputerBootstrap/brief.md",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": "agents/A62_EncryptedDataHandoff/brief.md",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": "agents/A63_FinalCandidateGate/brief.md",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": "??",
+      "path": "agents/A64_FinalGitPublisher/brief.md",
+      "owner": "Codex-workline",
+      "reason": "active temporary Agent contract"
+    },
+    {
+      "status": " M",
+      "path": "category-page.js",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "category.html",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "data/content-store.js",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "data/markdown-renderer.js",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "data/miniapps.js",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "data/site-meta.js",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "deploy/nginx-gokottamaker.conf",
+      "owner": "operations-template",
+      "reason": "secret-free environment or deployment template"
+    },
+    {
+      "status": " M",
+      "path": "derive.html",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "docs/codex-workline/A00_ProjectDirector_handoff.md",
+      "owner": "A00-governance",
+      "reason": "active project governance and handoff state"
+    },
+    {
+      "status": " M",
+      "path": "docs/codex-workline/implementation_slices.json",
+      "owner": "A00-governance",
+      "reason": "active project governance and handoff state"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/requirements/active/REQ-20260812-001.json",
+      "owner": "requirements",
+      "reason": "confirmed requirement or dispatch package"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/requirements/active/REQ-20260812-002.json",
+      "owner": "requirements",
+      "reason": "confirmed requirement or dispatch package"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/requirements/active/REQ-20260812-003.json",
+      "owner": "requirements",
+      "reason": "confirmed requirement or dispatch package"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/requirements/active/REQ-20260812-004.json",
+      "owner": "requirements",
+      "reason": "confirmed requirement or dispatch package"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/requirements/active/REQ-20260813-001.json",
+      "owner": "requirements",
+      "reason": "confirmed requirement or dispatch package"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/requirements/dispatch/DISPATCH-20260812-001.json",
+      "owner": "requirements",
+      "reason": "confirmed requirement or dispatch package"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/requirements/dispatch/DISPATCH-20260812-002.json",
+      "owner": "requirements",
+      "reason": "confirmed requirement or dispatch package"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/requirements/dispatch/DISPATCH-20260813-001.json",
+      "owner": "requirements",
+      "reason": "confirmed requirement or dispatch package"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/requirements/dispatch/DISPATCH-20260813-002.json",
+      "owner": "requirements",
+      "reason": "confirmed requirement or dispatch package"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/slices/S43_formula_identity_automation_handoff.md",
+      "owner": "A00-governance",
+      "reason": "active project governance and handoff state"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/slices/S44_public_content_freshness_handoff.md",
+      "owner": "A00-governance",
+      "reason": "active project governance and handoff state"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/slices/S45_public_surface_minimization_handoff.md",
+      "owner": "A00-governance",
+      "reason": "active project governance and handoff state"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/slices/S46_private_cms_gateway_handoff.md",
+      "owner": "A00-governance",
+      "reason": "active project governance and handoff state"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/slices/S47_formula_binding_authority_handoff.md",
+      "owner": "A00-governance",
+      "reason": "active project governance and handoff state"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/slices/S48_formula_relationship_projection_handoff.md",
+      "owner": "A00-governance",
+      "reason": "active project governance and handoff state"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/slices/S49_formula_marker_graph_ui_handoff.md",
+      "owner": "A00-governance",
+      "reason": "active project governance and handoff state"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/slices/S50_security_regression_evidence_handoff.md",
+      "owner": "A00-governance",
+      "reason": "active project governance and handoff state"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/slices/S51_final_repository_manifest_handoff.md",
+      "owner": "A00-governance",
+      "reason": "active project governance and handoff state"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/slices/S52_cross_computer_bootstrap_handoff.md",
+      "owner": "A00-governance",
+      "reason": "active project governance and handoff state"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/slices/S53_encrypted_data_handoff.md",
+      "owner": "A00-governance",
+      "reason": "active project governance and handoff state"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/slices/S54_final_candidate_gate_handoff.md",
+      "owner": "A00-governance",
+      "reason": "active project governance and handoff state"
+    },
+    {
+      "status": "??",
+      "path": "docs/codex-workline/slices/S55_git_publish_and_remote_clone_handoff.md",
+      "owner": "A00-governance",
+      "reason": "active project governance and handoff state"
+    },
+    {
+      "status": " M",
+      "path": "docs/codex-workline/task_registry.json",
+      "owner": "A00-governance",
+      "reason": "active project governance and handoff state"
+    },
+    {
+      "status": "??",
+      "path": "docs/cross-computer-bootstrap.md",
+      "owner": "documentation",
+      "reason": "release, deployment, security, or repository documentation"
+    },
+    {
+      "status": " M",
+      "path": "docs/deployment.md",
+      "owner": "documentation",
+      "reason": "release, deployment, security, or repository documentation"
+    },
+    {
+      "status": "??",
+      "path": "docs/encrypted-data-handoff.md",
+      "owner": "documentation",
+      "reason": "release, deployment, security, or repository documentation"
+    },
+    {
+      "status": "??",
+      "path": "docs/final-git-manifest-20260813.json",
+      "owner": "documentation",
+      "reason": "release, deployment, security, or repository documentation"
+    },
+    {
+      "status": "??",
+      "path": "docs/final-git-staging-plan-20260813.md",
+      "owner": "documentation",
+      "reason": "release, deployment, security, or repository documentation"
+    },
+    {
+      "status": "??",
+      "path": "docs/final-release-gate-20260813.md",
+      "owner": "documentation",
+      "reason": "release, deployment, security, or repository documentation"
+    },
+    {
+      "status": "??",
+      "path": "docs/final-repository-audit-20260813.md",
+      "owner": "documentation",
+      "reason": "release, deployment, security, or repository documentation"
+    },
+    {
+      "status": " M",
+      "path": "docs/prompts/next_agents.md",
+      "owner": "documentation",
+      "reason": "release, deployment, security, or repository documentation"
+    },
+    {
+      "status": "??",
+      "path": "docs/security-formula-regression-evidence.md",
+      "owner": "documentation",
+      "reason": "release, deployment, security, or repository documentation"
+    },
+    {
+      "status": " M",
+      "path": "formula-graph.js",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "index.html",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "lib/content.js",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "lib/seo.js",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "lib/validators.js",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "main.js",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "maker.html",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": "??",
+      "path": "migrations/028_formula_content_bindings.js",
+      "owner": "database-schema",
+      "reason": "accepted additive migration"
+    },
+    {
+      "status": " M",
+      "path": "miniapps.html",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "package-lock.json",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "package.json",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "post.html",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "post.js",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "PROJECT_WINDOW.md",
+      "owner": "A00-governance",
+      "reason": "active project governance and handoff state"
+    },
+    {
+      "status": " M",
+      "path": "project.html",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "projects.html",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "README.md",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": "??",
+      "path": "scripts/export-encrypted-handoff.ps1",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "scripts/gokottamaker.env.example",
+      "owner": "operations-template",
+      "reason": "secret-free environment or deployment template"
+    },
+    {
+      "status": "??",
+      "path": "scripts/restore-encrypted-handoff.ps1",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": "??",
+      "path": "scripts/run-security-formula-regression.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": " M",
+      "path": "scripts/test-article-formula-authoring.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": " M",
+      "path": "scripts/test-branching-derivation-graph.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": " M",
+      "path": "scripts/test-carousel-focus-buffer.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": " M",
+      "path": "scripts/test-focus-mode.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": "??",
+      "path": "scripts/test-formula-binding-authority.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": " M",
+      "path": "scripts/test-formula-catalog.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": "??",
+      "path": "scripts/test-formula-identity-automation.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": " M",
+      "path": "scripts/test-formula-map-flow-layout.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": "??",
+      "path": "scripts/test-formula-marker-graph-ui.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": " M",
+      "path": "scripts/test-formula-reference-versioning.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": "??",
+      "path": "scripts/test-formula-relationship-projection.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": " M",
+      "path": "scripts/test-legacy-formula-relation-migration.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": " M",
+      "path": "scripts/test-linear-derivation-graph.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": " M",
+      "path": "scripts/test-md2file-public-entry.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": " M",
+      "path": "scripts/test-post-reading-minutes.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": "??",
+      "path": "scripts/test-private-cms-gateway.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": "??",
+      "path": "scripts/test-public-content-freshness.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": "??",
+      "path": "scripts/test-public-surface-minimization.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": " M",
+      "path": "scripts/verify-api.ps1",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": "??",
+      "path": "scripts/verify-clean-clone.ps1",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": "??",
+      "path": "scripts/verify-final-git-candidate.js",
+      "owner": "QA",
+      "reason": "accepted test or release verifier"
+    },
+    {
+      "status": " M",
+      "path": "server.js",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "site-layout.js",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "tools/gokotta-elec.html",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "tools/larkix-elec.html",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    },
+    {
+      "status": " M",
+      "path": "tools/md2doc.html",
+      "owner": "product",
+      "reason": "accepted product or release identity file"
+    }
+  ],
+  "exclude": [
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-05-28_01-27_Agent0_项目目录整理与Agent输出契约.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-19_18-10_Agent00_top_down_dispatch.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-19_18-10_Agent00_自顶向下分发与自底向上收敛.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-19_18-52_Agent0_第一轮自底向上收敛检查版.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-19_18-52_Agent0_第一轮自底向上收敛检查版.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-19_19-01_Agent00_项目永久概述与Agent接口契约.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-19_20-35_Agent00_derivation_network_dispatch.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-19_20-35_Agent00_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-19_20-35_Agent00_公式变量推导网络与电力电子聚焦架构设计.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-19_20-47_Agent0_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-19_20-47_Agent0_公式变量推导网络子Agent任务下达.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-19_21-08_Agent0_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-19_21-08_Agent0_子Agent启动契约与更新协议.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-19_21-09_Agent0_child_agent_bootstrap_contract.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-19_21-09_Agent0_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-19_21-09_Agent0_子Agent启动任务包与契约确认.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-21_18-13_Agent0_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-21_18-13_Agent0_推导网络与聚焦模式子Agent回传收敛.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-21_18-30_Agent0_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-21_18-30_Agent0_最新契约复核与执行前检查.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-21_18-38_Agent0_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-21_18-38_Agent0_全部回传信息收敛.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-21_18-53_Agent00_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-21_18-53_Agent00_项目状态补签_未进入代码实现.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-21_19-01_Agent00_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-21_19-01_Agent00_重新裁决_仍未进入代码实现.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_implementation_decisions.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-21_19-12_Agent00_九项实现前架构裁决与Agent0实现批次授权.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-21_19-44_Agent0_implementation_batch_dispatch.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-21_19-44_Agent0_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-06-21_19-44_Agent0_实现批次设计_推导网络与电力电子聚焦.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-07-07_15-15_Agent0_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-07-07_15-15_Agent0_Task0回传收敛_Batch1仍关闭.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-07-08_23-15_Agent0_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-07-08_23-15_Agent0_Task0全部回传收敛_Batch1待开启裁决.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-07-09_00-00_Agent0_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-07-09_12-42_Agent0_project_handoff_snapshot.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent0+总控与集成/2026-07-09_12-42_Agent0_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent1+运维与发布稳定性/2026-06-19_18-42_Agent1_发布门禁复核与上线输入模板.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent1+运维与发布稳定性/2026-06-21_18-11_Agent1_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent1+运维与发布稳定性/2026-06-21_18-11_Agent1_推导网络迁移备份回滚发布门禁.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent1+运维与发布稳定性/2026-07-07_16-53_Agent1_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent1+运维与发布稳定性/2026-07-07_16-53_Agent1_裁决后迁移备份回滚门禁补齐.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent101-Git/2026-06-19_18-21_Agent101_治理文件入库审计.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent101-Git/2026-06-21_18-02_Agent101_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent101-Git/2026-06-21_18-02_Agent101_推导网络治理与实现提交拆分审计.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent101-Git/2026-07-07_16-25_Agent101_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent101-Git/2026-07-07_16-25_Agent101_裁决后治理入库显式staging清单.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent2+后端与数据模型/2026-06-19_18-24_Agent2_serverjs模块化二期设计.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent2+后端与数据模型/2026-06-19_21-19_Agent2_child_agent_bootstrap_contract.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent2+后端与数据模型/2026-06-19_21-19_Agent2_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent2+后端与数据模型/2026-06-19_21-19_Agent2_子Agent2A2B2C任务包与接口契约.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent2+后端与数据模型/2026-06-20_00-03_Agent2A_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent2+后端与数据模型/2026-06-20_00-03_Agent2A_知识节点数据模型迁移接口设计.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent2+后端与数据模型/2026-06-20_00-03_Agent2B_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent2+后端与数据模型/2026-06-20_00-03_Agent2B_知识节点公开与管理API接口设计.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent2+后端与数据模型/2026-06-20_00-04_Agent2C_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent2+后端与数据模型/2026-06-20_00-04_Agent2C_运行数据安全上传审计边界.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent2+后端与数据模型/2026-06-20_11-26_Agent2_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent2+后端与数据模型/2026-06-20_11-26_Agent2_子Agent结果复测与收敛汇总.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent2+后端与数据模型/AGENT2_CHILD_UPDATE_INDEX.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent20+体验测试与问题上报/2026-06-19_18-40_Agent20_最小回归模板与证据规范.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent20+体验测试与问题上报/2026-06-19_21-18_Agent20_Agent20A20B分派与交接契约.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent20+体验测试与问题上报/2026-06-19_21-18_Agent20_child_regression_contract.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent20+体验测试与问题上报/2026-06-19_21-18_Agent20_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent20+体验测试与问题上报/2026-06-20_11-25_Agent20A_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent20+体验测试与问题上报/2026-06-20_11-25_Agent20A_浏览器视觉回归接口设计.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent20+体验测试与问题上报/2026-06-20_11-26_Agent20B_API_CMS_迁移回归接口设计.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent20+体验测试与问题上报/2026-06-20_11-26_Agent20B_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent20+体验测试与问题上报/2026-06-20_11-29_Agent20_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent20+体验测试与问题上报/2026-06-20_11-29_Agent20_子Agent结果复测与汇总.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent20+体验测试与问题上报/2026-06-21_21-21_Agent20_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent20+体验测试与问题上报/2026-06-21_21-21_Agent20_裁决后分批回归矩阵.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent20+体验测试与问题上报/AGENT20_UPDATE_INDEX.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent3+管理端CMS与内容工作流/2026-06-19_18-25_Agent3_CMS工作流拆分设计.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent3+管理端CMS与内容工作流/2026-06-19_21-17_Agent3_child_agent_bootstrap_contract.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent3+管理端CMS与内容工作流/2026-06-19_21-17_Agent3_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent3+管理端CMS与内容工作流/2026-06-19_21-17_Agent3_子Agent启动任务包与接口契约.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent3+管理端CMS与内容工作流/2026-06-20_00-04_Agent3A_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent3+管理端CMS与内容工作流/2026-06-20_00-04_Agent3A_推导节点编辑器表单接口设计.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent3+管理端CMS与内容工作流/2026-06-20_00-04_Agent3B_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent3+管理端CMS与内容工作流/2026-06-20_00-04_Agent3B_推导节点媒体MarkdownRevisionAudit接口设计.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent3+管理端CMS与内容工作流/2026-06-20_11-26_Agent3_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent3+管理端CMS与内容工作流/2026-06-20_11-26_Agent3_子Agent结果复测与汇总.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent3+管理端CMS与内容工作流/2026-06-21_18-10_Agent3C_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent3+管理端CMS与内容工作流/2026-06-21_18-10_Agent3C_聚焦模式CMS配置接口设计.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent3+管理端CMS与内容工作流/2026-06-21_20-13_Agent3_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent3+管理端CMS与内容工作流/2026-06-21_20-13_Agent3_裁决后CMS子Agent收敛刷新.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent4+访客端体验、视觉与前端架构/2026-06-19_18-28_Agent4_访客端边界与回归清单.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent4+访客端体验、视觉与前端架构/2026-06-21_17-53_Agent4_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent4+访客端体验、视觉与前端架构/2026-06-21_17-53_Agent4_推导页与聚焦模式前端接口设计.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent5+内容、SEO与知识体系/2026-06-19_18-32_Agent5_内容事实来源与SEO字段契约.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent5+内容、SEO与知识体系/2026-06-21_17-52_Agent5_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent5+内容、SEO与知识体系/2026-06-21_17-52_Agent5_电力电子聚焦与推导节点内容语义.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent6-miniapps/2026-06-19_18-33_Agent6_小程序职责边界与版本同步清单.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent7+视觉品牌与样式设计/2026-06-19_18-35_Agent7_视觉资产治理与主题变更流程.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent7+视觉品牌与样式设计/2026-06-21_17-51_Agent7_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent7+视觉品牌与样式设计/2026-06-21_17-51_Agent7_公式变量高亮视觉token接口设计.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent8+市场部设计/2026-06-19_18-36_Agent8_市场表达输入与转化路径建议.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent8+市场部设计/2026-06-21_18-12_Agent8_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent8+市场部设计/2026-06-21_18-12_Agent8_电力电子聚焦首页表达草案.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent9+内容生成对接规范/2026-06-19_18-38_Agent9_Markdown与DOCX契约复核.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent9+内容生成对接规范/2026-06-19_21-09_Agent9_status.json",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    },
+    {
+      "status": "??",
+      "path": "docs/Agent9+内容生成对接规范/2026-06-19_21-09_Agent9_推导变量Markdown短码接口设计.md",
+      "owner": "historical-legacy-docs",
+      "reason": "untracked pyramid-era Agent document; retained locally but excluded as historical noise"
+    }
+  ],
+  "review": [],
+  "ignoredAudit": {
+    "count": 6,
+    "entries": [
+      {
+        "status": "!!",
+        "path": ".codex-logs/",
+        "decision": "exclude",
+        "reason": "temporary/log evidence"
+      },
+      {
+        "status": "!!",
+        "path": ".env",
+        "decision": "exclude",
+        "reason": "local secret environment"
+      },
+      {
+        "status": "!!",
+        "path": ".tmp/",
+        "decision": "exclude",
+        "reason": "temporary/log evidence"
+      },
+      {
+        "status": "!!",
+        "path": "database/",
+        "decision": "exclude",
+        "reason": "runtime/current data"
+      },
+      {
+        "status": "!!",
+        "path": "node_modules/",
+        "decision": "exclude",
+        "reason": "installed dependencies"
+      },
+      {
+        "status": "!!",
+        "path": "runtime-data/",
+        "decision": "exclude",
+        "reason": "runtime/current data"
+      }
+    ]
+  },
+  "globalExclusions": [
+    ".env",
+    "database/*.sqlite*",
+    "runtime-data/",
+    "uploads/",
+    ".codex-logs/",
+    ".tmp/",
+    "node_modules/",
+    "*.log",
+    "certificates and private keys",
+    "unencrypted backups or exported production/current data"
+  ],
+  "validation": {
+    "uniqueStatusPaths": true,
+    "partitionCountMatches": true,
+    "reviewEmpty": true,
+    "manifestSha256": "664c331b908b62884c85d206bd8c056b406920af3763ca7bc75c7078e181fe59"
+  }
+}

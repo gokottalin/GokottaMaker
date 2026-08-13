@@ -48,6 +48,11 @@ function cardPayload(id, name = id) {
   });
 }
 
+function ordinaryFormulaPayload(payload) {
+  const { formulaId, formula_id, slug, ...business } = payload;
+  return business;
+}
+
 function createCards(store, prefix = "formula.graph") {
   const specs = [
     ["source-a", "拓扑来源 A"],
@@ -122,7 +127,8 @@ async function apiChecks(tempRoot) {
       DATA_DIR: path.join(tempRoot, "api-data"),
       FORMULA_BACKUP_DIR: path.join(tempRoot, "api-backups"),
       ADMIN_USERNAME: "LinearGraphTester",
-      ADMIN_PASSWORD: "linear-graph-test-password"
+      ADMIN_PASSWORD: "linear-graph-test-password",
+      ALLOW_LEGACY_CMS_LOOPBACK: "true"
     },
     stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true
@@ -170,7 +176,7 @@ async function apiChecks(tempRoot) {
       const formulaId = `formula.api-graph.${key}`;
       const created = await request("/api/admin/formulas", {
         method: "POST",
-        body: JSON.stringify(cardPayload(formulaId, `API ${key}`))
+        body: JSON.stringify(ordinaryFormulaPayload(cardPayload(formulaId, `API ${key}`)))
       });
       assert.equal(created.response.status, 200);
       const published = await request(`/api/admin/formulas/${encodeURIComponent(created.payload.card.formulaId)}/publish`, {

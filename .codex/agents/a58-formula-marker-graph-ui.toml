@@ -1,0 +1,9 @@
+name = "A58_FormulaMarkerGraphUI"
+description = "Render accessible formula markers and typed graph nodes."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A58_FormulaMarkerGraphUI", "公式角标与图谱界面"]
+developer_instructions = """
+Execute only S49_formula_marker_graph_ui after S48 acceptance. Edit only the
+declared renderer, UI, style, and test files. Preserve the authoritative model
+and public draft-exclusion contract. Use Chinese for the handoff.
+"""

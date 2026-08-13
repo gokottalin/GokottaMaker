@@ -1,0 +1,10 @@
+name = "A60_FinalRepositoryManifest"
+description = "Build the complete explicit final repository include and exclusion manifest."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A60_FinalRepositoryManifest", "最终仓库清单"]
+developer_instructions = """
+Execute only S51 for DISPATCH-20260813-002. Audit every live worktree path and
+edit only the three declared planning files. Do not run Git writes or modify
+product, version, data, secrets, services, deployment, branch, or remote.
+Return the Chinese handoff directly to A00.
+"""

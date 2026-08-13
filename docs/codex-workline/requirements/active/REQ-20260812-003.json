@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260812-003",
+  "title": "聚焦公开数据最小化、MD2File 收口与加密私有 CMS 入口",
+  "status": "dispatched",
+  "priority": "urgent",
+  "createdAt": "2026-08-12T23:59:29.776+08:00",
+  "updatedAt": "2026-08-13T00:06:32.127+08:00",
+  "intent": {
+    "problem": "聚焦模式下，MD2File 页面仍暴露其他应屏蔽的小程序或内容；游客收到的页面与公开数据中仍包含被聚焦规则隐藏的信息，并能识别或直接探测管理端入口，增加信息泄露和攻击面。",
+    "desiredOutcome": "聚焦模式从数据源和路由层实行公开最小化：游客仅收到允许内容，MD2File 是唯一公开小程序；标准管理路径对游客恒定返回 404，Owner 通过 HTTPS、不可猜测且可轮换的私有入口和独立登录认证进入 CMS。",
+    "targetUsers": ["游客", "Owner/幕后作者"]
+  },
+  "scope": {
+    "in": [
+      "聚焦模式下仅 MD2File 可在品牌首页、Maker、小程序中心和 MD2File 页面公开出现",
+      "从 MD2File 页面删除其他小程序入口、卡片、导航、推荐、说明和可识别元数据",
+      "非 MD2File 小程序的代码、数据和历史资产继续保留在服务器端以便未来恢复，但不进入任何游客响应或公开资源清单",
+      "聚焦模式屏蔽内容不得进入公开 HTML、内嵌脚本、公开 JSON/JS API、搜索索引、站点地图、RSS、结构化数据、预加载数据或页面源代码",
+      "游客直接访问聚焦模式禁止的内容、API 和小程序路由返回 404，不以 403、重定向、占位页或错误文案泄露其存在",
+      "公开响应不得包含 CMS 路径、管理端链接、管理 API、内部内容状态、草稿标识或后台能力清单",
+      "常规 /admin/ 以及既有可猜测管理路径对未认证访问恒定返回 404，并从导航、robots、sitemap、搜索、源代码和公开资源中移除",
+      "为 Owner 提供 HTTPS 加密传输、不可猜测且可轮换的私有 CMS 入口、独立登录认证、会话保护、登录限速与失败审计",
+      "常规 /admin/ 即使 Owner 已登录也继续返回 404，Owner 只通过私有入口进入 CMS",
+      "私有入口不可作为唯一安全边界；服务端对全部管理页面和管理 API 继续强制认证与授权",
+      "私有入口发生泄露时可轮换而不迁移 CMS 数据、不改变 Owner 账户并使旧入口立即失效"
+    ],
+    "out": [
+      "物理删除非 MD2File 小程序的服务器代码、数据或历史资产",
+      "把管理入口 URL、口令、密钥或恢复方式写入仓库、公开页面、公开 API、日志或需求包",
+      "以仅修改 robots.txt、隐藏链接或改名代替服务端访问控制",
+      "让未认证游客通过任何标准或旧管理路径进入登录页",
+      "改变聚焦模式允许的电子基础、公式推导和开源项目内容范围",
+      "在本需求包中确定或保存生产私有入口的具体秘密值"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "进入 MD2File 后仍可看到其他聚焦模式应屏蔽的内容。",
+      "游客收到的公开响应中包含被界面隐藏但仍可识别的聚焦屏蔽信息。",
+      "管理端可从公开信息或可猜测路径被直接识别和探测。"
+    ],
+    "expected": [
+      "公开响应从源头只序列化当前游客允许看到的数据，不再先下发完整数据再由前端隐藏。",
+      "MD2File 页面及公开小程序入口只包含 MD2File，其他小程序在服务器端保留但完全不公开。",
+      "聚焦禁止路由和常规管理路径向未认证访问统一表现为 404，不泄露资源类型、认证要求或真实位置。",
+      "Owner 使用独立保存的加密私有入口完成登录后进入 CMS；入口可轮换，旧入口失效。",
+      "管理 API 在不知道私有入口或未通过认证时同样不可发现、不可调用。"
+    ],
+    "edgeCases": [
+      "游客查看页面源代码、网络响应、预加载脚本、搜索索引、站点地图和结构化数据。",
+      "游客猜测 /admin/、历史管理路径、管理 API、旧小程序 URL 或静态资源路径。",
+      "Owner 已登录后访问 /admin/ 或旧管理入口。",
+      "私有入口泄露后执行轮换，旧书签、旧会话和旧 CSRF 令牌的处理。",
+      "缓存或 CDN 中仍保存修复前包含屏蔽信息的公开响应。",
+      "聚焦模式关闭后恢复允许公开的业务内容，但不自动公开管理端和非 MD2File 小程序。",
+      "404 响应时间、正文和响应头差异可能被用于枚举隐藏资源。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.md2file-only",
+      "statement": "聚焦模式开启时，品牌首页、Maker、小程序中心和 MD2File 页面只出现 MD2File，不出现其他小程序的名称、链接、图标、卡片、推荐或元数据。",
+      "verification": "对四个页面执行 DOM、页面源代码、网络响应和公开资源清单检查，并搜索所有已知非 MD2File 小程序标识。"
+    },
+    {
+      "id": "ac.public-payload-minimized",
+      "statement": "被聚焦模式屏蔽的内容不会出现在公开 HTML、JSON/JS API、搜索索引、sitemap、RSS、结构化数据和预加载数据中。",
+      "verification": "准备允许与禁止内容样本，开启聚焦模式后抓取所有公开投影并断言禁止样本的标题、ID、slug、标签和管理状态均不存在。"
+    },
+    {
+      "id": "ac.focus-route-404",
+      "statement": "游客直接访问聚焦规则禁止的内容、API、小程序页面或资产时返回 404，且不通过重定向、错误文案或状态差异泄露资源存在。",
+      "verification": "对已知存在与随机不存在路径执行匿名请求矩阵，比较状态码、响应模板和必要的防枚举行为。"
+    },
+    {
+      "id": "ac.admin-undiscoverable",
+      "statement": "公开页面、源代码、robots、sitemap、搜索数据及公开 API 不包含管理入口或管理能力；匿名访问 /admin/、旧路径和管理 API 均返回 404。",
+      "verification": "执行公开资产全文扫描、浏览器网络检查与匿名路由矩阵，并确认不存在登录页标题、认证挑战或管理 API 结构泄露。"
+    },
+    {
+      "id": "ac.private-cms-access",
+      "statement": "Owner 只能通过 HTTPS 私有入口进入独立登录流程；登录成功后 CMS 与管理 API 可用，未认证或入口错误时保持 404。",
+      "verification": "用正确私有入口完成一次登录和 CMS 读取；分别测试无入口、错误入口、未登录、过期会话和普通 /admin/。"
+    },
+    {
+      "id": "ac.private-entry-rotation",
+      "statement": "私有入口可安全轮换，轮换后旧入口立即返回 404，新入口可登录，CMS 数据和 Owner 账户保持不变。",
+      "verification": "在隔离环境执行入口轮换并核对旧入口、新入口、会话策略、账户与内容数量。"
+    },
+    {
+      "id": "ac.auth-protection",
+      "statement": "私有入口之外仍有服务端认证、授权、CSRF/会话保护、登录限速和失败审计，不能仅凭知道 URL 调用管理能力。",
+      "verification": "执行未登录管理 API、跨站请求、重复失败登录、过期会话和权限绕过测试，并核对安全审计记录不包含秘密入口值。"
+    },
+    {
+      "id": "ac.retained-server-assets",
+      "statement": "非 MD2File 小程序的服务器端代码、数据和历史资产保留且未物理删除，但不会进入公开构建或游客响应。",
+      "verification": "变更前后核对受保护资产和数据数量，同时验证匿名路由与公开清单均不可见。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN"],
+    "platforms": ["Larkix 公开网站", "MD2File", "Larkix CMS", "公开内容 API", "Nginx/服务端路由"],
+    "compatibility": ["保留非 MD2File 小程序的服务器端恢复能力", "保持现有聚焦允许内容正常公开", "保持 Owner 账户和 CMS 数据不变"],
+    "data": ["不得物理删除非 MD2File 小程序数据", "不得在前端或公开 API 下发后再隐藏禁止数据", "私有入口秘密不得写入版本库或公开日志"],
+    "security": ["隐藏路径不是唯一安全措施", "全站使用 HTTPS", "管理页面和 API 强制认证授权", "默认拒绝并以 404 防止资源枚举", "入口可轮换且失败登录限速审计"],
+    "operations": ["需要清理或失效修复前的公开缓存", "私有入口值和轮换操作由安全配置/秘密管理承载", "需要匿名与已认证双路径安全回归"],
+    "deadline": null
+  },
+  "evidence": [
+    {
+      "id": "evidence.owner-md2file",
+      "kind": "observation",
+      "locator": "Owner report 2026-08-12",
+      "note": "Owner 进入 MD2File 后仍看到聚焦模式应屏蔽的其他内容。",
+      "status": "provided"
+    },
+    {
+      "id": "evidence.owner-public-payload",
+      "kind": "observation",
+      "locator": "Owner report 2026-08-12",
+      "note": "Owner 发现游客可从网页接收信息中识别被聚焦规则屏蔽的内容和管理端。",
+      "status": "provided"
+    }
+  ],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.security-by-obscurity",
+      "severity": "critical",
+      "statement": "若仅隐藏或更换管理 URL，攻击者仍可通过管理 API、历史链接、静态资源或错误响应发现并攻击 CMS。",
+      "mitigation": "将私有入口作为附加层，服务端继续实施认证授权、速率限制、CSRF/会话保护、默认 404 和安全审计。"
+    },
+    {
+      "id": "risk.secret-exposure",
+      "severity": "critical",
+      "statement": "私有入口若进入仓库、日志、浏览器公开脚本、Referer 或分析平台，将失去不可猜测性。",
+      "mitigation": "通过部署秘密配置生成和轮换，限制日志与 Referer 泄露，禁止写入公开构建，并准备立即轮换流程。"
+    },
+    {
+      "id": "risk.stale-public-cache",
+      "severity": "high",
+      "statement": "CDN 或浏览器可能继续缓存包含屏蔽内容或旧管理入口的历史公开响应。",
+      "mitigation": "上线时清理相关缓存并修正动态内容缓存策略，使用独立匿名客户端复验。"
+    },
+    {
+      "id": "risk.owner-lockout",
+      "severity": "high",
+      "statement": "私有入口配置或轮换错误可能导致 Owner 无法进入 CMS。",
+      "mitigation": "提供受保护的离线恢复和回滚流程，先验证新入口再使旧入口失效，不在公开渠道暴露恢复方式。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-08-13T00:02:48.519+08:00",
+    "confirmationText": "确认这两个需求包",
+    "digest": "sha256:d00fd5b569043c4209bcf38e6dbb60cb521338dc8ce91f1765c5c9fda7de0564"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-08-13T00:06:32.127+08:00"
+  }
+}

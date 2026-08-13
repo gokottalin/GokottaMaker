@@ -127,3 +127,24 @@ Agent 00 Project Director（项目导演：负责顺序、门禁和下一步裁�
 ### next_handoff
 
 `A00_ProjectDirector` waits for the next Owner-confirmed requirement package.
+
+## 2026-08-13 Confirmed Batch
+
+### status
+
+`DISPATCH-20260813-001 complete; control returned to A00`
+
+### accepted scope
+
+- S45 minimized every anonymous public projection and retained only MD2File among public miniapps without deleting private assets.
+- S46 moved CMS pages, authentication, sessions, and admin APIs behind a rotatable private namespace with constant 404 behavior outside it.
+- S47 and S48 established one formula-content binding authority, migrated legacy relations, and derived lifecycle-aware public/CMS projections.
+- S49 rendered one accessible purple upper-right marker per binding and typed clickable article/formula graph nodes without public draft leakage.
+- S50 passed the repeatable security/formula matrix at `15 passed, 0 failed`, including real browser evidence at `1440 x 900`, `768 x 900`, and `390 x 844`.
+- Project contract passed at `1089 passed, 0 warnings, 0 failures`.
+
+### boundaries
+
+- Current and production data, uploads, production services, secrets, version, deployment, and Git were not changed.
+- Production release still requires server-side `sudo nginx -t` and a server-local real `PRIVATE_CMS_PATH`.
+- No temporary Agent is queued; new work requires a confirmed requirement or explicit release authority.

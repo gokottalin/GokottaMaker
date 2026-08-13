@@ -1,0 +1,148 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260812-001",
+  "title": "公式卡技术标识自动生成并从新建表单隐藏",
+  "status": "dispatched",
+  "priority": "high",
+  "createdAt": "2026-08-12T23:00:27.288+08:00",
+  "updatedAt": "2026-08-12T23:02:15.210+08:00",
+  "intent": {
+    "problem": "公式库的新建公式卡表单仍要求作者填写 formulaId 和访客路径 slug，与已确认的系统自动生成规则冲突，并暴露不应由作者承担的技术细节。",
+    "desiredOutcome": "作者新建公式卡时完全看不到也不填写 formulaId 和 slug；系统根据已确认元数据自动生成，创建成功后仅在技术信息区只读展示并允许复制。",
+    "targetUsers": ["Owner/幕后作者"]
+  },
+  "scope": {
+    "in": [
+      "从公式库的新建公式卡表单中彻底移除 formulaId 输入框和 slug 输入框",
+      "新建时不显示这两个字段的标签、占位符、必填状态或折叠输入入口",
+      "服务端根据公式名称、所属模块和主分类等已确认信息自动生成稳定 formulaId 与 slug",
+      "自动清理空格、统一格式并保证生成值符合现有标识和路由约束",
+      "发生标识或路径冲突时由系统确定性生成唯一结果，不要求作者手工修改技术标识",
+      "创建成功后在独立的技术信息区域只读显示 formulaId 和 slug",
+      "技术信息区为两个值分别提供明确的复制按钮和复制成功反馈",
+      "编辑既有公式卡时 formulaId 和 slug 保持不可修改",
+      "文章框选建卡与公式库直接新建使用同一自动生成规则",
+      "API 不接受普通作者通过新建或编辑载荷覆盖系统生成的 formulaId 或 slug"
+    ],
+    "out": [
+      "允许作者自定义或修改 formulaId",
+      "允许作者自定义或修改 slug",
+      "隐藏公式名称、模块、主分类或 LaTeX 等业务字段",
+      "改变既有公式卡的稳定标识或公开 URL",
+      "批量重写历史公式标识"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "公式库新建表单显示公式标识 formulaId 和访客路径 slug，并将二者设为必填。",
+      "作者需要理解并手工填写类似 formula.module.name 与 module-name 的技术字符串。",
+      "文章框选建卡已经自动生成标识，两个新建入口行为不一致。"
+    ],
+    "expected": [
+      "新建公式卡表单只呈现作者需要决定的业务信息，完全不出现 formulaId 和 slug 输入。",
+      "保存时系统自动生成合法、稳定且唯一的 formulaId 与 slug。",
+      "创建完成后技术信息区只读显示两个值，可分别一键复制。",
+      "两个新建入口生成规则一致，编辑时标识不可变。"
+    ],
+    "edgeCases": [
+      "相同名称出现在不同模块或主分类。",
+      "规范化后名称相同、全角半角差异或连续空格差异。",
+      "中文名称、数字、符号和超长名称。",
+      "生成 slug 已被历史公式占用。",
+      "并发创建两个规范化后相同的公式卡。",
+      "恶意或旧客户端仍提交 formulaId 或 slug。",
+      "复制 API 不可用时提供可选中只读文本。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.hidden-on-create",
+      "statement": "公式库新建公式卡时，页面和键盘焦点顺序中均不存在 formulaId 或 slug 输入控件、标签和必填校验。",
+      "verification": "打开新建公式卡，检查 DOM、可见界面、Tab 顺序并在不提供两个字段的情况下完成创建。"
+    },
+    {
+      "id": "ac.server-generated",
+      "statement": "只填写名称、模块、主分类和 LaTeX 等业务字段即可创建公式卡，响应返回系统生成的合法 formulaId 与唯一 slug。",
+      "verification": "通过 CMS 和不含技术标识的 API 请求创建公式卡，并校验响应与数据库。"
+    },
+    {
+      "id": "ac.deterministic-conflict",
+      "statement": "规范化名称或 slug 冲突时系统以确定性、并发安全方式生成唯一值，不把冲突解决责任交给作者。",
+      "verification": "创建同名、近似同名及并发同名夹具，确认全部结果合法且没有路由覆盖。"
+    },
+    {
+      "id": "ac.technical-info",
+      "statement": "创建成功及编辑既有卡片时，技术信息区只读显示 formulaId 和 slug，并为二者分别提供复制按钮。",
+      "verification": "创建后检查技术信息区，分别复制两个值并核对剪贴板与成功提示。"
+    },
+    {
+      "id": "ac.immutable-existing",
+      "statement": "编辑既有公式卡不能修改 formulaId 或 slug，保存业务字段不会改变稳定标识和公开 URL。",
+      "verification": "修改名称、分类、用途和正文后保存，比较保存前后的标识及访客地址。"
+    },
+    {
+      "id": "ac.entry-parity",
+      "statement": "公式库直接新建和文章框选建卡遵守相同的规范化、唯一性和不可变规则。",
+      "verification": "使用等价业务字段从两个入口建卡并核对生成策略、冲突行为与技术信息展示。"
+    },
+    {
+      "id": "ac.payload-protection",
+      "statement": "旧客户端或构造请求提交 formulaId、slug 时不能覆盖系统生成结果或修改既有卡片标识。",
+      "verification": "向新建和编辑 API 注入自定义技术标识，确认被忽略或明确拒绝且数据未改变。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN"],
+    "platforms": ["Larkix CMS", "Larkix 公式 API"],
+    "compatibility": ["保留全部既有公式卡 formulaId 与 slug", "保持既有文章绑定、推导关系和公开 URL 可用"],
+    "data": ["不得批量重写历史技术标识", "自动生成必须具备数据库唯一性和并发安全"],
+    "security": ["服务端必须拥有技术标识最终决定权，不能信任客户端覆盖值"],
+    "operations": ["需要 CMS、API、冲突、并发与历史兼容回归"],
+    "deadline": null
+  },
+  "evidence": [
+    {
+      "id": "evidence.owner-screenshot",
+      "kind": "screenshot",
+      "locator": "codex-clipboard-707c702a-87b8-4b61-8ee0-50653b346e59.png",
+      "note": "公式库新建表单仍显示并要求填写公式标识 formulaId 与访客路径 slug。",
+      "status": "provided"
+    },
+    {
+      "id": "evidence.current-form",
+      "kind": "file",
+      "locator": "admin/index.html",
+      "note": "当前表单把 formulaId 和 slug 作为 required 输入字段。",
+      "status": "verified"
+    }
+  ],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.identity-collision",
+      "severity": "high",
+      "statement": "若只在前端生成或冲突处理不具备事务唯一性，并发创建可能覆盖路由或错误复用公式卡。",
+      "mitigation": "由服务端在唯一约束下生成并重试，使用冲突和并发夹具验收。"
+    },
+    {
+      "id": "risk.legacy-client",
+      "severity": "medium",
+      "statement": "旧页面或脚本仍可能向 API 传入 formulaId 和 slug。",
+      "mitigation": "服务端拒绝或忽略客户端覆盖，并保持既有读取和编辑响应兼容。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-08-12T23:02:15.210+08:00",
+    "confirmationText": "确认该需求包并立即修复",
+    "digest": "sha256:49d942b8a4488242b7c5a62cdc62f6750fc519f0dc68a92a73fa8c6a92561c75"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-08-12T23:02:15.210+08:00"
+  }
+}
