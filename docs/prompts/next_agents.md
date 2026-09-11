@@ -15,11 +15,11 @@ Agent 00 Project Director（项目导演：本批次已验收，等待下一份�
 
 Current controller: `A00_ProjectDirector`. Accepted dispatch: `DISPATCH-20260911-001`.
 
-Release commit `2ef409b` and closure commit `d73bd02` are verified on
-`origin/main`. Version `V2.5.4+20260814-0001` and contract `1156/0/0` passed.
+Release commit `68bc822` is published on `origin/main`. Version
+`V2.5.5+20260911-0001`, contract `1238/0/0`, and formula regression `15/15` passed.
 
 ## Queue
 
 1. S56 through S60A: accepted by A00.
 2. Next Owner-confirmed requirement package: waiting for intake.
-3. Git publication and production deployment: separate explicit authority; closed.
+3. Production deployment: separate explicit authority; closed.

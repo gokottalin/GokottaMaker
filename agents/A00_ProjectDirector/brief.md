@@ -56,18 +56,18 @@ Director for future A00-scoped work and should execute that work directly.
 This does not bypass closed gates for implementation, database mutation,
 production release, or Git operations.
 
-## Latest Completed Batch
+## Latest Published Batch
 
-- Confirmed dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260813-002.json`
-- Accepted slices: `S51` through `S55`, accepted by A00 on 2026-08-16.
+- Confirmed dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json`
+- Accepted slices: `S56` through `S60A`, accepted and published by A00 on 2026-09-11.
 - Current slice: none; control stays at `A00_ProjectDirector` with an empty queue.
-- Published identity: `V2.5.4+20260814-0001`; release commit `2ef409b`, closure commit `d73bd02`.
-- GitHub `main` is at `d73bd02` and matches the remote; production deployment remains closed.
+- Published identity: `V2.5.5+20260911-0001`; release commit `68bc822`.
+- GitHub `main` contains `68bc822`; production deployment remains closed.
 - Prior accepted batches: `DISPATCH-20260726-001`, `DISPATCH-20260728-001`, `DISPATCH-20260730-001`, and the 2026-08-12/13 security/formula batches (`S43`-`S50`).
 
-## Active Batch
+## Completed Scope
 
 - Dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json`.
-- Wave 1: `S56_formula_map_contract` and `S57_adaptive_formula_height`.
-- Queue: `S58_formula_metadata_management`, `S59_formula_detail_page`, `S60_formula_workline_regression`.
-- A00 accepts every wave before advancing dependent work.
+- Formula map contract, adaptive formula height, metadata management, canonical
+  formula detail page, relationship projection repair, and 15/15 regression are complete.
+- Queue: empty; wait for the next Owner-confirmed requirement package.

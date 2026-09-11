@@ -14,10 +14,11 @@ This file is the reserved top-level window for new Codex sessions. Keep it short
 
 - Product target: LarkixMaker website and local content/CMS runtime.
 - Current work target: A00 accepted S56 through S60A with formula workline regression 15/15 and evidence digest sha256:9574b01464d7f2b0ddbc861e0783d1e77173313664082585c256dca7c86794c3.
+- Published release: `V2.5.5+20260911-0001`, release commit `68bc822` on `origin/main`.
 - Current gate: Git writes, production deployment, current/production data, services, secrets, cloud, migrations, restore and rollback are closed.
 - Confirmed queue: empty after A00 acceptance of DISPATCH-20260911-001.
 - Closed boundaries: all Git writes, production deployment, current/production data, cloud, services, secrets, restore, rollback and migrations.
-- Last accepted handoff: `docs/codex-workline/slices/S55_git_publish_and_remote_clone_handoff.md`.
+- Last accepted handoff: `docs/codex-workline/slices/S60_formula_workline_regression_handoff.md`.
 - Last updated: 2026-09-11
 
 ## Do Not Put Here

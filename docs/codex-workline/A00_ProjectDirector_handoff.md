@@ -190,3 +190,22 @@ Agent 00 Project Director（项目导演：最终 Git 交付已验收，队列�
 ### next_handoff
 
 `A00_ProjectDirector` waits for the next Owner-confirmed requirement package or explicit production-release authority. No short-task Agent is queued.
+
+## 2026-09-11 Formula Workline Git Publication (DISPATCH-20260911-001)
+
+### status
+
+`published_queue_empty`
+
+### A00 acceptance and publication evidence
+
+- S56 through S60A are accepted; the isolated formula workline regression passed `15/15` with evidence digest `sha256:9574b01464d7f2b0ddbc861e0783d1e77173313664082585c256dca7c86794c3`.
+- Release identity is `V2.5.5+20260911-0001`; version check and project contract passed at `1238 passed / 0 warnings / 0 failures`.
+- Exactly 73 release paths were staged; forbidden runtime/data/secret paths and high-confidence secret scan hits were both zero.
+- Release commit `68bc8221616bbf3b790422a23ff746b038aabfaf` was pushed to `origin/main` after a fast-forward check of `1 ahead / 0 behind`.
+- Historical pyramid-era `docs/Agent*` files remain local and untracked; database, uploads, environment files, certificates, private CMS path, backups, and runtime data were not published.
+
+### boundaries
+
+- Git writes close again after the publication record is pushed.
+- Production deployment, current/production data, services, secrets, cloud, migrations, restore, and rollback remain closed.
