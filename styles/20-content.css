@@ -146,6 +146,20 @@
   transform: translateY(-1px);
 }
 
+/* Shared block-math height contract. Inline math stays on its natural line box. */
+:where(.markdown-article, .derive-content, .md2doc-preview, .preview-panel)
+  .markdown-math-display[data-math-adaptive="block"],
+.markdown-math-display[data-math-adaptive="block"] {
+  box-sizing: border-box;
+  min-block-size: calc(var(--math-content-block-size, 1em) + var(--math-safe-block-padding, 6px) + var(--math-safe-block-padding, 6px));
+  padding-block: var(--math-safe-block-padding, 6px);
+  overflow: visible;
+}
+
+.markdown-math-display[data-math-adaptive="block"] > .katex-display {
+  overflow-y: visible;
+}
+
 .category-summary {
   position: relative;
   max-width: 780px;

@@ -19,6 +19,7 @@ const {
   validateFormulaBusinessPayload,
   validateFormulaCardPayload,
   validateFormulaClassificationPayload,
+  validateFormulaMetadataOperationPayload,
   validateFormulaDecisionPayload,
   validateFormulaDerivationPayload,
   validateFocusModePayload,
@@ -72,8 +73,8 @@ const contentStore = createContentStore(db);
 const auth = createAuth(db, { adminUsername, adminPassword, resetAdminPassword });
 const uploadStore = createUploadStore(uploadDir);
 
-const siteVersion = "V2.5.4";
-const siteBuild = "20260814-0001";
+const siteVersion = "V2.5.5";
+const siteBuild = "20260911-0001";
 const siteVersionLabel = `${siteVersion}+${siteBuild}`;
 const siteUrl = (process.env.SITE_URL || "https://www.larkix.com").replace(/\/$/, "");
 const elecVersion = "V1.3";
@@ -82,6 +83,35 @@ const elecMaxCircuits = 10;
 const elecTmpRoot = path.resolve(process.env.ELEC_TMP_DIR || path.join(dataDir, ".tmp", "gokotta-elec"));
 const elecCoreDir = path.resolve(process.env.ELEC_CORE_DIR || path.join(root, "gokotta-elec-core"));
 const md2docInputLimitBytes = 512 * 1024;
+const formulaGraphCursorSecret = crypto.randomBytes(32);
+const formulaGraphPageSize = 240;
+
+function encodeFormulaGraphCursor(payload) {
+  const body = Buffer.from(JSON.stringify(payload), "utf8").toString("base64url");
+  const signature = crypto.createHmac("sha256", formulaGraphCursorSecret).update(body).digest("base64url");
+  return `${body}.${signature}`;
+}
+
+function decodeFormulaGraphCursor(cursor, slug) {
+  const [body, signature, extra] = String(cursor || "").split(".");
+  if (!body || !signature || extra) return null;
+  const expected = crypto.createHmac("sha256", formulaGraphCursorSecret).update(body).digest();
+  let supplied;
+  try {
+    supplied = Buffer.from(signature, "base64url");
+  } catch {
+    return null;
+  }
+  if (supplied.length !== expected.length || !crypto.timingSafeEqual(supplied, expected)) return null;
+  try {
+    const payload = JSON.parse(Buffer.from(body, "base64url").toString("utf8"));
+    if (payload.v !== 1 || payload.slug !== slug || !Number.isInteger(payload.limit)) return null;
+    if (payload.limit < formulaGraphPageSize || payload.limit > 5000) return null;
+    return payload;
+  } catch {
+    return null;
+  }
+}
 
 function loadSeedData() {
   const sandbox = { window: {} };
@@ -376,6 +406,7 @@ const {
   appendFormulaRelationRepairEvent,
   saveFormulaDerivation,
   saveFormulaClassification,
+  operateFormulaMetadata,
   saveFormulaCard,
   createFormulaCard,
   updateFormulaCard,
@@ -549,7 +580,19 @@ function publicProjectByIdentity(identity) {
   return allProjects(false).find((project) => project.id === identity || project.slug === identity) || null;
 }
 
-const seo = createSeo({ siteUrl, allPosts, allProjects, text });
+function allPublicFormulaRoutes() {
+  return db.prepare(
+    `SELECT card.slug, publication.published_at AS publishedAt
+     FROM formula_cards card
+     JOIN formula_revision_publications publication
+       ON publication.formula_id = card.formula_id
+      AND publication.revision_id = card.published_revision_id
+     WHERE card.publish_status = 'published' AND card.archived_at IS NULL
+     ORDER BY card.slug ASC`
+  ).all();
+}
+
+const seo = createSeo({ siteUrl, allPosts, allProjects, allFormulas: allPublicFormulaRoutes, text });
 
 function focusXmlEscape(value) {
   return String(value || "")
@@ -577,6 +620,11 @@ function focusedSitemap(res) {
       loc: `${siteUrl}/project.html?id=${encodeURIComponent(project.id)}`,
       priority: "0.7",
       lastmod: project.publishedAt || project.date
+    })),
+    ...allPublicFormulaRoutes().map((formula) => ({
+      loc: `${siteUrl}/formula/${encodeURIComponent(formula.slug)}`,
+      priority: "0.75",
+      lastmod: formula.publishedAt
     }))
   ];
   const urls = pages
@@ -1609,9 +1657,11 @@ function knowledgeNodeAuditMetadata(result) {
 
 function publicFormulaCardPayload(card) {
   if (!card) return null;
+  const truncated = Boolean(card.graph?.truncated);
   const publicReference = (reference) => {
     if (!reference?.slug) return null;
     return {
+      contractVersion: "larkix.formula-derivation-map.v1",
       referenceKey: reference.slug,
       slug: reference.slug,
       displayName: reference.displayName || "",
@@ -1693,8 +1743,19 @@ function publicFormulaCardPayload(card) {
       initialNodeIds: (card.graph.initialNodeIds || []).map((id) => idMap.get(id)).filter((id) => nodeIds.has(id)),
       expandableNodeIds: (card.graph.expandableNodeIds || []).map((id) => idMap.get(id) || id).filter((id) => nodeIds.has(id)),
       hiddenNodeCount: Math.max(0, Number(card.graph.hiddenNodeCount || 0)),
-      truncated: Boolean(card.graph.truncated),
-      limits: card.graph.limits || null
+      truncated,
+      limits: card.graph.limits || null,
+      continuation: truncated
+        ? {
+            cursor: encodeFormulaGraphCursor({
+              v: 1,
+              slug: card.slug,
+              revision: card.publishedRevisionId,
+              limit: Math.min(5000, Number(card.graph.limits?.payloadNodes || formulaGraphPageSize) + formulaGraphPageSize)
+            }),
+            hasMore: true
+          }
+        : null
     };
   })();
   const dependencySlugByFormulaId = new Map(
@@ -1760,9 +1821,23 @@ async function api(req, res, pathname) {
   }
   const publicFormulaCard = pathname.match(/^\/api\/formulas\/([^/]+)$/);
   if (publicFormulaCard && req.method === "GET") {
-    const slug = decodeURIComponent(publicFormulaCard[1]);
-    const card = publicFormulaCardBySlug(slug);
+    let slug = "";
+    try {
+      slug = decodeURIComponent(publicFormulaCard[1]);
+    } catch {
+      return json(res, 404, { error: "not found" });
+    }
+    const requestUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+    const cursorValue = requestUrl.searchParams.get("cursor");
+    const cursor = cursorValue ? decodeFormulaGraphCursor(cursorValue, slug) : null;
+    if (cursorValue && !cursor) return json(res, 400, { error: "invalid continuation cursor" });
+    const card = publicFormulaCardBySlug(slug, {
+      payloadNodeLimit: cursor?.limit || formulaGraphPageSize
+    });
     if (!card) return json(res, 404, { error: "not found" });
+    if (cursor && cursor.revision !== card.publishedRevisionId) {
+      return json(res, 400, { error: "invalid continuation cursor" });
+    }
     return json(res, 200, { card: publicFormulaCardPayload(card) });
   }
   if (pathname === "/api/elec/samples" && req.method === "GET") return elecResponse(res, 200, elecSamples());
@@ -1997,6 +2072,25 @@ async function api(req, res, pathname) {
     return json(res, result.reused ? 200 : 201, {
       ...result,
       classifications: listFormulaClassifications()
+    });
+  }
+
+  if (pathname === "/api/admin/formula-metadata/operate" && req.method === "POST") {
+    const input = validateFormulaMetadataOperationPayload(await readBody(req));
+    let result;
+    withTransaction(() => {
+      result = operateFormulaMetadata({ ...input, actor: user });
+      logAudit(db, req, user, `formula_metadata_${input.action}`, input.kind, input.classificationId || "batch", {
+        affectedCount: result.affectedCount || 0,
+        cardCount: result.impact?.cardCount || 0,
+        articleCount: result.impact?.articleCount || 0,
+        dependencyCount: result.impact?.dependencyCount || 0
+      });
+    });
+    return json(res, 200, {
+      ...result,
+      classifications: listFormulaClassifications(),
+      catalog: listFormulaCards({ allowGlobalSearch: true, archiveState: "all", pageSize: 1 })
     });
   }
 
@@ -2506,6 +2600,8 @@ const publicStaticFiles = new Set([
   "/category.html",
   "/category-page.js",
   "/derive.html",
+  "/formula.html",
+  "/formula.js",
   "/index.html",
   "/maker.html",
   "/miniapps.html",
@@ -2602,6 +2698,8 @@ const privateCmsStaticFiles = new Set([
   "/admin/admin.js",
   "/styles.css",
   "/formula-graph.js",
+  "/formula.html",
+  "/formula.js",
   "/maker.html",
   "/derive.html",
   "/index.html"
@@ -2743,6 +2841,29 @@ const server = http.createServer(async (req, res) => {
         return await api(req, res, cmsRoute.pathname);
       }
       return servePrivateCmsStatic(req, res, cmsRoute.pathname);
+    }
+    const formulaPageMatch = url.pathname.match(/^\/formula\/([^/]+)$/);
+    if ((req.method === "GET" || req.method === "HEAD") && formulaPageMatch) {
+      let formulaSlug = "";
+      try {
+        formulaSlug = decodeURIComponent(formulaPageMatch[1]);
+      } catch {
+        return serveNotFound(res);
+      }
+      if (!publicFormulaCardBySlug(formulaSlug)) return serveNotFound(res);
+      return serveStatic(req, res, "/formula.html");
+    }
+    if ((req.method === "GET" || req.method === "HEAD") && url.pathname === "/formula.html") {
+      return serveNotFound(res);
+    }
+    if (
+      (req.method === "GET" || req.method === "HEAD") &&
+      url.pathname === "/derive.html" &&
+      url.searchParams.has("formula")
+    ) {
+      const formulaSlug = String(url.searchParams.get("formula") || "");
+      if (!publicFormulaCardBySlug(formulaSlug)) return serveNotFound(res);
+      return servePermanentRedirect(req, res, `/formula/${encodeURIComponent(formulaSlug)}`);
     }
     if (
       (req.method === "GET" || req.method === "HEAD") &&

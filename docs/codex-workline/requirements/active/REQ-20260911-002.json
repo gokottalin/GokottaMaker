@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260911-002",
+  "title": "高公式自适应高度与无纵向滚动完整显示",
+  "status": "dispatched",
+  "priority": "high",
+  "createdAt": "2026-09-11T00:54:10.571+08:00",
+  "updatedAt": "2026-09-11T01:14:03.580+08:00",
+  "intent": {
+    "problem": "公式容器上下出现滚动或裁切，分式、根号、积分、矩阵等高公式没有获得足够的垂直空间，作者和游客必须滚动才能看完整公式。",
+    "desiredOutcome": "所有公式展示容器根据实际数学排版高度自动扩展，并在上下保留稳定留白，使普通及复杂高公式一次完整可见，不出现内部纵向滚动条、上下裁切或基线错位。",
+    "targetUsers": ["Larkix 游客", "CMS 公式作者", "MD2File 用户"]
+  },
+  "scope": {
+    "in": [
+      "统一修复文章、独立公式页、公式推导正文、公式地图节点、CMS 公式预览、文章编辑预览和 MD2File 预览中的公式容器高度计算",
+      "渲染完成后根据数学元素实际 bounding box、字体加载和容器宽度测量高度，自动增加上下内边距和最小高度，而不是使用固定单行高度",
+      "识别复杂分式、嵌套根号、积分/微分、求和、上下限、矩阵、分段函数、boxed 和多行公式等高内容，并为其提供更多垂直空间",
+      "公式容器禁止 overflow-y:auto/scroll；任何公式不得依赖内部纵向滚动才能查看完整上下部分",
+      "容器尺寸在窗口缩放、移动端旋转、字体完成加载、暗色模式切换和公式内容更新后重新计算，不留下旧高度",
+      "行内公式继续与正文视觉垂直居中，不因统一增高规则把整行撑出异常空白；块级公式才使用完整自适应留白",
+      "公式地图节点随公式实际宽高增长并完整包住数学内容，连接线和节点布局在重新测量后更新",
+      "极宽且不可合理断行的公式按现有响应式策略处理，但不得以压低容器高度、裁切上下边界或添加纵向滚动作为解决方式",
+      "增加跨渲染表面的视觉与尺寸回归，使用普通公式、分子含根号的分式、整体根号、嵌套分式、积分、矩阵和 boxed 作为固定样例"
+    ],
+    "out": [
+      "改变公式数学含义、LaTeX 源文或推导关系",
+      "用统一超大固定高度给所有公式制造大量空白",
+      "把行内公式全部改为块级公式",
+      "重新设计公式地图数据契约、分类管理或独立公式页内容",
+      "未经授权部署到生产"
+    ]
+  },
+  "behavior": {
+    "current": ["部分公式上下出现滚动或被容器限制，高公式无法一次完整显示。", "公式卡和预览样式中存在 overflow 规则，复杂公式高度未在所有渲染表面统一测量。"],
+    "expected": ["普通和高公式上下均完整可见，容器无内部纵向滚动条。", "高公式获得更多垂直空间，普通公式保持紧凑。", "行内复杂分式仍与正文视觉居中，块级公式上下留白稳定。", "公式地图节点和连接线在高度变化后布局正确。"],
+    "edgeCases": ["分式分子为根号或积分。", "整个分式置于根号内与仅分子置于根号内。", "多层嵌套分式、矩阵和 cases 环境。", "公式字体异步加载后高度变化。", "窄屏下公式换行或缩放。", "同一公式在 CMS 预览和游客页尺寸不同。"]
+  },
+  "acceptanceCriteria": [
+    {"id":"ac.no-vertical-scroll","statement":"所有目标公式表面都不出现公式容器内部纵向滚动条，公式上下边界完整可见。","verification":"在桌面和移动端检查文章、公式页、推导正文、图谱、CMS 和 MD2File；读取计算样式确认 overflow-y 不为 auto/scroll。"},
+    {"id":"ac.dynamic-height","statement":"容器高度依据实际公式内容变化，高公式比普通公式获得更大空间且没有统一过量空白。","verification":"对固定普通/复杂样例测量数学元素与容器 bounding box，确认上下安全间距满足设计阈值并随高度单调增长。"},
+    {"id":"ac.complex-math","statement":"嵌套分式、根号、积分、微分、求和、矩阵、分段函数和 boxed 均完整且垂直排版正确。","verification":"渲染固定 LaTeX 样例并进行截图和边界检测，确认没有裁切、重叠、基线整体下沉或错误根号范围。"},
+    {"id":"ac.inline-block-separation","statement":"行内公式保持同行视觉居中，块级公式使用自适应垂直留白，两类规则互不污染。","verification":"在连续中文正文中混合行内复杂分式和块级高公式，检查行高、相邻段落间距和垂直对齐。"},
+    {"id":"ac.reflow","statement":"窗口、字体、主题和内容变化后公式容器会重新测量，公式地图节点与连线同步重排。","verification":"调整 390、768、1366 和 1920 宽度，延迟字体加载并切换主题，确认无旧高度、遮挡和连线偏移。"},
+    {"id":"ac.shared-regression","statement":"修复使用共享数学渲染规则并通过文章、公式、图谱、CMS 与 MD2File 的专项回归。","verification":"运行共享数学渲染、公式地图、Markdown、浏览器和 codex:contract 测试，控制台无新增错误。"}
+  ],
+  "constraints": {
+    "languages": ["zh-CN"],
+    "platforms": ["Desktop browser", "Mobile browser", "LarkixMaker CMS", "MD2File"],
+    "compatibility": ["保持现有 LaTeX 语法与共享数学渲染器", "保持行内/块级语义", "兼容明暗模式和响应式布局"],
+    "data": ["不修改公式正文、修订或关系数据"],
+    "security": ["不通过执行未受信 LaTeX 脚本测量高度", "保持现有 Markdown 与数学内容净化"],
+    "operations": ["先用隔离页面和固定样例验证", "不得在线上真实内容中做破坏性测试", "不自动部署"],
+    "deadline": null
+  },
+  "evidence": [
+    {"id":"evidence.owner-overflow","kind":"observation","locator":"Owner report 2026-09-10","note":"Owner 报告公式上下出现滚动，要求上下预留足够位置并自动识别高公式增加空间。","status":"provided"},
+    {"id":"evidence.current-css","kind":"file","locator":"admin/admin.css","note":"当前公式卡与编辑预览样式含 overflow-x:auto，需核对共享数学容器与嵌套高度规则。","status":"verified"}
+  ],
+  "openQuestions": [],
+  "assumptions": [{"id":"assumption.horizontal-overflow","statement":"本需求明确禁止纵向滚动；对极宽且无法安全断行的公式继续采用现有受控横向响应策略，但不得裁切上下内容。","status":"proposed"}],
+  "risks": [
+    {"id":"risk.excess-whitespace","severity":"medium","statement":"简单增加固定 padding 会让普通公式产生大量空白。","mitigation":"按渲染后的实际边界分级计算高度和留白，并设置合理上下限。"},
+    {"id":"risk.layout-loop","severity":"high","statement":"ResizeObserver 与节点重排可能相互触发形成布局循环。","mitigation":"使用去抖、尺寸差阈值和单向测量/布局阶段，增加循环检测回归。"},
+    {"id":"risk.font-timing","severity":"medium","statement":"数学字体异步加载会使首次测量高度错误。","mitigation":"等待 fonts.ready 并监听实际尺寸变化后只重算必要容器。"}
+  ],
+  "confirmation": {"confirmed":true,"confirmedBy":"Owner","confirmedAt":"2026-09-11T01:13:05.947+08:00","confirmationText":"**确认这 4 个需求包**。","digest":"sha256:e84a91563d48cfd34deee5e8c8396669643d3ecbf778dbdd55ca34f36432b76d"},
+  "dispatch": {"targetRole":"A00_ProjectDirector","recommendedWorkbenches":[],"dependencies":["REQ-20260728-002","REQ-20260730-003","REQ-20260730-004"],"dispatchedAt":"2026-09-11T01:14:03.580+08:00"}
+}

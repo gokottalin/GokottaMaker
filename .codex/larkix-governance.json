@@ -228,7 +228,24 @@
       "docs/codex-workline/slices/S54_final_candidate_gate_handoff.md",
       "agents/A64_FinalGitPublisher/brief.md",
       ".codex/agents/a64-final-git-publisher.toml",
-      "docs/codex-workline/slices/S55_git_publish_and_remote_clone_handoff.md"
+      "docs/codex-workline/slices/S55_git_publish_and_remote_clone_handoff.md",
+      "docs/codex-workline/requirements/active/REQ-20260824-001.json",
+      "docs/codex-workline/requirements/active/REQ-20260911-001.json",
+      "docs/codex-workline/requirements/active/REQ-20260911-002.json",
+      "docs/codex-workline/requirements/active/REQ-20260911-003.json",
+      "docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json",
+      "agents/A65_FormulaMapContract/brief.md",
+      ".codex/agents/a65-formula-map-contract.toml",
+      "agents/A66_AdaptiveFormulaHeight/brief.md",
+      ".codex/agents/a66-adaptive-formula-height.toml",
+      "agents/A67_FormulaMetadataManagement/brief.md",
+      ".codex/agents/a67-formula-metadata-management.toml",
+      "agents/A68_FormulaDetailPage/brief.md",
+      ".codex/agents/a68-formula-detail-page.toml",
+      "agents/A69_FormulaWorklineRegression/brief.md",
+      ".codex/agents/a69-formula-workline-regression.toml",
+      "agents/A70_FormulaRelationshipProjectionRepair/brief.md",
+      ".codex/agents/a70-formula-relationship-projection-repair.toml"
     ],
     "pausedBooleanFields": {
       "batch1ReadyForOpenDecision": true,
@@ -248,13 +265,13 @@
     },
     "projectWindowRequiredText": [
       "# Project Window",
-      "Current phase: `DISPATCH-20260813-002_Complete_Returned_A00`",
+      "Current phase: `DISPATCH-20260911-001_Accepted_Queue_Empty`",
       "Current controller: `agents/A00_ProjectDirector/brief.md`",
       "Next agent: `agents/A00_ProjectDirector/brief.md`",
-      "Confirmed requirement dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260813-002.json`",
-      "Current work target: V2.5.4 release commit `2ef409b` is published to `origin/main`; S55 closure returns control to A00",
+      "Confirmed requirement dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json`",
+      "Current work target: A00 accepted S56 through S60A with formula workline regression 15/15 and evidence digest sha256:9574b01464d7f2b0ddbc861e0783d1e77173313664082585c256dca7c86794c3",
       "Current gate: Git writes, production deployment, current/production data, services, secrets, cloud, migrations, restore and rollback are closed",
-      "Confirmed queue: A00 final acceptance and the next Owner-confirmed requirement. Production deployment remains separate"
+      "Confirmed queue: empty after A00 acceptance of DISPATCH-20260911-001"
     ],
     "agentsGuideRequiredText": [
       "Recommended handoff and coordination language: Chinese",
@@ -709,7 +726,13 @@
       "A61_CrossComputerBootstrap": "跨电脑启动契约：让新电脑 Codex 从 AGENTS.md 完成克隆后的启动、验证和接续",
       "A62_EncryptedDataHandoff": "加密数据交接：在 Git 之外备份、校验和恢复可选数据库及上传文件",
       "A63_FinalCandidateGate": "最终候选门禁：同步新版本、清零待裁决路径并在仓库外复验完整候选副本",
-      "A64_FinalGitPublisher": "最终 Git 发布：按显式清单提交、普通推送并从远程 SHA 干净克隆复验"
+      "A64_FinalGitPublisher": "最终 Git 发布：按显式清单提交、普通推送并从远程 SHA 干净克隆复验",
+      "A65_FormulaMapContract": "公式地图契约：建立唯一无限深度 JSON 接口",
+      "A66_AdaptiveFormulaHeight": "高公式布局：完整显示且无纵向滚动",
+      "A67_FormulaMetadataManagement": "公式元数据：两级分类与安全迁移",
+      "A68_FormulaDetailPage": "公式独立页：统一详情与推导入口",
+      "A69_FormulaWorklineRegression": "公式工作线回归：统一验收证据",
+      "A70_FormulaRelationshipProjectionRepair": "关系投影修复：消除公开公式 API 500"
     },
     "expectedTaskStatuses": {
       "A01_ProjectStateRetriever": "completed",
@@ -773,7 +796,13 @@
       "A61_CrossComputerBootstrap": "completed",
       "A62_EncryptedDataHandoff": "completed",
       "A63_FinalCandidateGate": "completed",
-      "A64_FinalGitPublisher": "completed"
+      "A64_FinalGitPublisher": "completed",
+      "A65_FormulaMapContract": "completed",
+      "A66_AdaptiveFormulaHeight": "completed",
+      "A67_FormulaMetadataManagement": "completed",
+      "A68_FormulaDetailPage": "completed",
+      "A69_FormulaWorklineRegression": "completed",
+      "A70_FormulaRelationshipProjectionRepair": "completed"
     }
   },
   "temporaryExperts": [
@@ -1080,6 +1109,36 @@
     {
       "id": "A64_FinalGitPublisher",
       "file": ".codex/agents/a64-final-git-publisher.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A65_FormulaMapContract",
+      "file": ".codex/agents/a65-formula-map-contract.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A66_AdaptiveFormulaHeight",
+      "file": ".codex/agents/a66-adaptive-formula-height.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A67_FormulaMetadataManagement",
+      "file": ".codex/agents/a67-formula-metadata-management.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A68_FormulaDetailPage",
+      "file": ".codex/agents/a68-formula-detail-page.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A69_FormulaWorklineRegression",
+      "file": ".codex/agents/a69-formula-workline-regression.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A70_FormulaRelationshipProjectionRepair",
+      "file": ".codex/agents/a70-formula-relationship-projection-repair.toml",
       "mode": "workspace-write"
     }
   ]

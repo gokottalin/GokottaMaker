@@ -1,0 +1,11 @@
+# S59 公式独立详情页交接
+
+- `status`: completed，等待 `A00_ProjectDirector` 执行 Wave 3 验收。
+- `scope_completed`: 已新增 `/formula/{stable-slug}` 规范公开详情页；服务端仅为已发布且未归档公式返回页面与公开 API，非法、缺失、草稿及归档目标统一为不泄露状态的 404；旧 `derive.html?formula=...` 与已验证旧知识节点映射均 308 收敛到唯一规范 URL。页面复用共享 Markdown、KaTeX、自适应高度及唯一 `formula-graph.js`，按公式、用途、两级分类/标签、Markdown 推导、上下游列表、完整地图组织内容，缺失选填项不渲染空壳。公式节点与关系项进入公式页，文章节点保持文章路由；canonical、Open Graph、JSON-LD 与 sitemap 使用稳定 URL。
+- `continuation_cursor`: 经 A00 明确批准后，`lib/content.js` 已精确纳入 S59 边界。现有 `formulaGraphForCard` 保持唯一关系生产者，仅增加可控累计节点上限；公开 API 在 `truncated=true` 时以进程内随机密钥 HMAC 签发不透明 cursor，并绑定 slug、已发布修订与下一加载上限。伪造、跨公式、过期修订 cursor 返回 400；前端继续加载后仍由同一图谱组件合并、重排和展开，无第二份关系结构。
+- `files_created_or_changed`: `server.js`；`lib/content.js`；`lib/seo.js`；`formula.html`；`formula.js`；`formula-graph.js`；`post.js`；`styles/40-formula.css`；`scripts/test-formula-detail-page.js`；本交接。`agents/A68_FormulaDetailPage/brief.md` 与 `docs/codex-workline/implementation_slices.json` 的边界扩展由 A00 裁决产生，不作为 A68 业务实现声明。
+- `decisions`: 规范 URL 定为 `/formula/{slug}`；旧页面不保留第二份可索引正文；公开 API 继续只投影 published revision，不返回 formulaId、revisionId、管理状态或 CMS 地址；continuation 响应是同一契约的累计有界投影，避免边端点脱离当前响应；文章角标的旧 href 通过服务端兼容重定向最终收敛，保留既有悬停名称与历史文章内容。
+- `risks`: continuation 当前单次按 240 个公式节点递增并重新返回累计契约，极大图谱响应会随继续次数增长；S60 应重点观察大图内存、响应体与交互延迟。`derive.html` 保留旧公式渲染代码仅作受控兼容兜底，正常公开请求在 HTML 前已 308，不形成第二 canonical。仓库原有大量非本任务工作树状态，验收须按本交接精确文件集审阅。
+- `tests_or_checks`: `node --experimental-sqlite scripts/test-formula-detail-page.js` 通过，覆盖 245 节点首次 240 截断与继续至 245、草稿/发布/归档公开投影、规范路由/SEO/共享渲染/签名门禁静态契约；`node scripts/test-formula-derivation-map-contract.js`、`node scripts/test-formula-marker-graph-ui.js`、`node --experimental-sqlite scripts/test-branching-derivation-graph.js`、`node scripts/test-adaptive-formula-height.js`、`npm.cmd run test:math-rendering`、`npm.cmd run test:markdown` 均通过；`npm.cmd run codex:contract` 为 1226 passed / 0 warnings / 0 failures；限定文件 `git diff --check` 通过，仅有既有 LF/CRLF 提示。
+- `protected_boundaries`: 所有数据验证均使用系统临时目录中的隔离 SQLite 并在完成后删除；未读取或写入当前/生产数据库，未执行 migration、部署、云/服务/密钥、Git staging、commit 或 push。
+- `next_handoff`: 直接回传 `A00_ProjectDirector` 执行 `A00_wave3_acceptance`；验收通过后才可按派工序列开放 `A69_FormulaWorklineRegression` / `S60_formula_workline_regression`。

@@ -246,12 +246,16 @@
     if (!initialIds.size) [...allNodes.keys()].slice(0, 1).forEach((nodeId) => initialIds.add(nodeId));
 
     const visibleIds = new Set(initialIds);
-    const depthResult = computeDepths([...allNodes.values()], [...allEdges.values()]);
+    let depthResult = computeDepths([...allNodes.values()], [...allEdges.values()]);
+    let continuation = graph.continuation || null;
+    let loadingContinuation = false;
     let selectedId = String(graph.currentNodeId || [...initialIds][0] || "");
     let cy = null;
     let layoutSnapshot = null;
     let resizeObserver = null;
     let syncFrame = 0;
+    let remeasureFrame = 0;
+    let rebuilding = false;
     let destroyed = false;
     const overlayById = new Map();
     const sizeById = new Map();
@@ -448,6 +452,7 @@
       for (const node of visibleNodes().sort(stableNodeOrder)) {
         const overlay = createOverlay(node);
         nodeLayer.append(overlay);
+        global.LarkixMath?.adaptiveLayout?.measure?.(overlay.querySelector(".formula-graph-node-math"));
         const rect = overlay.getBoundingClientRect();
         const nodeId = String(node.id);
         overlayById.set(nodeId, overlay);
@@ -455,6 +460,7 @@
           width: Math.ceil(Math.max(rect.width, LAYOUT.fallbackWidth)),
           height: Math.ceil(Math.max(rect.height, LAYOUT.fallbackHeight))
         });
+        resizeObserver?.observe(overlay);
       }
     }
 
@@ -509,7 +515,7 @@
       const hidden = Math.max(0, allNodes.size - visibleIds.size);
       const layerCount = layoutSnapshot ? Object.keys(layoutSnapshot.depths).length : 0;
       const zoom = cy ? Math.round(cy.zoom() * 100) : 100;
-      const limitNote = graph.truncated ? "，图谱已按加载上限显示" : "";
+      const limitNote = continuation?.hasMore ? "，仍可继续加载" : "";
       status.textContent =
         message ||
         `当前显示 ${visibleIds.size} 个节点、${layerCount} 层，缩放 ${zoom}%${
@@ -536,11 +542,16 @@
     }
 
     function rebuild(fit = true) {
+      if (rebuilding || destroyed) return;
+      rebuilding = true;
       measureOverlays();
       layoutSnapshot = computeLayout(visibleNodes(), visibleEdges(), sizeById, {
         depths: depthResult
       });
-      if (!cy) return;
+      if (!cy) {
+        rebuilding = false;
+        return;
+      }
       cy.batch(() => {
         cy.elements().remove();
         cy.add(cytoscapeElements());
@@ -550,11 +561,55 @@
       if (fit) fitReadable();
       else scheduleOverlaySync();
       updateStatus();
+      rebuilding = false;
     }
 
-    function expand(nodeId = selectedId) {
+    function scheduleRemeasure() {
+      if (remeasureFrame || rebuilding || destroyed) return;
+      const requestFrame = global.requestAnimationFrame || ((callback) => global.setTimeout(callback, 0));
+      remeasureFrame = requestFrame(() => {
+        remeasureFrame = 0;
+        if (!cy || destroyed) return;
+        const changed = [...overlayById].some(([nodeId, overlay]) => {
+          const previous = sizeById.get(nodeId);
+          const width = Math.ceil(Math.max(overlay.offsetWidth, LAYOUT.fallbackWidth));
+          const height = Math.ceil(Math.max(overlay.offsetHeight, LAYOUT.fallbackHeight));
+          return !previous || Math.abs(previous.width - width) > 1 || Math.abs(previous.height - height) > 1;
+        });
+        if (!changed) return;
+        const pan = cy.pan();
+        const zoom = cy.zoom();
+        rebuild(false);
+        cy.zoom(zoom);
+        cy.pan(pan);
+        scheduleOverlaySync();
+      });
+    }
+
+    async function expand(nodeId = selectedId) {
       const key = String(nodeId || graph.currentNodeId || "");
-      const additions = hiddenNeighbors(key);
+      let additions = hiddenNeighbors(key);
+      if (!additions.length && continuation?.hasMore && typeof options.loadContinuation === "function" && !loadingContinuation) {
+        loadingContinuation = true;
+        updateStatus("正在继续加载推导图谱……");
+        try {
+          const next = await options.loadContinuation(continuation.cursor);
+          for (const node of next?.nodes || []) allNodes.set(String(node.id), node);
+          for (const edge of next?.edges || []) allEdges.set(String(edge.id), edge);
+          continuation = next?.continuation || null;
+          depthResult = computeDepths([...allNodes.values()], [...allEdges.values()]);
+          additions = hiddenNeighbors(key);
+          if (!additions.length) {
+            const frontier = [...visibleIds].flatMap((visibleId) => hiddenNeighbors(visibleId));
+            additions = [...new Set(frontier)];
+          }
+        } catch {
+          updateStatus("继续加载失败，请稍后重试。");
+          return 0;
+        } finally {
+          loadingContinuation = false;
+        }
+      }
       additions.forEach((candidate) => visibleIds.add(candidate));
       if (additions.length) {
         rebuild(true);
@@ -702,7 +757,7 @@
       }
     });
 
-    function onToolbarClick(event) {
+    async function onToolbarClick(event) {
       const control = event.target.closest("[data-graph-action]");
       if (!control) return;
       const action = control.dataset.graphAction;
@@ -710,20 +765,22 @@
       if (action === "zoom-out") zoomBy(1 / 1.2);
       if (action === "fit") fitReadable();
       if (action === "center") centerCurrent();
-      if (action === "expand") expand();
+      if (action === "expand") await expand();
       if (action === "collapse") collapse();
     }
     host.addEventListener("click", onToolbarClick);
 
     resizeObserver =
       typeof global.ResizeObserver === "function"
-        ? new global.ResizeObserver(() => {
+        ? new global.ResizeObserver((entries) => {
             if (!cy) return;
-            cy.resize();
+            if (entries.some((entry) => entry.target === canvas)) cy.resize();
+            if (entries.some((entry) => entry.target !== canvas)) scheduleRemeasure();
             scheduleOverlaySync();
           })
         : null;
     resizeObserver?.observe(canvas);
+    overlayById.forEach((overlay) => resizeObserver?.observe(overlay));
 
     global.document.fonts?.ready?.then(() => {
       if (destroyed) return;
@@ -749,6 +806,7 @@
         destroyed = true;
         resizeObserver?.disconnect();
         if (syncFrame && global.cancelAnimationFrame) global.cancelAnimationFrame(syncFrame);
+        if (remeasureFrame && global.cancelAnimationFrame) global.cancelAnimationFrame(remeasureFrame);
         host.removeEventListener("click", onToolbarClick);
         cy?.destroy();
         if (host._formulaGraph === api) host._formulaGraph = null;

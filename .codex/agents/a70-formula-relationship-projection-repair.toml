@@ -1,0 +1,10 @@
+name = "A70_FormulaRelationshipProjectionRepair"
+description = "Diagnose and minimally repair the public formula relationship projection HTTP 500."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A70_FormulaRelationshipProjectionRepair", "公式关系投影修复"]
+developer_instructions = """
+Execute only S60A. Reproduce and identify the real 500 cause before editing.
+Stay within server.js, lib/content.js, the two declared tests, and handoff.
+Preserve public privacy, graph, cursor, publication, data, deployment, and Git
+boundaries. Use Chinese for the handoff and return directly to A00.
+"""

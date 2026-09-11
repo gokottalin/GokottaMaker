@@ -261,6 +261,10 @@ node --experimental-sqlite server.js
 `codex:contract` checks the current Agent gate and required project files.
 `codex:resources` inventories source assets and protected runtime resources.
 
+The unique machine contract for formula derivation maps is
+`schemas/formula-derivation-map.schema.json`; semantic and projection rules are
+documented in `docs/formula-derivation-map-contract.md`.
+
 ## Codex Structure
 
 - `.codex/config.toml` keeps project-scoped Codex agent settings.

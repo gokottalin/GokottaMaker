@@ -1,6 +1,15 @@
 # A00 Project Director Handoff
 
-Status: `DISPATCH-20260730-001 complete; control returned to A00`.
+Status: `DISPATCH-20260911-001 accepted; S56 through S60A complete; queue empty`.
+
+## Active Dispatch
+
+- Requirements: `REQ-20260824-001`, `REQ-20260911-001`, `REQ-20260911-002`, `REQ-20260911-003`.
+- Accepted: `A65` / `S56`, `A66` / `S57`, `A67` / `S58`, and `A68` / `S59`.
+- Accepted repair: `A70` / `S60A`; root cause was `truncated` scope causing ReferenceError.
+- Final S60 rerun: `15 passed / 0 failed`, digest `sha256:9574b01464d7f2b0ddbc861e0783d1e77173313664082585c256dca7c86794c3`.
+- A00 final decision: accepted; queue empty and control remains at A00.
+- Production, current data, migrations, Git, deployment, cloud, version, service and secret writes remain closed.
 
 ## Authority
 
@@ -87,9 +96,10 @@ S28 final A00 evidence:
 
 ## Current Gate
 
-No short-task workbench is open. S42 published `V2.5.3+20260807-0001` as
-commit `450b041` to the existing `origin/main`. Production, cloud, data,
-version, product, branch, remote, and Git write gates are closed.
+Only the declared `DISPATCH-20260911-001` product files and isolated tests are
+open. `origin/main` remains at closure commit `d73bd02`. Production, cloud,
+current data, migrations, version, services, secrets, branch, remote, and Git
+write gates are closed.
 
 ## Closed Boundaries
 
@@ -101,14 +111,13 @@ version, product, branch, remote, and Git write gates are closed.
 
 ## Queue
 
-1. S30-S42. Accepted.
-2. A00 requirement intake and sequencing. Current.
-3. Production deployment. Closed.
+1. Next Owner-confirmed requirement package. Current intake state: waiting.
+2. Production deployment. Closed; requires explicit Owner authorization.
 
 ## Current Handoff
 
 ```text
-Agent 00 Project Director（项目导演：负责顺序、门禁和下一步裁决）：请进入 E:\Project\2607-LarkixWeb，运行 npm.cmd run codex:handoff 核验当前已回到 A00；使用中文交接，等待新的已确认需求后再分派短任务 Agent。
+Agent 00 Project Director（项目导演：最终 Git 交付已验收，队列为空）：请进入 E:\Project\2607-LarkixWeb，运行 npm.cmd run codex:handoff 核验当前路由仍在 A00；使用中文交接，等待下一份 Owner 确认需求后再分派短任务 Agent；生产部署与所有 Git 写入保持关闭。
 ```
 
 ## 2026-07-30 Confirmed Batch
@@ -148,3 +157,36 @@ Agent 00 Project Director（项目导演：负责顺序、门禁和下一步裁�
 - Current and production data, uploads, production services, secrets, version, deployment, and Git were not changed.
 - Production release still requires server-side `sudo nginx -t` and a server-local real `PRIVATE_CMS_PATH`.
 - No temporary Agent is queued; new work requires a confirmed requirement or explicit release authority.
+
+## 2026-08-16 Final Git Publication Batch (DISPATCH-20260813-002)
+
+### status
+
+`accepted_queue_empty`
+
+### accepted scope
+
+- S51 / A60: complete live-worktree partition (`123 include / 105 exclude / 0 review`) with explicit exclusion reasons and no Git write.
+- S52 / A61: secret-free cross-computer clone, bootstrap, verification, and Codex continuation path (`AGENTS.md` entry, `verify:clean-clone`, `codex:handoff`).
+- S53 / A62: Git-external encrypted database/uploads handoff verified on isolated sample data only.
+- S54 / A63: synchronized release identity `V2.5.4+20260814-0001`, zero review paths, and an outside-repository candidate that installed, started, health-checked, and passed tests.
+- S55 / A64: exact 123-path staging (never `git add .`), release commit `2ef409b` and closure commit `d73bd02` pushed to existing `origin/main`, and a fresh remote-SHA clone that passed install, start, health, and core verification.
+
+### A00 final acceptance evidence (2026-08-16)
+
+- Local HEAD `d73bd02…8bb54` equals remote `origin/main` SHA; branch relation `main...origin/main` ahead/behind `0/0`.
+- Release commit `2ef409b` and closure commit `d73bd02` are present in local history and on the remote.
+- `npm.cmd run check:version` passed at `V2.5.4+20260814-0001`.
+- `npm.cmd run codex:contract` passed at `1156 passed / 0 warnings / 0 failures`.
+- Working tree has no tracked or staged changes; only the 105 intentionally excluded legacy `docs/Agent*` untracked files remain, exactly as declared by S55.
+- S55 reported final candidate verifier passed, security-formula regression `15/15`, secret scan `0` hits, and pre-push fetch fast-forward `0/0`.
+
+### boundaries
+
+- Production deployment, production data, services, secrets, cloud, migrations, restore, rollback, and all Git writes remain closed.
+- The 105 legacy pyramid-era `docs/Agent*` files stay local and unpublished.
+- Optional business data can only move outside Git via `docs/encrypted-data-handoff.md`.
+
+### next_handoff
+
+`A00_ProjectDirector` waits for the next Owner-confirmed requirement package or explicit production-release authority. No short-task Agent is queued.

@@ -21,8 +21,24 @@
     "A00_acceptance"
   ],
   "acceptedSlices": ["S51_final_repository_manifest", "S52_cross_computer_bootstrap", "S53_encrypted_data_handoff", "S54_final_candidate_gate", "S55_git_publish_and_remote_clone"],
-  "currentSlice": "A00_acceptance",
+  "currentSlice": "A00_acceptance_complete",
   "currentAgent": "A00_ProjectDirector",
+  "acceptance": {
+    "acceptedBy": "A00_ProjectDirector",
+    "acceptedAt": "2026-08-16 19:29 +08:00",
+    "decision": "accepted",
+    "evidence": {
+      "localHeadSha": "d73bd02111f277fc259e6630c5511531e018bb54",
+      "remoteMainSha": "d73bd02111f277fc259e6630c5511531e018bb54",
+      "releaseCommitSha": "2ef409b397d9f96bf2e3f80c78767c3f06f5084f",
+      "branchRelation": "main...origin/main ahead/behind 0/0",
+      "versionCheck": "V2.5.4+20260814-0001 passed",
+      "contractCheck": "1156 passed / 0 warnings / 0 failures",
+      "worktreeState": "no tracked or staged changes; only 105 intentionally excluded legacy docs/Agent* untracked files remain",
+      "s55ReportedChecks": "final candidate verifier passed; security-formula regression 15/15; secret scan 0 hits; pre-push fetch fast-forward 0/0"
+    },
+    "queueAfterAcceptance": "empty; next work requires an Owner-confirmed requirement package or explicit production-release authority"
+  },
   "writePolicy": "single_writer_per_declared_file",
   "gates": {
     "manifestPlanning": false,

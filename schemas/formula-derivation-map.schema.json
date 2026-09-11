@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://larkix.com/schemas/formula-derivation-map.schema.json",
+  "title": "Larkix Formula Derivation Map",
+  "description": "公式推导地图的唯一交换契约。边方向恒为 source -> target；公式依赖边表示来源公式依赖目标公式。DAG、投影隔离和游标一致性由 x-semanticRules 定义。",
+  "type": "object",
+  "required": ["mode", "currentNodeId", "nodes", "edges", "initialNodeIds", "expandableNodeIds", "hiddenNodeCount", "truncated", "limits"],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "const": "larkix.formula-derivation-map.v1" },
+    "mode": { "enum": ["published", "current"] },
+    "currentNodeId": { "$ref": "#/$defs/nodeId" },
+    "source": { "$ref": "#/$defs/source" },
+    "nodes": { "type": "array", "items": { "$ref": "#/$defs/node" } },
+    "edges": { "type": "array", "items": { "$ref": "#/$defs/edge" } },
+    "initialNodeIds": { "$ref": "#/$defs/nodeIdList" },
+    "expandableNodeIds": { "$ref": "#/$defs/nodeIdList" },
+    "hiddenNodeCount": { "type": "integer", "minimum": 0 },
+    "truncated": { "type": "boolean" },
+    "limits": {
+      "type": ["object", "null"],
+      "required": ["initialNodes", "payloadNodes"],
+      "additionalProperties": false,
+      "properties": {
+        "initialNodes": { "type": "integer", "minimum": 1 },
+        "payloadNodes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "continuation": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "required": ["cursor", "hasMore"],
+          "additionalProperties": false,
+          "properties": {
+            "cursor": { "$ref": "#/$defs/cursor" },
+            "hasMore": { "type": "boolean" }
+          }
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "nodeId": { "type": "string", "minLength": 1, "maxLength": 256, "pattern": "^[^\\s]+$" },
+    "nodeIdList": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/nodeId" } },
+    "cursor": { "type": "string", "minLength": 16, "maxLength": 2048, "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$" },
+    "source": {
+      "type": "object",
+      "required": ["kind", "id", "revision"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "enum": ["formula_card", "article"] },
+        "id": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "revision": { "type": "string", "minLength": 1, "maxLength": 256 }
+      }
+    },
+    "nodeBase": {
+      "type": "object",
+      "required": ["id", "nodeType", "slug", "displayName", "rank", "direction", "current", "initiallyVisible"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nodeId" },
+        "nodeType": { "enum": ["formula", "article"] },
+        "slug": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 512 },
+        "latex": { "type": "string" },
+        "route": { "type": "string", "maxLength": 2048 },
+        "referenceCount": { "type": "integer", "minimum": 0 },
+        "rank": { "type": "integer" },
+        "direction": { "enum": ["ancestor", "current", "dependency", "article"] },
+        "current": { "type": "boolean" },
+        "initiallyVisible": { "type": "boolean" },
+        "formulaId": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "revisionId": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "postId": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "publishStatus": { "enum": ["draft", "published", "archived"] },
+        "pendingPublication": { "type": "boolean" },
+        "archiveState": { "enum": ["active", "archived"] },
+        "lifecycleState": { "type": "string", "minLength": 1, "maxLength": 64 }
+      }
+    },
+    "node": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeBase" },
+        {
+          "if": { "properties": { "nodeType": { "const": "formula" } }, "required": ["nodeType"] },
+          "then": { "required": ["latex"], "properties": { "direction": { "enum": ["ancestor", "current", "dependency"] } } },
+          "else": { "required": ["route", "referenceCount"], "properties": { "direction": { "const": "article" }, "current": { "const": false } } }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "edge": {
+      "type": "object",
+      "required": ["id", "edgeType", "source", "target", "initiallyVisible"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "edgeType": { "enum": ["formula_dependency", "article_reference"] },
+        "source": { "$ref": "#/$defs/nodeId" },
+        "target": { "$ref": "#/$defs/nodeId" },
+        "initiallyVisible": { "type": "boolean" },
+        "referenceCount": { "type": "integer", "minimum": 0 },
+        "provenance": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "ordinal": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "x-semanticRules": [
+    "node and edge ids are unique; every edge endpoint and listed node id exists",
+    "currentNodeId identifies exactly one formula node with current=true",
+    "formula_dependency and article_reference edges form a directed acyclic graph; self edges are forbidden",
+    "formula_dependency is formula-to-formula and article_reference is article-to-formula",
+    "published projection forbids formulaId, revisionId, postId, publishStatus, pendingPublication, archiveState, lifecycleState, provenance and ordinal",
+    "current projection may expose status and internal identities",
+    "truncated=true requires continuation.hasMore=true and a valid opaque cursor; continuation.hasMore=true requires truncated=true",
+    "truncated=false forbids a non-null continuation cursor"
+  ]
+}

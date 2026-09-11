@@ -1,0 +1,9 @@
+name = "A68_FormulaDetailPage"
+description = "Create the canonical public formula card page and unified navigation."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A68_FormulaDetailPage", "公式卡独立页"]
+developer_instructions = """
+Execute only S59 after A00 accepts S56-S58. Reuse the unique graph contract and
+shared renderers. Preserve publication privacy and legacy links. Do not touch
+production data, deployment, or Git. Use Chinese for the handoff.
+"""

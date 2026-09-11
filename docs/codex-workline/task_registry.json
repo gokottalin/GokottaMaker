@@ -4,7 +4,7 @@
   "operatingModel": "project_director_plus_short_task_agents",
   "legacyAgentDocsMode": "historical_reference_only",
   "currentGate": {
-    "batch1": "dispatch_20260813_complete_returned_a00",
+    "batch1": "dispatch_20260911_accepted_queue_empty",
     "businessImplementationAllowed": true,
     "databaseMutationAllowed": false,
     "migrationFileImplementationAllowed": false,
@@ -120,7 +120,13 @@
         "the formula critical path is accepted in binding, selection, relation recovery, and graph-layout order",
         "MD2File preview, DOCX semantics, public entry, and focus exception are accepted",
         "S40 batch regression and S41 release gate are accepted before any later Git authorization",
-        "current/production data, physical cleanup, cloud, deployment, and Git operations remain closed"
+        "current/production data, physical cleanup, cloud, deployment, and Git operations remain closed",
+        "REQ-20260812-001 through REQ-20260812-004 are digest-verified and mapped by DISPATCH-20260812-001, DISPATCH-20260812-002, and DISPATCH-20260813-001",
+        "S43 through S50 are accepted for the 2026-08-12 security and formula batches",
+        "REQ-20260813-001 is digest-verified and mapped by DISPATCH-20260813-002",
+        "S51 through S55 are accepted with V2.5.4 release commit 2ef409b and closure commit d73bd02 verified on origin/main from a fresh remote-SHA clone",
+        "the automatic short-task queue has zero current tasks and routes back to A00",
+        "current/production data, destructive cleanup, cloud, deployment, and Git operations remain closed"
       ]
     }
   ],
@@ -2418,6 +2424,66 @@
       "doneWhen": ["staged paths exactly equal the accepted include set", "fast-forward safety and full candidate checks pass", "ordinary push to existing origin/main succeeds", "fresh remote-SHA clone installs, starts, health-checks, and passes core verification"],
       "brief": "agents/A64_FinalGitPublisher/brief.md",
       "handoff": "docs/codex-workline/slices/S55_git_publish_and_remote_clone_handoff.md"
+    },
+    {
+      "id": "A65_FormulaMapContract",
+      "status": "completed",
+      "scope": "Define and verify the unique unlimited-depth formula derivation map JSON contract without runtime behavior changes.",
+      "reads": ["AGENTS.md", "PROJECT_WINDOW.md", "docs/codex-workline/requirements/active/REQ-20260824-001.json", "docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json", "schemas/formula-derivation-map.schema.json", "server.js", "lib/content.js", "formula-graph.js", "post.js", "admin/admin.js"],
+      "mayEdit": ["schemas/formula-derivation-map.schema.json", "docs/formula-derivation-map-contract.md", "scripts/test-formula-derivation-map-contract.js", "AGENTS.md", "docs/codex-workline/slices/S56_formula_map_contract_handoff.md"],
+      "doneWhen": ["one machine-valid schema covers article/formula nodes, DAG edges, states, projections, truncation, and continuation", "valid six-level branching and merge fixtures pass", "invalid public draft leakage and malformed structures fail", "AGENTS points to the unique machine contract and all gates pass"],
+      "brief": "agents/A65_FormulaMapContract/brief.md",
+      "handoff": "docs/codex-workline/slices/S56_formula_map_contract_handoff.md"
+    },
+    {
+      "id": "A66_AdaptiveFormulaHeight",
+      "status": "completed",
+      "scope": "Make complex formulas fully visible with adaptive vertical sizing across public, CMS, graph, and MD2File surfaces.",
+      "reads": ["AGENTS.md", "PROJECT_WINDOW.md", "docs/codex-workline/requirements/active/REQ-20260911-002.json", "docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json", "data/math-renderer.js", "styles/40-formula.css", "admin/admin.css", "formula-graph.js"],
+      "mayEdit": ["data/math-renderer.js", "styles/20-content.css", "styles/40-formula.css", "admin/admin.css", "admin/admin-dark.css", "formula-graph.js", "scripts/test-adaptive-formula-height.js", "docs/codex-workline/slices/S57_adaptive_formula_height_handoff.md"],
+      "doneWhen": ["no target math container uses vertical scrolling or clips math", "block math expands to measured content while inline math remains compact", "font, resize, theme, content, and graph reflow are handled without observer loops", "complex fixture and responsive checks pass"],
+      "brief": "agents/A66_AdaptiveFormulaHeight/brief.md",
+      "handoff": "docs/codex-workline/slices/S57_adaptive_formula_height_handoff.md"
+    },
+    {
+      "id": "A67_FormulaMetadataManagement",
+      "status": "completed",
+      "scope": "Implement selectable modules, simple two-level classifications, tags, revision notes, and protected metadata lifecycle operations.",
+      "reads": ["AGENTS.md", "PROJECT_WINDOW.md", "docs/codex-workline/requirements/active/REQ-20260911-001.json", "docs/codex-workline/slices/S56_formula_map_contract_handoff.md", "server.js", "lib/content.js", "lib/validators.js", "admin/index.html", "admin/admin.js", "admin/admin.css"],
+      "mayEdit": ["server.js", "lib/content.js", "lib/validators.js", "admin/index.html", "admin/admin.js", "admin/admin.css", "admin/admin-dark.css", "scripts/test-formula-metadata-management.js", "docs/formula-metadata-management.md", "docs/codex-workline/slices/S58_formula_metadata_management_handoff.md"],
+      "doneWhen": ["existing metadata is selectable and refreshes from authority", "revision notes save and round-trip", "classification is a simple two-level business taxonomy without graph levels", "rename, merge, migrate, archive, and zero-reference delete enforce preview and reference protection"],
+      "brief": "agents/A67_FormulaMetadataManagement/brief.md",
+      "handoff": "docs/codex-workline/slices/S58_formula_metadata_management_handoff.md"
+    },
+    {
+      "id": "A68_FormulaDetailPage",
+      "status": "completed",
+      "scope": "Create one canonical public formula card page and route all formula navigation to it while preserving publication privacy and legacy links.",
+      "reads": ["AGENTS.md", "PROJECT_WINDOW.md", "docs/codex-workline/requirements/active/REQ-20260911-003.json", "docs/codex-workline/slices/S56_formula_map_contract_handoff.md", "docs/codex-workline/slices/S57_adaptive_formula_height_handoff.md", "docs/codex-workline/slices/S58_formula_metadata_management_handoff.md"],
+      "mayEdit": ["server.js", "lib/content.js", "lib/seo.js", "formula.html", "formula.js", "formula-graph.js", "post.js", "derive.html", "derive.js", "styles/20-content.css", "styles/40-formula.css", "scripts/test-formula-detail-page.js", "docs/codex-workline/slices/S59_formula_detail_page_handoff.md"],
+      "doneWhen": ["published formulas have one stable canonical URL", "all formula entry points converge while article nodes remain article links", "page shows complete optional-aware content and the unique graph", "draft, archived, invalid, and missing formulas return non-leaking public 404"],
+      "brief": "agents/A68_FormulaDetailPage/brief.md",
+      "handoff": "docs/codex-workline/slices/S59_formula_detail_page_handoff.md"
+    },
+    {
+      "id": "A69_FormulaWorklineRegression",
+      "status": "completed",
+      "scope": "Produce isolated regression evidence for the complete formula contract, metadata, layout, detail-page, graph, and security workline.",
+      "reads": ["AGENTS.md", "PROJECT_WINDOW.md", "docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json", "docs/codex-workline/slices/S56_formula_map_contract_handoff.md", "docs/codex-workline/slices/S57_adaptive_formula_height_handoff.md", "docs/codex-workline/slices/S58_formula_metadata_management_handoff.md", "docs/codex-workline/slices/S59_formula_detail_page_handoff.md"],
+      "mayEdit": ["scripts/run-formula-workline-regression.js", "docs/formula-workline-regression-evidence.md", "docs/codex-workline/slices/S60_formula_workline_regression_handoff.md"],
+      "doneWhen": ["one repeatable requirement-to-check matrix passes", "six-level DAG, public/CMS projection, metadata lifecycle, high math, detail route, and legacy links are covered", "responsive, dark mode, accessibility, and anonymous security evidence pass", "QA contains no product repairs and protected boundaries remain unchanged"],
+      "brief": "agents/A69_FormulaWorklineRegression/brief.md",
+      "handoff": "docs/codex-workline/slices/S60_formula_workline_regression_handoff.md"
+    },
+    {
+      "id": "A70_FormulaRelationshipProjectionRepair",
+      "status": "completed",
+      "scope": "Diagnose and minimally repair the public formula relationship projection HTTP 500 without weakening privacy, graph, cursor, or publication contracts.",
+      "reads": ["AGENTS.md", "PROJECT_WINDOW.md", "docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json", "docs/codex-workline/slices/S56_formula_map_contract_handoff.md", "docs/codex-workline/slices/S58_formula_metadata_management_handoff.md", "docs/codex-workline/slices/S59_formula_detail_page_handoff.md", "docs/codex-workline/slices/S60_formula_workline_regression_handoff.md", "scripts/test-formula-relationship-projection.js", "server.js", "lib/content.js"],
+      "mayEdit": ["server.js", "lib/content.js", "scripts/test-formula-relationship-projection.js", "scripts/test-formula-detail-page.js", "docs/codex-workline/slices/S60A_formula_relationship_projection_repair_handoff.md"],
+      "doneWhen": ["the real 500 cause is recorded", "the original failing test passes without relaxed assertions", "public projection still excludes draft and internal identities", "formula detail, publication, DAG, security, and codex gates pass"],
+      "brief": "agents/A70_FormulaRelationshipProjectionRepair/brief.md",
+      "handoff": "docs/codex-workline/slices/S60A_formula_relationship_projection_repair_handoff.md"
     }
   ],
   "onDemandWorkbenches": [

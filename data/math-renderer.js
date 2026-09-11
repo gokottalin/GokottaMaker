@@ -11,6 +11,91 @@
     maxExpand: 1000,
     maxSize: 20
   });
+  const ADAPTIVE_BLOCK_SELECTOR = [
+    ".markdown-math-display",
+    ".formula-card-latex",
+    ".formula-editor-preview",
+    ".formula-markdown-preview",
+    ".formula-authoring-latex",
+    ".formula-selection-preview"
+  ].join(",");
+  const MEASURE_EPSILON = 0.5;
+  let adaptiveObserver = null;
+  let adaptiveMutationObserver = null;
+  let adaptiveFrame = 0;
+  const adaptiveRoots = new Set();
+
+  function measuredMath(container) {
+    if (!container || container.matches?.(".markdown-math-inline")) return null;
+    return container.querySelector?.(".katex-display > .katex, .katex-display, .katex") || null;
+  }
+
+  function measureBlock(container) {
+    const math = measuredMath(container);
+    if (!math || typeof math.getBoundingClientRect !== "function") return false;
+    const rect = math.getBoundingClientRect();
+    if (!(rect.height > 0)) return false;
+    const padding = Math.max(6, Math.min(14, rect.height * 0.1));
+    const previous = Number(container.dataset.mathContentHeight || 0);
+    container.dataset.mathAdaptive = "block";
+    container.style.setProperty("--math-content-block-size", `${rect.height.toFixed(2)}px`);
+    container.style.setProperty("--math-safe-block-padding", `${padding.toFixed(2)}px`);
+    container.dataset.mathContentHeight = rect.height.toFixed(2);
+    adaptiveObserver?.observe(math);
+    return Math.abs(previous - rect.height) > MEASURE_EPSILON;
+  }
+
+  function collectBlocks(root) {
+    if (!root || typeof root.querySelectorAll !== "function") return [];
+    const blocks = [];
+    if (root.matches?.(ADAPTIVE_BLOCK_SELECTOR)) blocks.push(root);
+    root.querySelectorAll(ADAPTIVE_BLOCK_SELECTOR).forEach((block) => blocks.push(block));
+    return blocks;
+  }
+
+  function flushAdaptiveLayout() {
+    adaptiveFrame = 0;
+    const roots = [...adaptiveRoots];
+    adaptiveRoots.clear();
+    roots.forEach((root) => collectBlocks(root).forEach(measureBlock));
+  }
+
+  function scheduleAdaptiveLayout(root) {
+    if (!global.document) return;
+    adaptiveRoots.add(root && root.nodeType ? root : global.document);
+    if (adaptiveFrame) return;
+    const requestFrame = global.requestAnimationFrame || ((callback) => global.setTimeout(callback, 0));
+    adaptiveFrame = requestFrame(flushAdaptiveLayout);
+  }
+
+  function startAdaptiveLayout() {
+    if (!global.document || adaptiveMutationObserver) return;
+    adaptiveObserver =
+      typeof global.ResizeObserver === "function"
+        ? new global.ResizeObserver((entries) => {
+            entries.forEach((entry) => {
+              const block = entry.target.closest?.(ADAPTIVE_BLOCK_SELECTOR);
+              if (block) scheduleAdaptiveLayout(block);
+            });
+          })
+        : null;
+    adaptiveMutationObserver =
+      typeof global.MutationObserver === "function"
+        ? new global.MutationObserver((records) => {
+            records.forEach((record) => scheduleAdaptiveLayout(record.target));
+          })
+        : { disconnect() {} };
+    adaptiveMutationObserver.observe?.(global.document.documentElement, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+      attributes: true,
+      attributeFilter: ["class", "data-theme"]
+    });
+    global.addEventListener?.("resize", () => scheduleAdaptiveLayout(global.document));
+    global.document.fonts?.ready?.then(() => scheduleAdaptiveLayout(global.document));
+    scheduleAdaptiveLayout(global.document);
+  }
 
   function positionAt(source, offset) {
     const safeOffset = Math.max(0, Math.min(source.length, Number.isFinite(offset) ? offset : 0));
@@ -180,6 +265,19 @@
     ENGINE,
     VERSION,
     render,
-    validate
+    validate,
+    adaptiveLayout: Object.freeze({
+      measure: measureBlock,
+      refresh: scheduleAdaptiveLayout,
+      start: startAdaptiveLayout
+    })
   });
+
+  if (global.document) {
+    if (global.document.readyState === "loading") {
+      global.document.addEventListener("DOMContentLoaded", startAdaptiveLayout, { once: true });
+    } else {
+      startAdaptiveLayout();
+    }
+  }
 })(typeof window !== "undefined" ? window : globalThis);

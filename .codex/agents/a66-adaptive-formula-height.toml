@@ -1,0 +1,10 @@
+name = "A66_AdaptiveFormulaHeight"
+description = "Make complex formulas fully visible with adaptive vertical sizing."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A66_AdaptiveFormulaHeight", "高公式自适应"]
+developer_instructions = """
+Execute only S57_adaptive_formula_height. Stay inside the declared renderer,
+style, graph, test, and handoff files. Preserve inline math semantics and all
+data/API contracts. Do not deploy or perform Git writes. Use Chinese for the
+handoff and return directly to A00.
+"""

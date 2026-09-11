@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260911-003",
+  "title": "公式卡独立访问页面与统一推导入口",
+  "status": "dispatched",
+  "priority": "high",
+  "createdAt": "2026-09-11T00:54:10.571+08:00",
+  "updatedAt": "2026-09-11T01:14:03.580+08:00",
+  "intent": {
+    "problem": "公式卡缺少清晰、可直接访问和分享的独立页面，用户从公式推导页面进入时无法在一个稳定页面查看公式本体、用途、分类、推导正文和完整上下游关系。",
+    "desiredOutcome": "为每张允许访问的公式卡提供稳定独立页面，并把推导地图节点和文章公式角标统一连接到该页面；页面集中展示公式信息、Markdown 推导和完整关系图，同时遵守草稿、已发布、已归档的访问边界。",
+    "targetUsers": ["Larkix 游客", "Owner", "CMS 公式作者"]
+  },
+  "scope": {
+    "in": [
+      "建立公式卡专用详情路由和页面，其 URL 使用服务端生成的稳定公式 slug，不与公式推导索引或旧知识节点页面混为同一内容模式",
+      "独立页面按顺序展示公式名称、完整 LaTeX 公式、用途、大类/小类、标签、Markdown 推导正文、上下游关系列表和完整公式地图",
+      "公式推导首页、公式推导地图中的公式节点、公式上下级关系项及文章中的紫色圆形回车角标统一进入对应公式卡独立页面",
+      "地图中的文章节点仍进入文章详情页，不错误进入公式卡页；鼠标悬停角标继续显示目标公式名称",
+      "页面使用唯一公式地图 JSON 契约解释文章上游、当前公式、下一级公式和无限深度 DAG，不创建页面专用平行关系结构",
+      "公式页可以直接刷新、复制链接、前进后退和从更深层返回，页面标题、canonical、分享摘要及错误状态与当前公式对应",
+      "游客只能访问已发布公式卡的已发布修订；草稿公式卡仅在 CMS 认证预览中访问；已归档公式保留既有文章历史显示，但独立公开页按照既有规则不再公开",
+      "不存在、非法 slug、草稿、无权限和不公开归档公式在公开端返回不泄露内部状态的 404，不显示管理端路径或内部 ID",
+      "保留旧公式详情链接的兼容重定向或等价路由映射，避免现有文章角标和历史外链失效；具体规范路由由 A00 根据当前部署结构确定",
+      "独立页面应用共享 Markdown/LaTeX 渲染、公式自适应高度、明暗模式、移动端布局、公式地图滚动缩放和无障碍导航规则",
+      "增加从文章、推导索引、地图节点、上下级关系和直接 URL 进入页面的端到端测试"
+    ],
+    "out": [
+      "把草稿或已归档公式重新公开",
+      "在页面中暴露 formulaId、revisionId、私有 CMS 地址、管理 API 或审计信息给游客",
+      "复制一套新的公式关系数据源或第二份图谱契约",
+      "改变公式卡三态、推导 DAG 或分类 CRUD 规则",
+      "未经授权生产部署"
+    ]
+  },
+  "behavior": {
+    "current": ["公式推导和公式详情共用 derive.html 的不同参数/模式，Owner 认为缺少明确的公式卡单独访问页面。", "公式地图节点和文章角标已经具有公式跳转基础，但目标页面职责和完整信息不够清晰。"],
+    "expected": ["每张已发布公式卡有唯一、稳定、可直接访问的公开详情 URL。", "从公式推导页面点击公式节点即可进入独立公式卡页。", "页面完整显示公式、用途、两级分类、标签、推导正文及完整上下游地图。", "文章角标和所有公式关系入口使用同一目标路由。", "草稿仅 CMS 可见，归档独立公开页不可访问。"],
+    "edgeCases": ["公式 slug 非法或不存在。", "公式刚由草稿发布或已归档，缓存仍持有旧页面。", "旧链接使用 derive.html?formula=...。", "地图节点是文章而非公式。", "公式没有用途、标签、推导正文或关系。", "深图加载被截断后继续展开。"]
+  },
+  "acceptanceCriteria": [
+    {"id":"ac.stable-page","statement":"每张已发布公式卡具有唯一稳定详情 URL，可直接打开、刷新、复制和浏览器前进后退。","verification":"对多张公式复制 URL 到全新匿名会话，核对页面内容、canonical、标题和当前公式身份。"},
+    {"id":"ac.complete-content","statement":"独立页显示公式名称、完整公式、用途、大类/小类、标签、Markdown 推导、上下游关系和完整公式地图；选填内容缺失时不显示空壳。","verification":"用字段完整和字段缺省两张公式卡检查页面顺序、空态和共享数学/Markdown 渲染。"},
+    {"id":"ac.unified-navigation","statement":"推导索引、公式地图公式节点、上下级公式项和文章紫色角标全部进入同一公式卡独立页面，文章节点仍进入文章页。","verification":"逐个入口点击并比较最终规范 URL；检查悬停名称、返回路径及节点类型路由。"},
+    {"id":"ac.status-visibility","statement":"游客只能访问已发布公式的已发布修订；草稿只在 CMS 预览可见，已归档独立公式页和不存在公式均公开返回 404。","verification":"对草稿、已发布、待发布修订、已归档和不存在 slug 逐项匿名/认证测试并检查响应不泄露内部状态。"},
+    {"id":"ac.legacy-links","statement":"现有旧公式链接和文章绑定不会因新页面失效，并被规范映射到唯一公式详情 URL。","verification":"收集既有 derive.html?formula 链接和文章角标链接，确认受控重定向或兼容访问且无循环跳转。"},
+    {"id":"ac.graph-contract","statement":"独立页面只消费唯一公式地图契约并支持无限深度 DAG 的有界加载、滚动和缩放。","verification":"验证页面响应符合 schemas/formula-derivation-map.schema.json，测试至少六阶分支汇入图及截断继续加载。"},
+    {"id":"ac.responsive-accessible","statement":"独立页在桌面、移动端、明暗模式下无裁切和横向页面溢出，键盘可进入公式、正文和图谱控制。","verification":"在 390、768、1366、1920 宽度执行浏览器截图、键盘和控制台检查。"}
+  ],
+  "constraints": {
+    "languages": ["zh-CN"],
+    "platforms": ["LarkixMaker visitor site", "LarkixMaker CMS preview", "Desktop browser", "Mobile browser"],
+    "compatibility": ["保留已有公式 slug 和文章公式绑定", "兼容旧 derive.html?formula 链接", "复用共享 Markdown/LaTeX 和公式地图渲染器", "遵守公式三态发布规则"],
+    "data": ["页面读取服务端权威公式修订和关系", "不复制或迁移生产公式数据", "游客端只读取发布投影"],
+    "security": ["草稿与归档公式公开返回最小化 404", "不暴露内部 ID、修订管理字段、私有 CMS 路径或管理 API", "Markdown、LaTeX 和分享元数据继续净化"],
+    "operations": ["A00 决定规范 URL 与旧链接兼容方式", "先隔离数据和本地浏览器验收", "不自动部署"],
+    "deadline": null
+  },
+  "evidence": [
+    {"id":"evidence.owner-page-request","kind":"observation","locator":"Owner report 2026-09-10 and confirmation 2026-09-11","note":"Owner 要求增加公式卡单独访问页面，并确认页面包含公式、用途、分类标签、Markdown 推导、上下游关系和完整地图，从公式推导页面进入。","status":"provided"},
+    {"id":"evidence.current-routing","kind":"file","locator":"post.js","note":"当前 derive.html 通过 formula 和 slug 参数兼顾公式卡与旧推导节点模式，公式地图已有按 slug 导航能力。","status":"verified"},
+    {"id":"evidence.current-page","kind":"file","locator":"derive.html","note":"当前文件是公式推导入口和详情的共用页面，可作为兼容迁移基线。","status":"verified"}
+  ],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {"id":"risk.link-breakage","severity":"high","statement":"新路由可能使历史文章角标、搜索索引和外部书签失效。","mitigation":"保留稳定 slug，建立受控兼容映射和 canonical，并用现有链接清单回归。"},
+    {"id":"risk.draft-leak","severity":"critical","statement":"共用详情序列化器可能向游客返回草稿或待发布修订。","mitigation":"公开路由只使用 public projection，以状态组合和匿名网络响应做负向测试。"},
+    {"id":"risk.duplicate-pages","severity":"medium","statement":"旧详情模式和新页面同时可索引会形成重复内容。","mitigation":"确定唯一 canonical URL，旧路径只兼容重定向或返回 canonical，不生成第二份公开正文。"}
+  ],
+  "confirmation": {"confirmed":true,"confirmedBy":"Owner","confirmedAt":"2026-09-11T01:13:05.947+08:00","confirmationText":"**确认这 4 个需求包**。","digest":"sha256:34cfdb63801a7452befeae422a5d8733cbd935d4e886986dfc5f25969c353e47"},
+  "dispatch": {"targetRole":"A00_ProjectDirector","recommendedWorkbenches":[],"dependencies":["REQ-20260824-001","REQ-20260911-002","REQ-20260728-003","REQ-20260730-005"],"dispatchedAt":"2026-09-11T01:14:03.580+08:00"}
+}

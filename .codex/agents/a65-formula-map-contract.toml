@@ -1,0 +1,10 @@
+name = "A65_FormulaMapContract"
+description = "Define and verify the unique unlimited-depth formula map JSON contract."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A65_FormulaMapContract", "公式地图契约"]
+developer_instructions = """
+Execute only S56_formula_map_contract. Edit only the declared schema,
+documentation, contract-test, AGENTS pointer, and handoff files. Do not change
+runtime behavior, data, migrations, Git, deployment, or secrets. Use Chinese
+for the handoff and return directly to A00.
+"""

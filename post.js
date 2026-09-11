@@ -158,6 +158,7 @@
   function itemUrl(item) {
     if (item.href) return item.href;
     if (item.type === "knowledge_node") return `./derive.html?slug=${encodeURIComponent(item.slug || item.id)}`;
+    if (item.type === "formula_card") return `/formula/${encodeURIComponent(item.slug || item.id)}`;
     const page = item.type === "project" ? "project.html" : "post.html";
     return `./${page}?id=${encodeURIComponent(item.slug || item.id)}`;
   }
@@ -560,7 +561,7 @@
       <strong>${escapeHtml(card.displayName || card.formulaId)}</strong>
       <code>${escapeHtml(card.formulaId)}</code>`;
     return available
-      ? `<a class="formula-derivation-link" href="./derive.html?formula=${encodeURIComponent(card.slug)}">${inner}</a>`
+      ? `<a class="formula-derivation-link" href="/formula/${encodeURIComponent(card.slug)}">${inner}</a>`
       : `<div class="formula-derivation-link is-unavailable" aria-label="${escapeHtml(
           `${card.displayName || card.formulaId} 已归档，推导链路中断`
         )}">${inner}</div>`;
@@ -651,7 +652,8 @@
         excerpt: card.purpose || `${card.moduleKey} / ${card.categoryPath}`,
         tags: card.tags || [],
         cover: fallbackDeriveCover,
-        date: formatNodeDate(card)
+        date: formatNodeDate(card),
+        canonicalPath: absoluteUrl(`/formula/${encodeURIComponent(card.slug)}`)
       };
       syncSeo(item);
       if (hero) {
@@ -677,9 +679,14 @@
       }
       if (!content) return;
       const formulaRendered = window.LarkixMarkdown.renderFormulaCard(card);
-      content.innerHTML = `
-        ${renderFormulaGraphSection(card)}
-        ${formulaRendered.html}
+      const formulaTemplate = document.createElement("template");
+      formulaTemplate.innerHTML = formulaRendered.html;
+      if (!String(card.purpose || "").trim()) formulaTemplate.content.querySelector(".formula-purpose-public")?.remove();
+      if (!String(card.markdownDerivation || "").trim()) formulaTemplate.content.querySelector(".formula-markdown-derivation")?.remove();
+      const optionalFormulaHtml = formulaTemplate.innerHTML;
+      const formulaRelationsHtml = renderFormulaDerivationSection(card);
+      const canonicalFormulaHtml = `
+        ${optionalFormulaHtml}
         <section aria-labelledby="formulaCardInfo">
           <h2 id="formulaCardInfo">公式信息</h2>
           <dl class="formula-card-public-meta">
@@ -688,16 +695,32 @@
             ${card.sourceBookId ? `<div><dt>来源计算书</dt><dd>${escapeHtml(card.sourceBookId)}</dd></div>` : ""}
             ${card.sourceFormulaId ? `<div><dt>来源公式</dt><dd>${escapeHtml(card.sourceFormulaId)}</dd></div>` : ""}
           </dl>
-        </section>`;
+        </section>
+        ${formulaRelationsHtml}
+        ${renderFormulaGraphSection(card)}`;
+      const legacyFormulaHtml = `${renderFormulaGraphSection(card)}${formulaRendered.html}`;
+      content.innerHTML = options.canonicalDetail ? canonicalFormulaHtml : legacyFormulaHtml;
       const graphHost = content.querySelector("#publicFormulaGraph");
       if (graphHost && window.LarkixFormulaGraph) {
         window.LarkixFormulaGraph.mount(graphHost, card.graph, {
-          hrefPrefix: "./derive.html?formula="
+          hrefPrefix: "/formula/",
+          loadContinuation: async (cursor) => {
+            const response = await fetch(`./api/formulas/${encodeURIComponent(card.slug)}?cursor=${encodeURIComponent(cursor)}`, {
+              cache: "no-store"
+            });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return (await response.json()).card?.graph;
+          }
         });
       }
       if (toc) {
-        toc.innerHTML = `<a class="toc-level-2" data-level="2" href="#formulaGraphTitle">推导网络</a>
-          ${(formulaRendered.headings || [])
+        toc.innerHTML = `${(formulaRendered.headings || [])
+          .filter((heading) =>
+            heading.id !== "formulaPurposeTitle" || String(card.purpose || "").trim()
+          )
+          .filter((heading) =>
+            heading.id !== "formulaMarkdownTitle" || String(card.markdownDerivation || "").trim()
+          )
           .map((heading) => {
             const level = Math.max(2, Math.min(Number(heading.level || 2), 3));
             return `<a class="toc-level-${level}" data-level="${level}" href="#${escapeHtml(heading.id)}">${escapeHtml(
@@ -705,7 +728,9 @@
             )}</a>`;
           })
           .join("")}
-          <a class="toc-level-2" data-level="2" href="#formulaCardInfo">公式信息</a>`;
+          <a class="toc-level-2" data-level="2" href="#formulaCardInfo">公式信息</a>
+          <a class="toc-level-2" data-level="2" href="#formulaDerivationTitle">上下游关系</a>
+          <a class="toc-level-2" data-level="2" href="#formulaGraphTitle">推导网络</a>`;
       }
       enhanceReading(content, toc);
     } catch {
@@ -776,6 +801,7 @@
       renderDeriveState(hero, content, toc, "error", "网络或服务暂时不可用，无法读取这个推导节点。");
     }
   };
+  window.renderFormulaCardPage = renderFormulaCardPage;
 
   window.renderMarkdownPage = function renderMarkdownPage(options) {
     const id = new URLSearchParams(location.search).get(options.paramName || "id");

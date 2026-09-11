@@ -3254,6 +3254,20 @@ button:disabled {
 .formula-editor-preview {
   margin-top: 12px;
   overflow-x: auto;
+  overflow-y: visible;
+}
+
+:is(
+  .formula-card-latex,
+  .formula-editor-preview,
+  .formula-markdown-preview,
+  .formula-authoring-latex,
+  .formula-selection-preview
+)[data-math-adaptive="block"] {
+  box-sizing: border-box;
+  min-block-size: calc(var(--math-content-block-size, 1em) + var(--math-safe-block-padding, 6px) + var(--math-safe-block-padding, 6px));
+  padding-block: var(--math-safe-block-padding, 6px);
+  overflow: visible;
 }
 
 .formula-card-editor {
@@ -3742,6 +3756,7 @@ button.formula-graph-node {
   font-size: 0.96rem;
   line-height: 1.35;
   white-space: nowrap;
+  overflow-y: visible;
 }
 
 .formula-graph-node-math .katex-display {

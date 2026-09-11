@@ -6,7 +6,7 @@
     <title>LarkixMaker 管理端</title>
     <meta name="robots" content="noindex,nofollow" />
     <link rel="icon" type="image/svg+xml" href="../assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524" />
-    <link rel="stylesheet" href="../styles.css?v=20260814-0001" />
+    <link rel="stylesheet" href="../styles.css?v=20260911-0001" />
     <link rel="stylesheet" href="./admin.css?v=20260730-s38" />
     <link rel="stylesheet" href="./admin-dark.css?v=20260730-s38" />
   </head>
@@ -625,10 +625,10 @@
                 </label>
                 <label class="formula-field-wide">
                   <span class="formula-field-label">主分类
-                    <button class="formula-field-help-button" type="button" data-formula-help="单选。按当前模块搜索主分类；允许使用 1-8 级斜杠路径，例如：磁性元件/变压器设计。" aria-label="查看主分类说明">?</button>
+                    <button class="formula-field-help-button" type="button" data-formula-help="单选。按当前模块搜索分类；只允许大类或大类/小类两级，例如：反激/主设计。L1/L2 等动态推导层级不属于分类。" aria-label="查看主分类说明">?</button>
                   </span>
                   <span class="formula-classification-input">
-                    <input name="categoryPath" list="formulaCategoryOptions" required maxlength="240" placeholder="计算书/章节" autocomplete="off" />
+                    <input name="categoryPath" list="formulaCategoryOptions" required maxlength="240" placeholder="反激/主设计" autocomplete="off" />
                     <button class="button secondary" type="button" data-formula-create-classification="category">新建</button>
                   </span>
                 </label>
@@ -663,7 +663,7 @@
                 </label>
                 <label class="formula-field-wide">
                   修订说明
-                  <input name="revisionReason" maxlength="64" value="manual-save" />
+                  <input name="revisionReason" maxlength="64" placeholder="例如：补充边界条件" />
                 </label>
               </div>
               <section class="formula-technical-info" id="formulaTechnicalInfo" aria-labelledby="formulaTechnicalInfoTitle" hidden>
@@ -1035,10 +1035,10 @@
       </section>
     </div>
 
-    <script src="../data/posts.js?v=20260814-0001"></script>
-    <script src="../data/seed.js?v=20260814-0001"></script>
-    <script src="../api/content.js?v=20260814-0001"></script>
-    <script src="../data/content-store.js?v=20260814-0001"></script>
+    <script src="../data/posts.js?v=20260911-0001"></script>
+    <script src="../data/seed.js?v=20260911-0001"></script>
+    <script src="../api/content.js?v=20260911-0001"></script>
+    <script src="../data/content-store.js?v=20260911-0001"></script>
     <link rel="stylesheet" href="/assets/vendor/katex/katex.min.css?v=0.16.22" />
     <script src="/assets/vendor/katex/katex.min.js?v=0.16.22"></script>
     <script src="/data/math-renderer.js?v=20260730-s30"></script>
@@ -1046,7 +1046,7 @@
     <script src="../assets/vendor/cytoscape.min.js?v=3.34.0"></script>
     <script src="../formula-graph.js?v=20260728-s19"></script>
     <script src="./admin.js?v=20260730-s38"></script>
-    <script src="../data/site-meta.js?v=20260814-0001"></script>
-    <script src="../data/footer.js?v=20260814-0001"></script>
+    <script src="../data/site-meta.js?v=20260911-0001"></script>
+    <script src="../data/footer.js?v=20260911-0001"></script>
   </body>
 </html>

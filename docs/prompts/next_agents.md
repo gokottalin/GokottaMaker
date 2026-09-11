@@ -2,18 +2,24 @@
 
 ## Automatic Dispatch
 
-S55 is complete. Control is returned to A00 and every Git and production gate is closed.
+`DISPATCH-20260911-001` is accepted. S56 through S60A are complete, the final
+formula workline regression is 15/15, and the queue is empty. Git, production,
+data, cloud, migration, version, and service gates remain closed.
+
+Agent 00 Project Director remains the only long-lived controller. Historical
+accepted baseline: `DISPATCH-20260813-002`.
 
 ```text
-Agent 00 Project Director（项目导演：验收最终 Git 发布并裁决下一步）：请进入项目根目录，运行 npm.cmd run codex:handoff，读取 S55 Git 发布交接；等待下一份用户确认需求，生产部署和所有 Git 写入保持关闭。
+Agent 00 Project Director（项目导演：本批次已验收，等待下一份确认需求）：请进入 E:\Project\2607-LarkixWeb，运行 npm.cmd run codex:handoff 核验队列为空；Git 和生产门禁保持关闭。
 ```
 
-Current controller: `A00_ProjectDirector`. Active dispatch: `DISPATCH-20260813-002`.
+Current controller: `A00_ProjectDirector`. Accepted dispatch: `DISPATCH-20260911-001`.
 
-S51 through S55 are complete. Release commit `2ef409b` is on `origin/main`.
-Production deployment, services, data, secrets, cloud and Git writes remain closed.
+Release commit `2ef409b` and closure commit `d73bd02` are verified on
+`origin/main`. Version `V2.5.4+20260814-0001` and contract `1156/0/0` passed.
 
 ## Queue
 
-1. A00 final acceptance and next confirmed requirement. Current.
-2. Production deployment. Separate Owner-authorized task.
+1. S56 through S60A: accepted by A00.
+2. Next Owner-confirmed requirement package: waiting for intake.
+3. Git publication and production deployment: separate explicit authority; closed.

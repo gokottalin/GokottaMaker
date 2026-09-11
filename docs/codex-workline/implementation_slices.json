@@ -5,12 +5,12 @@
   "status": "complete",
   "workspaceRoot": "E:/Project/2607-LarkixWeb",
   "generatedAt": "2026-07-09 22:20 +08:00",
-  "mainline": "Final repository manifest, portable bootstrap, optional encrypted data handoff, clean candidate verification, and ordinary Git publication with remote-clone proof.",
-  "lastReplannedAt": "2026-08-13",
+  "mainline": "Unique formula-map contract, adaptive complex-math layout, protected metadata management, canonical formula detail page, and unified regression evidence.",
+  "lastReplannedAt": "2026-09-11",
   "lastReplannedBy": "A00_ProjectDirector",
-  "requirementDispatch": "docs/codex-workline/requirements/dispatch/DISPATCH-20260813-002.json",
+  "requirementDispatch": "docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json",
   "currentGate": {
-    "batch1": "dispatch_20260813_complete_returned_a00",
+    "batch1": "dispatch_20260911_accepted_queue_empty",
     "businessImplementationAllowed": true,
     "databaseMutationAllowed": false,
     "migrationFileImplementationAllowed": false,
@@ -2914,13 +2914,97 @@
       "dependencies": ["A00 acceptance of S54", "explicit final Git authority in REQ-20260813-001"],
       "forbidden": ["broad git add", "force push or history rewrite", "branch or remote changes", "production deployment", "cloud, service, data, secret, or destructive operations"],
       "requirements": ["REQ-20260813-001"]
+    },
+    {
+      "id": "S56_formula_map_contract",
+      "agent": "A65_FormulaMapContract",
+      "roleNote": "公式地图契约：建立唯一无限深度 JSON 接口",
+      "status": "completed",
+      "purpose": "Establish one machine-valid graph contract before dependent CMS and page work.",
+      "reads": ["AGENTS.md", "docs/codex-workline/requirements/active/REQ-20260824-001.json", "server.js", "lib/content.js", "formula-graph.js", "post.js", "admin/admin.js"],
+      "mayEdit": ["schemas/formula-derivation-map.schema.json", "docs/formula-derivation-map-contract.md", "scripts/test-formula-derivation-map-contract.js", "AGENTS.md", "docs/codex-workline/slices/S56_formula_map_contract_handoff.md"],
+      "outputs": ["unique JSON schema", "contract guide", "positive and negative fixtures", "A00 handoff"],
+      "verification": ["schema parse", "six-level branching/merge fixture", "public leak negative fixture", "codex contract"],
+      "dependencies": ["confirmed REQ-20260824-001"],
+      "forbidden": ["runtime behavior changes", "data or migration writes", "Git, deployment, cloud, service, or secret writes"],
+      "requirements": ["REQ-20260824-001"]
+    },
+    {
+      "id": "S57_adaptive_formula_height",
+      "agent": "A66_AdaptiveFormulaHeight",
+      "roleNote": "高公式布局：完整显示且无纵向滚动",
+      "status": "completed",
+      "purpose": "Make block formulas adapt to rendered height on every target surface while preserving inline layout.",
+      "reads": ["AGENTS.md", "docs/codex-workline/requirements/active/REQ-20260911-002.json", "data/math-renderer.js", "styles/40-formula.css", "admin/admin.css", "formula-graph.js"],
+      "mayEdit": ["data/math-renderer.js", "styles/20-content.css", "styles/40-formula.css", "admin/admin.css", "admin/admin-dark.css", "formula-graph.js", "scripts/test-adaptive-formula-height.js", "docs/codex-workline/slices/S57_adaptive_formula_height_handoff.md"],
+      "outputs": ["adaptive sizing behavior", "inline/block separation", "graph reflow", "complex math regression"],
+      "verification": ["DOM bounds", "browser widths 390/768/1366/1920", "font and theme reflow", "affected regressions"],
+      "dependencies": ["confirmed REQ-20260911-002"],
+      "forbidden": ["formula content or API changes", "data, Git, deployment, cloud, service, or secret writes"],
+      "requirements": ["REQ-20260911-002"]
+    },
+    {
+      "id": "S58_formula_metadata_management",
+      "agent": "A67_FormulaMetadataManagement",
+      "roleNote": "公式元数据：两级分类与安全迁移",
+      "status": "completed",
+      "purpose": "Provide authoritative metadata selection and protected lifecycle operations without graph-level taxonomy drift.",
+      "reads": ["AGENTS.md", "docs/codex-workline/requirements/active/REQ-20260911-001.json", "docs/codex-workline/slices/S56_formula_map_contract_handoff.md"],
+      "mayEdit": ["server.js", "lib/content.js", "lib/validators.js", "admin/index.html", "admin/admin.js", "admin/admin.css", "admin/admin-dark.css", "scripts/test-formula-metadata-management.js", "docs/formula-metadata-management.md", "docs/codex-workline/slices/S58_formula_metadata_management_handoff.md"],
+      "outputs": ["metadata selectors", "two-level taxonomy", "revision-note round trip", "impact preview and protected lifecycle"],
+      "verification": ["isolated API and CMS", "reference protection", "stale-option recovery", "classification validation"],
+      "dependencies": ["A00 acceptance of S56"],
+      "forbidden": ["migration files", "current/production data", "Git, deployment, cloud, service, or secret writes"],
+      "requirements": ["REQ-20260911-001"]
+    },
+    {
+      "id": "S59_formula_detail_page",
+      "agent": "A68_FormulaDetailPage",
+      "roleNote": "公式独立页：统一详情与推导入口",
+      "status": "completed",
+      "purpose": "Create a canonical formula page and unify all formula navigation under the accepted graph and layout contracts.",
+      "reads": ["AGENTS.md", "docs/codex-workline/requirements/active/REQ-20260911-003.json", "docs/codex-workline/slices/S56_formula_map_contract_handoff.md", "docs/codex-workline/slices/S57_adaptive_formula_height_handoff.md", "docs/codex-workline/slices/S58_formula_metadata_management_handoff.md"],
+      "mayEdit": ["server.js", "lib/content.js", "lib/seo.js", "formula.html", "formula.js", "formula-graph.js", "post.js", "derive.html", "derive.js", "styles/20-content.css", "styles/40-formula.css", "scripts/test-formula-detail-page.js", "docs/codex-workline/slices/S59_formula_detail_page_handoff.md"],
+      "outputs": ["canonical formula page", "unified navigation", "legacy link compatibility", "publication-state privacy"],
+      "verification": ["direct and entry-point navigation", "canonical and history behavior", "anonymous state matrix", "responsive and accessibility"],
+      "dependencies": ["A00 acceptance of S56, S57, and S58"],
+      "forbidden": ["parallel graph data source", "current/production data", "Git, deployment, cloud, service, or secret writes"],
+      "requirements": ["REQ-20260911-003"]
+    },
+    {
+      "id": "S60_formula_workline_regression",
+      "agent": "A69_FormulaWorklineRegression",
+      "roleNote": "公式工作线回归：统一验收证据",
+      "status": "completed",
+      "purpose": "Verify the four confirmed requirements end to end without hiding product repairs in QA.",
+      "reads": ["AGENTS.md", "docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json", "docs/codex-workline/slices/S56_formula_map_contract_handoff.md", "docs/codex-workline/slices/S57_adaptive_formula_height_handoff.md", "docs/codex-workline/slices/S58_formula_metadata_management_handoff.md", "docs/codex-workline/slices/S59_formula_detail_page_handoff.md"],
+      "mayEdit": ["scripts/run-formula-workline-regression.js", "docs/formula-workline-regression-evidence.md", "docs/codex-workline/slices/S60_formula_workline_regression_handoff.md"],
+      "outputs": ["repeatable regression runner", "requirement evidence matrix", "protected-boundary proof", "release readiness decision"],
+      "verification": ["schema/API/CMS/public/browser matrix", "six-level DAG", "complex math bounds", "responsive dark-mode accessibility and security"],
+      "dependencies": ["A00 acceptance of S56 through S59"],
+      "forbidden": ["product repairs", "current/production data", "version, Git, deployment, cloud, service, or secret writes"],
+      "requirements": ["REQ-20260824-001", "REQ-20260911-001", "REQ-20260911-002", "REQ-20260911-003"]
+    },
+    {
+      "id": "S60A_formula_relationship_projection_repair",
+      "agent": "A70_FormulaRelationshipProjectionRepair",
+      "roleNote": "关系投影修复：消除公开公式 API 500",
+      "status": "completed",
+      "purpose": "Repair the single deterministic S60 product regression before rerunning the full QA matrix.",
+      "reads": ["AGENTS.md", "docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json", "docs/codex-workline/slices/S56_formula_map_contract_handoff.md", "docs/codex-workline/slices/S58_formula_metadata_management_handoff.md", "docs/codex-workline/slices/S59_formula_detail_page_handoff.md", "docs/codex-workline/slices/S60_formula_workline_regression_handoff.md", "scripts/test-formula-relationship-projection.js", "server.js", "lib/content.js"],
+      "mayEdit": ["server.js", "lib/content.js", "scripts/test-formula-relationship-projection.js", "scripts/test-formula-detail-page.js", "docs/codex-workline/slices/S60A_formula_relationship_projection_repair_handoff.md"],
+      "outputs": ["root-cause evidence", "minimal product repair", "targeted regression evidence", "A00 handoff"],
+      "verification": ["original failing test", "formula detail page", "publication and DAG", "security and contract"],
+      "dependencies": ["S60 failed only at formula relationship projection"],
+      "forbidden": ["relaxed assertions or public privacy regression", "current/production data or migration", "version, Git, deployment, cloud, service, or secret writes"],
+      "requirements": ["REQ-20260824-001", "REQ-20260911-003"]
     }
   ],
   "nextDecision": {
     "agents": ["A00_ProjectDirector"],
-    "decision": "S51 through S55 are complete. Control returned to A00; Git and production deployment remain closed.",
+    "decision": "S56 through S60A are accepted. The queue is empty and control returned to A00; Git and production remain closed.",
     "shortPrompts": [
-      "Agent 00 Project Director（项目导演：验收最终 Git 发布并裁决下一步）：请运行 npm.cmd run codex:handoff，读取 S55 交接；等待下一份用户确认需求，生产部署和 Git 写入保持关闭。"
+      "Agent 00 Project Director（项目导演：本批次已验收，等待下一份确认需求）：运行 codex:handoff 核验队列为空；Git 和生产门禁保持关闭。"
     ]
   }
 }

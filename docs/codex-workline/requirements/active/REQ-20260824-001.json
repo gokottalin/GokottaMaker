@@ -1,0 +1,286 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260824-001",
+  "title": "公式推导地图无限深度唯一 JSON 接口契约与 AGENTS 入口",
+  "status": "dispatched",
+  "priority": "high",
+  "createdAt": "2026-08-24T23:17:37.931+08:00",
+  "updatedAt": "2026-09-11T01:14:03.580+08:00",
+  "intent": {
+    "problem": "当前 V2.5.4 的公式地图已经支持文章反向引用、公式依赖、分支与汇入、公开/CMS 可见性和逐层推导，但接口字段、方向、层级、状态和遍历规则分散在 server.js、post.js、formula-graph.js、admin/admin.js、数据库迁移及历史文档中；后续 Agent 或外部功能没有一个唯一、稳定、可机器校验的 JSON 契约可以对接，容易出现一阶、二阶、三阶及更深推导含义不一致。",
+    "desiredOutcome": "在项目中建立唯一的公式推导地图 JSON 接口契约，完整定义文章到公式、公式到下一级公式、无限深度无环遍历、节点与边、修订状态、公开/CMS 投影、截断与扩展规则；现有生产者和消费者均以该契约为准，并在根级 AGENTS.md 中把它声明为公式地图对接的唯一机器入口。",
+    "targetUsers": ["Owner", "A00_ProjectDirector 与后续实现 Agent", "公式地图前端和 CMS 开发者", "API 对接方"]
+  },
+  "scope": {
+    "in": [
+      "在项目 schemas 目录建立且只建立一个公式地图权威接口文件：schemas/formula-derivation-map.schema.json；文件采用 UTF-8 无 BOM、ASCII JSON 键和明确的契约版本",
+      "该文件是接口契约而不是公式内容数据库、生产数据快照或手工维护的第二份公式关系数据；实际文章、公式、修订和关系继续由 SQLite 与现有服务端数据模型管理",
+      "契约使用可机器校验的 JSON Schema 形式，并在同一文件内通过 $defs、约束说明和内嵌 examples 表达完整数据结构，不再为同一接口创建第二个 schema、示例 JSON 或平行权威清单",
+      "契约定义顶层响应元数据，包括 contractVersion、projection、graphId、currentNodeId、nodes、edges、initialNodeIds、expandableNodeIds、hiddenNodeCount、truncated、limits 及兼容性所需字段；A00 可根据现有接口实况确定最终字段细节，但不得改变本需求确定的语义",
+      "契约明确两类核心节点：formula 与 article；公式节点包含稳定身份、公开 slug、显示名称、LaTeX、修订身份、发布状态、可见性、路由、当前节点/方向/层级等接口信息，文章节点包含稳定身份、标题、发布状态、可见性、路由和对公式的引用信息",
+      "契约明确两类核心边：formula_dependency 与 article_reference；每条边具有稳定身份、sourceNodeId、targetNodeId、关系类型、顺序及必要的修订/引用信息，并明确边方向不得因前端布局而反转业务语义",
+      "公式推导的逻辑深度不设上限；一阶、二阶、三阶只是从当前公式根节点沿 formula_dependency 向下遍历时得到的连续层级，四阶及更深层级使用同一规则继续递归",
+      "L1、L2、L3、L4、L5 等层级不得保存为公式卡固有属性、分类、标签或人工选择项；层级必须根据当前文章或当前公式作为入口实时计算，因此同一公式在不同入口和路径下可以具有不同层级",
+      "无限深度不等于允许无限循环：公式依赖必须保持有向无环图，禁止自引用、直接循环、间接循环、重复边和指向不存在节点的关系",
+      "契约必须为分支与汇入保留能力：一张公式卡可在 Markdown 推导正文中引用多个下一级公式，同一个通用公式也可被多个上一级公式引用；合流节点在图中只保留一个稳定节点身份",
+      "契约定义确定的层级计算、合流去重、节点排序、边排序和当前根节点语义；当同一节点可由多条路径到达时，所有生产者和消费者必须得到一致层级和展示顺序",
+      "契约定义文章引用为当前公式的上游关系：已发布文章在游客公式图和 CMS 图中出现，草稿文章仅在 CMS 投影中出现并携带可区分状态，文章引用不被误算为下一阶公式深度",
+      "契约定义公式草稿、已发布、已归档及修订快照语义：游客投影只允许公开的稳定修订；CMS 投影可包含草稿、待发布修订和归档历史；归档公式保留既有文章与推导历史但不作为新的公开独立页面或新绑定目标",
+      "契约定义 public 与 cms 两种投影使用相同结构但执行不同可见性规则；public 响应不得包含草稿正文、私有 CMS 路径、管理 API、内部凭据、审计信息或可用于发现管理端的字段",
+      "逻辑深度可以无限增长，但单次响应必须是有界的；契约明确 limits、truncated、hiddenNodeCount、expandableNodeIds 或等价的分页/按需扩展语义，防止深图一次性加载导致服务器、浏览器或布局失控",
+      "现有公式卡公开 API、CMS 图谱 API 或内部序列化器输出的 graph 部分必须能够按该唯一契约验证；若当前字段存在差异，A00 只能做维持现有用户行为的最小兼容调整，不得另建平行契约",
+      "现有网页继续由公式地图接口自动生成一阶、二阶、三阶及后续节点，不要求 Owner 为展示层级重复手工绑定；公式关系的真实来源仍是文章公式绑定和公式 Markdown 中的公式引用关系",
+      "根级 AGENTS.md 增加简洁的 Formula Derivation Map Contract 入口，明确唯一契约路径、适用生产者/消费者、读取优先级、禁止复制规则、版本变更规则和验证命令；不得把内部需求编号或访谈过程写入游客内容",
+      "AGENTS.md 明确未来任何 Agent 修改公式地图数据库关系、API、CMS、游客图谱、公式角标或遍历算法前必须先读取该契约；实现与契约冲突时不得静默新增第二套字段或第二个 JSON 文件",
+      "为契约增加自动验证：JSON Schema 自身可解析，内嵌至少包含文章上游、一阶根公式、二阶、三阶及四阶以上的分支/汇入示例；正例通过，循环、自引用、重复边、缺失节点、公开投影泄漏草稿和不一致层级等反例被拒绝",
+      "将契约校验纳入项目现有测试或 contract 门禁，确保后续 API 或前端变更不能在未更新契约版本和兼容性说明时改变公式地图接口"
+    ],
+    "out": [
+      "把 schemas/formula-derivation-map.schema.json 当作公式内容存储、生产数据库导出、备份文件或手工关系清单",
+      "为游客端、CMS、测试、示例或不同推导阶数分别建立多个权威公式地图 JSON 文件",
+      "把一阶、二阶、三阶固定为最多三层，或拒绝四阶及更深的合法无环推导",
+      "在公式卡新建、编辑、分类或标签字段中要求作者预先判断并填写 L1、L2、L3 或其他固定阶级",
+      "允许公式自引用、直接或间接循环依赖，或用循环表示无限深度",
+      "为了生成层级而要求 Owner 重复维护文章上一级、展示深度或前端专用关系",
+      "重新设计公式地图视觉样式、角标外观、公式编辑器或公式卡业务流程，除非是使现有行为符合契约所必需的最小兼容修复",
+      "迁移、删除或改写现有生产公式、文章、修订、绑定、推导关系和上传内容",
+      "在本需求未另行获得发布授权时执行生产部署、数据库迁移、Git 提交、推送或云端写入",
+      "在 AGENTS.md 中复制完整 schema 内容、记录生产数据、写入秘密路径或加入冗长历史说明"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "当前公式 Markdown 通过 {{formula-ref:...}} 建立下一级公式依赖，数据库迁移 021 已对自引用、重复依赖、缺失目标和循环依赖设置约束。",
+      "当前服务端公式卡响应已经包含 derivation 与 graph，graph 使用 nodes、edges、currentNodeId、initialNodeIds、expandableNodeIds、hiddenNodeCount、truncated 和 limits 等字段。",
+      "当前公式地图支持 formula_dependency 和 article_reference，公开端会过滤草稿文章，CMS 可显示草稿关系，但这些规则分散在 server.js、post.js、formula-graph.js、admin/admin.js 和迁移代码中。",
+      "根级 AGENTS.md 目前没有指向一个公式地图唯一 JSON 接口契约，后续 Agent 必须从多个源文件和历史文档反推语义。"
+    ],
+    "expected": [
+      "项目只有 schemas/formula-derivation-map.schema.json 被声明为公式推导地图唯一机器对接契约。",
+      "接口消费者能够只读取该契约就确定节点、边、方向、层级、状态、可见性、修订、路由、截断和扩展行为，无需依赖历史聊天或多个说明文件拼接语义。",
+      "从任意当前公式开始，系统可自动计算并展示一阶、二阶、三阶、四阶及任意更深的合法无环推导；分支和汇入行为保持一致。",
+      "同一公式卡从不同文章或根公式进入时可以显示为不同相对层级，公式卡身份、正文和分类保持不变。",
+      "游客端与 CMS 使用同一数据形状，区别只来自契约明确的 projection 与可见性规则，不会发生草稿或管理信息泄漏。",
+      "AGENTS.md 让新电脑或新 Codex 会话立即找到唯一契约，并阻止未来实现产生第二套公式地图 JSON 定义。"
+    ],
+    "edgeCases": [
+      "一个公式同时被多个上一级公式引用，并且又引用多个下一级公式。",
+      "同一合流公式经不同长度路径可到达，导致层级计算可能存在歧义。",
+      "推导链超过三阶、超过前端初始加载上限或形成非常宽的分支。",
+      "公式已发布但其目标仍为草稿、已归档、缺失或只有待发布修订。",
+      "草稿文章引用已发布公式，CMS 应显示而游客图谱不得出现。",
+      "已发布文章继续引用已归档公式的历史修订，但公式不能被新文章绑定。",
+      "旧客户端只认识现有 graph 字段，新契约增加字段或提升版本后仍需明确兼容策略。",
+      "节点显示名称、LaTeX 或文章标题重复，但稳定 ID、slug 和边身份不得碰撞。",
+      "深图被截断后用户继续展开，新增节点不能造成重复、顺序漂移或错误层级。",
+      "JSON Schema 可以验证结构但无法单独证明整图无环，需要语义验证器补充。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.single-canonical-contract",
+      "statement": "项目存在且只声明 schemas/formula-derivation-map.schema.json 为公式推导地图唯一权威 JSON 接口契约，没有游客端、CMS、示例或阶数专用的平行权威 JSON。",
+      "verification": "扫描仓库中的 schema、contract、graph 和 derivation JSON 引用，确认 AGENTS.md、代码和测试均指向同一路径；其他历史 JSON 只能作为非权威证据且不得被运行时对接。"
+    },
+    {
+      "id": "ac.machine-valid-schema",
+      "statement": "唯一契约是可被标准工具解析和校验的 JSON Schema，包含契约版本、节点、边、投影、遍历、截断和兼容性定义。",
+      "verification": "使用项目锁定的 JSON Schema 验证器加载该文件并验证 meta-schema；检查所有必填字段、枚举、模式、additionalProperties 策略和 $defs 引用均有效。"
+    },
+    {
+      "id": "ac.unbounded-dag-depth",
+      "statement": "契约将一阶、二阶、三阶定义为连续推导层级但不限制最大深度，四阶及更深关系仍使用相同公式依赖规则，同时明确禁止自引用和任何循环。",
+      "verification": "构造至少六阶合法链并通过契约与语义验证；分别构造自引用、两节点循环和跨多层循环，确认全部被语义门禁拒绝。"
+    },
+    {
+      "id": "ac.context-relative-level",
+      "statement": "L1 至 Ln 仅表示相对于当前文章或根公式的计算结果，不作为公式卡持久字段、分类或标签；同一公式可在不同推导入口中处于不同层级。",
+      "verification": "让同一公式分别通过长度不同的两条无环路径被两个入口引用，确认两个图谱计算出不同层级，而公式卡数据、分类和标签中不存在固定 L 字段。"
+    },
+    {
+      "id": "ac.branch-and-merge",
+      "statement": "契约同时支持一个公式引用多个下一级公式和多个上一级公式汇入同一公式，合流节点保持唯一身份和确定层级。",
+      "verification": "用包含分叉、不同长度路径和汇入的示例验证 nodes/edges 去重、稳定 ID、层级计算、排序及页面布局输入一致。"
+    },
+    {
+      "id": "ac.relation-direction",
+      "statement": "article_reference 与 formula_dependency 的源、目标和业务方向在契约中无歧义；文章上游不被误算为下一级公式深度。",
+      "verification": "以“文章引用根公式，根公式引用二阶，二阶引用三阶”的示例核对边方向、根节点、层级和导航路由，并与当前网页/API 结果比较。"
+    },
+    {
+      "id": "ac.public-cms-projections",
+      "statement": "public 与 cms 投影遵循同一结构但状态可见性明确：游客只接收允许公开的文章和公式修订，CMS 可接收草稿和归档上下文且能区分状态。",
+      "verification": "以已发布/草稿文章和草稿/已发布/已归档公式组合生成两种投影，分别按 schema 和语义门禁验证；扫描 public 响应确认无草稿正文、私有 CMS 路径和管理元数据。"
+    },
+    {
+      "id": "ac.revision-history-semantics",
+      "statement": "契约能够区分公式稳定身份、当前草稿修订、公开修订和文章绑定修订，归档后仍可表达既有历史引用但不能误导新绑定。",
+      "verification": "创建发布、修改待发布、文章保留旧修订和归档四个场景，核对接口字段与现有公式版本决策规则一致。"
+    },
+    {
+      "id": "ac.bounded-payload-unbounded-logic",
+      "statement": "无限逻辑深度不会要求单次响应无限增长；契约定义可验证的加载限制、截断、隐藏数量和继续扩展机制。",
+      "verification": "生成超过节点/深度上限的图，确认响应标记 truncated、hiddenNodeCount 和可扩展节点；继续加载时节点与边不重复、层级和顺序不漂移。"
+    },
+    {
+      "id": "ac.current-api-conformance",
+      "statement": "现有公开公式卡 graph 响应、CMS 图谱响应和前端公式地图消费者均能按唯一契约解释，不再在代码中维持未经声明的平行字段语义。",
+      "verification": "抓取至少一个含文章上游和三阶以上推导的公开/CMS 响应，运行契约与语义验证；执行 formula graph、relationship projection、binding authority 和浏览器回归。"
+    },
+    {
+      "id": "ac.agents-entry",
+      "statement": "根级 AGENTS.md 明确列出唯一契约路径、必须读取的变更场景、生产者与消费者、版本兼容要求、禁止复制规则和验证命令。",
+      "verification": "从无历史上下文的新 Codex 会话只读取 AGENTS.md 后，能够准确定位契约并说明修改公式地图前的必读与验证步骤；运行 codex:contract 确认治理入口有效。"
+    },
+    {
+      "id": "ac.embedded-examples-and-negative-tests",
+      "statement": "唯一契约内部包含至少一个文章上游、一阶根公式、二阶、三阶和四阶以上分支汇入示例，测试同时覆盖所有关键非法图。",
+      "verification": "正例通过 schema 和语义验证；循环、自引用、重复边、缺失节点、错误方向、层级不一致、public 泄漏草稿和非法状态组合均被拒绝并给出可定位错误。"
+    },
+    {
+      "id": "ac.no-product-data-mutation",
+      "statement": "建立契约和 AGENTS 入口不会修改、迁移或重新生成现有生产文章、公式、修订、绑定和推导数据，也不会改变当前游客可见行为。",
+      "verification": "比较实施前后数据库迁移清单、隔离数据内容与公开样例响应语义；确认没有生产/当前数据写入、部署或无关 UI 改动。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN", "en-US machine identifiers"],
+    "platforms": ["Node.js 22", "SQLite", "LarkixMaker CMS", "LarkixMaker visitor formula map", "JSON Schema Draft 2020-12"],
+    "compatibility": ["保持现有公式卡、文章引用、推导关系和公开 URL 兼容", "保持 formula-graph.js、post.js 和 CMS 现有用户行为", "契约字段变更必须提升 contractVersion 并声明兼容策略", "一阶至三阶现有内容必须能无损映射到无限深度模型"],
+    "data": ["JSON 契约不包含生产内容、数据库快照或秘密", "SQLite 继续作为公式、文章、修订和关系事实来源", "节点与边使用稳定身份并保留修订绑定语义", "本需求不授权当前或生产数据库写入和迁移"],
+    "security": ["public 投影不得泄漏草稿、私有 CMS 路径、管理 API、凭据、审计记录或内部错误细节", "契约示例只使用虚构非敏感数据", "AGENTS.md 不记录真实服务器路径或秘密值", "深图输入必须受节点、边、深度请求和响应大小限制保护"],
+    "operations": ["只有 A00 可决定实现顺序、文件边界和临时 Agent", "唯一契约与 AGENTS.md 变更必须经过 JSON、专项测试和 codex:contract 验证", "不创建第二个公式地图 JSON 契约或外部未登记副本", "本需求不自动开放 Git、生产部署、服务、数据、迁移或云端写入"],
+    "deadline": null
+  },
+  "evidence": [
+    {
+      "id": "evidence.owner-request",
+      "kind": "observation",
+      "locator": "Owner request 2026-08-24",
+      "note": "Owner 要求为当前网页一阶、二阶、三阶公式地图推导逻辑撰写唯一可对接 JSON 文件，存储在项目路径并在 AGENTS.md 说明。",
+      "status": "provided"
+    },
+    {
+      "id": "evidence.owner-contract-clarification",
+      "kind": "observation",
+      "locator": "Owner clarification 2026-08-24",
+      "note": "Owner 确认该 JSON 是接口契约，不是数据源；推导逻辑深度不设上限。结合此前已确认无环规则，含义为无限递归深度而非允许循环。",
+      "status": "provided"
+    },
+    {
+      "id": "evidence.owner-relative-level-clarification",
+      "kind": "observation",
+      "locator": "Owner clarification 2026-09-10",
+      "note": "Owner 明确无法在新建公式时判断其固定为 L3，因为同一公式在其他文章中可能处于 L4 或 L5；层级不得作为固定分类。",
+      "status": "provided"
+    },
+    {
+      "id": "evidence.current-graph-renderer",
+      "kind": "file",
+      "locator": "formula-graph.js",
+      "note": "当前游客与 CMS 图谱渲染器消费 nodes、edges、currentNodeId、initialNodeIds、expandableNodeIds、truncated 和 limits 等图谱字段。",
+      "status": "verified"
+    },
+    {
+      "id": "evidence.current-public-projection",
+      "kind": "file",
+      "locator": "server.js",
+      "note": "当前服务端分别组装公式依赖、文章反向引用、公开过滤、节点/边与图谱限制字段，但没有外置唯一 JSON 契约。",
+      "status": "verified"
+    },
+    {
+      "id": "evidence.current-page-consumer",
+      "kind": "file",
+      "locator": "post.js",
+      "note": "当前公式详情页读取公开公式接口，渲染推导正文、上下级关系和公式图谱，并通过公式 slug 导航。",
+      "status": "verified"
+    },
+    {
+      "id": "evidence.current-dag-constraints",
+      "kind": "file",
+      "locator": "migrations/021_branching_derivation_graph.js",
+      "note": "当前数据库迁移已经实现公式依赖自引用、重复、缺失目标和循环阻断，可作为唯一契约的语义基础。",
+      "status": "verified"
+    },
+    {
+      "id": "evidence.current-binding-authority",
+      "kind": "file",
+      "locator": "migrations/028_formula_content_bindings.js",
+      "note": "当前统一绑定迁移定义文章到公式和公式修订到下一级公式的权威关系来源。",
+      "status": "verified"
+    },
+    {
+      "id": "evidence.agents-missing-contract-entry",
+      "kind": "file",
+      "locator": "AGENTS.md",
+      "note": "根级入口目前包含项目和 Agent 协议，但没有公式推导地图唯一 JSON 契约路径与变更规则。",
+      "status": "verified"
+    }
+  ],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.contract-runtime-drift",
+      "severity": "high",
+      "statement": "若只新增 schema 而不把 API 生产者、前端消费者和测试接入验证，唯一契约会迅速退化为过时文档。",
+      "mitigation": "让公开/CMS 样例响应进入自动契约测试，并将校验加入现有 contract 或专项门禁；字段变更必须伴随版本更新。"
+    },
+    {
+      "id": "risk.unbounded-traversal",
+      "severity": "high",
+      "statement": "逻辑深度无上限时，错误的一次性全图遍历可能造成数据库查询、网络载荷、浏览器布局和内存失控。",
+      "mitigation": "契约强制有界响应、截断标志、隐藏数量、按需扩展和稳定去重，服务端保留请求与响应上限。"
+    },
+    {
+      "id": "risk.cycle-validation-gap",
+      "severity": "high",
+      "statement": "标准 JSON Schema 只能验证结构，不能可靠证明任意节点集合是无环图。",
+      "mitigation": "在唯一契约中声明机器可读语义不变量，并提供独立语义验证器或现有数据库约束测试覆盖自引用和所有循环路径。"
+    },
+    {
+      "id": "risk.public-draft-leak",
+      "severity": "critical",
+      "statement": "若 public 与 cms 投影共用结构却没有严格状态门禁，草稿公式、草稿文章、待发布正文或管理信息可能进入游客响应。",
+      "mitigation": "契约明确 projection 判别字段与状态组合，增加 public 响应负向扫描和草稿/归档组合回归。"
+    },
+    {
+      "id": "risk.level-ambiguity",
+      "severity": "medium",
+      "statement": "分支汇入图中同一节点可能通过不同长度路径到达，若层级算法未固定，不同客户端会把它显示为不同阶。",
+      "mitigation": "由契约固定一种确定层级规则和排序规则，服务端生成权威层级，客户端不得各自重新推断。"
+    },
+    {
+      "id": "risk.duplicate-authority",
+      "severity": "high",
+      "statement": "历史文档、内嵌示例或后续 Agent 可能再次创建另一套 JSON 字段定义，使唯一入口失效。",
+      "mitigation": "AGENTS.md 声明禁止复制，仓库扫描检测平行契约，示例只内嵌在唯一 schema 中且历史资料明确为非权威。"
+    },
+    {
+      "id": "risk.breaking-existing-clients",
+      "severity": "high",
+      "statement": "为契约统一字段时若直接删除或改名现有 graph 字段，可能破坏已上线游客页、CMS 和历史链接。",
+      "mitigation": "先以现有 V2.5.4 响应为基线，采用版本化兼容和最小适配，完成公开/CMS 浏览器回归后再收口。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-09-11T01:13:05.947+08:00",
+    "confirmationText": "**确认这 4 个需求包**。",
+    "digest": "sha256:37dd13eb54da11aeed9be717dd5126cd2cbfe32c9284d1ddf09be8987dd16703"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [
+      "REQ-20260728-003",
+      "REQ-20260728-005",
+      "REQ-20260730-004",
+      "REQ-20260730-005",
+      "REQ-20260730-008",
+      "REQ-20260812-004"
+    ],
+    "dispatchedAt": "2026-09-11T01:14:03.580+08:00"
+  }
+}

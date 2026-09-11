@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "larkix.requirement-dispatch.v1",
+  "dispatchId": "DISPATCH-20260911-001",
+  "status": "complete",
+  "createdAt": "2026-09-11T02:00:00+08:00",
+  "owner": "A00_ProjectDirector",
+  "requirements": [
+    {"requirementId":"REQ-20260824-001","briefPath":"docs/codex-workline/requirements/active/REQ-20260824-001.json","digest":"sha256:37dd13eb54da11aeed9be717dd5126cd2cbfe32c9284d1ddf09be8987dd16703","validation":"passed"},
+    {"requirementId":"REQ-20260911-001","briefPath":"docs/codex-workline/requirements/active/REQ-20260911-001.json","digest":"sha256:176f2fa37266014bbda5dfcd00097aead069f8af46fa172bbf1d88ae1d972253","validation":"passed"},
+    {"requirementId":"REQ-20260911-002","briefPath":"docs/codex-workline/requirements/active/REQ-20260911-002.json","digest":"sha256:e84a91563d48cfd34deee5e8c8396669643d3ecbf778dbdd55ca34f36432b76d","validation":"passed"},
+    {"requirementId":"REQ-20260911-003","briefPath":"docs/codex-workline/requirements/active/REQ-20260911-003.json","digest":"sha256:34cfdb63801a7452befeae422a5d8733cbd935d4e886986dfc5f25969c353e47","validation":"passed"}
+  ],
+  "sequence": [
+    ["S56_formula_map_contract", "S57_adaptive_formula_height"],
+    "A00_wave1_acceptance",
+    "S58_formula_metadata_management",
+    "A00_wave2_acceptance",
+    "S59_formula_detail_page",
+    "A00_wave3_acceptance",
+    "S60_formula_workline_regression",
+    "S60A_formula_relationship_projection_repair",
+    "S60_formula_workline_regression_rerun",
+    "A00_final_acceptance"
+  ],
+  "acceptedSlices": ["S56_formula_map_contract", "S57_adaptive_formula_height", "S58_formula_metadata_management", "S59_formula_detail_page", "S60A_formula_relationship_projection_repair", "S60_formula_workline_regression"],
+  "currentWave": {"wave":"complete","agents":["A00_ProjectDirector"],"slices":["A00_final_acceptance"]},
+  "queuedSlices": [],
+  "acceptance": {
+    "acceptedBy": "A00_ProjectDirector",
+    "acceptedAt": "2026-09-11T06:00:00+08:00",
+    "decision": "accepted",
+    "evidence": {
+      "formulaWorklineRegression": "15 passed / 0 failed",
+      "evidenceDigest": "sha256:9574b01464d7f2b0ddbc861e0783d1e77173313664082585c256dca7c86794c3",
+      "contractCheck": "1238 passed / 0 warnings / 0 failures",
+      "repairRootCause": "publicFormulaCardPayload truncated variable scope caused ReferenceError and HTTP 500",
+      "protectedBoundaries": "no current or production data, migration, deployment, cloud, service, secret, version, staging, commit, or push"
+    },
+    "queueAfterAcceptance": "empty; control returned to A00"
+  },
+  "writePolicy": "single_writer_per_declared_file",
+  "gates": {
+    "businessImplementation": true,
+    "isolatedDataVerification": true,
+    "migrationFiles": false,
+    "currentOrProductionDataMutation": false,
+    "gitWrites": false,
+    "productionDeployment": false,
+    "cloudOrServiceWrites": false,
+    "secretMaterial": false
+  }
+}

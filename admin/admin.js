@@ -3910,9 +3910,9 @@ $$
       items
         .map(
           (item) =>
-            `<span><strong>${escapeHtml(item.displayName)}</strong><code>${escapeHtml(item.slug)}</code><em>${escapeHtml(
-              item.usageCount || 0
-            )} 张卡</em></span>`
+            `<span data-formula-classification-id="${escapeHtml(item.classificationId)}"><strong>${escapeHtml(item.displayName)}</strong><code>${escapeHtml(item.slug)}</code><em>${escapeHtml(
+               item.usageCount || 0
+            )} 张卡</em><button class="button secondary" type="button" data-formula-metadata-action="preview">影响</button><button class="button secondary" type="button" data-formula-metadata-action="rename">重命名</button><button class="button secondary" type="button" data-formula-metadata-action="merge">合并</button><button class="button secondary" type="button" data-formula-metadata-action="migrate">迁移卡片</button><button class="button secondary" type="button" data-formula-metadata-action="delete">删除</button></span>`
         )
         .join("") || "<em>当前范围没有已登记选项。</em>";
   }
@@ -3944,6 +3944,56 @@ $$
     const classification = await createFormulaClassification(kind, displayName, parentSlug);
     formulaClassificationName.value = "";
     setNotice(`公式${kind === "module" ? "模块" : kind === "category" ? "主分类" : "标签"}已登记：${classification.displayName}`, "success");
+  }
+
+  async function operateFormulaMetadata(payload) {
+    const result = await request("/api/admin/formula-metadata/operate", {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+    formulaClassifications = result.classifications || formulaClassifications;
+    formulaCatalogState.facets.classifications = formulaClassifications;
+    renderFormulaClassificationOptions();
+    await loadFormulaCatalog({ selectDefault: false });
+    return result;
+  }
+
+  function formulaImpactMessage(impact) {
+    return `${impact.cardCount} 张卡（草稿 ${impact.draftCount} / 已发布 ${impact.publishedCount} / 已归档 ${impact.archivedCount}），文章引用 ${impact.articleCount}，公式依赖 ${impact.dependencyCount}，受保护 ${impact.protectedCount}。`;
+  }
+
+  async function handleFormulaMetadataAction(button) {
+    const row = button.closest("[data-formula-classification-id]");
+    const classificationId = row?.dataset.formulaClassificationId;
+    const action = button.dataset.formulaMetadataAction;
+    if (!classificationId) return;
+    const preview = await operateFormulaMetadata({ action: "preview", kind: formulaClassificationKind.value, classificationId });
+    if (action === "preview") {
+      window.alert(formulaImpactMessage(preview.impact));
+      return;
+    }
+    if (action === "rename" || action === "merge") {
+      const displayName = window.prompt(`${formulaImpactMessage(preview.impact)}\n请输入${action === "merge" ? "已有合并目标" : "新"}名称：`, action === "rename" ? preview.impact.classification.displayName : "");
+      if (!displayName || displayName === preview.impact.classification.displayName) return;
+      await operateFormulaMetadata({ action, kind: preview.impact.classification.kind, classificationId, displayName });
+      setNotice(action === "merge" ? "选项已合并，重复绑定已去重。" : "名称与全部当前引用已原子更新。", "success");
+      return;
+    }
+    if (action === "migrate") {
+      if (!preview.impact.cardCount) throw new Error("当前选项没有需要迁移的公式卡。");
+      const targetModuleKey = window.prompt(`${formulaImpactMessage(preview.impact)}\n请输入已有目标模块 slug：`);
+      if (!targetModuleKey) return;
+      const targetCategoryPath = window.prompt("请输入已有目标分类（大类或大类/小类）：");
+      if (!targetCategoryPath) return;
+      await operateFormulaMetadata({ action: "migrate", kind: preview.impact.classification.kind, classificationId, targetModuleKey, targetCategoryPath });
+      setNotice(`${preview.impact.cardCount} 张公式卡已原子迁移，正文、修订与关系保持不变。`, "success");
+      return;
+    }
+    if (preview.impact.cardCount) throw new Error(`${formulaImpactMessage(preview.impact)} 请先迁移卡片，不能直接删除。`);
+    const confirmText = window.prompt(`${formulaImpactMessage(preview.impact)}\n已完成备份后输入 PERMANENTLY DELETE：`);
+    if (confirmText !== "PERMANENTLY DELETE") return;
+    await operateFormulaMetadata({ action: "delete", kind: preview.impact.classification.kind, classificationId, backupConfirmed: true, confirmText });
+    setNotice("零引用分类已永久删除。", "success");
   }
 
   async function createFormulaClassificationFromEditor(kind) {
@@ -4060,6 +4110,7 @@ $$
                     ? `<button class="button secondary" type="button" data-formula-action="restore" data-formula-id="${escapeHtml(card.formulaId)}">恢复</button>`
                     : `<button class="button secondary" type="button" data-formula-action="archive" data-formula-id="${escapeHtml(card.formulaId)}">归档</button>`
                 }
+                <button class="button secondary" type="button" data-formula-action="delete" data-formula-id="${escapeHtml(card.formulaId)}">永久删除</button>
               </div>
             </article>`
         )
@@ -4528,7 +4579,7 @@ $$
     setFormulaSelectedTags(card?.tags || []);
     formulaFormField("latex").value = card?.latex || "";
     formulaFormField("markdownDerivation").value = card?.markdownDerivation || "";
-    formulaFormField("revisionReason").value = "manual-save";
+    formulaFormField("revisionReason").value = card?.currentRevisionReason || "";
     formulaEditingCard = card;
     renderFormulaTechnicalInfo(card);
     const status = card?.publishStatus || "draft";
@@ -4604,7 +4655,7 @@ $$
       tags,
       latex: formulaFormField("latex")?.value,
       markdownDerivation: formulaFormField("markdownDerivation")?.value,
-      revisionReason: formulaFormField("revisionReason")?.value || "manual-save"
+      revisionReason: formulaFormField("revisionReason")?.value
     };
     const editingId = formulaEditingCard?.formulaId || "";
     const endpoint = editingId
@@ -5218,6 +5269,17 @@ $$
       withBusy(button, "检查链路...", () => archiveFormulaCardWithImpact(id)).catch((error) => setNotice(error.message, "error"));
       return;
     }
+    if (action === "delete") {
+      withBusy(button, "检查引用...", async () => {
+        const preview = await operateFormulaMetadata({ action: "preview", kind: "card", formulaIds: [id] });
+        if (preview.impact.protectedCount) throw new Error(`永久删除已阻止：${formulaImpactMessage(preview.impact)} 请先迁移引用或归档。`);
+        const confirmText = window.prompt(`${formulaImpactMessage(preview.impact)}\n已完成备份后输入 PERMANENTLY DELETE：`);
+        if (confirmText !== "PERMANENTLY DELETE") return;
+        await operateFormulaMetadata({ action: "delete", kind: "card", formulaIds: [id], backupConfirmed: true, confirmText });
+        setNotice("零引用公式卡已永久删除。", "success");
+      }).catch((error) => setNotice(error.message, "error"));
+      return;
+    }
     withBusy(button, "处理中...", () => mutateFormulaCard(id, action)).catch((error) => setNotice(error.message, "error"));
   });
 
@@ -5268,6 +5330,11 @@ $$
     withBusy(formulaClassificationCreate, "新建中...", createFormulaClassificationFromManager).catch((error) =>
       setNotice(error.message, "error")
     );
+  });
+  formulaClassificationList?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-formula-metadata-action]");
+    if (!button) return;
+    withBusy(button, "检查中...", () => handleFormulaMetadataAction(button)).catch((error) => setNotice(error.message, "error"));
   });
   formulaTagAddButton?.addEventListener("click", () => {
     withBusy(formulaTagAddButton, "添加中...", addFormulaSelectedTag).catch((error) => setNotice(error.message, "error"));

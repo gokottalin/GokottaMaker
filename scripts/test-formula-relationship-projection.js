@@ -227,8 +227,9 @@ async function main() {
     try {
       await waitForServer(baseUrl, child);
       const response = await fetch(`${baseUrl}/api/formulas/${encodeURIComponent(target.slug)}`);
-      assert.equal(response.status, 200);
-      const payload = await response.json();
+      const responseBody = await response.text();
+      assert.equal(response.status, 200, `public formula response: ${responseBody}`);
+      const payload = JSON.parse(responseBody);
       const articleNodes = payload.card.graph.nodes.filter((node) => node.nodeType === "article");
       assert.deepEqual(articleNodes.map((node) => node.displayName).sort(), [
         "S48 公开可见文章",

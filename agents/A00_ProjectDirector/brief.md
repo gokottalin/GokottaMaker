@@ -28,11 +28,16 @@ only long-lived role.
 
 ## Current Decision
 
-A00 accepted S42 after exact 207-path staging, commit `450b041`, successful
-push to `origin/main`, 37/37 post-commit regression, and remote relation `0/0`.
+Four Owner-confirmed, digest-valid requirements are mapped by
+`DISPATCH-20260911-001`. Wave 1 runs `A65_FormulaMapContract` and
+`A66_AdaptiveFormulaHeight` in parallel because their write sets are disjoint.
+`A67_FormulaMetadataManagement`, `A68_FormulaDetailPage`, and
+`A69_FormulaWorklineRegression` remain dependency-gated and queued.
 
-`DISPATCH-20260730-001` is complete. No short-task Agent is open. Git,
-production, cloud, runtime data, product changes, and destructive operations are closed.
+Business implementation and isolated verification are open only for the
+declared slice files. Git, production, cloud, current data, migrations,
+services, secrets, release/version changes, and destructive operations remain
+closed.
 
 ## Teaching Rule
 
@@ -51,10 +56,18 @@ Director for future A00-scoped work and should execute that work directly.
 This does not bypass closed gates for implementation, database mutation,
 production release, or Git operations.
 
-## Active Batch 2026-07-30
+## Latest Completed Batch
 
-- Confirmed dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260730-001.json`
-- Accepted slices: `S30` through `S42`, including `S40A`.
-- Current slice: none; control returned to `A00_ProjectDirector`.
-- Candidate identity: `V2.5.3+20260807-0001`.
-- GitHub `main` is at release commit `450b041`; production deployment remains closed.
+- Confirmed dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260813-002.json`
+- Accepted slices: `S51` through `S55`, accepted by A00 on 2026-08-16.
+- Current slice: none; control stays at `A00_ProjectDirector` with an empty queue.
+- Published identity: `V2.5.4+20260814-0001`; release commit `2ef409b`, closure commit `d73bd02`.
+- GitHub `main` is at `d73bd02` and matches the remote; production deployment remains closed.
+- Prior accepted batches: `DISPATCH-20260726-001`, `DISPATCH-20260728-001`, `DISPATCH-20260730-001`, and the 2026-08-12/13 security/formula batches (`S43`-`S50`).
+
+## Active Batch
+
+- Dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json`.
+- Wave 1: `S56_formula_map_contract` and `S57_adaptive_formula_height`.
+- Queue: `S58_formula_metadata_management`, `S59_formula_detail_page`, `S60_formula_workline_regression`.
+- A00 accepts every wave before advancing dependent work.
