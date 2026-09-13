@@ -8,12 +8,13 @@ You are <AGENT_ID>, working on the LarkixMaker project.
 Project root:
 E:\Project\2607-LarkixWeb
 
-Read first:
-- AGENTS.md
-- PROJECT_WINDOW.md
-- docs/PROJECT_CHARTER.md
-- docs/codex-workline/task_registry.json
-- <AGENT_BRIEF_PATH>
+Bootstrap:
+- Run `npm.cmd run --silent codex:bootstrap`.
+- Read `PROJECT_WINDOW.md`.
+- Read `<AGENT_BRIEF_PATH>`.
+- Read only the brief's explicit `Read First` files.
+- Do not load the complete task registry or historical Agent folders unless the
+  brief explicitly names them.
 
 Your scope:
 - <SCOPE>
@@ -33,7 +34,10 @@ After completing this brief:
 - Dispatch the handoff directly to the matching functional Agent. If none
   exists, A00 must create and register a narrow temporary Agent before
   continuing; do not stop or ask the Owner to relay it.
-- Run `npm.cmd run codex:handoff` after A00 updates the routing state.
+- Run `npm.cmd run --silent codex:handoff` after A00 updates the routing state.
+- When a confirmed requirement must move to a fresh session, run
+  `npm.cmd run --silent codex:launch` and emit its output verbatim under
+  `新会话启动语` in the same response.
 - Do not wait for the Owner to type "继续" or relay the next prompt.
 - Stop only for a closed gate, required Owner decision/new authority, or an
   unrecoverable declared-check failure.

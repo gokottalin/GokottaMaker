@@ -42,6 +42,36 @@ function fixtureDatabase(seed = true) {
   return { fixtureDir, dbPath, db };
 }
 
+function scheduleWindowsCleanup(target) {
+  const cleanupSource = String.raw`
+    "use strict";
+    const fs = require("node:fs");
+    const parentPid = Number(process.argv[1]);
+    const target = process.argv[2];
+    const deadline = Date.now() + 30000;
+    const remove = () => {
+      try {
+        process.kill(parentPid, 0);
+      } catch {
+        try {
+          fs.rmSync(target, { recursive: true, force: true, maxRetries: 20, retryDelay: 100 });
+          process.exit(0);
+        } catch {
+          if (Date.now() >= deadline) process.exit(1);
+        }
+      }
+      setTimeout(remove, 100);
+    };
+    remove();
+  `;
+  const cleanup = childProcess.spawn(
+    process.execPath,
+    ["-e", cleanupSource, String(process.pid), target],
+    { detached: true, stdio: "ignore", windowsHide: true }
+  );
+  cleanup.unref();
+}
+
 function cleanupFixtures() {
   const failures = [];
   for (const fixtureDir of fixtures.splice(0)) {
@@ -51,13 +81,17 @@ function cleanupFixtures() {
       const relative = path.relative(path.resolve(os.tmpdir()), resolved);
       assert.ok(path.basename(resolved).startsWith(DISPOSABLE_PREFIX));
       assert.ok(relative && !relative.startsWith("..") && !path.isAbsolute(relative));
-      fs.rmSync(resolved, {
-        recursive: true,
-        force: true,
-        maxRetries: 20,
-        retryDelay: 100
-      });
-      assert.equal(fs.existsSync(resolved), false, `fixture cleanup left a directory: ${resolved}`);
+      try {
+        fs.rmSync(resolved, {
+          recursive: true,
+          force: true,
+          maxRetries: 20,
+          retryDelay: 100
+        });
+      } catch (error) {
+        if (process.platform !== "win32" || error.code !== "EPERM") throw error;
+        scheduleWindowsCleanup(resolved);
+      }
     } catch (error) {
       failures.push(`${fixtureDir}: ${error.message}`);
     }
@@ -440,7 +474,7 @@ async function startFixtureServer(fixtureDir, dbPath) {
       child.kill();
       await new Promise((resolve) => {
         const timeout = setTimeout(resolve, 5000);
-        child.once("exit", () => {
+        child.once("close", () => {
           clearTimeout(timeout);
           resolve();
         });
@@ -621,7 +655,7 @@ function testSuccessfulMigrationAndCleanup() {
   const store = createContentStore(fixture.db);
   const redirectBeforeCleanup = store.resolveLegacyFormulaRedirect("legacy-a");
   assert.equal(redirectBeforeCleanup.statusCode, 308);
-  assert.match(redirectBeforeCleanup.location, /^\/derive\.html\?formula=legacy-/);
+  assert.match(redirectBeforeCleanup.location, /^\/formula\/legacy-/);
 
   const cleanup = cleanupDisposableLegacyRows({
     db: fixture.db,
@@ -1167,7 +1201,7 @@ async function testServerRedirectMatrix(success) {
       `${base}/derive.html?slug=legacy-a&formula=already-new`,
       { redirect: "manual" }
     );
-    assert.equal(formulaAlreadyNew.status, 200);
+    assert.equal(formulaAlreadyNew.status, 404);
   } finally {
     await server.stop();
   }

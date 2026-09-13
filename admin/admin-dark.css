@@ -56,6 +56,9 @@
   .formula-selected-tags > span,
   .formula-editor-preview,
   .formula-markdown-preview,
+  .formula-workbench-preview,
+  .formula-workbench-editor,
+  .formula-dependency-candidate,
   .formula-authoring-result
 ) {
   border-color: var(--theme-dark-border);
@@ -309,6 +312,9 @@
     .formula-card-row,
     .formula-editor-preview,
     .formula-markdown-preview,
+    .formula-workbench-preview,
+    .formula-workbench-editor,
+    .formula-dependency-candidate,
     .formula-authoring-result,
     .meta-visibility,
     .formula-derivation-grid > section,

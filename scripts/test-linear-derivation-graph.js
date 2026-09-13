@@ -324,7 +324,10 @@ async function apiChecks(tempRoot) {
 
     const page = await fetch(`${baseUrl}/derive.html?formula=${encodeURIComponent(cards["source-a"].slug)}`);
     assert.equal(page.status, 200);
-    assert.match(await page.text(), /renderKnowledgeNodePage/);
+    const pageHtml = await page.text();
+    assert.match(pageHtml, /data-layout-page="formulaPage"/);
+    assert.match(pageHtml, /id="formulaContent"/);
+    assert.match(pageHtml, /\/formula\.js\?v=/);
 
     const restored = await request(`/api/admin/formulas/${encodeURIComponent(cards.shared.formulaId)}/restore`, {
       method: "POST",

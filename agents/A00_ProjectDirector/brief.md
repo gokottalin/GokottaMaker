@@ -5,6 +5,15 @@
 Own project sequencing, file contracts, gates, and final acceptance. A00 is the
 only long-lived role.
 
+## Fast Context
+
+- Run `npm.cmd run --silent codex:bootstrap` first.
+- Read `PROJECT_WINDOW.md` and only the files needed for the current decision.
+- Query `docs/codex-workline/task_registry.json` programmatically; do not dump
+  the complete registry into the conversation.
+- Treat old `docs/Agent*` directories and completed handoffs as historical
+  evidence, not startup context.
+
 ## Responsibilities
 
 - Keep `PROJECT_WINDOW.md` short and pointer-only.
@@ -23,31 +32,35 @@ only long-lived role.
   and parallelize only Agents with disjoint file and contract ownership.
 - Use Codex task messaging or handoff tools for routine cross-session
   coordination instead of asking the Owner to relay text.
+- After the Owner confirms a digest-valid requirement, if A00 decides the work
+  must continue in a fresh task session, register the narrow brief, run
+  `npm.cmd run --silent codex:launch`, and emit the exact output immediately under
+  `新会话启动语`.
 - Escalate only material product choices, conflicting confirmed requirements,
   irreversible actions, and production/cloud credential or cost decisions.
 
 ## Current Decision
 
-Four Owner-confirmed, digest-valid requirements are mapped by
-`DISPATCH-20260911-001`. Wave 1 runs `A65_FormulaMapContract` and
-`A66_AdaptiveFormulaHeight` in parallel because their write sets are disjoint.
-`A67_FormulaMetadataManagement`, `A68_FormulaDetailPage`, and
-`A69_FormulaWorklineRegression` remain dependency-gated and queued.
-
-Business implementation and isolated verification are open only for the
-declared slice files. Git, production, cloud, current data, migrations,
-services, secrets, release/version changes, and destructive operations remain
+`DISPATCH-20260911-001`, S56 through S61, and the four Owner-confirmed S62
+formula CMS requirements are accepted. Both formula-workline and
+security/formula regressions are 15/15. The active task queue is empty. Wait
+for the next Owner-confirmed requirement package. Git,
+production, cloud, current data, migrations, services, secrets,
+release/version changes, restore, rollback, and destructive operations remain
 closed.
 
 ## Teaching Rule
 
 When the user asks what to do next, prefer a short handoff instruction:
-enter the project, run `npm.cmd run codex:handoff`, then follow the reported
+enter the project, run `npm.cmd run --silent codex:bootstrap`, then follow the reported
 Next Agent brief. The short handoff must start with the Agent number, English
 role, and Chinese note, such as `Agent 41 Article Formula Selection Create
 （文章公式框选建卡：保存完整 LaTeX 选区并原子创建绑定）`.
 Do not paste a full task brief unless the user explicitly asks for the expanded
 contract.
+
+Use `npm.cmd run --silent codex:bootstrap` for normal fresh-session entry and
+`npm.cmd run --silent codex:launch` when only the launch sentence is needed.
 
 ## Owner Instruction
 
@@ -56,18 +69,9 @@ Director for future A00-scoped work and should execute that work directly.
 This does not bypass closed gates for implementation, database mutation,
 production release, or Git operations.
 
-## Latest Published Batch
+## Current Pointer
 
-- Confirmed dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json`
-- Accepted slices: `S56` through `S60A`, accepted and published by A00 on 2026-09-11.
-- Current slice: none; control stays at `A00_ProjectDirector` with an empty queue.
-- Published identity: `V2.5.5+20260911-0001`; release commit `68bc822`.
-- GitHub `main` contains `68bc822`; production deployment remains closed.
-- Prior accepted batches: `DISPATCH-20260726-001`, `DISPATCH-20260728-001`, `DISPATCH-20260730-001`, and the 2026-08-12/13 security/formula batches (`S43`-`S50`).
-
-## Completed Scope
-
-- Dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json`.
-- Formula map contract, adaptive formula height, metadata management, canonical
-  formula detail page, relationship projection repair, and 15/15 regression are complete.
-- Queue: empty; wait for the next Owner-confirmed requirement package.
+- Current state: `PROJECT_WINDOW.md`.
+- Active routing: `npm.cmd run --silent codex:bootstrap`.
+- Expanded routing: `npm.cmd run --silent codex:handoff`.
+- Copy-ready fresh-session sentence: `npm.cmd run --silent codex:launch`.

@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260913-002",
+  "title": "保存公式卡按钮点击区域修复",
+  "status": "dispatched",
+  "priority": "urgent",
+  "createdAt": "2026-09-13T00:34:30.708+08:00",
+  "updatedAt": "2026-09-13T00:37:59.968+08:00",
+  "intent": {
+    "problem": "公式编辑器底部的保存公式卡按钮虽然可见，但可点击热区偏移到最右侧，导致作者无法从按钮主体可靠保存；该现象在切换日夜模式时被发现。",
+    "desiredOutcome": "让保存公式卡按钮在日间和夜间模式下都以整个可见区域接收点击并正常提交，不改动新建公式卡和编辑入口按钮。",
+    "targetUsers": ["Owner", "CMS 公式作者"]
+  },
+  "scope": {
+    "in": [
+      "修复公式编辑器底部保存公式卡按钮的视觉区域与真实点击区域不一致问题",
+      "日间和夜间模式下按钮整个可见区域均可点击",
+      "共享保存控件从新建或编辑入口打开时均保持正确命中和提交",
+      "保存成功、校验失败和请求失败时继续提供明确反馈"
+    ],
+    "out": [
+      "修改公式库顶部的新建公式卡入口按钮",
+      "修改公式列表中的编辑入口按钮",
+      "改变保存数据模型、修订语义或发布流程",
+      "生产数据、云、部署或 Git 写入"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "保存公式卡按钮主体可见，但作者观察到实际可点击区域偏到最右侧。",
+      "切换日间或夜间模式时更容易发现视觉按钮与命中区域不一致。"
+    ],
+    "expected": [
+      "点击保存按钮左侧、中央或右侧的可见区域均命中同一保存动作。",
+      "主题切换前后按钮位置、尺寸和点击热区保持一致。",
+      "新建公式卡和编辑入口按钮保持现状。"
+    ],
+    "edgeCases": [
+      "表单存在必填字段校验错误。",
+      "保存期间按钮进入忙碌或禁用状态。",
+      "窗口宽度变化以及日夜模式连续切换。",
+      "悬浮反馈、固定工具栏或其他覆盖层与保存按钮相邻。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.full-hit-area",
+      "statement": "保存公式卡按钮的完整可见矩形与可点击区域一致，不存在只能点击最右侧或按钮外偏移位置的情况。",
+      "verification": "在按钮左、中、右三个代表点执行真实指针点击并核对均触发同一表单行为，同时检查按钮外相邻区域不会误触。"
+    },
+    {
+      "id": "ac.theme-consistency",
+      "statement": "日间和夜间模式下保存按钮的布局、层叠和点击区域均正确。",
+      "verification": "在两种主题下分别测试有效提交、必填校验和失败反馈，并在切换主题后重复命中区域检查。"
+    },
+    {
+      "id": "ac.shared-save-control",
+      "statement": "从新建和编辑入口打开公式编辑器时，共用的保存按钮都能通过完整可见区域触发保存。",
+      "verification": "使用隔离数据分别打开新建表单和一张已有公式卡，完成保存并确认提交一次、数据结果正确。"
+    },
+    {
+      "id": "ac.entry-buttons-unchanged",
+      "statement": "公式库的新建公式卡和列表编辑入口按钮不在修改范围内，现有行为无回归。",
+      "verification": "核对两个入口仍可正常打开对应表单，且没有非必要视觉或交互变化。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN", "ASCII identifiers"],
+    "platforms": ["LarkixMaker CMS", "desktop browser", "narrow mobile browser"],
+    "compatibility": ["保留现有表单提交和校验行为", "保留现有日夜主题", "不改新建和编辑入口按钮"],
+    "data": ["浏览器复测仅使用隔离测试数据", "不得触碰当前或生产数据库"],
+    "security": ["不得绕过 CMS 鉴权、CSRF 或服务端验证"],
+    "operations": ["不执行生产、云、部署或 Git 写入"],
+    "deadline": null
+  },
+  "evidence": [
+    {
+      "id": "evidence.owner-hitbox",
+      "kind": "observation",
+      "locator": "Owner interview 2026-09-12 to 2026-09-13",
+      "note": "Owner 报告保存按钮可见但真实点击区域偏到最右侧，并要求整个区域可点击。",
+      "status": "provided"
+    },
+    {
+      "id": "evidence.browser-shared-control",
+      "kind": "observation",
+      "locator": "A18 isolated local browser inspection 2026-09-13",
+      "note": "隔离网页复测确认新建与编辑共用同一个公式表单保存控件；测试实例和临时数据已清理。",
+      "status": "verified"
+    }
+  ],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.overlay",
+      "severity": "medium",
+      "statement": "主题样式、固定反馈栏或透明覆盖层可能造成视觉区域和指针命中区域分离。",
+      "mitigation": "用真实指针位置测试左右中部并检查层叠、pointer-events 和响应式状态。"
+    },
+    {
+      "id": "risk.duplicate-submit",
+      "severity": "medium",
+      "statement": "扩大或重构点击区域时可能导致一次点击重复提交。",
+      "mitigation": "保留单一提交源并验证一次点击只产生一次请求和一个修订。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-09-13T00:36:45.328+08:00",
+    "confirmationText": "Owner 已在当前项目治理会话明确指示：认可新的快速启动机制，并要求继续处理刚刚收敛的“四个小包”需求，完成确认后的需求包交接。",
+    "digest": "sha256:745162a50f9658fab2fcf643e4c9507bc32b4d7e1ddfc75c3f4c26d52be46144"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-09-13T00:37:59.968+08:00"
+  }
+}

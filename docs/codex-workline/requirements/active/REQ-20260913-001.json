@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260913-001",
+  "title": "公式卡结论与 Markdown 双栏实时预览",
+  "status": "dispatched",
+  "priority": "high",
+  "createdAt": "2026-09-13T00:34:30.708+08:00",
+  "updatedAt": "2026-09-13T00:37:59.968+08:00",
+  "intent": {
+    "problem": "公式卡的新建与编辑界面把结论公式、Markdown 推导及其预览分散排列，作者需要分别滚动编辑区和预览区，难以边写边核对效果。",
+    "desiredOutcome": "让公式作者在桌面端以左侧预览、右侧编辑的统一双栏界面撰写结论公式与 Markdown 推导，并由右侧编辑滚动驱动左侧预览定位；窄屏使用清晰的上下布局。",
+    "targetUsers": ["Owner", "CMS 公式作者"]
+  },
+  "scope": {
+    "in": [
+      "新建和编辑公式卡均采用一致的结论公式双栏界面：桌面端左侧实时预览、右侧 LaTeX 编辑",
+      "新建和编辑公式卡均采用一致的 Markdown 推导双栏界面：桌面端左侧实时预览、右侧 Markdown 编辑",
+      "右侧 Markdown 编辑区滚动时，左侧预览自动定位到对应内容位置，交互效果参考现有文章撰写界面",
+      "窄屏时双栏改为上下排列，预览在上、编辑在下",
+      "日间和夜间模式均保持可读、可编辑且布局不溢出"
+    ],
+    "out": [
+      "修改文章撰写界面",
+      "要求左侧预览滚动反向驱动右侧编辑区",
+      "改变公式正文格式、公式身份、发布状态或修订语义",
+      "生产数据、云、部署或 Git 写入"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "结论公式 LaTeX 输入与结论预览未按左预览右编辑紧邻排列。",
+      "Markdown 编辑与预览未采用文章撰写界面的左预览右编辑及单向滚动同步方式。"
+    ],
+    "expected": [
+      "桌面端作者在同一视野内看到左侧实时结果和右侧输入。",
+      "编辑 Markdown 长文时只需滚动右侧编辑区，左侧预览即跟随到相应内容。",
+      "窄屏自动切换为预览在上、编辑在下的上下布局。"
+    ],
+    "edgeCases": [
+      "Markdown 为空、只有一个长段落或包含多个长公式。",
+      "预览渲染高度与编辑文本行高差异明显。",
+      "窗口在桌面宽度与窄屏宽度之间切换。",
+      "日间与夜间模式切换后保留当前编辑内容和合理滚动位置。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.desktop-layout",
+      "statement": "桌面端结论公式和 Markdown 推导均为左侧预览、右侧编辑，且新建和编辑公式卡表现一致。",
+      "verification": "在代表性桌面视口分别打开新建和编辑公式卡，输入 LaTeX 与多段 Markdown，核对左右位置、实时更新和无横向溢出。"
+    },
+    {
+      "id": "ac.scroll-sync",
+      "statement": "滚动右侧 Markdown 编辑区时，左侧预览跟随至对应段落或区块，不需要作者单独滚动两侧。",
+      "verification": "使用包含多个标题、段落和公式的长推导，在顶部、中部和底部滚动右侧，核对左侧对应内容连续跟随且不出现明显跳错区块。"
+    },
+    {
+      "id": "ac.narrow-layout",
+      "statement": "窄屏下预览在上、编辑在下，控件可完整操作且内容不被裁切。",
+      "verification": "在代表性手机宽度测试新建和编辑状态，核对上下顺序、输入、预览、滚动及日夜模式。"
+    },
+    {
+      "id": "ac.state-preservation",
+      "statement": "响应式切换和主题切换不会清空未保存内容或破坏实时预览。",
+      "verification": "输入未保存内容后切换视口宽度与主题，确认输入值、预览结果及编辑焦点仍可继续使用。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN", "LaTeX", "Markdown", "ASCII identifiers"],
+    "platforms": ["LarkixMaker CMS", "desktop browser", "narrow mobile browser"],
+    "compatibility": ["保留现有公式卡新建与编辑能力", "保留现有 Markdown 与数学渲染语义", "参考现有文章撰写滚动同步行为"],
+    "data": ["不得改变公式正文存储格式或现有公式数据"],
+    "security": ["不得扩大 CMS 访问范围或向访客端泄露草稿内容"],
+    "operations": ["只允许隔离测试数据验证", "不执行生产、云、部署或 Git 写入"],
+    "deadline": null
+  },
+  "evidence": [
+    {
+      "id": "evidence.owner-layout",
+      "kind": "observation",
+      "locator": "Owner interview 2026-09-12 to 2026-09-13",
+      "note": "Owner 明确要求两处左预览右编辑、右侧驱动左侧滚动，窄屏上下排列且不要求反向联动。",
+      "status": "provided"
+    },
+    {
+      "id": "evidence.current-editor",
+      "kind": "file",
+      "locator": "admin/index.html",
+      "note": "当前公式卡表单包含结论公式输入、Markdown 输入及两个独立预览区域。",
+      "status": "verified"
+    }
+  ],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.scroll-mapping",
+      "severity": "medium",
+      "statement": "编辑文本与渲染预览高度差异可能造成滚动位置逐渐偏离。",
+      "mitigation": "按稳定区块或等价比例映射，并用多标题、多公式长文覆盖顶部、中部和底部。"
+    },
+    {
+      "id": "risk.shared-cms-surface",
+      "severity": "medium",
+      "statement": "布局修改可能与其他公式 CMS 小包共享前端写集并产生冲突。",
+      "mitigation": "由 A00 串行开放小包，同一时间仅允许一个执行会话拥有共享写集。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-09-13T00:36:45.328+08:00",
+    "confirmationText": "Owner 已在当前项目治理会话明确指示：认可新的快速启动机制，并要求继续处理刚刚收敛的“四个小包”需求，完成确认后的需求包交接。",
+    "digest": "sha256:a2e1ebe2fac0e7715dbc754d5b72453c195c0e9d2c4a432af37dab0439ff9745"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-09-13T00:37:59.968+08:00"
+  }
+}

@@ -146,7 +146,7 @@ function shortPrompt(governance, entry, promptRoot) {
   const note = agentRoleNote(governance, entry.id);
   const noteText = note ? `（${note}）` : "";
   const briefText = entry.brief ? `，然后执行 ${displayWindowsPath(entry.brief)}` : "";
-  return `${title}${noteText}：请进入 ${promptRoot}，运行 npm.cmd run codex:handoff 核验路由${briefText}；使用中文交接，遵守 AGENTS.md 门禁；完成后直接回传 A00，不等待用户转发或发送“继续”。`;
+  return `${title}${noteText}：请进入 ${promptRoot}，运行 npm.cmd run --silent codex:bootstrap 核验路由${briefText}；只读取 compact 输出、任务 brief 及其 Read First 清单，使用中文交接，严格遵守 may_edit、验收命令和 AGENTS.md 门禁；完成后直接回传 A00，不等待用户转发或发送“继续”。`;
 }
 
 function printEntryDetails(entry, index, total) {
@@ -167,6 +167,15 @@ function printEntryDetails(entry, index, total) {
 
 function main() {
   try {
+    const flags = new Set(process.argv.slice(2));
+    const compact = flags.has("--compact");
+    const launchOnly = flags.has("--launch-only");
+    const supportedFlags = new Set(["--compact", "--launch-only"]);
+    const unknownFlags = [...flags].filter((flag) => !supportedFlags.has(flag));
+    if (unknownFlags.length > 0) {
+      throw new Error(`Unsupported option(s): ${unknownFlags.join(", ")}`);
+    }
+
     const governance = readJson(".codex/larkix-governance.json");
     const registry = readJson(governance.workline.taskRegistry);
     const projectWindow = readText("PROJECT_WINDOW.md");
@@ -178,6 +187,12 @@ function main() {
     const lastHandoff = projectWindowValue(projectWindow, "Last accepted handoff") || "none";
     const gate = projectWindowValue(projectWindow, "Current gate") || "see PROJECT_WINDOW.md";
     const promptRoot = displayWindowsPath(workspaceRoot);
+    const prompts = entries.map((entry) => shortPrompt(governance, entry, promptRoot));
+
+    if (launchOnly) {
+      console.log(prompts.join("\n"));
+      return;
+    }
 
     console.log("LarkixMaker handoff");
     console.log("===================");
@@ -185,8 +200,8 @@ function main() {
     console.log(entries.length === 1
       ? "Short prompt for a fresh Codex session:"
       : "Short prompts for parallel Codex sessions:");
-    for (const entry of entries) {
-      console.log(shortPrompt(governance, entry, promptRoot));
+    for (const prompt of prompts) {
+      console.log(prompt);
     }
     console.log("");
     console.log(`Project root: ${workspaceRoot}`);
@@ -194,6 +209,20 @@ function main() {
     console.log(`Next ${kind}: ${entries.map((entry) => entry.id).join(", ")}`);
     console.log(`Last accepted handoff: ${lastHandoff}`);
     console.log(`Gate: ${gate}`);
+
+    if (compact) {
+      console.log("");
+      entries.forEach((entry, index) => {
+        const suffix = entries.length > 1 ? ` ${index + 1}` : "";
+        console.log(`Next Agent brief${suffix}: ${entry.brief || "not declared"}`);
+        console.log(`Expected handoff${suffix}: ${entry.handoff || entry.activeHandoff || "not declared"}`);
+      });
+      console.log("");
+      console.log("Read policy: PROJECT_WINDOW.md -> Next Agent brief -> brief Read First only.");
+      console.log("Expanded details: npm.cmd run --silent codex:handoff");
+      return;
+    }
+
     console.log("");
     entries.forEach((entry, index) => printEntryDetails(entry, index, entries.length));
   } catch (error) {

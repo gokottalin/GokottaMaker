@@ -6,6 +6,22 @@ scripts, and Agent governance documents.
 
 Active project root: the current Git checkout containing this `AGENTS.md` file.
 
+## Codex Desktop Entry Shell
+
+Some Codex Desktop tasks are created under `C:\Users\Larkix网站`. That path is
+only a saved conversation entry shell, not this repository. Its
+`AGENTS.md` and `PROJECT_POINTER.json` redirect tasks here. For all
+LarkixMaker/GokottaMaker version, code, test, Git, CMS, formula, or deployment
+work, the canonical project root is:
+
+```text
+E:\Project\2607-LarkixWeb
+```
+
+Do not infer project state from the entry shell, copy this repository into it,
+or run project commands there. If this canonical checkout is unavailable,
+stop and report the missing root instead of falling back to the entry shell.
+
 ## Fresh Windows Checkout
 
 On a new Windows computer, this file is the complete first entrypoint. Install
@@ -16,7 +32,7 @@ git clone https://github.com/gokottalin/GokottaMaker.git LarkixMaker
 Set-Location LarkixMaker
 Get-Content -Encoding UTF8 -Raw AGENTS.md
 npm.cmd run verify:clean-clone
-npm.cmd run codex:handoff
+npm.cmd run --silent codex:bootstrap
 ```
 
 `verify:clean-clone` installs the locked dependencies, creates an isolated empty
@@ -25,31 +41,29 @@ credentials in process memory, starts the service on an available loopback
 port, checks `/healthz`, stops it, runs the core and governance checks, and
 removes its temporary data even after a failure. It never reads `.env`, the
 current machine's database, or production data. After it passes, follow the
-`Next Agent brief` printed by `codex:handoff`; no historical conversation is
+`Next Agent brief` printed by `codex:bootstrap`; no historical conversation is
 required. See `docs/cross-computer-bootstrap.md` for prerequisites, environment
 variables, troubleshooting, and the separate Linux production boundary.
 
 ## Startup
 
-Before changing files, read the current governance state in this order:
-
-1. `PROJECT_WINDOW.md`
-2. `docs/PROJECT_CHARTER.md`
-3. `docs/codex-workline/task_registry.json`
-4. `PROJECT_MAINTENANCE.json`
-5. `ACTIVE_AGENT_DISPATCH.json`
-6. `TOP_ARCHITECT_HANDOFF.json`
-7. `docs/Agent0+总控与集成/AGENT_UPDATE_INDEX.json`
-8. The latest Agent or task handoff referenced by those files
-
-Then run:
+Codex already loads this file. Do not spend tokens rereading every historical
+governance file at session start. Run the compact router first:
 
 ```powershell
-npm.cmd run codex:contract
+npm.cmd run --silent codex:bootstrap
 ```
 
-Treat the checker output as the live project gate. At the time this guide was
-added, Batch1 was paused by Owner and business implementation was closed.
+Then read only `PROJECT_WINDOW.md`, the reported `Next Agent brief`, and the
+brief's explicit `Read First` list. Do not recursively scan `docs/Agent*`, read
+the complete task registry, or load old handoffs unless the active brief names
+them. Before changing files, run the brief's declared baseline check. Run
+`npm.cmd run codex:contract` after governance or Agent-file changes and treat
+its summary as the live project gate.
+
+Use `npm.cmd run --silent codex:handoff` only when the expanded routing details are
+needed. Use `npm.cmd run --silent codex:launch` when a copy-ready fresh-session launch
+sentence is required.
 
 ## Operating Model
 
@@ -99,7 +113,7 @@ The continuation loop is:
 3. If the completed Agent returns to `A00_ProjectDirector`, immediately act as
    A00 in the same task and perform acceptance, gate checks, registry updates,
    and next-task routing.
-4. Run `npm.cmd run codex:handoff` after the routing state is updated.
+4. Run `npm.cmd run --silent codex:handoff` after the routing state is updated.
 5. Read the reported Next Agent brief and dispatch it directly to the named
    functional Agent.
 6. Repeat the handoff, A00 acceptance, routing, dispatch, and execution cycle one Agent at
@@ -174,9 +188,38 @@ protocol is `docs/codex-workline/requirements/README.md`. Use
 `npm.cmd run codex:requirement -- emit <package.json>` to produce the compact
 handoff envelope after confirmation.
 
+## Confirmed Requirement Fresh-Session Launch Rule
+
+When both conditions below are true, the current session must emit a launch
+sentence automatically in the same response instead of waiting for the Owner
+to ask for one:
+
+1. the Owner has explicitly confirmed the final requirement summary and the
+   requirement package is digest-valid; and
+2. the current session determines that remaining work must move to a new
+   session because the responsible role, write ownership, gate, or bounded
+   context belongs there.
+
+Before emitting the sentence, ensure A00 has registered the target Agent and
+its narrow brief. Then run:
+
+```powershell
+npm.cmd run --silent codex:launch
+```
+
+Emit the command output verbatim under `新会话启动语`; do not paste the full
+brief and do not ask the Owner to compose or relay a prompt. If an existing
+Codex task can receive the handoff directly, send it through the available task
+messaging tool as well. If routing is incomplete, return to A00 to create the
+brief; an unregistered target is not a reason to invent a launch sentence.
+
+This rule only packages already-confirmed scope. It does not confirm a draft
+requirement, bypass a closed gate, grant new write authority, or authorize Git,
+production, cloud, service, secret, migration, restore, or rollback actions.
+
 For fresh handoff sessions, the user should not need to paste a long task
 brief. Prefer the short prompt "enter the project and run
-`npm.cmd run codex:handoff`"; the next Agent must then read the reported brief
+`npm.cmd run --silent codex:bootstrap`"; the next Agent must then read the reported brief
 and current project window.
 The short prompt must begin with the current Agent number, English role, and a
 concise Chinese role note, for example
@@ -249,7 +292,9 @@ handoff tools.
 ## Commands
 
 ```powershell
-npm.cmd run codex:handoff
+npm.cmd run --silent codex:handoff
+npm.cmd run --silent codex:bootstrap
+npm.cmd run --silent codex:launch
 npm.cmd run codex:contract
 npm.cmd run codex:resources
 npm.cmd run check:version
@@ -257,7 +302,10 @@ npm.cmd run test:markdown
 node --experimental-sqlite server.js
 ```
 
-`codex:handoff` prints the current short handoff and next Agent brief path.
+`codex:bootstrap` prints the compact current route and next Agent brief path.
+`codex:launch` prints only the copy-ready fresh-session launch sentence; invoke
+it through `npm.cmd run --silent codex:launch` so npm adds no wrapper text.
+`codex:handoff` prints expanded routing details for diagnosis.
 `codex:contract` checks the current Agent gate and required project files.
 `codex:resources` inventories source assets and protected runtime resources.
 

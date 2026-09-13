@@ -1,0 +1,176 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260913-004",
+  "title": "公式推导依赖库选择与无环引用插入",
+  "status": "dispatched",
+  "priority": "high",
+  "createdAt": "2026-09-13T00:34:30.708+08:00",
+  "updatedAt": "2026-09-13T01:40:12.192+08:00",
+  "intent": {
+    "problem": "作者撰写二阶及更高阶公式推导时必须手工寻找并输入 formula-ref 短码，难以浏览可依赖公式、确认身份并避免自引用或间接循环。",
+    "desiredOutcome": "在公式卡 Markdown 推导编辑区提供已发布公式选择器，支持分类浏览和宽松搜索，点击即可在当前光标处插入以完整 formulaId 为键的现有标准 formula-ref，同时在界面和保存端阻止直接或间接循环依赖。",
+    "targetUsers": ["Owner", "CMS 公式作者"]
+  },
+  "scope": {
+    "in": [
+      "新建和编辑公式卡的 Markdown 推导编辑区均提供依赖公式工具",
+      "工具只展示已发布公式，支持按现有分类浏览",
+      "支持宽松搜索；公式名称、Formula ID、分类三项任一匹配即显示",
+      "结果项显示分类、公式名称、Formula ID 和核心公式预览，不展开完整推导正文",
+      "点击结果后在当前 Markdown 光标位置插入以完整 formulaId 为键的现有标准短码，例如 {{formula-ref:formula.user.dcm-471448c998ea}}",
+      "禁止选择当前公式自身",
+      "会形成间接循环依赖的候选项置灰并说明原因",
+      "保存时服务端再次校验并拒绝自引用、间接循环及无效依赖",
+      "插入后保持编辑焦点与合理光标位置，允许继续输入"
+    ],
+    "out": [
+      "在选择器中展示草稿、待修订、已归档或其他未发布公式",
+      "在结果列表展开完整 Markdown 推导正文",
+      "取消手动输入 formula-ref 的能力",
+      "新增独立 shortId 字段、尾段 ID 解析、ID 迁移或改变 formula-ref 的既有渲染与版本语义",
+      "生产数据、云、部署或 Git 写入"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "作者需要手工输入以完整 formulaId 为键的 {{formula-ref:...}} 并自行确认依赖公式身份。",
+      "公式库缺少面向当前编辑光标的分类浏览、搜索和插入流程。"
+    ],
+    "expected": [
+      "作者从 Markdown 编辑区打开依赖公式工具后，只看到可引用的已发布公式。",
+      "按分类或名称、ID、分类任一字段搜索即可快速缩小结果。",
+      "点击可用项立即在当前光标处插入正确的完整 formulaId 引用。",
+      "当前公式及会形成间接循环的公式不可选择，并向作者解释原因。",
+      "即使绕过界面手工输入，保存端仍阻止不合法依赖。"
+    ],
+    "edgeCases": [
+      "新建公式尚未获得自身 Formula ID。",
+      "搜索词只匹配 Formula ID 的一部分或分类名称。",
+      "同名公式位于不同分类。",
+      "当前 Markdown 已包含多个依赖引用。",
+      "候选公式状态在选择器打开后发生变化。",
+      "A 依赖 B、B 依赖 C，当前 C 尝试引用 A。",
+      "光标位于段落中间、选中文本范围或编辑区末尾。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.published-only",
+      "statement": "选择器只列出已发布公式，草稿、待修订、已归档和不可访问公式均不泄露也不可插入。",
+      "verification": "准备多状态公式并分别按名称、ID、分类搜索，确认仅已发布且授权可见的候选返回。"
+    },
+    {
+      "id": "ac.browse-search-summary",
+      "statement": "作者可按分类浏览或宽松搜索，名称、ID、分类任一字段匹配即可显示；结果仅呈现分类、名称、Formula ID 和核心公式预览。",
+      "verification": "分别用名称片段、ID 片段和分类片段搜索，核对 OR 匹配、分类筛选、结果摘要及不展开完整推导。"
+    },
+    {
+      "id": "ac.cursor-insert",
+      "statement": "点击候选公式在当前光标位置插入 {{formula-ref:完整formulaId}}，例如 {{formula-ref:formula.user.dcm-471448c998ea}}，并保持编辑焦点与后续输入能力。",
+      "verification": "在段首、段中、段末及选区场景插入多个引用，核对完整 formulaId、短码结构、位置、焦点和周围文本不丢失。"
+    },
+    {
+      "id": "ac.self-cycle-ui",
+      "statement": "当前公式和任何会形成间接循环依赖的候选项不可点击，置灰并显示明确原因。",
+      "verification": "构造自引用和 A 到 B 到 C 的依赖链，在 C 中打开选择器，确认 C 与会闭环的 A 均不可选且原因正确。"
+    },
+    {
+      "id": "ac.server-cycle-gate",
+      "statement": "服务端保存重新解析 Markdown 依赖并拒绝自引用、间接循环、未发布或无效目标，失败时不产生部分修订。",
+      "verification": "绕过选择器直接提交各类非法短码，确认请求失败、返回可理解原因且公式正文、修订和关系边均不变。"
+    },
+    {
+      "id": "ac.manual-compatible",
+      "statement": "作者仍可手动输入合法 formula-ref；选择器是优先工具而非唯一入口。",
+      "verification": "手工输入一个合法已发布依赖并保存，确认与选择器插入结果使用同一验证和渲染规则。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN", "Markdown", "LaTeX", "ASCII Formula ID and shortcode"],
+    "platforms": ["LarkixMaker CMS", "Node.js 22", "SQLite", "desktop and narrow browser"],
+    "compatibility": ["保留现有 formula-ref 短码格式并继续以完整 formulaId 为引用键", "不新增独立 shortId 或尾段解析契约", "保留手动输入能力", "保留既有无环依赖和发布隐私规则"],
+    "data": ["依赖保存必须原子更新正文、修订与关系边", "浏览器和接口验证仅使用隔离测试数据", "不得触碰当前或生产数据库"],
+    "security": ["选择器与搜索接口仅供已授权 CMS 使用并受现有鉴权与 CSRF 边界保护", "未发布公式不得通过搜索结果、计数、错误或预览泄露"],
+    "operations": ["共享 CMS 前端写集一次只允许一个执行会话", "不执行生产、云、部署或 Git 写入"],
+    "deadline": null
+  },
+  "evidence": [
+    {
+      "id": "evidence.owner-picker",
+      "kind": "observation",
+      "locator": "Owner interview 2026-09-12 to 2026-09-13",
+      "note": "Owner 确认选择器用于新建和编辑公式卡，限定已发布公式，支持分类和名称、ID、分类任一匹配搜索，并在光标处插入 formula-ref。",
+      "status": "provided"
+    },
+    {
+      "id": "evidence.owner-cycle",
+      "kind": "observation",
+      "locator": "Owner interview 2026-09-13",
+      "note": "Owner 确认禁止当前公式和间接循环候选，界面置灰说明且保存端再次拒绝。",
+      "status": "provided"
+    },
+    {
+      "id": "evidence.current-shortcode",
+      "kind": "file",
+      "locator": "admin/index.html and admin/admin.js",
+      "note": "当前公式编辑器说明使用 Markdown formula-ref 作为依赖唯一来源，保存时已有关系校验提示。",
+      "status": "verified"
+    },
+    {
+      "id": "evidence.current-reference-key",
+      "kind": "observation",
+      "locator": "Requirement planner authority-code verification 2026-09-13",
+      "note": "当前 Markdown 依赖、服务端校验、关系边和测试均以完整 formulaId 作为 formula-ref 键，仓库没有独立 shortId 字段或尾段到完整 formulaId 的权威解析契约。",
+      "status": "verified"
+    }
+  ],
+  "openQuestions": [
+    {
+      "id": "question.reference-key",
+      "question": "formula-ref 应继续存完整 formulaId，还是新增稳定 shortId 及解析和兼容迁移语义？",
+      "impact": "该选择决定是否只做 CMS 选择器，或扩大为数据、API、渲染与旧引用兼容契约变更。",
+      "status": "resolved",
+      "answer": "Owner 选择 A：formula-ref 继续存完整 formulaId；短码仅指 formula-ref 语法整体，不新增 shortId、解析或迁移语义。"
+    }
+  ],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.cycle-race",
+      "severity": "high",
+      "statement": "选择器打开后关系或发布状态变化，可能使先前可选项在保存时变为非法。",
+      "mitigation": "界面提供即时提示但以保存端当前权威图和发布状态的原子校验为最终门禁。"
+    },
+    {
+      "id": "risk.identity-confusion",
+      "severity": "medium",
+      "statement": "若界面把短码误解为截短 ID，可能插入无法解析的尾段引用。",
+      "mitigation": "短码仅指 formula-ref 语法整体；插入器必须直接使用权威完整 formulaId，并以精确断言禁止只插入尾段。"
+    },
+    {
+      "id": "risk.search-leak",
+      "severity": "high",
+      "statement": "宽松搜索若在过滤发布状态前执行，可能泄露未发布公式存在性。",
+      "mitigation": "先按授权与已发布状态限定候选集合，再执行名称、ID 和分类 OR 匹配。"
+    },
+    {
+      "id": "risk.shared-cms-surface",
+      "severity": "medium",
+      "statement": "选择器与其他公式 CMS 小包共享前端写集，可能产生并行冲突。",
+      "mitigation": "由接收方一次只开放一个小包，并只交给一个执行会话。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-09-13T01:39:38.993+08:00",
+    "confirmationText": "确认修订后的 REQ-20260913-004",
+    "digest": "sha256:fd9a7c4a2c0b24cacf4ac2dddccea95645dca9cd01dacac0536bd1e404132637"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-09-13T01:40:12.192+08:00"
+  }
+}

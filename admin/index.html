@@ -649,18 +649,44 @@
                   <span class="formula-selected-tags" id="formulaSelectedTags"></span>
                   <textarea name="tags" hidden></textarea>
                 </label>
-                <label class="formula-field-wide">
-                  <span class="formula-field-label">结论公式 LaTeX
-                    <button class="formula-field-help-button" type="button" data-formula-help="只填写公式本体，不要加入 $$ 定界符。系统逐字保存，不会改写 LaTeX 含义。示例：V_{out}=D\\,V_{in}。" aria-label="查看 LaTeX 说明">?</button>
-                  </span>
-                  <textarea name="latex" rows="5" required></textarea>
-                </label>
-                <label class="formula-field-wide">
-                  <span class="formula-field-label">Markdown 推导正文
-                    <button class="formula-field-help-button" type="button" data-formula-help="独立维护完整推导，可使用标题、段落、列表、链接及 $...$ / $$...$$ 数学。正文会与 LaTeX 一起形成不可变修订。" aria-label="查看 Markdown 推导说明">?</button>
-                  </span>
-                  <textarea name="markdownDerivation" rows="12" placeholder="## 已知条件&#10;&#10;我采用..."></textarea>
-                </label>
+                <section class="formula-field-wide formula-authoring-split formula-latex-workbench" aria-labelledby="formulaLatexEditorLabel">
+                  <div class="formula-workbench-preview">
+                    <strong>结论公式预览</strong>
+                    <div class="formula-editor-preview" id="formulaEditorPreview"></div>
+                  </div>
+                  <label class="formula-workbench-editor" id="formulaLatexEditorLabel">
+                    <span class="formula-field-label">结论公式 LaTeX
+                      <button class="formula-field-help-button" type="button" data-formula-help="只填写公式本体，不要加入 $$ 定界符。系统逐字保存，不会改写 LaTeX 含义。示例：V_{out}=D\\,V_{in}。" aria-label="查看 LaTeX 说明">?</button>
+                    </span>
+                    <textarea name="latex" rows="5" required></textarea>
+                  </label>
+                </section>
+                <section class="formula-field-wide formula-authoring-split formula-markdown-workbench" aria-labelledby="formulaMarkdownEditorLabel">
+                  <div class="formula-workbench-preview">
+                    <strong>Markdown 推导预览</strong>
+                    <div class="formula-markdown-preview markdown-article" id="formulaMarkdownPreview"></div>
+                  </div>
+                  <div class="formula-workbench-editor">
+                    <label id="formulaMarkdownEditorLabel">
+                      <span class="formula-field-label">Markdown 推导正文
+                        <button class="formula-field-help-button" type="button" data-formula-help="独立维护完整推导，可使用标题、段落、列表、链接及 $...$ / $$...$$ 数学。正文会与 LaTeX 一起形成不可变修订。" aria-label="查看 Markdown 推导说明">?</button>
+                      </span>
+                      <textarea name="markdownDerivation" rows="16" placeholder="## 已知条件&#10;&#10;我采用..."></textarea>
+                    </label>
+                    <section class="formula-dependency-picker" aria-labelledby="formulaDependencyPickerTitle">
+                      <div class="formula-dependency-picker-heading">
+                        <strong id="formulaDependencyPickerTitle">插入已发布依赖公式</strong>
+                        <span id="formulaDependencyPickerStatus" role="status" aria-live="polite"></span>
+                      </div>
+                      <div class="formula-dependency-filters">
+                        <label>模块<select id="formulaDependencyModule"><option value="">全部模块</option></select></label>
+                        <label>分类<select id="formulaDependencyCategory"><option value="">全部分类</option></select></label>
+                        <label>搜索<input id="formulaNextTarget" type="search" placeholder="名称、完整 Formula ID 或分类" autocomplete="off" /></label>
+                      </div>
+                      <div class="formula-dependency-results" id="formulaDependencyResults"></div>
+                    </section>
+                  </div>
+                </section>
                 <label class="formula-field-wide">
                   修订说明
                   <input name="revisionReason" maxlength="64" placeholder="例如：补充边界条件" />
@@ -685,21 +711,11 @@
                   <button class="button secondary" type="button" data-formula-copy="slug">复制</button>
                 </div>
               </section>
-              <div class="formula-editor-preview-grid">
-                <section>
-                  <strong>结论公式预览</strong>
-                  <div class="formula-editor-preview" id="formulaEditorPreview"></div>
-                </section>
-                <section>
-                  <strong>Markdown 推导预览</strong>
-                  <div class="formula-markdown-preview markdown-article" id="formulaMarkdownPreview"></div>
-                </section>
-              </div>
               <div class="formula-editor-footer">
                 <span class="formula-publication-hint" id="formulaPublicationHint">新卡保存后为草稿。</span>
                 <a class="button secondary" id="formulaVisitorPreview" href="/derive.html" target="_blank" rel="noopener noreferrer" hidden>访客预览</a>
                 <button class="button secondary" id="formulaPublishButton" type="button" hidden>发布公式卡</button>
-                <button class="button primary" type="submit">保存公式卡</button>
+                <button class="button primary formula-save-button" id="formulaSaveButton" type="submit">保存公式卡</button>
               </div>
               <section class="formula-derivation-panel" id="formulaDerivationPanel" hidden>
                 <div class="section-heading compact">
@@ -721,15 +737,6 @@
                   <section aria-labelledby="formulaDependenciesTitle">
                     <h5 id="formulaDependenciesTitle">当前修订依赖</h5>
                     <div class="formula-relation-list" id="formulaNextRelation"></div>
-                    <div class="formula-relation-control">
-                      <label>
-                        搜索依赖公式
-                        <input id="formulaNextTarget" list="formulaDerivationCandidates" placeholder="输入名称或 formulaId" autocomplete="off" />
-                      </label>
-                      <div class="row-actions">
-                        <button class="button secondary" id="formulaNextSet" type="button">插入依赖短码</button>
-                      </div>
-                    </div>
                   </section>
                 </div>
                 <section class="formula-graph-admin-preview" aria-labelledby="formulaGraphPreviewTitle">
@@ -741,7 +748,6 @@
                   </div>
                   <div id="formulaAdminGraph" class="formula-graph-host"></div>
                 </section>
-                <datalist id="formulaDerivationCandidates"></datalist>
               </section>
               <section class="formula-revisions">
                 <h4>不可变修订记录</h4>

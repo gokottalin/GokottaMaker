@@ -146,6 +146,8 @@ function machineEnvelope(requirement, filePath) {
     briefPath: path.relative(process.cwd(), filePath).replaceAll("\\", "/"),
     digest: requirement.confirmation.digest,
     target: "A00_ProjectDirector",
+    launchCommand: "npm.cmd run --silent codex:launch",
+    launchPolicy: "emit_after_confirmed_requirement_when_fresh_session_handoff_is_required",
   };
 }
 
@@ -228,6 +230,10 @@ function makeSelfTestRequirement() {
 function runSelfTest() {
   const requirement = makeSelfTestRequirement();
   assertValid(requirement);
+  const envelope = machineEnvelope(requirement, path.resolve(process.cwd(), "selftest-requirement.json"));
+  if (envelope.launchCommand !== "npm.cmd run --silent codex:launch") {
+    throw new Error("selftest expected confirmed handoff launch command");
+  }
 
   requirement.intent.desiredOutcome = "Changed after confirmation.";
   const failures = validateRequirement(requirement);

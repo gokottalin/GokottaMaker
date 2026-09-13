@@ -245,7 +245,18 @@
       "agents/A69_FormulaWorklineRegression/brief.md",
       ".codex/agents/a69-formula-workline-regression.toml",
       "agents/A70_FormulaRelationshipProjectionRepair/brief.md",
-      ".codex/agents/a70-formula-relationship-projection-repair.toml"
+      ".codex/agents/a70-formula-relationship-projection-repair.toml",
+      "agents/A71_SessionBootstrapGovernance/brief.md",
+      ".codex/agents/a71-session-bootstrap-governance.toml",
+      "scripts/test-codex-handoff.js",
+      "docs/codex-workline/slices/S61_session_bootstrap_governance_handoff.md",
+      "docs/codex-workline/requirements/active/REQ-20260913-001.json",
+      "docs/codex-workline/requirements/active/REQ-20260913-002.json",
+      "docs/codex-workline/requirements/active/REQ-20260913-003.json",
+      "docs/codex-workline/requirements/active/REQ-20260913-004.json",
+      "scripts/test-formula-cms-consolidated.js",
+      "scripts/run-formula-cms-consolidated-browser-fixture.js",
+      "docs/codex-workline/slices/S62_formula_cms_consolidated_handoff.md"
     ],
     "pausedBooleanFields": {
       "batch1ReadyForOpenDecision": true,
@@ -258,20 +269,23 @@
     },
     "packageScripts": {
       "codex:handoff": "node scripts/codex-handoff.js",
+      "codex:bootstrap": "node scripts/codex-handoff.js --compact",
+      "codex:launch": "node scripts/codex-handoff.js --launch-only",
       "codex:requirement": "node scripts/requirement-handoff.js",
       "codex:contract": "node scripts/codex-governance.js contract",
       "codex:resources": "node scripts/codex-governance.js resources",
-      "codex:check": "node scripts/codex-governance.js all"
+      "codex:check": "node scripts/codex-governance.js all",
+      "test:codex-handoff": "node scripts/test-codex-handoff.js"
     },
     "projectWindowRequiredText": [
       "# Project Window",
-      "Current phase: `DISPATCH-20260911-001_Accepted_Queue_Empty`",
+      "Current phase: `S62_Formula_CMS_Consolidated_Accepted_Queue_Empty`",
       "Current controller: `agents/A00_ProjectDirector/brief.md`",
       "Next agent: `agents/A00_ProjectDirector/brief.md`",
       "Confirmed requirement dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json`",
-      "Current work target: A00 accepted S56 through S60A with formula workline regression 15/15 and evidence digest sha256:9574b01464d7f2b0ddbc861e0783d1e77173313664082585c256dca7c86794c3",
+      "Current work target: A00 accepted S61 compact bootstrap plus S62 consolidated formula CMS authoring; security/formula and formula-workline regressions are both 15/15",
       "Current gate: Git writes, production deployment, current/production data, services, secrets, cloud, migrations, restore and rollback are closed",
-      "Confirmed queue: empty after A00 acceptance of DISPATCH-20260911-001"
+      "Confirmed queue: empty after A00 acceptance of S62"
     ],
     "agentsGuideRequiredText": [
       "Recommended handoff and coordination language: Chinese",
@@ -287,8 +301,11 @@
       "A missing Agent is not a stop condition",
       "without waiting for the Owner to type",
       "Cross-Session Dispatch and Scheduling Rule",
+      "Confirmed Requirement Fresh-Session Launch Rule",
+      "npm.cmd run --silent codex:bootstrap",
+      "npm.cmd run --silent codex:launch",
       "One file has one active editing owner at a time",
-      "npm.cmd run codex:handoff",
+      "npm.cmd run --silent codex:handoff",
       "Agent 00 Project Director",
       "项目导演：",
       "run `npm.cmd run codex:contract`"
@@ -297,7 +314,7 @@
       "Agent 00 Project Director",
       "DISPATCH-20260813-002",
       "A00_ProjectDirector",
-      "npm.cmd run codex:handoff"
+      "npm.cmd run --silent codex:handoff"
     ],
     "a01Completion": {
       "schema": "codex-workline.source_registry.v1",
@@ -732,7 +749,8 @@
       "A67_FormulaMetadataManagement": "公式元数据：两级分类与安全迁移",
       "A68_FormulaDetailPage": "公式独立页：统一详情与推导入口",
       "A69_FormulaWorklineRegression": "公式工作线回归：统一验收证据",
-      "A70_FormulaRelationshipProjectionRepair": "关系投影修复：消除公开公式 API 500"
+      "A70_FormulaRelationshipProjectionRepair": "关系投影修复：消除公开公式 API 500",
+      "A71_SessionBootstrapGovernance": "新会话启动治理：紧凑路由并自动发出启动语"
     },
     "expectedTaskStatuses": {
       "A01_ProjectStateRetriever": "completed",
@@ -802,7 +820,8 @@
       "A67_FormulaMetadataManagement": "completed",
       "A68_FormulaDetailPage": "completed",
       "A69_FormulaWorklineRegression": "completed",
-      "A70_FormulaRelationshipProjectionRepair": "completed"
+      "A70_FormulaRelationshipProjectionRepair": "completed",
+      "A71_SessionBootstrapGovernance": "completed"
     }
   },
   "temporaryExperts": [
@@ -1139,6 +1158,11 @@
     {
       "id": "A70_FormulaRelationshipProjectionRepair",
       "file": ".codex/agents/a70-formula-relationship-projection-repair.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A71_SessionBootstrapGovernance",
+      "file": ".codex/agents/a71-session-bootstrap-governance.toml",
       "mode": "workspace-write"
     }
   ]

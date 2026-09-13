@@ -397,6 +397,7 @@ const {
   removeCarouselFocusBuffer,
   allKnowledgeNodes,
   listFormulaCards,
+  listFormulaDependencyCandidates,
   listFormulaClassifications,
   publicFormulaCardBySlug,
   resolveLegacyFormulaRedirect,
@@ -2039,6 +2040,22 @@ async function api(req, res, pathname) {
     );
   }
 
+  if (pathname === "/api/admin/formula-dependency-candidates" && req.method === "GET") {
+    const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+    return json(
+      res,
+      200,
+      listFormulaDependencyCandidates({
+        sourceFormulaId: url.searchParams.get("sourceFormulaId") || "",
+        moduleKey: url.searchParams.get("module") || "",
+        categoryPath: url.searchParams.get("category") || "",
+        query: url.searchParams.get("q") || "",
+        page: url.searchParams.get("page") || 1,
+        pageSize: url.searchParams.get("pageSize") || 20
+      })
+    );
+  }
+
   if (pathname === "/api/admin/formula-classifications" && req.method === "GET") {
     const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
     return json(res, 200, {
@@ -2255,7 +2272,7 @@ async function api(req, res, pathname) {
     const body = validateFormulaBusinessPayload(input);
     let saved;
     withTransaction(() => {
-      saved = createFormulaCard({ ...body, actor: user });
+      saved = createFormulaCard({ ...body, actor: user, requirePublishedDependencies: true });
       logAudit(db, req, user, "formula_card_create", "formula_card", saved.card.formulaId, {
         slug: saved.card.slug,
         revisionCreated: saved.revisionCreated,
@@ -2273,7 +2290,7 @@ async function api(req, res, pathname) {
     const body = validateFormulaBusinessPayload(input);
     let saved;
     withTransaction(() => {
-      saved = updateFormulaCard(id, { ...body, actor: user });
+      saved = updateFormulaCard(id, { ...body, actor: user, requirePublishedDependencies: true });
       logAudit(db, req, user, "formula_card_update", "formula_card", saved.card.formulaId, {
         slug: saved.card.slug,
         revisionCreated: saved.revisionCreated,

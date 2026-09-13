@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "larkix.requirement-brief.v1",
+  "requirementId": "REQ-20260913-003",
+  "title": "公式库隐藏技术标识并一键复制完整 Formula ID",
+  "status": "dispatched",
+  "priority": "high",
+  "createdAt": "2026-09-13T00:34:30.708+08:00",
+  "updatedAt": "2026-09-13T00:37:59.968+08:00",
+  "intent": {
+    "problem": "公式库直接显示 formula.user.dcm-471448c998ea 一类技术标识，但作者难以判断和复制真正的 Formula ID，既占用界面又阻碍引用确认。",
+    "desiredOutcome": "公式库卡片不再直接展示完整技术标识，而以明确按钮一键复制完整 Formula ID，并提供复制成功反馈。",
+    "targetUsers": ["Owner", "CMS 公式作者"]
+  },
+  "scope": {
+    "in": [
+      "公式库每张公式卡隐藏原先直接展示的完整 Formula ID 文本",
+      "原标识位置提供复制公式 ID 按钮",
+      "按钮复制完整技术标识，例如 formula.user.dcm-471448c998ea",
+      "复制成功后明确提示已复制"
+    ],
+    "out": [
+      "改变 Formula ID 的生成规则、稳定性或存储值",
+      "让复制按钮复制仅用于 formula-ref 的短 ID",
+      "改造公式详情页或访客端公式显示",
+      "生产数据、云、部署或 Git 写入"
+    ]
+  },
+  "behavior": {
+    "current": [
+      "公式库卡片直接显示完整技术标识。",
+      "作者缺少明确的一键复制入口，无法确信复制的是完整 Formula ID。"
+    ],
+    "expected": [
+      "卡片不再暴露一长串原始 ID 文本，只显示语义清晰的复制按钮。",
+      "点击按钮把对应卡片的完整 Formula ID 写入剪贴板。",
+      "成功后给出已复制反馈，并且不会打开编辑器或改变卡片状态。"
+    ],
+    "edgeCases": [
+      "同一分类存在多张名称相似的公式卡。",
+      "Formula ID 较长或包含点号、连字符。",
+      "浏览器剪贴板权限或写入失败。",
+      "连续复制不同公式卡。"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "ac.hide-raw-id",
+      "statement": "公式库卡片不直接显示完整 Formula ID 文本，并保留足够的名称、分类和公式摘要供作者辨认。",
+      "verification": "加载含多张公式的目录，确认卡片可辨认但页面可见文本中不再出现原始完整 ID。"
+    },
+    {
+      "id": "ac.copy-full-id",
+      "statement": "每张公式卡的复制按钮只复制该卡完整 Formula ID，例如 formula.user.dcm-471448c998ea。",
+      "verification": "连续复制至少两张公式并读取剪贴板，逐项与服务端卡片 Formula ID 精确比较。"
+    },
+    {
+      "id": "ac.copy-feedback",
+      "statement": "复制成功显示明确的已复制反馈；复制失败时显示可理解的失败提示且不误报成功。",
+      "verification": "测试正常剪贴板写入和可控失败场景，核对反馈、焦点和卡片状态。"
+    },
+    {
+      "id": "ac.no-side-effect",
+      "statement": "复制操作不修改公式数据、发布状态或修订记录，也不误触编辑操作。",
+      "verification": "复制前后比较公式卡响应与修订数量，并确认没有保存、发布或编辑请求。"
+    }
+  ],
+  "constraints": {
+    "languages": ["zh-CN", "ASCII Formula ID"],
+    "platforms": ["LarkixMaker CMS", "browser Clipboard API or compatible fallback"],
+    "compatibility": ["完整 Formula ID 值和生成规则保持不变", "保留公式库卡片的辨认信息", "兼容日间与夜间模式"],
+    "data": ["复制是只读操作，不产生数据库修订或审计写入"],
+    "security": ["只复制当前已授权 CMS 响应中该卡片的 Formula ID", "不得复制私有路径、凭据或其他隐藏数据"],
+    "operations": ["不执行生产、云、部署或 Git 写入"],
+    "deadline": null
+  },
+  "evidence": [
+    {
+      "id": "evidence.owner-id",
+      "kind": "observation",
+      "locator": "Owner interview 2026-09-12 to 2026-09-13",
+      "note": "Owner 明确要求完全隐藏公式库中的完整 ID 文本，只保留按钮，并复制完整 ID 后提示已复制。",
+      "status": "provided"
+    }
+  ],
+  "openQuestions": [],
+  "assumptions": [],
+  "risks": [
+    {
+      "id": "risk.wrong-card-id",
+      "severity": "high",
+      "statement": "列表复用或事件绑定错误可能复制相邻卡片或旧分页中的 ID。",
+      "mitigation": "按钮与稳定卡片身份绑定，并在筛选、分页和连续复制场景逐项核对。"
+    },
+    {
+      "id": "risk.clipboard-failure",
+      "severity": "low",
+      "statement": "浏览器剪贴板限制可能导致复制失败。",
+      "mitigation": "捕获失败并提供明确提示，不在未确认成功时显示已复制。"
+    }
+  ],
+  "confirmation": {
+    "confirmed": true,
+    "confirmedBy": "Owner",
+    "confirmedAt": "2026-09-13T00:36:45.328+08:00",
+    "confirmationText": "Owner 已在当前项目治理会话明确指示：认可新的快速启动机制，并要求继续处理刚刚收敛的“四个小包”需求，完成确认后的需求包交接。",
+    "digest": "sha256:71bb4dd15fae68117433f26369451fc475bf964adef880d4cfe2164ac6907456"
+  },
+  "dispatch": {
+    "targetRole": "A00_ProjectDirector",
+    "recommendedWorkbenches": [],
+    "dependencies": [],
+    "dispatchedAt": "2026-09-13T00:37:59.968+08:00"
+  }
+}

@@ -3433,20 +3433,50 @@ button:disabled {
   user-select: text;
 }
 
-.formula-editor-preview-grid {
+.formula-editor-preview-grid,
+.formula-authoring-split {
   display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
-  margin-top: 14px;
 }
 
-.formula-editor-preview-grid > section {
+.formula-editor-preview-grid > section,
+.formula-authoring-split > * {
   min-width: 0;
 }
 
-.formula-editor-preview-grid > section > strong {
+.formula-editor-preview-grid > section > strong,
+.formula-workbench-preview > strong {
   color: var(--muted);
   font-size: 0.82rem;
+}
+
+.formula-workbench-preview,
+.formula-workbench-editor {
+  min-width: 0;
+  padding: 12px;
+  border: 1px dashed var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+}
+
+.formula-workbench-editor > label {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.formula-latex-workbench textarea,
+.formula-latex-workbench .formula-editor-preview {
+  min-height: 142px;
+}
+
+.formula-markdown-workbench textarea,
+.formula-markdown-workbench .formula-markdown-preview {
+  box-sizing: border-box;
+  height: 420px;
+  min-height: 260px;
+  max-height: 70vh;
 }
 
 .formula-editor-preview,
@@ -3464,9 +3494,119 @@ button:disabled {
   overflow: auto;
 }
 
+.formula-markdown-workbench .formula-markdown-preview,
+.formula-markdown-workbench .formula-markdown-preview[data-math-adaptive="block"] {
+  overflow: auto;
+}
+
+.formula-dependency-picker {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.formula-dependency-picker-heading {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.formula-dependency-picker-heading span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  text-align: right;
+}
+
+.formula-dependency-filters {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.75fr) minmax(150px, 1fr) minmax(180px, 1.35fr);
+  gap: 8px;
+}
+
+.formula-dependency-filters label {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.formula-dependency-results {
+  display: grid;
+  max-height: 330px;
+  gap: 8px;
+  overflow-y: auto;
+}
+
+.formula-dependency-candidate {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface-2);
+}
+
+.formula-dependency-candidate > div {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.formula-dependency-candidate code,
+.formula-dependency-candidate span {
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.formula-dependency-candidate .formula-dependency-latex {
+  min-width: 0;
+  overflow-x: auto;
+  color: var(--ink);
+}
+
+.formula-dependency-candidate.is-disabled {
+  opacity: 0.58;
+}
+
 .formula-editor-footer {
+  position: relative;
+  z-index: 3;
   justify-content: flex-end;
   margin-top: 14px;
+}
+
+.formula-save-button {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  min-width: 132px;
+  pointer-events: auto;
+  isolation: isolate;
+}
+
+@media (max-width: 760px) {
+  .formula-authoring-split,
+  .formula-dependency-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .formula-markdown-workbench textarea,
+  .formula-markdown-workbench .formula-markdown-preview {
+    height: min(52vh, 420px);
+  }
+
+  .formula-editor-footer .button {
+    flex: 1 1 132px;
+  }
+
+  .formula-save-button {
+    min-height: 44px;
+  }
 }
 
 .formula-publication-hint {

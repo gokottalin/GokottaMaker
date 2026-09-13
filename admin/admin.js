@@ -143,6 +143,7 @@
   const formulaEditorCancel = document.querySelector("#formulaEditorCancel");
   const formulaEditorPreview = document.querySelector("#formulaEditorPreview");
   const formulaMarkdownPreview = document.querySelector("#formulaMarkdownPreview");
+  const formulaSaveButton = document.querySelector("#formulaSaveButton");
   const formulaEditorStatus = document.querySelector("#formulaEditorStatus");
   const formulaPublicationHint = document.querySelector("#formulaPublicationHint");
   const formulaPublishButton = document.querySelector("#formulaPublishButton");
@@ -176,6 +177,10 @@
   const formulaNextSet = document.querySelector("#formulaNextSet");
   const formulaNextRemove = document.querySelector("#formulaNextRemove");
   const formulaDerivationCandidates = document.querySelector("#formulaDerivationCandidates");
+  const formulaDependencyModule = document.querySelector("#formulaDependencyModule");
+  const formulaDependencyCategory = document.querySelector("#formulaDependencyCategory");
+  const formulaDependencyResults = document.querySelector("#formulaDependencyResults");
+  const formulaDependencyPickerStatus = document.querySelector("#formulaDependencyPickerStatus");
   const formulaAdminGraph = document.querySelector("#formulaAdminGraph");
   const formulaAuthoringPopover = document.querySelector("#formulaAuthoringPopover");
   const formulaAuthoringDrawerBody = document.querySelector("#formulaAuthoringDrawerBody");
@@ -217,8 +222,17 @@
   let editingId = null;
   let formulaEditingCard = null;
   let formulaDerivationSearchTimer = null;
+  let formulaDependencyRequestVersion = 0;
+  let formulaSavePending = false;
   let formulaAdminGraphInstance = null;
   const formulaDependencyPreview = new Map();
+  const formulaDependencyPickerState = {
+    items: [],
+    facets: { modules: [], categories: [] },
+    moduleKey: "",
+    categoryPath: "",
+    query: ""
+  };
   let currentCover = "";
   let currentCoverCrop = null;
   let csrfToken = "";
@@ -4086,7 +4100,9 @@ $$
               <div>
                 <h3>${escapeHtml(card.displayName)}</h3>
                 <div class="formula-card-meta">
-                  <code>${escapeHtml(card.formulaId)}</code>
+                  <button class="button secondary formula-copy-id-button" type="button" data-formula-copy-id="${escapeHtml(
+                    card.formulaId
+                  )}" aria-label="复制《${escapeHtml(card.displayName)}》的完整 Formula ID">复制公式 ID</button>
                   <span class="formula-status-badge is-${escapeHtml(card.publishStatus || "draft")}">${escapeHtml(
                     formulaStatusLabel(card)
                   )}</span>
@@ -4122,6 +4138,15 @@ $$
     }
     if (formulaPreviousPage) formulaPreviousPage.disabled = pagination.page <= 1;
     if (formulaNextPage) formulaNextPage.disabled = !pagination.pageCount || pagination.page >= pagination.pageCount;
+  }
+
+  async function copyFormulaCatalogId(button) {
+    const formulaId = String(button?.dataset.formulaCopyId || "");
+    if (!formulaId) throw new Error("未找到可复制的 Formula ID");
+    if (!navigator.clipboard?.writeText) throw new Error("浏览器未提供剪贴板写入权限");
+    await navigator.clipboard.writeText(formulaId);
+    setNotice("完整 Formula ID 已复制。", "success", { key: "formula-copy-id" });
+    button.focus();
   }
 
   function formulaRelationIssueLabel(issueCode) {
@@ -4437,39 +4462,84 @@ $$
     }
   }
 
-  async function loadFormulaDerivationCandidates(query) {
-    if (!formulaDerivationCandidates) return;
-    const value = String(query || "").trim();
-    if (value.length < 2) {
-      formulaDerivationCandidates.innerHTML = "";
-      return;
-    }
-    const params = new URLSearchParams({
-      authoring: "1",
-      q: value,
-      archiveState: "all",
-      page: "1",
-      pageSize: "20"
-    });
-    const result = await request(`/api/admin/formulas?${params.toString()}`);
-    const candidates = (result.items || []).filter(
-      (card) => card.formulaId !== formulaEditingCard?.formulaId
-    );
-    candidates.forEach((card) => formulaDependencyPreview.set(card.formulaId, card));
-    formulaDerivationCandidates.innerHTML = candidates
+  function renderFormulaDependencyFilters() {
+    if (!formulaDependencyModule || !formulaDependencyCategory) return;
+    const modules = formulaDependencyPickerState.facets.modules || [];
+    const categories = formulaDependencyPickerState.facets.categories || [];
+    formulaDependencyModule.innerHTML = `<option value="">全部模块</option>${modules
+      .map((moduleKey) => `<option value="${escapeHtml(moduleKey)}">${escapeHtml(moduleKey)}</option>`)
+      .join("")}`;
+    formulaDependencyModule.value = formulaDependencyPickerState.moduleKey;
+    formulaDependencyCategory.innerHTML = `<option value="">全部分类</option>${categories
+      .filter((item) => !formulaDependencyPickerState.moduleKey || item.moduleKey === formulaDependencyPickerState.moduleKey)
       .map(
-        (card) =>
-          `<option value="${escapeHtml(card.formulaId)}">${escapeHtml(card.displayName)} · ${
-            card.archiveState === "archived" ? "已归档" : "使用中"
+        (item) =>
+          `<option value="${escapeHtml(item.categoryPath)}">${escapeHtml(item.categoryPath)}${
+            formulaDependencyPickerState.moduleKey ? "" : ` · ${escapeHtml(item.moduleKey)}`
           }</option>`
       )
-      .join("");
+      .join("")}`;
+    formulaDependencyCategory.value = formulaDependencyPickerState.categoryPath;
   }
 
-  function scheduleFormulaDerivationCandidates(value) {
+  function renderFormulaDependencyCandidates() {
+    if (!formulaDependencyResults) return;
+    const existingIds = new Set(markdownDependencyIds());
+    formulaDependencyResults.innerHTML = formulaDependencyPickerState.items
+      .map((card) => {
+        const duplicate = existingIds.has(card.formulaId);
+        const disabledReason = duplicate ? "当前 Markdown 已引用此公式" : card.disabledReason || "";
+        const disabled = Boolean(disabledReason);
+        formulaDependencyPreview.set(card.formulaId, card);
+        return `
+          <article class="formula-dependency-candidate ${disabled ? "is-disabled" : ""}">
+            <div>
+              <span>${escapeHtml(card.moduleKey)} / ${escapeHtml(card.categoryPath)}</span>
+              <strong>${escapeHtml(card.displayName)}</strong>
+              <code>${escapeHtml(card.formulaId)}</code>
+              <div class="formula-dependency-latex">${formulaLatexHtml(card.latex)}</div>
+              ${disabledReason ? `<span>${escapeHtml(disabledReason)}</span>` : ""}
+            </div>
+            <button class="button secondary" type="button" data-formula-dependency-insert="${escapeHtml(
+              card.formulaId
+            )}" ${disabled ? "disabled" : ""}>插入引用</button>
+          </article>`;
+      })
+      .join("") || `<div class="empty-state">没有符合条件的已发布公式。</div>`;
+  }
+
+  async function loadFormulaDerivationCandidates() {
+    if (!formulaDependencyResults) return;
+    const requestVersion = ++formulaDependencyRequestVersion;
+    const params = new URLSearchParams({
+      sourceFormulaId: formulaEditingCard?.formulaId || "",
+      module: formulaDependencyPickerState.moduleKey,
+      category: formulaDependencyPickerState.categoryPath,
+      q: formulaDependencyPickerState.query,
+      page: "1",
+      pageSize: "50"
+    });
+    if (formulaDependencyPickerStatus) formulaDependencyPickerStatus.textContent = "正在读取已发布公式…";
+    const result = await request(`/api/admin/formula-dependency-candidates?${params.toString()}`);
+    if (requestVersion !== formulaDependencyRequestVersion) return;
+    formulaDependencyPickerState.items = result.items || [];
+    formulaDependencyPickerState.facets = result.facets || { modules: [], categories: [] };
+    renderFormulaDependencyFilters();
+    renderFormulaDependencyCandidates();
+    if (formulaDependencyPickerStatus) {
+      const total = Number(result.pagination?.total || 0);
+      formulaDependencyPickerStatus.textContent = total > 50 ? `显示前 50 / ${total} 项，请搜索缩小范围` : `${total} 项`;
+    }
+  }
+
+  function scheduleFormulaDerivationCandidates(value = formulaDependencyPickerState.query) {
+    formulaDependencyPickerState.query = String(value || "").trim();
     window.clearTimeout(formulaDerivationSearchTimer);
     formulaDerivationSearchTimer = window.setTimeout(() => {
-      loadFormulaDerivationCandidates(value).catch((error) => setNotice(error.message, "error"));
+      loadFormulaDerivationCandidates().catch((error) => {
+        if (formulaDependencyPickerStatus) formulaDependencyPickerStatus.textContent = "读取失败";
+        setNotice(error.message, "error");
+      });
     }, 180);
   }
 
@@ -4504,35 +4574,28 @@ $$
         .join("") || `<div class="empty-state">当前 Markdown 没有公式依赖短码。</div>`;
   }
 
-  async function insertFormulaDependencyShortcode() {
-    const targetFormulaId = String(formulaNextTarget?.value || "").trim();
+  function insertFormulaDependencyShortcode(targetFormulaId) {
+    const normalizedTargetId = String(targetFormulaId || "").trim();
     const sourceFormulaId = String(formulaEditingCard?.formulaId || "");
-    if (!sourceFormulaId) throw new Error("请先保存公式卡，再插入依赖。");
-    if (!targetFormulaId) throw new Error("请输入依赖公式的 formulaId。");
-    if (targetFormulaId === sourceFormulaId) throw new Error("公式卡不能依赖自身。");
-    if (markdownDependencyIds().includes(targetFormulaId)) {
-      throw new Error(`当前 Markdown 已引用 ${targetFormulaId}，不能重复插入。`);
+    if (!normalizedTargetId) throw new Error("请选择依赖公式。");
+    if (normalizedTargetId === sourceFormulaId) throw new Error("公式卡不能依赖自身。");
+    if (markdownDependencyIds().includes(normalizedTargetId)) {
+      throw new Error(`当前 Markdown 已引用 ${normalizedTargetId}，不能重复插入。`);
     }
-    const targetResult = await request(
-      `/api/admin/formulas/${encodeURIComponent(targetFormulaId)}`
-    );
-    const target = targetResult.card;
-    formulaDependencyPreview.set(target.formulaId, target);
+    const target = formulaDependencyPickerState.items.find((card) => card.formulaId === normalizedTargetId);
+    if (!target || target.disabled) throw new Error(target?.disabledReason || "该公式当前不可作为依赖。");
     const field = formulaFormField("markdownDerivation");
     const marker = `{{formula-ref:${target.formulaId}}}`;
     const start = Number(field.selectionStart || field.value.length);
     const end = Number(field.selectionEnd || start);
     const before = field.value.slice(0, start);
     const after = field.value.slice(end);
-    const prefix = before && !before.endsWith("\n") ? "\n\n" : "";
-    const suffix = after && !after.startsWith("\n") ? "\n\n" : "";
-    field.value = `${before}${prefix}${marker}${suffix}${after}`;
-    const cursor = before.length + prefix.length + marker.length;
+    field.value = `${before}${marker}${after}`;
+    const cursor = before.length + marker.length;
     field.focus();
     field.setSelectionRange(cursor, cursor);
-    if (formulaNextTarget) formulaNextTarget.value = "";
     updateFormulaEditorPreview();
-    setNotice("依赖短码已插入；保存公式卡后执行悬空与循环校验。", "warning");
+    setNotice("已插入完整 Formula ID 的 formula-ref；保存时将按权威图再次校验。", "success");
   }
 
   function removeFormulaDependencyShortcode(formulaId) {
@@ -4564,6 +4627,17 @@ $$
         : '<p class="empty-state">输入 Markdown 后在这里实时预览。</p>';
     }
     renderDraftDependencyList();
+    renderFormulaDependencyCandidates();
+    syncFormulaMarkdownPreviewScroll();
+  }
+
+  function syncFormulaMarkdownPreviewScroll() {
+    const field = formulaFormField("markdownDerivation");
+    if (!field || !formulaMarkdownPreview) return;
+    const editorRange = Math.max(0, field.scrollHeight - field.clientHeight);
+    const previewRange = Math.max(0, formulaMarkdownPreview.scrollHeight - formulaMarkdownPreview.clientHeight);
+    const progress = editorRange ? Math.min(1, Math.max(0, field.scrollTop / editorRange)) : 0;
+    formulaMarkdownPreview.scrollTop = progress * previewRange;
   }
 
   function populateFormulaEditor(card = null, options = {}) {
@@ -4603,6 +4677,11 @@ $$
     renderFormulaDerivation(card);
     renderFormulaClassificationOptions();
     updateFormulaEditorPreview();
+    formulaDependencyPickerState.moduleKey = "";
+    formulaDependencyPickerState.categoryPath = "";
+    formulaDependencyPickerState.query = "";
+    if (formulaNextTarget) formulaNextTarget.value = "";
+    loadFormulaDerivationCandidates().catch((error) => setNotice(error.message, "error"));
     if (options.scroll !== false) formulaCardEditor.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -5257,6 +5336,13 @@ $$
   });
 
   formulaCardList?.addEventListener("click", (event) => {
+    const copyButton = event.target.closest("[data-formula-copy-id]");
+    if (copyButton) {
+      copyFormulaCatalogId(copyButton).catch((error) =>
+        setNotice(`复制失败：${error.message}`, "error", { key: "formula-copy-id", persistent: true })
+      );
+      return;
+    }
     const button = event.target.closest("[data-formula-action]");
     if (!button) return;
     const action = button.dataset.formulaAction;
@@ -5382,6 +5468,24 @@ $$
     if (!event.target.closest(".formula-field-help-button, #formulaFieldHelpPopover")) hideFormulaFieldHelp();
   });
   formulaNextTarget?.addEventListener("input", () => scheduleFormulaDerivationCandidates(formulaNextTarget.value));
+  formulaDependencyModule?.addEventListener("change", () => {
+    formulaDependencyPickerState.moduleKey = formulaDependencyModule.value;
+    formulaDependencyPickerState.categoryPath = "";
+    scheduleFormulaDerivationCandidates();
+  });
+  formulaDependencyCategory?.addEventListener("change", () => {
+    formulaDependencyPickerState.categoryPath = formulaDependencyCategory.value;
+    scheduleFormulaDerivationCandidates();
+  });
+  formulaDependencyResults?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-formula-dependency-insert]");
+    if (!button || button.disabled) return;
+    try {
+      insertFormulaDependencyShortcode(button.dataset.formulaDependencyInsert);
+    } catch (error) {
+      setNotice(error.message, "error");
+    }
+  });
   formulaNextSet?.addEventListener("click", () => {
     withBusy(formulaNextSet, "插入中...", insertFormulaDependencyShortcode).catch((error) =>
       setNotice(error.message, "error")
@@ -5398,13 +5502,29 @@ $$
     dismissToast("formula-save");
     dismissToast("formula-publish");
   });
+  formulaCardEditor?.addEventListener(
+    "scroll",
+    (event) => {
+      if (event.target.name === "markdownDerivation") syncFormulaMarkdownPreviewScroll();
+    },
+    true
+  );
+  formulaCardEditor?.addEventListener(
+    "invalid",
+    () => setNotice("请完整填写必填项后再保存公式卡。", "error", { key: "formula-save", persistent: true }),
+    true
+  );
   formulaCardEditor?.addEventListener("submit", (event) => {
     event.preventDefault();
-    const submitButton = formulaCardEditor.querySelector("button[type='submit']");
+    if (formulaSavePending) return;
+    formulaSavePending = true;
+    const submitButton = formulaSaveButton || formulaCardEditor.querySelector("button[type='submit']");
     const operation = beginFeedbackOperation("formula-save");
     withBusy(submitButton, "保存中...", () => saveFormulaEditor(operation)).catch((error) =>
       setOperationNotice(operation, error.message, "error", { persistent: true })
-    );
+    ).finally(() => {
+      formulaSavePending = false;
+    });
   });
   formulaImportButton?.addEventListener("click", () => {
     withBusy(formulaImportButton, "导入中...", importFormulaCatalogFile).catch((error) => setNotice(error.message, "error"));

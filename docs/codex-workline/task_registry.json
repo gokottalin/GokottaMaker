@@ -2484,6 +2484,16 @@
       "doneWhen": ["the real 500 cause is recorded", "the original failing test passes without relaxed assertions", "public projection still excludes draft and internal identities", "formula detail, publication, DAG, security, and codex gates pass"],
       "brief": "agents/A70_FormulaRelationshipProjectionRepair/brief.md",
       "handoff": "docs/codex-workline/slices/S60A_formula_relationship_projection_repair_handoff.md"
+    },
+    {
+      "id": "A71_SessionBootstrapGovernance",
+      "status": "completed",
+      "scope": "Reduce fresh-session startup context and automatically emit a copy-ready launch sentence when a confirmed requirement must move to a new session.",
+      "reads": ["AGENTS.md", "PROJECT_WINDOW.md", "agents/A00_ProjectDirector/brief.md", "scripts/codex-handoff.js", "scripts/requirement-handoff.js", "docs/prompts/agent_prompt_template.md"],
+      "mayEdit": ["AGENTS.md", "PROJECT_WINDOW.md", "agents/A00_ProjectDirector/brief.md", "agents/A71_SessionBootstrapGovernance/brief.md", ".codex/agents/a71-session-bootstrap-governance.toml", ".codex/larkix-governance.json", "docs/codex-workline/task_registry.json", "docs/prompts/agent_prompt_template.md", "docs/prompts/next_agents.md", "scripts/codex-handoff.js", "scripts/requirement-handoff.js", "scripts/test-codex-handoff.js", "package.json", "docs/codex-workline/slices/S61_session_bootstrap_governance_handoff.md"],
+      "doneWhen": ["compact bootstrap omits expanded task history", "launch mode emits exactly one copy-ready sentence", "confirmed requirement envelopes name the launch command", "AGENTS requires automatic launch-sentence emission only after confirmation and a real fresh-session handoff decision", "handoff and governance checks pass"],
+      "brief": "agents/A71_SessionBootstrapGovernance/brief.md",
+      "handoff": "docs/codex-workline/slices/S61_session_bootstrap_governance_handoff.md"
     }
   ],
   "onDemandWorkbenches": [
