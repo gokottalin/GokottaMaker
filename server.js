@@ -28,7 +28,9 @@ const {
   validateFormulaRelationRepairEventPayload,
   validateLatexSelection,
   validateSourceHash,
-  validateUploadPayload
+  validateUploadPayload,
+  validateCommonLevelPayload,
+  validateHomepageFocusPayload
 } = require("./lib/validators");
 const { writeSnapshotFile } = require("./tools/calculation-book/formula-catalog");
 
@@ -320,6 +322,13 @@ function currentUser(req) {
   return auth.currentUser(cookies(req)[sessionCookieName]);
 }
 
+function loadPublicMiniapps() {
+  const sandbox = { window: {} };
+  vm.createContext(sandbox);
+  vm.runInContext(fs.readFileSync(path.join(root, "data", "miniapps.js"), "utf8"), sandbox);
+  return Array.from(sandbox.window.LARKIX_PUBLIC_MINIAPPS || [], (item) => ({ ...item }));
+}
+
 function publicUser(user) {
   return auth.publicUser(user);
 }
@@ -395,7 +404,7 @@ const {
   reconcileCarouselFocusBuffer,
   restoreCarouselFocusBuffer,
   removeCarouselFocusBuffer,
-  allKnowledgeNodes,
+  allKnowledgeNodes: allStoredKnowledgeNodes,
   listFormulaCards,
   listFormulaDependencyCandidates,
   listFormulaClassifications,
@@ -436,7 +445,16 @@ const {
   hardDeleteProject,
   softDeletePost,
   softDeleteProject,
-  softDeleteKnowledgeNode
+  softDeleteKnowledgeNode,
+  setCommonLevel,
+  incrementPublicView,
+  publicDiscoveryItems,
+  homepageFocusSlots,
+  saveHomepageFocusSlots,
+  miniappDiscoveryMetadata,
+  latestPublicFormulas,
+  allFormulaCardsForDiscovery,
+  publicFormulaUploadSources
 } = contentStore;
 const { saveUpload, uploads } = uploadStore;
 
@@ -468,6 +486,12 @@ function allProjects(admin = false) {
   if (admin) return items;
   const visible = focusModeEnabled() ? items.filter((item) => focusAccessDecision(item, "project").allowed) : items;
   return visible.map(publicProjectPayload);
+}
+
+function allKnowledgeNodes(admin = false) {
+  const nodes = allStoredKnowledgeNodes(admin);
+  if (admin) return nodes;
+  return nodes.map(({ commonLevel, ...node }) => node);
 }
 
 function listFormulaReferenceDecisions(filters = {}) {
@@ -955,7 +979,9 @@ function publicProjectPreview(project) {
     date: project.date || "",
     version: project.version || "",
     progress: Number(project.progress || 0),
-    tags: project.tags || ""
+    tags: project.tags || "",
+    readingMinutes: project.readingMinutes == null ? null : Number(project.readingMinutes),
+    viewCount: Number(project.viewCount || 0)
   };
 }
 
@@ -989,6 +1015,7 @@ function publicPostPayload(post) {
     date: post.date || "",
     featured: Boolean(post.featured),
     featuredOrder: Number(post.featuredOrder || 0),
+    viewCount: Number(post.viewCount || 0),
     formulaBindings: (post.formulaBindings || []).map(publicFormulaBindingPayload)
   };
 }
@@ -1005,6 +1032,174 @@ function publicProjectPayload(project) {
   };
 }
 
+function publicKnowledgeNodePayload(node) {
+  if (!node) return null;
+  const { commonLevel, ...safe } = node;
+  return safe;
+}
+
+function normalizedDiscoveryText(value) {
+  return String(value ?? "").normalize("NFKC").toLocaleLowerCase("zh-CN");
+}
+
+function publicMiniappDiscoveryItems() {
+  return loadPublicMiniapps().map((app) => {
+    const metadata = miniappDiscoveryMetadata(app.id);
+    return {
+      id: app.id,
+      slug: app.id,
+      name: app.title || app.name || app.id,
+      category: app.category || "",
+      module: app.name || "",
+      keywords: [app.name, app.summary, app.version].filter(Boolean).join(" "),
+      cover: app.icon || "",
+      durationMinutes: null,
+      commonLevel: metadata.commonLevel,
+      viewCount: metadata.viewCount,
+      publicAt: "",
+      route: app.href || ""
+    };
+  });
+}
+
+function discoveryDateFloor(range, now = new Date()) {
+  if (range === "all") return null;
+  const milliseconds = range === "day"
+    ? 24 * 60 * 60 * 1000
+    : range === "week"
+      ? 7 * 24 * 60 * 60 * 1000
+      : range === "half-year"
+        ? 183 * 24 * 60 * 60 * 1000
+        : null;
+  if (milliseconds === null) throw apiError(400, "invalid date range");
+  return new Date(now.getTime() - milliseconds).getTime();
+}
+
+function publicDiscoverySearch(url) {
+  const type = String(url.searchParams.get("type") || "article");
+  if (!["article", "project", "derivation", "formula", "miniapp"].includes(type)) {
+    throw apiError(400, "invalid discovery type");
+  }
+  let items = type === "miniapp" ? publicMiniappDiscoveryItems() : publicDiscoveryItems(type);
+  items = items.map((item) => {
+    const tags = String(item.keywords || "").split(/[,，、]/).map((tag) => tag.trim());
+    const tagValue = (namespace) => tags.find((tag) => tag.startsWith(`${namespace}:`))?.slice(namespace.length + 1) || "";
+    return {
+      ...item,
+      module: tagValue("module") || item.module || "",
+      category: tagValue("category") || item.category || ""
+    };
+  });
+  if (type === "article") {
+    const allowed = new Set(allPosts(false).map((item) => item.id));
+    items = items.filter((item) => allowed.has(item.id));
+  } else if (type === "project") {
+    const allowed = new Set(allProjects(false).map((item) => item.id));
+    items = items.filter((item) => allowed.has(item.id));
+  }
+
+  const categories = [...new Set(items.map((item) => String(item.category || "")).filter(Boolean))]
+    .sort((left, right) => left.localeCompare(right, "zh-CN"));
+  const query = normalizedDiscoveryText(url.searchParams.get("q") || "").trim();
+  const category = String(url.searchParams.get("category") || "").trim();
+  const dateRange = String(url.searchParams.get("date") || "all");
+  const dateFloor = discoveryDateFloor(dateRange);
+  const minimumDurationText = url.searchParams.get("durationMin");
+  const maximumDurationText = url.searchParams.get("durationMax");
+  if (!["article", "project"].includes(type) && (minimumDurationText !== null || maximumDurationText !== null)) {
+    throw apiError(400, "duration filter is not available for this discovery type");
+  }
+  const parseDuration = (value, fallback) => {
+    if (value === null || value === "") return fallback;
+    if (!/^\d+$/.test(value)) throw apiError(400, "invalid duration filter");
+    const number = Number(value);
+    if (!Number.isSafeInteger(number) || number < 0 || number > 9999) throw apiError(400, "invalid duration filter");
+    return number;
+  };
+  const minimumDuration = parseDuration(minimumDurationText, 0);
+  const maximumDuration = parseDuration(maximumDurationText, 9999);
+  if (minimumDuration > maximumDuration) throw apiError(400, "invalid duration filter");
+
+  items = items.filter((item) => {
+    if (query) {
+      const haystack = [item.id, item.slug, item.name, item.keywords, item.category, item.module]
+        .map(normalizedDiscoveryText)
+        .join("\n");
+      if (!haystack.includes(query)) return false;
+    }
+    if (category && item.category !== category) return false;
+    if (dateFloor !== null) {
+      const timestamp = Date.parse(item.publicAt || "");
+      if (!Number.isFinite(timestamp) || timestamp < dateFloor) return false;
+    }
+    if (["article", "project"].includes(type) && (minimumDurationText !== null || maximumDurationText !== null)) {
+      const duration = item.durationMinutes == null ? null : Number(item.durationMinutes);
+      if (duration === null || duration < minimumDuration || duration > maximumDuration) return false;
+    }
+    return true;
+  });
+
+  const sort = String(url.searchParams.get("sort") || "comprehensive");
+  if (!["comprehensive", "views", "newest", "common-level"].includes(sort)) {
+    throw apiError(400, "invalid discovery sort");
+  }
+  const direction = String(url.searchParams.get("direction") || "desc");
+  if (!["asc", "desc"].includes(direction)) throw apiError(400, "invalid discovery direction");
+  const compareText = (left, right) => String(left || "").localeCompare(String(right || ""));
+  const numericDirection = direction === "asc" ? 1 : -1;
+  items.sort((left, right) => {
+    if (sort === "comprehensive") {
+      return Number(right.commonLevel) - Number(left.commonLevel)
+        || compareText(right.publicAt, left.publicAt)
+        || compareText(left.id, right.id);
+    }
+    if (sort === "views") {
+      return Number(right.viewCount) - Number(left.viewCount)
+        || compareText(right.publicAt, left.publicAt)
+        || compareText(left.id, right.id);
+    }
+    if (sort === "newest") {
+      return numericDirection * compareText(left.publicAt, right.publicAt) || compareText(left.id, right.id);
+    }
+    return numericDirection * (Number(left.commonLevel) - Number(right.commonLevel))
+      || compareText(right.publicAt, left.publicAt)
+      || compareText(left.id, right.id);
+  });
+
+  const positiveIntegerQuery = (name, fallback) => {
+    const rawValue = url.searchParams.get(name);
+    if (rawValue === null || rawValue === "") return fallback;
+    if (!/^[1-9]\d*$/.test(rawValue)) throw apiError(400, `invalid discovery ${name}`);
+    const value = Number(rawValue);
+    if (!Number.isSafeInteger(value)) throw apiError(400, `invalid discovery ${name}`);
+    return value;
+  };
+  const pageSize = Math.min(positiveIntegerQuery("pageSize", 20), 50);
+  const requestedPage = positiveIntegerQuery("page", 1);
+  const total = items.length;
+  const pageCount = total ? Math.ceil(total / pageSize) : 0;
+  const page = pageCount ? Math.min(requestedPage, pageCount) : 1;
+  const pageItems = items.slice((page - 1) * pageSize, page * pageSize).map(({ commonLevel, ...item }) => ({
+    ...item,
+    ...(type === "formula" ? { formulaId: item.id, formulaRef: `{{formula-ref:${item.id}}}` } : {})
+  }));
+  return {
+    type,
+    items: pageItems,
+    facets: { categories },
+    pagination: { page, pageSize, total, pageCount },
+    selection: { query, category, dateRange, sort, direction }
+  };
+}
+
+function shouldCountPublicView(req, url) {
+  if (req.privateCmsRequest) return false;
+  if (url.searchParams.get("preview") === "1") return false;
+  if (["1", "true"].includes(String(req.headers["x-larkix-preview"] || "").toLowerCase())) return false;
+  if (["1", "true"].includes(String(req.headers["x-larkix-automation"] || "").toLowerCase())) return false;
+  return true;
+}
+
 function publicProjectDirectory() {
   if (focusModeEnabled()) return allProjects(false).map(publicProjectPreview);
   const seedProjects = loadSeedData().projects || [];
@@ -1018,17 +1213,20 @@ function publicProjectDirectory() {
 }
 
 function publicUploadPaths() {
-  return new Set(
-    [
-      ...allPosts(false).map((item) => item.cover),
-      ...allProjects(false).map((item) => item.cover),
-      ...allKnowledgeNodes(false).map((item) => item.cover),
-      ...publicCarouselItems().map((item) => item.cover)
-    ]
-      .map((value) => String(value || "").split(/[?#]/)[0])
-      .filter((value) => value.startsWith("/uploads/") || value.startsWith("./uploads/"))
-      .map((value) => value.replace(/^\./, ""))
-  );
+  const sources = [
+    ...allPosts(false).flatMap((item) => [item.cover, item.markdown]),
+    ...allProjects(false).flatMap((item) => [item.cover, item.markdown]),
+    ...allKnowledgeNodes(false).flatMap((item) => [item.cover, item.markdown]),
+    ...publicFormulaUploadSources(),
+    ...publicCarouselItems().map((item) => item.cover)
+  ];
+  const paths = new Set();
+  for (const source of sources) {
+    for (const match of String(source || "").matchAll(/\.?\/uploads\/[A-Za-z0-9._/-]+/g)) {
+      paths.add(match[0].replace(/^\./, "").split(/[?#]/)[0]);
+    }
+  }
+  return paths;
 }
 
 const defaultSiteLayout = {
@@ -1176,6 +1374,8 @@ function publicContentPayload() {
     projects: allProjects(false),
     heroCarousel: publicCarouselItems(),
     projectDirectory: publicProjectDirectory(),
+    latestFormulas: latestPublicFormulas(8),
+    focusedArticles: homepageFocusSlots(false),
     siteLayout: publicSiteLayout(),
     publicFocusMode: { enabled: focusMode.enabled }
   };
@@ -1784,6 +1984,7 @@ function publicFormulaCardPayload(card) {
     sourceBookRevision: card.sourceBookRevision || "",
     sourceFormulaId: card.sourceFormulaId || "",
     publishedAt: card.publishedAt || "",
+    viewCount: Number(card.viewCount || 0),
     derivation: {
       incoming,
       dependencies,
@@ -1800,16 +2001,31 @@ function publicFormulaCardPayload(card) {
 async function api(req, res, pathname) {
   if (pathname === "/api/content.js" && req.method === "GET") return contentScript(res);
   if (pathname === "/api/content" && req.method === "GET") return json(res, 200, publicContentPayload());
+  if (pathname === "/api/public/search" && req.method === "GET") {
+    return json(res, 200, publicDiscoverySearch(new URL(req.url, `http://${req.headers.host || "localhost"}`)));
+  }
+  if (pathname === "/api/public/home-discovery" && req.method === "GET") {
+    return json(res, 200, {
+      latestFormulas: latestPublicFormulas(8),
+      focusedArticles: homepageFocusSlots(false)
+    });
+  }
   const publicPost = pathname.match(/^\/api\/public\/posts\/([^/]+)$/);
   if (publicPost && req.method === "GET") {
     const post = publicPostByIdentity(decodeURIComponent(publicPost[1]));
     if (!post) return json(res, 404, { error: "not found" });
+    if (shouldCountPublicView(req, new URL(req.url, `http://${req.headers.host || "localhost"}`))) {
+      post.viewCount = incrementPublicView("article", post.id);
+    }
     return json(res, 200, { post });
   }
   const publicProject = pathname.match(/^\/api\/public\/projects\/([^/]+)$/);
   if (publicProject && req.method === "GET") {
     const project = publicProjectByIdentity(decodeURIComponent(publicProject[1]));
     if (!project) return json(res, 404, { error: "not found" });
+    if (shouldCountPublicView(req, new URL(req.url, `http://${req.headers.host || "localhost"}`))) {
+      project.viewCount = incrementPublicView("project", project.id);
+    }
     return json(res, 200, { project });
   }
   if (pathname === "/api/knowledge-nodes" && req.method === "GET") return json(res, 200, { nodes: allKnowledgeNodes(false) });
@@ -1818,7 +2034,10 @@ async function api(req, res, pathname) {
     const slug = decodeURIComponent(publicKnowledgeNode[1]);
     const node = publicKnowledgeNodeBySlug(slug);
     if (!node) return json(res, 404, { error: "not found" });
-    return json(res, 200, { node });
+    if (shouldCountPublicView(req, new URL(req.url, `http://${req.headers.host || "localhost"}`))) {
+      node.viewCount = incrementPublicView("derivation", node.id);
+    }
+    return json(res, 200, { node: publicKnowledgeNodePayload(node) });
   }
   const publicFormulaCard = pathname.match(/^\/api\/formulas\/([^/]+)$/);
   if (publicFormulaCard && req.method === "GET") {
@@ -1829,9 +2048,10 @@ async function api(req, res, pathname) {
       return json(res, 404, { error: "not found" });
     }
     const requestUrl = new URL(req.url, `http://${req.headers.host || "localhost"}`);
-    const cursorValue = requestUrl.searchParams.get("cursor");
-    const cursor = cursorValue ? decodeFormulaGraphCursor(cursorValue, slug) : null;
-    if (cursorValue && !cursor) return json(res, 400, { error: "invalid continuation cursor" });
+    const hasCursor = requestUrl.searchParams.has("cursor");
+    const cursorValue = requestUrl.searchParams.get("cursor") || "";
+    const cursor = hasCursor ? decodeFormulaGraphCursor(cursorValue, slug) : null;
+    if (hasCursor && !cursor) return json(res, 400, { error: "invalid continuation cursor" });
     const card = publicFormulaCardBySlug(slug, {
       payloadNodeLimit: cursor?.limit || formulaGraphPageSize
     });
@@ -1839,7 +2059,21 @@ async function api(req, res, pathname) {
     if (cursor && cursor.revision !== card.publishedRevisionId) {
       return json(res, 400, { error: "invalid continuation cursor" });
     }
+    if (!hasCursor && shouldCountPublicView(req, requestUrl)) {
+      card.viewCount = incrementPublicView("formula", card.formulaId);
+    }
     return json(res, 200, { card: publicFormulaCardPayload(card) });
+  }
+  const publicMiniapp = pathname.match(/^\/api\/public\/miniapps\/([^/]+)$/);
+  if (publicMiniapp && req.method === "GET") {
+    const id = decodeURIComponent(publicMiniapp[1]);
+    const app = loadPublicMiniapps().find((item) => item.id === id);
+    if (!app) return json(res, 404, { error: "not found" });
+    const metadata = miniappDiscoveryMetadata(id);
+    const viewCount = shouldCountPublicView(req, new URL(req.url, `http://${req.headers.host || "localhost"}`))
+      ? incrementPublicView("miniapp", id)
+      : metadata.viewCount;
+    return json(res, 200, { app: { ...app, viewCount } });
   }
   if (pathname === "/api/elec/samples" && req.method === "GET") return elecResponse(res, 200, elecSamples());
   if (pathname === "/api/elec/llm-handoff" && req.method === "GET") return elecHandoff(req, res);
@@ -1899,8 +2133,44 @@ async function api(req, res, pathname) {
       siteLayout: siteLayout(),
       publicFocusMode: publicFocusMode(),
       focusScopeCounts: focusScopeCounts(),
-      carousel: carouselAdminPayload()
+      carousel: carouselAdminPayload(),
+      discovery: {
+        miniapps: loadPublicMiniapps().map((item) => ({ ...item, ...miniappDiscoveryMetadata(item.id) })),
+        homepageFocus: homepageFocusSlots(true)
+      }
     });
+  }
+  if (pathname === "/api/admin/discovery" && req.method === "GET") {
+    return json(res, 200, {
+      posts: allPosts(true),
+      projects: allProjects(true),
+      knowledgeNodes: allKnowledgeNodes(true),
+      formulas: allFormulaCardsForDiscovery(),
+      miniapps: loadPublicMiniapps().map((item) => ({ ...item, ...miniappDiscoveryMetadata(item.id) })),
+      homepageFocus: homepageFocusSlots(true)
+    });
+  }
+  if (pathname === "/api/admin/discovery/common-level" && req.method === "POST") {
+    const input = validateCommonLevelPayload(await readBody(req));
+    const result = setCommonLevel(input.contentType, input.contentId, input.commonLevel);
+    logAudit(db, req, user, "discovery_common_level_save", input.contentType, result.contentId, {
+      commonLevel: result.commonLevel
+    });
+    return json(res, 200, result);
+  }
+  if (pathname === "/api/admin/homepage-focus" && req.method === "GET") {
+    return json(res, 200, { homepageFocus: homepageFocusSlots(true) });
+  }
+  if (pathname === "/api/admin/homepage-focus" && req.method === "POST") {
+    const input = validateHomepageFocusPayload(await readBody(req));
+    let homepageFocus;
+    withTransaction(() => {
+      homepageFocus = saveHomepageFocusSlots(input, user);
+      logAudit(db, req, user, "homepage_focus_save", "homepage_focus", "all", {
+        postIds: input.slots.map((item) => item.postId)
+      });
+    });
+    return json(res, 200, { homepageFocus });
   }
   if (pathname === "/api/admin/health" && req.method === "GET") return json(res, 200, healthPayload({ detailed: true }));
   if (pathname === "/api/admin/export" && req.method === "GET") {
@@ -2680,6 +2950,8 @@ const publicApiExactPaths = new Set([
   "/api/content.js",
   "/api/health",
   "/api/knowledge-nodes",
+  "/api/public/search",
+  "/api/public/home-discovery",
   "/api/md2file/convert"
 ]);
 
@@ -2692,7 +2964,7 @@ function isFocusModePublicStaticPath(pathname) {
 
 function isPublicApiPath(pathname) {
   if (publicApiExactPaths.has(pathname)) return true;
-  return /^\/api\/(?:public\/(?:posts|projects)|knowledge-nodes|formulas)\/[^/]+$/.test(pathname);
+  return /^\/api\/(?:public\/(?:posts|projects|miniapps)|knowledge-nodes|formulas)\/[^/]+$/.test(pathname);
 }
 
 function isLegacyAuthApiPath(pathname) {
@@ -2787,6 +3059,9 @@ function servePermanentRedirect(req, res, location) {
 function serveStatic(req, res, pathname) {
   let requested = decodeURIComponent(pathname === "/" ? "/index.html" : pathname);
   if (requested.endsWith("/")) requested += "index.html";
+  if (requested.startsWith("/uploads/") && !publicUploadPaths().has(requested)) {
+    return serveNotFound(res);
+  }
   if (!isPublicStaticRequest(requested)) {
     return serveNotFound(res);
   }
