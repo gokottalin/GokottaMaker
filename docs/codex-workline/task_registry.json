@@ -4,7 +4,7 @@
   "operatingModel": "project_director_plus_short_task_agents",
   "legacyAgentDocsMode": "historical_reference_only",
   "currentGate": {
-    "batch1": "dispatch_20260911_accepted_queue_empty",
+    "batch1": "s64_cms_draft_operations_controls_active",
     "businessImplementationAllowed": true,
     "databaseMutationAllowed": false,
     "migrationFileImplementationAllowed": false,
@@ -2494,6 +2494,16 @@
       "doneWhen": ["compact bootstrap omits expanded task history", "launch mode emits exactly one copy-ready sentence", "confirmed requirement envelopes name the launch command", "AGENTS requires automatic launch-sentence emission only after confirmation and a real fresh-session handoff decision", "handoff and governance checks pass"],
       "brief": "agents/A71_SessionBootstrapGovernance/brief.md",
       "handoff": "docs/codex-workline/slices/S61_session_bootstrap_governance_handoff.md"
+    },
+    {
+      "id": "A74_CmsDraftOperationsControls",
+      "status": "next",
+      "scope": "Implement CMS local draft protection, six-content common-level controls, derivation cover management, and three-slot homepage focus configuration using the accepted S63 authority.",
+      "reads": ["AGENTS.md", "PROJECT_WINDOW.md", "docs/PROJECT_CHARTER.md", "docs/codex-workline/task_registry.json", "docs/codex-workline/requirements/active/REQ-20260913-005.json", "docs/codex-workline/requirements/active/REQ-20260913-007.json", "docs/codex-workline/requirements/active/REQ-20260913-009.json", "docs/codex-workline/requirements/active/REQ-20260913-010.json", "docs/codex-workline/slices/S62_formula_cms_consolidated_handoff.md", "docs/codex-workline/slices/S63_cross_content_discovery_authority_handoff.md"],
+      "mayEdit": ["admin/index.html", "admin/admin.js", "admin/admin.css", "admin/admin-dark.css", "scripts/test-cms-draft-operations-controls.js", "scripts/run-cms-draft-operations-browser-fixture.js", "docs/codex-workline/slices/S64_cms_draft_operations_controls_handoff.md"],
+      "doneWhen": ["article and formula local drafts are identity-isolated and preserve dirty, restore, conflict, failure, and successful-save semantics", "six CMS content types use the S63 common-level authority", "derivation covers and three distinct published focus slots have complete safe CMS lifecycle behavior", "isolated checks and S50, S60, S62, S63, and governance regressions pass"],
+      "brief": "agents/A74_CmsDraftOperationsControls/brief.md",
+      "handoff": "docs/codex-workline/slices/S64_cms_draft_operations_controls_handoff.md"
     }
   ],
   "onDemandWorkbenches": [

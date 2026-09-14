@@ -1,6 +1,9 @@
 ﻿(function () {
   const savedLoginKey = "larkixmaker_admin_saved_login";
-  const draftKey = "larkixmaker_admin_autodraft_v1";
+  const legacyDraftKey = "larkixmaker_admin_autodraft_v1";
+  const draftKeyPrefix = "larkixmaker_admin_autodraft_v2";
+  const draftRegistryKey = `${draftKeyPrefix}:registry`;
+  const draftVersion = 2;
   const sidebarStateKey = "larkixmaker_admin_sidebar_collapsed";
   const editorDockStateKey = "larkixmaker_admin_editor_dock_collapsed";
   const articlePublishDockStateKey = "larkixmaker_admin_article_publish_dock_collapsed";
@@ -97,6 +100,12 @@
   const draftStatus = document.querySelector("#draftStatus");
   const draftStatusText = document.querySelector("#draftStatusText");
   const discardDraftButton = document.querySelector("#discardDraftButton");
+  const restoreDraftButton = document.querySelector("#restoreDraftButton");
+  const keepServerDraftButton = document.querySelector("#keepServerDraftButton");
+  const draftConflictActions = document.querySelector("#draftConflictActions");
+  const articleDraftRecoveryBar = document.querySelector("#articleDraftRecoveryBar");
+  const articleDraftPicker = document.querySelector("#articleDraftPicker");
+  const restoreSelectedArticleDraftButton = document.querySelector("#restoreSelectedArticleDraftButton");
   const contentSearch = document.querySelector("#contentSearch");
   const typeFilter = document.querySelector("#typeFilter");
   const statusFilter = document.querySelector("#statusFilter");
@@ -152,6 +161,15 @@
   const formulaTechnicalId = document.querySelector("#formulaTechnicalId");
   const formulaTechnicalSlug = document.querySelector("#formulaTechnicalSlug");
   const formulaCopyStatus = document.querySelector("#formulaCopyStatus");
+  const formulaDraftStatus = document.querySelector("#formulaDraftStatus");
+  const formulaDraftStatusText = document.querySelector("#formulaDraftStatusText");
+  const formulaDraftConflictActions = document.querySelector("#formulaDraftConflictActions");
+  const restoreFormulaDraftButton = document.querySelector("#restoreFormulaDraftButton");
+  const keepServerFormulaDraftButton = document.querySelector("#keepServerFormulaDraftButton");
+  const discardFormulaDraftButton = document.querySelector("#discardFormulaDraftButton");
+  const formulaDraftRecoveryBar = document.querySelector("#formulaDraftRecoveryBar");
+  const formulaDraftPicker = document.querySelector("#formulaDraftPicker");
+  const restoreSelectedFormulaDraftButton = document.querySelector("#restoreSelectedFormulaDraftButton");
   const formulaClassificationKind = document.querySelector("#formulaClassificationKind");
   const formulaClassificationParentField = document.querySelector("#formulaClassificationParentField");
   const formulaClassificationParent = document.querySelector("#formulaClassificationParent");
@@ -217,6 +235,14 @@
   const formulaDecisionPanel = document.querySelector("#formulaDecisionPanel");
   const formulaDecisionCount = document.querySelector("#formulaDecisionCount");
   const formulaDecisionList = document.querySelector("#formulaDecisionList");
+  const derivationCoverActions = document.querySelector("#derivationCoverActions");
+  const derivationCoverFallback = document.querySelector("#derivationCoverFallback");
+  const removeDerivationCoverButton = document.querySelector("#removeDerivationCoverButton");
+  const refreshOperationsButton = document.querySelector("#refreshOperationsButton");
+  const commonLevelManager = document.querySelector("#commonLevelManager");
+  const homepageFocusSlots = document.querySelector("#homepageFocusSlots");
+  const homepageFocusStatus = document.querySelector("#homepageFocusStatus");
+  const saveHomepageFocusButton = document.querySelector("#saveHomepageFocusButton");
 
   let editingType = null;
   let editingId = null;
@@ -256,6 +282,14 @@
   let isRestoringForm = false;
   let autosaveTimer = 0;
   let lastDraftSavedAt = "";
+  let articleDraftContextId = "";
+  let articleBaselineToken = "";
+  let pendingArticleDraftConflict = null;
+  let formulaDraftContextId = "";
+  let formulaBaselineToken = "";
+  let formulaDirty = false;
+  let formulaAutosaveTimer = 0;
+  let pendingFormulaDraftConflict = null;
   let cropState = null;
   let cropPointerState = null;
   let layoutDragState = null;
@@ -271,6 +305,19 @@
   const selectedContent = new Set();
   const filters = { search: "", type: "all", status: "all" };
   const featuredLimit = 4;
+  const discoveryContentTypes = ["article", "project", "formula", "derivation", "focus", "miniapp"];
+  const discoveryTypeLabels = {
+    article: "文章",
+    project: "开源项目",
+    formula: "公式",
+    derivation: "推导节点",
+    focus: "聚焦槽位",
+    miniapp: "小程序"
+  };
+  const discoveryState = {
+    posts: [], projects: [], knowledgeNodes: [], formulas: [], miniapps: [],
+    homepageFocus: { slots: [], configured: false, complete: false, missingSlots: [] }
+  };
   const knowledgeColorTokens = ["purple", "blue", "green", "amber", "red", "neutral"];
   const formulaCatalogState = {
     facets: { modules: [], tags: [], classifications: [] },
@@ -819,6 +866,111 @@ $$
       renderFormulaRelationRepairs();
     }
     renderFocusModeGate();
+    await loadOperations();
+  }
+
+  function discoveryItems(type) {
+    if (type === "article") return discoveryState.posts.map((item) => ({ id: item.id, label: item.title, ...item }));
+    if (type === "project") return discoveryState.projects.map((item) => ({ id: item.id, label: item.title, ...item }));
+    if (type === "formula") return discoveryState.formulas.map((item) => ({ id: item.formulaId || item.id, label: item.displayName, ...item }));
+    if (type === "derivation") return discoveryState.knowledgeNodes.map((item) => ({ id: item.id, label: item.title, ...item }));
+    if (type === "miniapp") return discoveryState.miniapps.map((item) => ({ id: item.id || item.contentId, label: item.title || item.name || item.id, ...item }));
+    if (type === "focus") return (discoveryState.homepageFocus?.slots || []).map((item) => ({ id: item.slot, label: item.slot, ...item }));
+    return [];
+  }
+
+  function renderCommonLevelManager() {
+    if (!commonLevelManager) return;
+    commonLevelManager.innerHTML = discoveryContentTypes.map((type) => {
+      const items = discoveryItems(type);
+      return `<section class="common-level-group" data-common-level-group="${type}">
+        <div class="section-heading compact"><h3>${discoveryTypeLabels[type]}</h3><span>${items.length} 项</span></div>
+        <div class="common-level-list">${items.map((item) => `
+          <label class="common-level-row">
+            <span><strong>${escapeHtml(item.label || item.id)}</strong><code>${escapeHtml(item.id)}</code></span>
+            <input type="number" inputmode="numeric" min="1" max="10" step="1" value="${escapeHtml(item.commonLevel)}"
+              aria-label="${escapeHtml(item.label || item.id)}常用等级" data-common-level-type="${type}" data-common-level-id="${escapeHtml(item.id)}" />
+            <button class="button secondary" type="button" data-save-common-level="${escapeHtml(item.id)}" data-common-level-type="${type}">保存等级</button>
+          </label>`).join("") || '<div class="empty-state">暂无内容。</div>'}</div>
+      </section>`;
+    }).join("");
+  }
+
+  function focusReasonLabel(item) {
+    return {
+      FOCUS_POST_MISSING: "文章不存在",
+      FOCUS_POST_ARCHIVED: "文章已归档",
+      FOCUS_POST_NOT_PUBLISHED: "文章已撤回"
+    }[item?.reasonCode] || "当前选择不可用";
+  }
+
+  function renderHomepageFocusManager() {
+    if (!homepageFocusSlots) return;
+    const slotOrder = ["large", "small-1", "small-2"];
+    const configured = discoveryState.homepageFocus?.slots || [];
+    const published = discoveryState.posts.filter((post) => post.publishStatus === "published" && !post.deletedAt);
+    homepageFocusSlots.innerHTML = slotOrder.map((slot) => {
+      const selected = configured.find((item) => item.slot === slot);
+      const missing = selected && !selected.available;
+      const options = published.map((post) => `<option value="${escapeHtml(post.id)}" ${post.id === selected?.postId ? "selected" : ""}>${escapeHtml(post.title)} · ${escapeHtml(post.id)}</option>`).join("");
+      const missingOption = missing ? `<option value="${escapeHtml(selected.postId)}" selected disabled>缺失：${escapeHtml(selected.title || selected.postId)}（${focusReasonLabel(selected)}）</option>` : "";
+      return `<label class="homepage-focus-slot ${missing ? "is-missing" : ""}">
+        <span><strong>${slot}</strong>${missing ? `<em>${focusReasonLabel(selected)}，请补齐</em>` : ""}</span>
+        <select data-homepage-focus-slot="${slot}"><option value="">请选择已发布文章</option>${missingOption}${options}</select>
+      </label>`;
+    }).join("");
+    const complete = Boolean(discoveryState.homepageFocus?.complete);
+    const missingSlots = discoveryState.homepageFocus?.missingSlots || [];
+    homepageFocusStatus.textContent = complete
+      ? "三个槽位已完整配置并准确回显。"
+      : `配置不完整${missingSlots.length ? `：${missingSlots.join("、")}` : ""}。不会自动替换，请由管理员补齐。`;
+    homepageFocusStatus.classList.toggle("is-warning", !complete);
+  }
+
+  function renderOperations() {
+    renderCommonLevelManager();
+    renderHomepageFocusManager();
+  }
+
+  async function loadOperations() {
+    const payload = await request("/api/admin/discovery");
+    discoveryState.posts = payload.posts || [];
+    discoveryState.projects = payload.projects || [];
+    discoveryState.knowledgeNodes = payload.knowledgeNodes || [];
+    discoveryState.formulas = payload.formulas || [];
+    discoveryState.miniapps = payload.miniapps || [];
+    discoveryState.homepageFocus = payload.homepageFocus || { slots: [], configured: false, complete: false, missingSlots: ["large", "small-1", "small-2"] };
+    renderOperations();
+  }
+
+  async function saveCommonLevel(button) {
+    const type = button.dataset.commonLevelType;
+    const id = button.dataset.saveCommonLevel;
+    const input = commonLevelManager.querySelector(`[data-common-level-type="${CSS.escape(type)}"][data-common-level-id="${CSS.escape(id)}"]`);
+    const result = await request("/api/admin/discovery/common-level", {
+      method: "POST",
+      body: JSON.stringify({ contentType: type, contentId: id, commonLevel: input.value })
+    });
+    input.value = String(result.commonLevel);
+    await loadOperations();
+    setNotice(`${discoveryTypeLabels[type]}常用等级已按 S63 权威语义保存为 ${result.commonLevel}。`, "success");
+  }
+
+  async function saveHomepageFocus() {
+    const selects = [...homepageFocusSlots.querySelectorAll("[data-homepage-focus-slot]")];
+    const slots = selects.map((select) => ({
+      slot: select.dataset.homepageFocusSlot,
+      postId: select.value,
+      commonLevel: discoveryState.homepageFocus?.slots?.find((item) => item.slot === select.dataset.homepageFocusSlot)?.commonLevel
+    }));
+    if (slots.some((item) => !item.postId)) throw new Error("必须一次选满 large、small-1、small-2 三个槽位");
+    if (new Set(slots.map((item) => item.postId)).size !== 3) throw new Error("三个聚焦槽位必须选择互异文章");
+    const publishedIds = new Set(discoveryState.posts.filter((item) => item.publishStatus === "published" && !item.deletedAt).map((item) => item.id));
+    if (slots.some((item) => !publishedIds.has(item.postId))) throw new Error("聚焦槽位只能选择当前已发布文章");
+    const payload = await request("/api/admin/homepage-focus", { method: "POST", body: JSON.stringify({ slots }) });
+    discoveryState.homepageFocus = payload.homepageFocus;
+    renderOperations();
+    setNotice("首页三个聚焦槽位已完整保存；Hero 四槽位未改动。", "success");
   }
 
   async function confirmPublicPostProjection(postId) {
@@ -2226,6 +2378,7 @@ $$
     syncFormulaDrawerAvailability();
     syncFocusAuthoringControls();
     updateCoverCoordinateActions();
+    updateDerivationCoverState();
     updateVisibilityHint();
   }
 
@@ -2365,6 +2518,154 @@ $$
     };
   }
 
+  function stableDraftId(prefix) {
+    if (window.crypto?.randomUUID) return `${prefix}-${window.crypto.randomUUID()}`;
+    return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  }
+
+  function draftStorageKey(kind, identity) {
+    return `${draftKeyPrefix}:${kind}:${identity}`;
+  }
+
+  function readDraftRegistry() {
+    try {
+      const value = JSON.parse(localStorage.getItem(draftRegistryKey) || "[]");
+      return Array.isArray(value) ? value.filter((key) => typeof key === "string" && key.startsWith(`${draftKeyPrefix}:`)) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function writeDraftRecord(kind, identity, record) {
+    const key = draftStorageKey(kind, identity);
+    localStorage.setItem(key, JSON.stringify(record));
+    const registry = readDraftRegistry().filter((item) => item !== key);
+    registry.unshift(key);
+    localStorage.setItem(draftRegistryKey, JSON.stringify(registry.slice(0, 80)));
+    renderDraftRecoveryPickers();
+  }
+
+  function readDraftRecord(kind, identity) {
+    if (!identity) return null;
+    try {
+      const record = JSON.parse(localStorage.getItem(draftStorageKey(kind, identity)) || "null");
+      return record?.version === draftVersion && record.kind === kind && record.identity === identity ? record : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function removeDraftRecord(kind, identity) {
+    if (!identity) return;
+    const key = draftStorageKey(kind, identity);
+    localStorage.removeItem(key);
+    localStorage.setItem(draftRegistryKey, JSON.stringify(readDraftRegistry().filter((item) => item !== key)));
+    renderDraftRecoveryPickers();
+  }
+
+  function latestDraftRecord(kind, predicate = () => true) {
+    for (const key of readDraftRegistry()) {
+      if (!key.startsWith(`${draftKeyPrefix}:${kind}:`)) continue;
+      try {
+        const record = JSON.parse(localStorage.getItem(key) || "null");
+        if (record?.version === draftVersion && record.kind === kind && predicate(record)) return record;
+      } catch {}
+    }
+    return null;
+  }
+
+  function draftRecords(kind) {
+    return readDraftRegistry().map((key) => {
+      try { return JSON.parse(localStorage.getItem(key) || "null"); } catch { return null; }
+    }).filter((record) => record?.version === draftVersion && record.kind === kind);
+  }
+
+  function preserveConflictLocalSide(kind, conflict) {
+    if (!conflict?.record) return "";
+    if (conflict.preservedIdentity && readDraftRecord(kind, conflict.preservedIdentity)) return conflict.preservedIdentity;
+    const existing = draftRecords(kind).find((record) =>
+      record.conflictRole === "preserved-local" &&
+      record.sourceIdentity === conflict.record.identity &&
+      record.baseToken === conflict.record.baseToken &&
+      JSON.stringify(record.snapshot) === JSON.stringify(conflict.record.snapshot)
+    );
+    if (existing) return existing.identity;
+    const identity = stableDraftId(`${kind}-conflict-local`);
+    writeDraftRecord(kind, identity, {
+      ...conflict.record,
+      identity,
+      savedAt: new Date().toISOString(),
+      conflictRole: "preserved-local",
+      sourceIdentity: conflict.record.identity,
+      conflictServerToken: conflict.serverToken
+    });
+    conflict.preservedIdentity = identity;
+    return identity;
+  }
+
+  function saveConflictServerEdit(kind, conflict, snapshot) {
+    if (!conflict?.record) return "";
+    const identity = conflict.workingIdentity || stableDraftId(`${kind}-conflict-server-edit`);
+    conflict.workingIdentity = identity;
+    writeDraftRecord(kind, identity, {
+      version: draftVersion,
+      kind,
+      identity,
+      savedAt: new Date().toISOString(),
+      baseToken: conflict.serverToken,
+      conflictRole: "server-side-edit",
+      sourceIdentity: conflict.record.identity,
+      snapshot
+    });
+    return identity;
+  }
+
+  function renderDraftRecoveryPickers() {
+    const articleRecords = draftRecords("article");
+    const formulaRecords = draftRecords("formula");
+    if (articleDraftRecoveryBar) articleDraftRecoveryBar.hidden = articleRecords.length === 0;
+    if (formulaDraftRecoveryBar) formulaDraftRecoveryBar.hidden = formulaRecords.length === 0;
+    if (articleDraftPicker) articleDraftPicker.innerHTML = articleRecords.map((record) =>
+      `<option value="${escapeHtml(record.identity)}">${record.conflictRole === "preserved-local" ? "冲突旧本地侧 · " : record.conflictRole === "server-side-edit" ? "冲突后新编辑 · " : ""}${escapeHtml(record.snapshot?.title || "未命名文章")} · ${new Date(record.savedAt).toLocaleString()}</option>`
+    ).join("");
+    if (formulaDraftPicker) formulaDraftPicker.innerHTML = formulaRecords.map((record) =>
+      `<option value="${escapeHtml(record.identity)}">${record.conflictRole === "preserved-local" ? "冲突旧本地侧 · " : record.conflictRole === "server-side-edit" ? "冲突后新编辑 · " : ""}${escapeHtml(record.snapshot?.displayName || "未命名公式")} · ${new Date(record.savedAt).toLocaleString()}</option>`
+    ).join("");
+  }
+
+  function migrateLegacyArticleDraft() {
+    try {
+      const legacy = JSON.parse(localStorage.getItem(legacyDraftKey) || "null");
+      if (!legacy?.snapshot || legacy.snapshot.type !== "post") return;
+      const identity = legacy.snapshot.editingId || stableDraftId("new-article");
+      const serverItem = legacy.snapshot.editingId ? serverContent.posts.find((item) => item.id === legacy.snapshot.editingId) : null;
+      writeDraftRecord("article", identity, {
+        version: draftVersion,
+        kind: "article",
+        identity,
+        savedAt: legacy.savedAt || new Date().toISOString(),
+        baseToken: serverItem ? contentBaselineToken("article", serverItem) : "new",
+        snapshot: legacy.snapshot
+      });
+      localStorage.removeItem(legacyDraftKey);
+    } catch {}
+  }
+
+  function contentBaselineToken(type, item) {
+    if (!item) return "new";
+    const fields = type === "formula"
+      ? [item.formulaId, item.currentRevisionId, item.updatedAt, item.displayName, item.moduleKey, item.categoryPath, item.purpose, item.tags, item.latex, item.markdownDerivation, item.currentRevisionReason]
+      : [item.id, item.updatedAt, item.publishStatus, item.title, item.category, item.excerpt, item.tags, item.markdown, item.cover, item.coverCrop, item.readingMinutes, item.featured, item.featuredOrder, item.recommendationPriority];
+    return JSON.stringify(fields);
+  }
+
+  function currentArticleDraftIdentity() {
+    if (getType() !== "post") return "";
+    if (editingId) return String(editingId);
+    if (!articleDraftContextId) articleDraftContextId = stableDraftId("new-article");
+    return articleDraftContextId;
+  }
+
   function snapshotHasContent(snapshot) {
     return Boolean(
       snapshot.title.trim() ||
@@ -2385,10 +2686,23 @@ $$
   function updateDraftStatus() {
     const draft = readDraft();
     draftStatus.hidden = !draft;
-    if (!draft) return;
+    if (!draft) {
+      draftStatus.classList.remove("is-conflict");
+      draftConflictActions.hidden = true;
+      return;
+    }
     const savedAt = draft.savedAt ? new Date(draft.savedAt).toLocaleString() : "刚刚";
     const title = draft.snapshot?.title ? `《${draft.snapshot.title}》` : "未命名内容";
-    draftStatusText.textContent = `${title} 已自动保存在此浏览器，保存时间：${savedAt}。`;
+    const conflicted = Boolean(
+      pendingArticleDraftConflict &&
+      pendingArticleDraftConflict.record?.identity === draft.identity &&
+      pendingArticleDraftConflict.record?.baseToken === draft.baseToken
+    );
+    draftStatus.classList.toggle("is-conflict", conflicted);
+    draftConflictActions.hidden = !conflicted;
+    draftStatusText.textContent = conflicted
+      ? `${title} 的服务器内容已在本地草稿之后更新。安全默认保留服务器内容；本地草稿仍保留，只有明确选择才会恢复。`
+      : `${title} 已自动保存在此浏览器，保存时间：${savedAt}。`;
   }
 
   function markDirty(value = true) {
@@ -2396,7 +2710,7 @@ $$
     const wasDirty = isDirty;
     isDirty = value;
     if (isDirty) {
-      queueDraftSave();
+      if (getType() === "post") queueDraftSave();
       if (!wasDirty) {
         setNotice("当前有未保存修改，本地草稿会自动保存在此浏览器。", "warning", {
           key: "article-dirty"
@@ -2413,21 +2727,32 @@ $$
   }
 
   function readDraft() {
-    try {
-      return JSON.parse(localStorage.getItem(draftKey) || "null");
-    } catch {
-      return null;
-    }
+    return readDraftRecord("article", currentArticleDraftIdentity());
   }
 
   function saveDraft() {
+    if (getType() !== "post") return;
     const snapshot = currentSnapshot();
+    const identity = currentArticleDraftIdentity();
+    if (pendingArticleDraftConflict?.record?.identity === identity) {
+      saveConflictServerEdit("article", pendingArticleDraftConflict, snapshot);
+      updateDraftStatus();
+      setNotice("冲突尚未决策：旧本地侧保持原记录，新编辑已另存为可恢复草稿。", "warning", { key: "article-draft-conflict", persistent: true });
+      return;
+    }
     if (!snapshotHasContent(snapshot)) {
       clearDraft();
       return;
     }
     lastDraftSavedAt = new Date().toISOString();
-    localStorage.setItem(draftKey, JSON.stringify({ savedAt: lastDraftSavedAt, snapshot }));
+    writeDraftRecord("article", identity, {
+      version: draftVersion,
+      kind: "article",
+      identity,
+      savedAt: lastDraftSavedAt,
+      baseToken: articleBaselineToken || "new",
+      snapshot
+    });
     updateDraftStatus();
   }
 
@@ -2437,12 +2762,13 @@ $$
   }
 
   function clearDraft() {
-    localStorage.removeItem(draftKey);
+    removeDraftRecord("article", currentArticleDraftIdentity());
+    pendingArticleDraftConflict = null;
     updateDraftStatus();
   }
 
   function confirmDiscard(message = "当前有未保存修改，确认继续吗？") {
-    if (!isDirty) return true;
+    if (!isDirty && !formulaDirty) return true;
     return window.confirm(message);
   }
 
@@ -2482,6 +2808,13 @@ $$
     coverCoordinateActions.hidden = !visible;
     if (coverCropEdit) coverCropEdit.disabled = !visible;
     if (coverCropReset) coverCropReset.disabled = !visible || !currentCoverCrop;
+  }
+
+  function updateDerivationCoverState() {
+    const derivation = isKnowledgeType(getType());
+    if (derivationCoverActions) derivationCoverActions.hidden = !derivation || !currentCover;
+    if (removeDerivationCoverButton) removeDerivationCoverButton.disabled = !derivation || !currentCover;
+    if (derivationCoverFallback) derivationCoverFallback.hidden = !derivation || Boolean(currentCover);
   }
 
   function positionCoverPreview() {
@@ -2534,6 +2867,7 @@ $$
       coverHint.textContent = "从资源管理器选择图片，推荐 1600x900 或 1920x1080";
     }
     updateCoverCoordinateActions();
+    updateDerivationCoverState();
     if (dirty) markDirty();
   }
 
@@ -2789,9 +3123,13 @@ $$
 
   function resetForm(options = {}) {
     const { dirty = false, clearLocalDraft = false } = options;
+    if (clearLocalDraft) clearDraft();
     isRestoringForm = true;
     editingType = null;
     editingId = null;
+    articleDraftContextId = stableDraftId("new-article");
+    articleBaselineToken = "new";
+    pendingArticleDraftConflict = null;
     contentForm.reset();
     contentForm.type.value = "post";
     if (contentForm.nodeType) contentForm.nodeType.value = "derivation";
@@ -2809,8 +3147,8 @@ $$
     updatePreview();
     updateVisibilityHint();
     isRestoringForm = false;
-    if (clearLocalDraft) clearDraft();
     dirty ? markDirty() : markClean();
+    updateDraftStatus();
   }
 
   function startNewKnowledgeNode() {
@@ -3446,8 +3784,16 @@ $$
     dirty ? markDirty() : markClean();
   }
 
+  function replaceAdminViewHash(view) {
+    window.history.replaceState(
+      window.history.state,
+      "",
+      `${window.location.pathname}${window.location.search}#${view}`
+    );
+  }
+
   function applyItemToForm(type, item, options = {}) {
-    const { confirm = true } = options;
+    const { confirm = true, restoreDraft = true, internalRestoreNavigation = false } = options;
     if (confirm && !confirmDiscard("当前编辑器里有未保存修改，切换内容会覆盖表单，确认继续吗？")) return false;
     const isKnowledge = isKnowledgeType(type);
     applySnapshotToForm(
@@ -3482,8 +3828,15 @@ $$
       },
       { dirty: false }
     );
+    if (type === "post") {
+      articleDraftContextId = "";
+      articleBaselineToken = contentBaselineToken("article", item);
+      pendingArticleDraftConflict = null;
+      if (restoreDraft) restoreArticleDraftForCurrentIdentity(item);
+    }
     setNotice(`正在编辑：${item.title || "未命名内容"}`, "info");
-    window.location.hash = "editor";
+    if (internalRestoreNavigation) replaceAdminViewHash("editor");
+    else window.location.hash = "editor";
     return true;
   }
 
@@ -3500,16 +3853,45 @@ $$
     }
   }
 
-  function restoreDraftIfNeeded() {
+  function restoreArticleDraftForCurrentIdentity(serverItem = null) {
     const draft = readDraft();
-    updateDraftStatus();
-    if (!draft?.snapshot || !snapshotHasContent(draft.snapshot)) return;
-    const title = draft.snapshot.title ? `《${draft.snapshot.title}》` : "未命名内容";
-    if (window.confirm(`检测到本地草稿 ${title}，是否恢复到编辑器？`)) {
-      applySnapshotToForm(draft.snapshot, { dirty: true });
-      setNotice("已恢复本地草稿。草稿尚未写入 SQLite，请确认后保存内容。", "warning");
-      window.location.hash = "editor";
+    pendingArticleDraftConflict = null;
+    if (!draft?.snapshot || !snapshotHasContent(draft.snapshot)) {
+      updateDraftStatus();
+      return false;
     }
+    const serverToken = serverItem ? contentBaselineToken("article", serverItem) : "new";
+    if (draft.baseToken !== serverToken) {
+      pendingArticleDraftConflict = { record: draft, serverToken };
+      updateDraftStatus();
+      setNotice("检测到本地文章草稿与更新后的服务器内容冲突。已安全保留服务器内容，请在草稿栏明确选择。", "warning", { key: "article-draft-conflict", persistent: true });
+      return false;
+    }
+    applySnapshotToForm(draft.snapshot, { dirty: true });
+    articleBaselineToken = serverToken;
+    setNotice("已自动恢复同一文章的本地草稿。草稿尚未写入服务器。", "warning");
+    return true;
+  }
+
+  function restoreDraftIfNeeded() {
+    migrateLegacyArticleDraft();
+    const draft = latestDraftRecord("article");
+    if (!draft?.snapshot || !snapshotHasContent(draft.snapshot)) {
+      updateDraftStatus();
+      return;
+    }
+    const serverItem = draft.snapshot.editingId
+      ? serverContent.posts.find((item) => item.id === draft.snapshot.editingId)
+      : null;
+    if (serverItem) {
+      applyItemToForm("post", serverItem, { confirm: false, restoreDraft: true, internalRestoreNavigation: true });
+      return;
+    }
+    articleDraftContextId = draft.identity;
+    articleBaselineToken = "new";
+    applySnapshotToForm(draft.snapshot, { dirty: true });
+    setNotice("已自动恢复新建文章表单的本地草稿。草稿尚未写入服务器。", "warning");
+    replaceAdminViewHash("editor");
   }
 
   function buildPayload() {
@@ -4302,6 +4684,133 @@ $$
     return formulaCardEditor?.elements?.namedItem(name);
   }
 
+  function currentFormulaDraftIdentity() {
+    if (formulaEditingCard?.formulaId) return String(formulaEditingCard.formulaId);
+    if (!formulaDraftContextId) formulaDraftContextId = stableDraftId("new-formula");
+    return formulaDraftContextId;
+  }
+
+  function currentFormulaSnapshot() {
+    return {
+      formulaId: formulaEditingCard?.formulaId || "",
+      displayName: formulaFormField("displayName")?.value || "",
+      moduleKey: formulaFormField("moduleKey")?.value || "",
+      categoryPath: formulaFormField("categoryPath")?.value || "",
+      purpose: formulaFormField("purpose")?.value || "",
+      tags: formulaFormField("tags")?.value || "",
+      latex: formulaFormField("latex")?.value || "",
+      markdownDerivation: formulaFormField("markdownDerivation")?.value || "",
+      revisionReason: formulaFormField("revisionReason")?.value || ""
+    };
+  }
+
+  function formulaSnapshotHasContent(snapshot) {
+    return [snapshot.displayName, snapshot.moduleKey, snapshot.categoryPath, snapshot.purpose, snapshot.tags, snapshot.latex, snapshot.markdownDerivation, snapshot.revisionReason]
+      .some((value) => String(value || "").trim());
+  }
+
+  function updateFormulaDraftStatus() {
+    if (!formulaDraftStatus) return;
+    const draft = readDraftRecord("formula", currentFormulaDraftIdentity());
+    formulaDraftStatus.hidden = !draft;
+    if (!draft) {
+      formulaDraftStatus.classList.remove("is-conflict");
+      formulaDraftConflictActions.hidden = true;
+      return;
+    }
+    const conflicted = Boolean(
+      pendingFormulaDraftConflict &&
+      pendingFormulaDraftConflict.record?.identity === draft.identity &&
+      pendingFormulaDraftConflict.record?.baseToken === draft.baseToken
+    );
+    const title = draft.snapshot?.displayName ? `《${draft.snapshot.displayName}》` : "未命名公式";
+    formulaDraftStatus.classList.toggle("is-conflict", conflicted);
+    formulaDraftConflictActions.hidden = !conflicted;
+    formulaDraftStatusText.textContent = conflicted
+      ? `${title} 的服务器修订已在本地草稿之后更新。安全默认保留服务器修订；本地草稿仍保留，只有明确选择才会恢复。`
+      : `${title} 已自动保存在此浏览器，保存时间：${new Date(draft.savedAt).toLocaleString()}。`;
+  }
+
+  function saveFormulaDraft() {
+    if (!formulaCardEditor || formulaCardEditor.hidden) return;
+    const snapshot = currentFormulaSnapshot();
+    const identity = currentFormulaDraftIdentity();
+    if (pendingFormulaDraftConflict?.record?.identity === identity) {
+      saveConflictServerEdit("formula", pendingFormulaDraftConflict, snapshot);
+      updateFormulaDraftStatus();
+      setNotice("公式冲突尚未决策：旧本地侧保持原记录，新编辑已另存为可恢复草稿。", "warning", { key: "formula-draft-conflict", persistent: true });
+      return;
+    }
+    if (!formulaSnapshotHasContent(snapshot)) {
+      removeDraftRecord("formula", identity);
+      updateFormulaDraftStatus();
+      return;
+    }
+    writeDraftRecord("formula", identity, {
+      version: draftVersion,
+      kind: "formula",
+      identity,
+      savedAt: new Date().toISOString(),
+      baseToken: formulaBaselineToken || "new",
+      snapshot
+    });
+    updateFormulaDraftStatus();
+  }
+
+  function clearFormulaDraft(identity = currentFormulaDraftIdentity()) {
+    removeDraftRecord("formula", identity);
+    pendingFormulaDraftConflict = null;
+    updateFormulaDraftStatus();
+  }
+
+  function queueFormulaDraftSave() {
+    window.clearTimeout(formulaAutosaveTimer);
+    formulaAutosaveTimer = window.setTimeout(saveFormulaDraft, autosaveDelay);
+  }
+
+  function markFormulaDirty() {
+    if (isRestoringForm) return;
+    formulaDirty = true;
+    queueFormulaDraftSave();
+  }
+
+  function applyFormulaDraftSnapshot(snapshot) {
+    isRestoringForm = true;
+    formulaFormField("displayName").value = snapshot.displayName || "";
+    formulaFormField("moduleKey").value = snapshot.moduleKey || "";
+    formulaFormField("categoryPath").value = snapshot.categoryPath || "";
+    formulaFormField("purpose").value = snapshot.purpose || "";
+    setFormulaSelectedTags(String(snapshot.tags || "").split(/[\n,，、]/).map((tag) => tag.trim()).filter(Boolean));
+    formulaFormField("latex").value = snapshot.latex || "";
+    formulaFormField("markdownDerivation").value = snapshot.markdownDerivation || "";
+    formulaFormField("revisionReason").value = snapshot.revisionReason || "";
+    renderFormulaClassificationOptions();
+    updateFormulaEditorPreview();
+    isRestoringForm = false;
+    formulaDirty = true;
+  }
+
+  function restoreFormulaDraftForCurrentIdentity(serverCard = null) {
+    const draft = readDraftRecord("formula", currentFormulaDraftIdentity());
+    pendingFormulaDraftConflict = null;
+    if (!draft?.snapshot || !formulaSnapshotHasContent(draft.snapshot)) {
+      updateFormulaDraftStatus();
+      return false;
+    }
+    const serverToken = serverCard ? contentBaselineToken("formula", serverCard) : "new";
+    if (draft.baseToken !== serverToken) {
+      pendingFormulaDraftConflict = { record: draft, serverToken };
+      updateFormulaDraftStatus();
+      setNotice("检测到本地公式草稿与更新后的服务器修订冲突。已安全保留服务器内容，请在草稿栏明确选择。", "warning", { key: "formula-draft-conflict", persistent: true });
+      return false;
+    }
+    applyFormulaDraftSnapshot(draft.snapshot);
+    formulaBaselineToken = serverToken;
+    updateFormulaDraftStatus();
+    setNotice("已自动恢复同一公式卡的本地草稿。草稿尚未创建服务器修订。", "warning");
+    return true;
+  }
+
   function renderFormulaTechnicalInfo(card = null) {
     if (!formulaTechnicalInfo) return;
     const visible = Boolean(card?.formulaId && card?.slug);
@@ -4595,6 +5104,7 @@ $$
     field.focus();
     field.setSelectionRange(cursor, cursor);
     updateFormulaEditorPreview();
+    markFormulaDirty();
     setNotice("已插入完整 Formula ID 的 formula-ref；保存时将按权威图再次校验。", "success");
   }
 
@@ -4607,6 +5117,7 @@ $$
       .replace(/[ \t]+\n/g, "\n")
       .replace(/\n{3,}/g, "\n\n");
     updateFormulaEditorPreview();
+    markFormulaDirty();
     setNotice("依赖短码已移除；保存公式卡后生成新的不可变修订。", "warning");
   }
 
@@ -4645,6 +5156,10 @@ $$
     formulaCardEditor.hidden = false;
     formulaCardEditor.reset();
     const editing = Boolean(card);
+    formulaDraftContextId = editing ? "" : (options.draftIdentity || stableDraftId("new-formula"));
+    formulaBaselineToken = editing ? contentBaselineToken("formula", card) : "new";
+    pendingFormulaDraftConflict = null;
+    formulaDirty = false;
     formulaEditorTitle.textContent = editing ? `编辑：${card.displayName}` : "新建公式卡";
     formulaFormField("displayName").value = card?.displayName || "";
     formulaFormField("moduleKey").value = card?.moduleKey || formulaCatalogState.selection.moduleKey || "";
@@ -4682,24 +5197,33 @@ $$
     formulaDependencyPickerState.query = "";
     if (formulaNextTarget) formulaNextTarget.value = "";
     loadFormulaDerivationCandidates().catch((error) => setNotice(error.message, "error"));
+    if (options.restoreDraft !== false) restoreFormulaDraftForCurrentIdentity(card);
+    else updateFormulaDraftStatus();
     if (options.scroll !== false) formulaCardEditor.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   async function editFormulaCard(id) {
+    if (formulaDirty && !window.confirm("当前公式有未保存修改；切换后本地草稿会保留，确认继续吗？")) return;
+    if (formulaDirty) saveFormulaDraft();
     const result = await request(`/api/admin/formulas/${encodeURIComponent(id)}`);
     populateFormulaEditor(result.card);
   }
 
   function closeFormulaEditor() {
+    if (formulaDirty) saveFormulaDraft();
     if (formulaCardEditor) formulaCardEditor.hidden = true;
     renderFormulaTechnicalInfo();
     formulaAdminGraphInstance?.destroy();
     formulaAdminGraphInstance = null;
     formulaDependencyPreview.clear();
     formulaEditingCard = null;
+    formulaDirty = false;
+    pendingFormulaDraftConflict = null;
   }
 
   async function saveFormulaEditor(operation = null) {
+    const savedDraftIdentity = currentFormulaDraftIdentity();
+    saveFormulaDraft();
     const tags = String(formulaFormField("tags")?.value || "")
       .split(/[\n,，、]/)
       .map((tag) => tag.trim())
@@ -4744,10 +5268,11 @@ $$
       method: editingId ? "PUT" : "POST",
       body: JSON.stringify(payload)
     });
+    clearFormulaDraft(savedDraftIdentity);
     formulaCatalogState.selection.moduleKey = result.card.moduleKey;
     formulaCatalogState.selection.categoryPath = result.card.categoryPath;
     formulaCatalogState.pagination.page = 1;
-    populateFormulaEditor(result.card);
+    populateFormulaEditor(result.card, { restoreDraft: false });
     await loadFormulaCatalog({ selectDefault: false });
     await loadServerContent();
     renderFormulaDecisions();
@@ -4837,7 +5362,7 @@ $$
 
   function currentAdminView() {
     const view = (window.location.hash || "#editor").replace("#", "");
-    return ["editor", "library", "knowledge", "formulas", "carousel", "layout", "health"].includes(view) ? view : "editor";
+    return ["editor", "library", "knowledge", "formulas", "operations", "carousel", "layout", "health"].includes(view) ? view : "editor";
   }
 
   function setAdminView(view = currentAdminView()) {
@@ -4996,8 +5521,9 @@ $$
 
   resetButton.addEventListener("click", () => {
     if (!confirmDiscard("当前有未保存修改，新建空白会清空编辑器，确认继续吗？")) return;
-    resetForm({ clearLocalDraft: true });
-    setNotice("已切换为新建空白内容。", "info");
+    if (isDirty) saveDraft();
+    resetForm();
+    setNotice("已建立新的空白文章身份；上一份未保存内容仍保留为独立本地草稿。", "info");
   });
 
   discardDraftButton.addEventListener("click", () => {
@@ -5005,6 +5531,121 @@ $$
     clearDraft();
     markClean();
     setNotice("本地草稿已丢弃。", "success");
+  });
+
+  restoreDraftButton?.addEventListener("click", () => {
+    const conflict = pendingArticleDraftConflict;
+    if (!conflict) return;
+    applySnapshotToForm(conflict.record.snapshot, { dirty: true });
+    articleBaselineToken = conflict.serverToken;
+    pendingArticleDraftConflict = null;
+    saveDraft();
+    setNotice("已按明确选择恢复本地文章草稿；服务器版本未被改写，正式保存前仍可比较。", "warning");
+  });
+
+  keepServerDraftButton?.addEventListener("click", () => {
+    const conflict = pendingArticleDraftConflict;
+    if (!conflict) return;
+    const preservedIdentity = preserveConflictLocalSide("article", conflict);
+    const working = readDraftRecord("article", conflict.workingIdentity);
+    removeDraftRecord("article", conflict.record.identity);
+    if (working) writeDraftRecord("article", conflict.record.identity, { ...working, identity: conflict.record.identity, conflictRole: "server-side-edit-current" });
+    pendingArticleDraftConflict = null;
+    updateDraftStatus();
+    setNotice(`已明确保留服务器文章侧；旧本地侧另存为 ${preservedIdentity}，冲突后新编辑仍可从草稿列表恢复。`, "info");
+  });
+
+  restoreFormulaDraftButton?.addEventListener("click", () => {
+    const conflict = pendingFormulaDraftConflict;
+    if (!conflict) return;
+    applyFormulaDraftSnapshot(conflict.record.snapshot);
+    formulaBaselineToken = conflict.serverToken;
+    pendingFormulaDraftConflict = null;
+    saveFormulaDraft();
+    setNotice("已按明确选择恢复本地公式草稿；服务器修订未被改写。", "warning");
+  });
+
+  keepServerFormulaDraftButton?.addEventListener("click", () => {
+    const conflict = pendingFormulaDraftConflict;
+    if (!conflict) return;
+    const preservedIdentity = preserveConflictLocalSide("formula", conflict);
+    const working = readDraftRecord("formula", conflict.workingIdentity);
+    removeDraftRecord("formula", conflict.record.identity);
+    if (working) writeDraftRecord("formula", conflict.record.identity, { ...working, identity: conflict.record.identity, conflictRole: "server-side-edit-current" });
+    pendingFormulaDraftConflict = null;
+    updateFormulaDraftStatus();
+    setNotice(`已明确保留服务器公式侧；旧本地侧另存为 ${preservedIdentity}，冲突后新编辑仍可从草稿列表恢复。`, "info");
+  });
+
+  discardFormulaDraftButton?.addEventListener("click", () => {
+    if (!window.confirm("确认丢弃当前公式卡的本地草稿吗？服务器修订不会受影响。")) return;
+    clearFormulaDraft();
+    formulaDirty = false;
+    setNotice("公式本地草稿已丢弃。", "success");
+  });
+
+  restoreSelectedArticleDraftButton?.addEventListener("click", () => {
+    const record = readDraftRecord("article", articleDraftPicker?.value);
+    if (!record) return;
+    if (isDirty && !window.confirm("当前文章修改会先保留为独立草稿。确认打开所选草稿吗？")) return;
+    if (isDirty) saveDraft();
+    const serverItem = record.snapshot?.editingId ? serverContent.posts.find((item) => item.id === record.snapshot.editingId) : null;
+    if (serverItem) {
+      const stableRecord = readDraftRecord("article", serverItem.id);
+      if (record.identity !== serverItem.id && stableRecord) {
+        preserveConflictLocalSide("article", { record: stableRecord, serverToken: contentBaselineToken("article", serverItem) });
+      }
+      applyItemToForm("post", serverItem, { confirm: false, restoreDraft: false });
+      articleBaselineToken = contentBaselineToken("article", serverItem);
+      pendingArticleDraftConflict = null;
+      applySnapshotToForm(record.snapshot, { dirty: true });
+      saveDraft();
+    } else {
+      articleDraftContextId = record.identity;
+      articleBaselineToken = record.baseToken || "new";
+      applySnapshotToForm(record.snapshot, { dirty: true });
+      updateDraftStatus();
+    }
+    window.location.hash = "editor";
+  });
+
+  restoreSelectedFormulaDraftButton?.addEventListener("click", () => withBusy(restoreSelectedFormulaDraftButton, "打开中...", async () => {
+    const record = readDraftRecord("formula", formulaDraftPicker?.value);
+    if (!record) return;
+    if (formulaDirty && !window.confirm("当前公式修改会先保留为独立草稿。确认打开所选草稿吗？")) return;
+    if (formulaDirty) {
+      saveFormulaDraft();
+      formulaDirty = false;
+    }
+    window.location.hash = "formulas";
+    if (record.snapshot?.formulaId) {
+      const result = await request(`/api/admin/formulas/${encodeURIComponent(record.snapshot.formulaId)}`);
+      const stableRecord = readDraftRecord("formula", record.snapshot.formulaId);
+      if (record.identity !== record.snapshot.formulaId && stableRecord) {
+        preserveConflictLocalSide("formula", { record: stableRecord, serverToken: contentBaselineToken("formula", result.card) });
+      }
+      populateFormulaEditor(result.card, { restoreDraft: false });
+      formulaBaselineToken = contentBaselineToken("formula", result.card);
+      pendingFormulaDraftConflict = null;
+      applyFormulaDraftSnapshot(record.snapshot);
+      saveFormulaDraft();
+    } else {
+      populateFormulaEditor(null, { draftIdentity: record.identity });
+    }
+  }).catch((error) => setNotice(error.message, "error", { persistent: true })));
+
+  refreshOperationsButton?.addEventListener("click", () => {
+    withBusy(refreshOperationsButton, "刷新中...", loadOperations).catch((error) => setNotice(error.message, "error"));
+  });
+
+  commonLevelManager?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-save-common-level]");
+    if (!button) return;
+    withBusy(button, "保存中...", () => saveCommonLevel(button)).catch((error) => setNotice(error.message, "error", { persistent: true }));
+  });
+
+  saveHomepageFocusButton?.addEventListener("click", () => {
+    withBusy(saveHomepageFocusButton, "保存中...", saveHomepageFocus).catch((error) => setNotice(error.message, "error", { persistent: true }));
   });
 
   refreshImagesButton.addEventListener("click", () => {
@@ -5399,10 +6040,22 @@ $$
     ).catch((error) => setNotice(error.message, "error"));
   });
 
-  newFormulaButton?.addEventListener("click", () => populateFormulaEditor());
-  formulaEditorCancel?.addEventListener("click", closeFormulaEditor);
+  newFormulaButton?.addEventListener("click", () => {
+    if (formulaDirty && !window.confirm("当前公式有未保存修改；继续新建会保留本地草稿，确认切换吗？")) return;
+    if (formulaDirty) saveFormulaDraft();
+    populateFormulaEditor(null);
+  });
+  formulaEditorCancel?.addEventListener("click", () => {
+    if (formulaDirty && !window.confirm("关闭后不会丢失：本地草稿会保留。确认关闭公式编辑器吗？")) return;
+    closeFormulaEditor();
+  });
   formulaPublishButton?.addEventListener("click", () => {
     if (!formulaEditingCard) return;
+    if (formulaDirty) {
+      saveFormulaDraft();
+      setNotice("当前公式有未保存修改。请先正式保存生成修订，再发布该修订。", "warning", { key: "formula-publish", persistent: true });
+      return;
+    }
     const operation = beginFeedbackOperation("formula-publish");
     withBusy(formulaPublishButton, "发布中...", () =>
       mutateFormulaCard(formulaEditingCard.formulaId, "publish", operation)
@@ -5423,17 +6076,18 @@ $$
     withBusy(button, "检查中...", () => handleFormulaMetadataAction(button)).catch((error) => setNotice(error.message, "error"));
   });
   formulaTagAddButton?.addEventListener("click", () => {
-    withBusy(formulaTagAddButton, "添加中...", addFormulaSelectedTag).catch((error) => setNotice(error.message, "error"));
+    withBusy(formulaTagAddButton, "添加中...", async () => { await addFormulaSelectedTag(); markFormulaDirty(); }).catch((error) => setNotice(error.message, "error"));
   });
   formulaTagPicker?.addEventListener("keydown", (event) => {
     if (event.key !== "Enter") return;
     event.preventDefault();
-    addFormulaSelectedTag().catch((error) => setNotice(error.message, "error"));
+    addFormulaSelectedTag().then(markFormulaDirty).catch((error) => setNotice(error.message, "error"));
   });
   formulaSelectedTags?.addEventListener("click", (event) => {
     const button = event.target.closest("[data-formula-remove-tag]");
     if (!button) return;
     setFormulaSelectedTags(formulaSelectedTagValues().filter((tag) => tag !== button.dataset.formulaRemoveTag));
+    markFormulaDirty();
   });
   formulaCardEditor?.addEventListener("click", (event) => {
     const copyButton = event.target.closest("[data-formula-copy]");
@@ -5499,6 +6153,7 @@ $$
   formulaCardEditor?.addEventListener("input", (event) => {
     if (event.target.name === "latex" || event.target.name === "markdownDerivation") updateFormulaEditorPreview();
     if (event.target.name === "moduleKey") renderFormulaClassificationOptions();
+    markFormulaDirty();
     dismissToast("formula-save");
     dismissToast("formula-publish");
   });
@@ -5511,7 +6166,10 @@ $$
   );
   formulaCardEditor?.addEventListener(
     "invalid",
-    () => setNotice("请完整填写必填项后再保存公式卡。", "error", { key: "formula-save", persistent: true }),
+    () => {
+      saveFormulaDraft();
+      setNotice("请完整填写必填项后再保存公式卡。", "error", { key: "formula-save", persistent: true });
+    },
     true
   );
   formulaCardEditor?.addEventListener("submit", (event) => {
@@ -5713,6 +6371,28 @@ $$
 
   window.addEventListener("hashchange", () => setAdminView());
 
+  document.addEventListener("click", (event) => {
+    const link = event.target.closest("a[href]");
+    if (!link || link.target === "_blank" || link.hasAttribute("download") || (!isDirty && !formulaDirty)) return;
+    if (!window.confirm("当前有未保存修改。仍要离开时本地草稿会保留，确认继续吗？")) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      return;
+    }
+    if (isDirty) saveDraft();
+    if (formulaDirty) saveFormulaDraft();
+  }, true);
+
+  window.addEventListener("popstate", () => {
+    if (!isDirty && !formulaDirty) return;
+    if (window.confirm("当前有未保存修改。仍要返回时本地草稿会保留，确认继续吗？")) {
+      if (isDirty) saveDraft();
+      if (formulaDirty) saveFormulaDraft();
+      return;
+    }
+    window.history.go(1);
+  });
+
   contentForm.addEventListener("input", (event) => {
     if (event.target.closest("#formulaDecisionPanel")) return;
     if (!contentForm.querySelector(":invalid")) dismissToast("article-validation");
@@ -5816,6 +6496,13 @@ $$
     if (!currentCover) return;
     setCover(currentCover, "已恢复完整原图，原图 URL 保持不变", { crop: null });
     setNotice("封面取景坐标已重置；保存后文章将使用完整原图。", "success");
+  });
+
+  removeDerivationCoverButton?.addEventListener("click", () => {
+    if (!isKnowledgeType(getType()) || !currentCover) return;
+    if (!window.confirm("确认解除当前推导链路的自定义封面引用吗？上传文件不会被物理删除。")) return;
+    setCover("", "已解除自定义封面；公开端将回退简化关系图");
+    setNotice("已解除封面引用。请保存推导节点；文件未被物理删除，草稿资源仍受私有路径保护。", "warning");
   });
 
   coverCropSelection?.addEventListener("pointerdown", cropPointerDown);
@@ -5974,8 +6661,9 @@ $$
     });
   });
   window.addEventListener("beforeunload", (event) => {
-    if (!isDirty) return;
-    saveDraft();
+    if (!isDirty && !formulaDirty) return;
+    if (isDirty) saveDraft();
+    if (formulaDirty) saveFormulaDraft();
     event.preventDefault();
     event.returnValue = "";
   });
@@ -5999,8 +6687,10 @@ $$
       await loadImages();
       await loadHealth().catch(() => {});
       restoreDraftIfNeeded();
+      renderDraftRecoveryPickers();
     } else {
       updateDraftStatus();
+      renderDraftRecoveryPickers();
     }
     updateTypeFields();
     updatePreview();

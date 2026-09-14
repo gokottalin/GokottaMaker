@@ -470,3 +470,21 @@
     color: var(--theme-dark-muted);
   }
 }
+.theme-dark .draft-status.is-conflict,
+[data-theme="dark"] .draft-status.is-conflict {
+  border-color: #d6a84f;
+  background: rgba(140, 91, 8, 0.24);
+}
+
+.theme-dark .homepage-focus-slot.is-missing,
+[data-theme="dark"] .homepage-focus-slot.is-missing {
+  border-color: #d6a84f;
+  background: rgba(140, 91, 8, 0.14);
+}
+
+.theme-dark .homepage-focus-slot em,
+.theme-dark #homepageFocusStatus.is-warning,
+[data-theme="dark"] .homepage-focus-slot em,
+[data-theme="dark"] #homepageFocusStatus.is-warning {
+  color: #f0c46d;
+}

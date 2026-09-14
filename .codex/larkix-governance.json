@@ -256,7 +256,14 @@
       "docs/codex-workline/requirements/active/REQ-20260913-004.json",
       "scripts/test-formula-cms-consolidated.js",
       "scripts/run-formula-cms-consolidated-browser-fixture.js",
-      "docs/codex-workline/slices/S62_formula_cms_consolidated_handoff.md"
+      "docs/codex-workline/slices/S62_formula_cms_consolidated_handoff.md",
+      "docs/codex-workline/requirements/active/REQ-20260913-005.json",
+      "docs/codex-workline/requirements/active/REQ-20260913-007.json",
+      "docs/codex-workline/requirements/active/REQ-20260913-009.json",
+      "docs/codex-workline/requirements/active/REQ-20260913-010.json",
+      "docs/codex-workline/slices/S63_cross_content_discovery_authority_handoff.md",
+      "agents/A74_CmsDraftOperationsControls/brief.md",
+      ".codex/agents/a74-cms-draft-operations-controls.toml"
     ],
     "pausedBooleanFields": {
       "batch1ReadyForOpenDecision": true,
@@ -279,13 +286,13 @@
     },
     "projectWindowRequiredText": [
       "# Project Window",
-      "Current phase: `S62_Formula_CMS_Consolidated_Accepted_Queue_Empty`",
+      "Current phase: `S64_CMS_Draft_Operations_Controls_In_Progress`",
       "Current controller: `agents/A00_ProjectDirector/brief.md`",
-      "Next agent: `agents/A00_ProjectDirector/brief.md`",
+      "Next agent: `agents/A74_CmsDraftOperationsControls/brief.md`",
       "Confirmed requirement dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json`",
-      "Current work target: A00 accepted S61 compact bootstrap plus S62 consolidated formula CMS authoring; security/formula and formula-workline regressions are both 15/15",
+      "Current work target: S63 accepted and pushed at `0adb4326b6d36c780a6ad1beb419d00653185181`; S64 CMS draft protection and operations controls is the only open execution task",
       "Current gate: Git writes, production deployment, current/production data, services, secrets, cloud, migrations, restore and rollback are closed",
-      "Confirmed queue: empty after A00 acceptance of S62"
+      "Confirmed queue: S64 active; S65 through S67 remain closed pending S64 completion and A00 acceptance"
     ],
     "agentsGuideRequiredText": [
       "Recommended handoff and coordination language: Chinese",
@@ -678,7 +685,8 @@
       "continueUntilQueueComplete": true,
       "stopOnClosedGateOrNewAuthority": true
     },
-    "expectedNextTaskCount": 0,
+    "expectedNextTaskCount": 1,
+    "onlyNextTask": "A74_CmsDraftOperationsControls",
     "agentRoleNotes": {
       "A00_ProjectDirector": "项目导演：负责顺序、门禁和下一步裁决",
       "A01_ProjectStateRetriever": "项目状态检索器：只读取资料并建立来源索引",
@@ -750,7 +758,8 @@
       "A68_FormulaDetailPage": "公式独立页：统一详情与推导入口",
       "A69_FormulaWorklineRegression": "公式工作线回归：统一验收证据",
       "A70_FormulaRelationshipProjectionRepair": "关系投影修复：消除公开公式 API 500",
-      "A71_SessionBootstrapGovernance": "新会话启动治理：紧凑路由并自动发出启动语"
+      "A71_SessionBootstrapGovernance": "新会话启动治理：紧凑路由并自动发出启动语",
+      "A74_CmsDraftOperationsControls": "CMS 草稿保护与内容运营控件"
     },
     "expectedTaskStatuses": {
       "A01_ProjectStateRetriever": "completed",
@@ -821,7 +830,8 @@
       "A68_FormulaDetailPage": "completed",
       "A69_FormulaWorklineRegression": "completed",
       "A70_FormulaRelationshipProjectionRepair": "completed",
-      "A71_SessionBootstrapGovernance": "completed"
+      "A71_SessionBootstrapGovernance": "completed",
+      "A74_CmsDraftOperationsControls": "next"
     }
   },
   "temporaryExperts": [
@@ -1163,6 +1173,11 @@
     {
       "id": "A71_SessionBootstrapGovernance",
       "file": ".codex/agents/a71-session-bootstrap-governance.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A74_CmsDraftOperationsControls",
+      "file": ".codex/agents/a74-cms-draft-operations-controls.toml",
       "mode": "workspace-write"
     }
   ]

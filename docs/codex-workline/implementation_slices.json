@@ -10,7 +10,7 @@
   "lastReplannedBy": "A00_ProjectDirector",
   "requirementDispatch": "docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json",
   "currentGate": {
-    "batch1": "dispatch_20260911_accepted_queue_empty",
+    "batch1": "s64_cms_draft_operations_controls_active",
     "businessImplementationAllowed": true,
     "databaseMutationAllowed": false,
     "migrationFileImplementationAllowed": false,
@@ -2998,11 +2998,25 @@
       "dependencies": ["S60 failed only at formula relationship projection"],
       "forbidden": ["relaxed assertions or public privacy regression", "current/production data or migration", "version, Git, deployment, cloud, service, or secret writes"],
       "requirements": ["REQ-20260824-001", "REQ-20260911-003"]
+    },
+    {
+      "id": "S64_cms_draft_operations_controls",
+      "agent": "A74_CmsDraftOperationsControls",
+      "roleNote": "CMS 草稿保护与内容运营控件",
+      "status": "in_progress",
+      "purpose": "Deliver reliable local draft protection and CMS controls over the accepted S63 authority without backend or public-surface changes.",
+      "reads": ["AGENTS.md", "PROJECT_WINDOW.md", "docs/codex-workline/task_registry.json", "docs/codex-workline/requirements/active/REQ-20260913-005.json", "docs/codex-workline/requirements/active/REQ-20260913-007.json", "docs/codex-workline/requirements/active/REQ-20260913-009.json", "docs/codex-workline/requirements/active/REQ-20260913-010.json", "docs/codex-workline/slices/S62_formula_cms_consolidated_handoff.md", "docs/codex-workline/slices/S63_cross_content_discovery_authority_handoff.md"],
+      "mayEdit": ["admin/index.html", "admin/admin.js", "admin/admin.css", "admin/admin-dark.css", "scripts/test-cms-draft-operations-controls.js", "scripts/run-cms-draft-operations-browser-fixture.js", "docs/codex-workline/slices/S64_cms_draft_operations_controls_handoff.md"],
+      "outputs": ["CMS local draft protection", "six-content common-level controls", "derivation cover controls", "three-slot homepage focus controls", "isolated regression evidence", "A00 handoff"],
+      "verification": ["local draft identity, leave, restore, conflict, failure, and save lifecycle", "six-content common-level boundaries", "cover and focus-slot lifecycle", "desktop, mobile, theme, keyboard, privacy, and regression checks"],
+      "dependencies": ["A00 acceptance and origin/main publication of S63 at 0adb4326b6d36c780a6ad1beb419d00653185181"],
+      "forbidden": ["backend authority, migrations, public pages, S65-S67 implementation", "current or production data, Git, deployment, cloud, service, secret, or destructive writes"],
+      "requirements": ["REQ-20260913-005", "REQ-20260913-007", "REQ-20260913-009", "REQ-20260913-010"]
     }
   ],
   "nextDecision": {
-    "agents": ["A00_ProjectDirector"],
-    "decision": "S56 through S60A are accepted. The queue is empty and control returned to A00; Git and production remain closed.",
+    "agents": ["A74_CmsDraftOperationsControls"],
+    "decision": "S63 is accepted. S64 is the only open execution task; S65 through S67 remain closed pending A00 acceptance.",
     "shortPrompts": [
       "Agent 00 Project Director（项目导演：本批次已验收，等待下一份确认需求）：运行 codex:handoff 核验队列为空；Git 和生产门禁保持关闭。"
     ]

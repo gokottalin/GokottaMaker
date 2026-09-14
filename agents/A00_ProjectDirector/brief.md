@@ -41,11 +41,11 @@ only long-lived role.
 
 ## Current Decision
 
-`DISPATCH-20260911-001`, S56 through S61, and the four Owner-confirmed S62
-formula CMS requirements are accepted. Both formula-workline and
-security/formula regressions are 15/15. The active task queue is empty. Wait
-for the next Owner-confirmed requirement package. Git,
-production, cloud, current data, migrations, services, secrets,
+S63 is accepted and published at commit
+`0adb4326b6d36c780a6ad1beb419d00653185181`. S64 is the only open execution
+task and routes to `A74_CmsDraftOperationsControls`; S65 through S67 remain
+closed until S64 completes and A00 accepts it. The execution Agent has no Git
+authority. Production, cloud, current data, migrations, services, secrets,
 release/version changes, restore, rollback, and destructive operations remain
 closed.
 

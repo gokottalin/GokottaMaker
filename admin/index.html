@@ -82,6 +82,7 @@
               <a href="#library" data-admin-nav="library" data-short="列">内容列表</a>
               <a href="#knowledge" data-admin-nav="knowledge" data-short="导">推导节点</a>
               <a href="#formulas" data-admin-nav="formulas" data-short="式">公式库</a>
+              <a href="#operations" data-admin-nav="operations" data-short="运">内容运营</a>
               <a href="#carousel" data-admin-nav="carousel" data-short="轮">首页轮播管理</a>
               <a href="./course-paths.html" data-short="路">课程路径</a>
               <a href="#layout" data-admin-nav="layout" data-short="排">页面排布</a>
@@ -125,7 +126,15 @@
                   <div class="draft-status" id="draftStatus" hidden>
                     <strong>本地草稿未入库</strong>
                     <span id="draftStatusText">当前编辑内容已自动保存在此浏览器。</span>
+                    <span class="draft-conflict-actions" id="draftConflictActions" hidden>
+                      <button class="button primary" id="restoreDraftButton" type="button">恢复本地草稿</button>
+                      <button class="button secondary" id="keepServerDraftButton" type="button">保留服务器内容（安全默认）</button>
+                    </span>
                     <button class="button secondary" id="discardDraftButton" type="button">丢弃本地草稿</button>
+                  </div>
+                  <div class="draft-recovery-bar" id="articleDraftRecoveryBar" hidden>
+                    <label>其他文章本地草稿<select id="articleDraftPicker"></select></label>
+                    <button class="button secondary" id="restoreSelectedArticleDraftButton" type="button">打开所选草稿</button>
                   </div>
 
                 <div class="content-meta-grid">
@@ -292,6 +301,14 @@
                     <div class="cover-coordinate-actions" id="coverCoordinateActions" hidden>
                       <button class="button secondary" id="coverCropEdit" type="button">调整取景</button>
                       <button class="button secondary" id="coverCropReset" type="button">恢复完整原图</button>
+                    </div>
+                    <div class="derivation-cover-actions" id="derivationCoverActions" hidden>
+                      <button class="button secondary danger" id="removeDerivationCoverButton" type="button">解除自定义封面</button>
+                    </div>
+                    <div class="derivation-cover-fallback" id="derivationCoverFallback" hidden role="status">
+                      <strong>公开端回退预览</strong>
+                      <span>未设置自定义封面时，公开端使用简化关系图。</span>
+                      <span class="derivation-cover-fallback-graph" aria-hidden="true"><i></i><i></i><i></i></span>
                     </div>
                   </div>
 
@@ -500,6 +517,10 @@
               </div>
             </div>
             <p class="library-note">按模块和自定义分类查看公式卡；默认不一次列出全部公式。技术标识由系统生成，建立后保持不变。</p>
+            <div class="draft-recovery-bar" id="formulaDraftRecoveryBar" hidden>
+              <label>待处理公式本地草稿<select id="formulaDraftPicker"></select></label>
+              <button class="button secondary" id="restoreSelectedFormulaDraftButton" type="button">打开所选草稿</button>
+            </div>
             <div class="formula-catalog-toolbar">
               <label>
                 搜索
@@ -606,6 +627,15 @@
                   <span class="formula-status-badge is-draft" id="formulaEditorStatus">草稿</span>
                 </div>
                 <button class="button secondary" id="formulaEditorCancel" type="button">关闭</button>
+              </div>
+              <div class="draft-status formula-draft-status" id="formulaDraftStatus" hidden>
+                <strong>公式本地草稿未入库</strong>
+                <span id="formulaDraftStatusText">当前公式已自动保存在此浏览器。</span>
+                <span class="draft-conflict-actions" id="formulaDraftConflictActions" hidden>
+                  <button class="button primary" id="restoreFormulaDraftButton" type="button">恢复本地草稿</button>
+                  <button class="button secondary" id="keepServerFormulaDraftButton" type="button">保留服务器内容（安全默认）</button>
+                </span>
+                <button class="button secondary" id="discardFormulaDraftButton" type="button">丢弃本地草稿</button>
               </div>
               <div class="formula-card-fields">
                 <label>
@@ -757,6 +787,29 @@
             <datalist id="formulaModuleOptions"></datalist>
             <datalist id="formulaCategoryOptions"></datalist>
             <datalist id="formulaTagOptions"></datalist>
+          </section>
+
+          <section id="operations" class="library-panel operations-panel admin-view" data-admin-view="operations" hidden>
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Operations</p>
+                <h2>跨内容运营控制</h2>
+              </div>
+              <button class="button secondary" id="refreshOperationsButton" type="button">刷新权威数据</button>
+            </div>
+            <p class="library-note">常用等级完全通过 S63 权威接口保存。新建与缺失值由服务端按 5 处理；主动清空由服务端按 1 保存。</p>
+            <div id="commonLevelManager" class="common-level-manager" aria-live="polite"></div>
+            <section class="homepage-focus-manager" aria-labelledby="homepageFocusTitle">
+              <div class="section-heading compact">
+                <div>
+                  <p class="eyebrow">Homepage Focus</p>
+                  <h3 id="homepageFocusTitle">首页三卡聚焦编排</h3>
+                </div>
+                <span id="homepageFocusStatus" role="status" aria-live="polite">必须一次选满三个互异的已发布文章。</span>
+              </div>
+              <div class="homepage-focus-slots" id="homepageFocusSlots"></div>
+              <button class="button primary" id="saveHomepageFocusButton" type="button">保存三个聚焦槽位</button>
+            </section>
           </section>
 
           <section id="carousel" class="library-panel carousel-panel admin-view" data-admin-view="carousel" hidden>
