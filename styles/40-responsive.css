@@ -488,6 +488,12 @@
 @media (max-width: 980px) {
   .public-media-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+@media (min-width: 761px) {
+  body.public-focus-mode .home-miniapp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
 @media (max-width: 760px) {
   .home-search-route { width: 100%; }
   .home-search-route .search-box { min-width: 0; flex: 1; }
@@ -516,6 +522,15 @@
   .miniapp-registry,
   .home-miniapp-grid,
   .larkix-product-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-miniapp-grid > .home-miniapp-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body.public-focus-mode .home-miniapp-grid {
+    display: grid;
     grid-template-columns: minmax(0, 1fr);
   }
 

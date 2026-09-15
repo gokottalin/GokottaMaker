@@ -291,13 +291,13 @@
     },
     "projectWindowRequiredText": [
       "# Project Window",
-      "Current phase: `S67_Discovery_Experience_Regression_Accepted_Queue_Empty`",
+      "Current phase: `S68_Home_Formula_Derivation_Consistency_Accepted_Queue_Empty`",
       "Current controller: `agents/A00_ProjectDirector/brief.md`",
       "Next agent: `agents/A00_ProjectDirector/brief.md`",
       "Confirmed requirement dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json`",
-      "Current work target: S62-S67 accepted; the final discovery-experience regression is 12/12 with protected-boundary PASS",
-      "Current gate: Git writes, production deployment, current/production data, services, secrets, cloud, migrations, restore and rollback are closed",
-      "Confirmed queue: empty after A00 acceptance of S67"
+      "Current work target: S62-S68 accepted; S68 passed all 12 acceptance criteria and the full protected regression gate",
+      "Current gate: execution is closed; production deployment, current/production data, services, secrets, cloud, migrations, restore and rollback remain closed",
+      "Confirmed queue: empty after A00 acceptance of S68"
     ],
     "agentsGuideRequiredText": [
       "Recommended handoff and coordination language: Chinese",
@@ -766,7 +766,8 @@
       "A74_CmsDraftOperationsControls": "CMS 草稿保护与内容运营控件",
       "A75_PublicSearchHomeComposition": "公开搜索与首页编排",
       "A76_PublicCardThemeFooterVersion": "公开卡片、主题首帧、版本与备案页脚",
-      "A77_DiscoveryExperienceRegression": "发现体验全批回归"
+      "A77_DiscoveryExperienceRegression": "发现体验全批回归",
+      "A78_HomeFormulaDerivationConsistency": "首页公式推导一致性：单会话整体修复首页公式卡、小程序卡、搜索控件与公式推导双视图"
     },
     "expectedTaskStatuses": {
       "A01_ProjectStateRetriever": "completed",
@@ -841,7 +842,8 @@
       "A74_CmsDraftOperationsControls": "completed",
       "A75_PublicSearchHomeComposition": "completed",
       "A76_PublicCardThemeFooterVersion": "completed",
-      "A77_DiscoveryExperienceRegression": "completed"
+      "A77_DiscoveryExperienceRegression": "completed",
+      "A78_HomeFormulaDerivationConsistency": "completed"
     }
   },
   "temporaryExperts": [
@@ -1203,6 +1205,11 @@
     {
       "id": "A77_DiscoveryExperienceRegression",
       "file": ".codex/agents/a77-discovery-experience-regression.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A78_HomeFormulaDerivationConsistency",
+      "file": ".codex/agents/a78-home-formula-derivation-consistency.toml",
       "mode": "workspace-write"
     }
   ]

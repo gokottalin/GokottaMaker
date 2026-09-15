@@ -52,7 +52,7 @@
       const rendered = window.LarkixMath.render(source, { displayMode: true });
       if (rendered.valid && !rendered.blocking) output = rendered.html;
     }
-    return `<div class="public-formula-fit"><div class="formula-card-latex" data-formula-source="${escapeHtml(source)}">${output || `<span class="public-formula-fallback">${escapeHtml(source || item.name || "公式")}</span>`}</div></div>`;
+    return `<div class="public-formula-fit"><div class="formula-card-latex" data-formula-source="${escapeHtml(source)}">${output || `<span class="public-formula-fallback"><strong>公式暂不可显示</strong><code>${escapeHtml(source || item.name || "公式")}</code></span>`}</div></div>`;
   }
   function card(item) {
     const type = state.type;
@@ -61,7 +61,7 @@
     const duration = ["article", "project"].includes(type) ? durationLabel(item.durationMinutes) : "";
     const cover = type === "formula" ? formulaCover(item) : item.cover ? `<img src="${escapeHtml(item.cover)}" alt="" loading="lazy" />` : fallbackCover(type);
     const route = escapeHtml(safeRoute(item.route));
-    return `<article class="public-media-card public-media-card--${type}" data-result-id="${escapeHtml(item.id)}">
+    return `<article class="public-media-card public-media-card--${type}" data-result-id="${escapeHtml(item.id)}"${type === "formula" ? ` data-formula-id="${escapeHtml(item.formulaId || item.id)}"` : ""}>
       <a class="public-card-cover" href="${route}" aria-label="打开${escapeHtml(title)}">${cover}
         <span class="public-card-overlays">${duration ? `<span class="public-card-duration"><span aria-hidden="true">◷</span> ${duration}</span>` : "<span></span>"}${exactViews(item.viewCount)}</span>
       </a><div class="public-card-copy"><h2><a href="${route}">${escapeHtml(title)}</a></h2><p>${escapeHtml(metadata || LABELS[type])}</p></div>

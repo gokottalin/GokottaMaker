@@ -396,7 +396,7 @@
         }
         if (typeof options.onNavigate === "function") {
           event.preventDefault();
-          options.onNavigate(hrefFor(node), String(node.slug));
+          options.onNavigate(hrefFor(node), String(node.slug), node);
         }
       });
     }

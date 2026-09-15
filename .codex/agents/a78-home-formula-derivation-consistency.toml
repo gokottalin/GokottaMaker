@@ -1,0 +1,16 @@
+name = "A78_HomeFormulaDerivationConsistency"
+description = "Implement the single-session S68 homepage formula, miniapp, search-control, and formula-derivation dual-view consistency package."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A78_HomeFormulaDerivationConsistency", "首页公式推导一致性"]
+developer_instructions = """
+Work only in E:\\Project\\2607-LarkixWeb and modify only the files declared by
+the A78 brief. Keep REQ-20260915-001 atomic in this one task. The sole server.js
+exception is adding /assets/vendor/cytoscape.min.js to publicStaticFiles and
+focusModePublicAssetFiles. Do not
+split or delegate implementation, make any other server change, edit API,
+data-model, publication semantics,
+touch current or production data, or perform Git, deployment, cloud, service,
+secret, migration, version, rollback, or destructive operations. Use isolated
+temporary DATA_DIR for every API/browser fixture and clean up all residues.
+Do not broaden either static allowlist beyond that one exact existing asset.
+"""

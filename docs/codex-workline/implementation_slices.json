@@ -10,7 +10,7 @@
   "lastReplannedBy": "A00_ProjectDirector",
   "requirementDispatch": "docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json",
   "currentGate": {
-    "batch1": "s66_public_card_theme_footer_version_active",
+    "batch1": "s68_home_formula_derivation_consistency_active",
     "businessImplementationAllowed": true,
     "databaseMutationAllowed": false,
     "migrationFileImplementationAllowed": false,
@@ -3054,13 +3054,27 @@
       "dependencies": ["A00 acceptance and origin/main publication of S66 at fc359526c220ad5c1f28c6471696f84e78292d27"],
       "forbidden": ["product, test-assertion, API, CMS, HTML, CSS or migration repairs", "current/production data, Git, deployment, cloud, service, secret, version or destructive writes"],
       "requirements": ["REQ-20260913-001", "REQ-20260913-002", "REQ-20260913-003", "REQ-20260913-004", "REQ-20260913-005", "REQ-20260913-006", "REQ-20260913-007", "REQ-20260913-008", "REQ-20260913-009", "REQ-20260913-010", "REQ-20260913-011", "REQ-20260913-012"]
+    },
+    {
+      "id": "S68_home_formula_derivation_consistency",
+      "agent": "A78_HomeFormulaDerivationConsistency",
+      "roleNote": "首页公式推导一致性：单会话整体修复首页公式卡、小程序卡、搜索控件与公式推导双视图",
+      "status": "completed",
+      "purpose": "Implement confirmed REQ-20260915-001 atomically in one execution task without changing backend authority, data models, publication semantics, or existing search filtering/sorting.",
+      "reads": ["AGENTS.md", "PROJECT_WINDOW.md", "docs/codex-workline/task_registry.json", "docs/codex-workline/requirements/active/REQ-20260915-001.json", "docs/codex-workline/slices/S65_public_search_home_composition_handoff.md", "docs/codex-workline/slices/S66_public_card_theme_footer_version_handoff.md", "docs/codex-workline/slices/S67_discovery_experience_regression_handoff.md", "index.html", "main.js", "search.html", "search.js", "formula.html", "formula.js", "derive.html", "derive.js", "formula-graph.js", "server.js", "assets/vendor/cytoscape.min.js", "data/math-renderer.js", "styles/larkix-home.css", "styles/20-content.css", "styles/40-formula.css", "styles/40-responsive.css"],
+      "mayEdit": ["index.html", "main.js", "search.js", "formula.html", "formula.js", "derive.html", "derive.js", "formula-graph.js", "server.js", "styles/larkix-home.css", "styles/20-content.css", "styles/40-formula.css", "styles/40-responsive.css", "scripts/test-home-formula-derivation-consistency.js", "scripts/run-home-formula-derivation-browser-fixture.js", "docs/codex-workline/slices/S68_home_formula_derivation_consistency_handoff.md"],
+      "outputs": ["homepage formula-card parity and fallback", "unified responsive homepage miniapp cards", "icon and clear-button homepage search interaction", "persistent public formula and derivation dual views", "isolated focused and full regression evidence", "A00 handoff"],
+      "verification": ["all REQ-20260915-001 acceptance IDs in one task", "desktop and 390px light/dark keyboard, mouse and touch browser matrix", "URL refresh and history persistence, multi-level and root-only graph navigation", "S68 focused, S67 12/12, S65/S66 and S50/S60/S62/S63/S64/contract regressions"],
+      "dependencies": ["confirmed REQ-20260915-001 digest sha256:3245ca525ff7af0a418b25f88e56b1b9cd517285743259347c0eba8a74f50df9", "S62-S67 accepted and origin/main at 7c0affe8d8bc7f80f6293dd49dd54878dbdb579d"],
+      "forbidden": ["splitting, second execution task or delegated implementation", "server changes except adding /assets/vendor/cytoscape.min.js to publicStaticFiles and focusModePublicAssetFiles, plus all API/data-model/publication/search-filter or sorting changes", "current/production data, Git, deployment, cloud, service, secret, migration, version or destructive writes", "files outside mayEdit"],
+      "requirements": ["REQ-20260915-001"]
     }
   ],
   "nextDecision": {
     "agents": ["A00_ProjectDirector"],
-    "decision": "S62 through S67 are accepted. The queue is empty and control returned to A00; Git and production remain closed.",
+    "decision": "S68 is accepted after A00 independently reproduced the focused browser matrix and the S67 12/12 protected regression gate. The confirmed queue is empty.",
     "shortPrompts": [
-      "Agent 00 Project Director（项目导演：S62-S67 已验收、队列为空）：运行 codex:handoff 核验队列为空；Git 和生产门禁保持关闭。"
+      "Agent 00 Project Director（项目导演：S62-S68 已验收、队列为空）：运行 codex:bootstrap 核验队列为空；保持生产、数据、云、部署、迁移和秘密边界关闭。"
     ]
   }
 }

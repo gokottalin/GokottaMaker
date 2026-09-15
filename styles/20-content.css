@@ -1965,15 +1965,25 @@
 
 
 /* S65 public search and shared discovery cards */
-.home-search-route { display: flex; align-items: stretch; gap: 8px; margin: 0; }
-.home-search-route .search-box { min-width: min(310px, 32vw); }
-.home-search-route > button,
+.home-search-route { display: flex; align-items: stretch; margin: 0; }
+.home-search-route .search-box { display: flex; min-width: min(310px, 32vw); align-items: center; }
+.home-search-route input[type="search"]::-webkit-search-cancel-button { display: none; }
+.home-search-clear,
+.home-search-submit,
 .public-search-direction,
 .public-search-more {
   min-height: 38px; padding: 7px 13px; border: 1px solid var(--line); border-radius: 999px;
   color: var(--ink); background: var(--surface); cursor: pointer; font: inherit; font-weight: 750;
 }
-.home-search-route > button { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); color: var(--accent); }
+.home-search-clear,
+.home-search-submit { flex: 0 0 34px; width: 34px; min-height: 34px; padding: 0; border: 0; background: transparent; }
+.home-search-clear { color: var(--muted); font-size: 1.25rem; }
+.home-search-submit { color: var(--accent); font-size: 1.25rem; }
+.home-search-clear[hidden] { display: none; }
+.home-search-clear:hover,
+.home-search-submit:hover,
+.home-search-clear:focus-visible,
+.home-search-submit:focus-visible { background: color-mix(in srgb, var(--accent) 10%, transparent); outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent); }
 .public-search-shell { padding-block: clamp(32px, 6vw, 72px); }
 .public-search-heading { max-width: 760px; margin-bottom: 26px; }
 .public-search-heading .eyebrow { margin: 0 0 8px; color: var(--accent); font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
@@ -2013,6 +2023,25 @@
   border-radius: var(--public-card-radius);
   background: var(--public-card-bg);
   box-shadow: var(--public-card-shadow);
+}
+.home-miniapp-grid > .home-miniapp-card {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr);
+  gap: var(--public-card-gap);
+  min-width: 0;
+  width: 100%;
+  padding: var(--public-card-padding);
+  background: var(--public-card-bg);
+  border: 1px solid var(--public-card-border);
+  border-radius: var(--public-card-radius);
+  box-shadow: var(--public-card-shadow);
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition), background var(--theme-duration) var(--theme-ease);
+}
+.home-miniapp-grid > .home-miniapp-card:hover,
+.home-miniapp-grid > .home-miniapp-card:focus-within {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--accent) 46%, var(--public-card-border));
+  box-shadow: 0 18px 42px color-mix(in srgb, var(--accent) 14%, transparent);
 }
 .focus-entry-card.focus-entry-primary {
   background:

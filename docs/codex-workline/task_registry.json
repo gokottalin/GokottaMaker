@@ -4,7 +4,7 @@
   "operatingModel": "project_director_plus_short_task_agents",
   "legacyAgentDocsMode": "historical_reference_only",
   "currentGate": {
-    "batch1": "s66_public_card_theme_footer_version_active",
+    "batch1": "s68_home_formula_derivation_consistency_active",
     "businessImplementationAllowed": true,
     "databaseMutationAllowed": false,
     "migrationFileImplementationAllowed": false,
@@ -2534,6 +2534,16 @@
       "doneWhen": ["one fail-fast runner covers S66, S65, S64, S63, S62, S60, S50 and governance", "real-browser evidence covers mobile, first-paint theme, privacy, search, homepage and CMS draft recovery", "protected paths, temporary data, processes and Git index remain clean", "stable failures return exact reproduction to the responsible earlier workbench instead of being repaired here"],
       "brief": "agents/A77_DiscoveryExperienceRegression/brief.md",
       "handoff": "docs/codex-workline/slices/S67_discovery_experience_regression_handoff.md"
+    },
+    {
+      "id": "A78_HomeFormulaDerivationConsistency",
+      "status": "completed",
+      "scope": "Implement REQ-20260915-001 as one indivisible session: homepage formula-card parity, miniapp-card styling, homepage search controls, and persistent formula/derivation dual views.",
+      "reads": ["AGENTS.md", "PROJECT_WINDOW.md", "docs/PROJECT_CHARTER.md", "docs/codex-workline/task_registry.json", "docs/codex-workline/requirements/active/REQ-20260915-001.json", "docs/codex-workline/slices/S65_public_search_home_composition_handoff.md", "docs/codex-workline/slices/S66_public_card_theme_footer_version_handoff.md", "docs/codex-workline/slices/S67_discovery_experience_regression_handoff.md", "index.html", "main.js", "search.html", "search.js", "formula.html", "formula.js", "derive.html", "derive.js", "formula-graph.js", "server.js", "assets/vendor/cytoscape.min.js", "data/math-renderer.js", "styles/larkix-home.css", "styles/20-content.css", "styles/40-formula.css", "styles/40-responsive.css", "scripts/run-discovery-experience-regression.js"],
+      "mayEdit": ["index.html", "main.js", "search.js", "formula.html", "formula.js", "derive.html", "derive.js", "formula-graph.js", "server.js", "styles/larkix-home.css", "styles/20-content.css", "styles/40-formula.css", "styles/40-responsive.css", "scripts/test-home-formula-derivation-consistency.js", "scripts/run-home-formula-derivation-browser-fixture.js", "docs/codex-workline/slices/S68_home_formula_derivation_consistency_handoff.md"],
+      "doneWhen": ["all twelve REQ-20260915-001 acceptance criteria pass in the same execution task", "desktop and 390px light/dark browser evidence covers mouse, touch, keyboard, URL and history behavior without horizontal overflow", "S68 focused static/browser plus S67 and all named S50/S60/S62/S63/S64/S65/S66/contract regressions pass", "isolated DATA_DIR, temporary residue, process, Git-index and protected-path evidence pass"],
+      "brief": "agents/A78_HomeFormulaDerivationConsistency/brief.md",
+      "handoff": "docs/codex-workline/slices/S68_home_formula_derivation_consistency_handoff.md"
     }
   ],
   "onDemandWorkbenches": [

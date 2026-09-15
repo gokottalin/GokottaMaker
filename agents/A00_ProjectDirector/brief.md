@@ -41,12 +41,12 @@ only long-lived role.
 
 ## Current Decision
 
-S66 is accepted and published at commit
-`fc359526c220ad5c1f28c6471696f84e78292d27`. S67 is independently accepted at
-12/12 with protected-boundary PASS. The batch queue is empty and control has
-returned to A00; no implementation Agent is open.
-Production, cloud, current data, migrations, services, secrets, release-version
-changes, restore, rollback, and destructive operations remain closed.
+`REQ-20260915-001` was completed atomically in the single A78 execution task.
+A00 independently reproduced the S68 focused static/browser checks and the S67
+12/12 protected regression gate, then accepted S68. S62-S68 are accepted and
+the confirmed execution queue is empty. Production, cloud, current data,
+migrations, services, secrets, release-version changes, restore, rollback, and
+destructive operations remain closed.
 
 ## Teaching Rule
 

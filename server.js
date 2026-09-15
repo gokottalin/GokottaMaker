@@ -2883,6 +2883,7 @@ const mime = {
 
 const publicStaticFiles = new Set([
   "/",
+  "/assets/vendor/cytoscape.min.js",
   "/404.html",
   "/category.html",
   "/category-page.js",
@@ -2935,6 +2936,7 @@ const focusModePublicAssetPrefixes = [
   "/assets/vendor/katex/"
 ];
 const focusModePublicAssetFiles = new Set([
+  "/assets/vendor/cytoscape.min.js",
   "/assets/icons/beian.png"
 ]);
 const focusModePublicStyleFiles = new Set([

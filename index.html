@@ -32,10 +32,10 @@
         <div class="header-actions">
           <form class="home-search-route" action="./search.html" method="get" role="search">
             <label class="search-box" for="larkixHomeSearch">
-              <span class="search-icon" aria-hidden="true">⌕</span>
               <input id="larkixHomeSearch" name="q" type="search" placeholder="搜索公开内容" />
+              <button class="home-search-clear" type="button" aria-label="清空搜索关键词" hidden><span aria-hidden="true">×</span></button>
+              <button class="home-search-submit" type="submit" aria-label="提交公开搜索"><span aria-hidden="true">⌕</span></button>
             </label>
-            <button type="submit" aria-label="提交公开搜索">搜索</button>
           </form>
           <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换夜间模式" title="切换夜间模式"><span class="theme-toggle-icon" aria-hidden="true"></span></button>
           <a class="larkix-maker-link" href="./maker.html">进入 Maker</a>
@@ -93,5 +93,17 @@
 
     <script src="./data/site-meta.js?v=20260915-s66"></script>
     <script src="./data/footer.js?v=20260915-s66"></script>
+    <script>
+      (() => {
+        const form = document.querySelector(".home-search-route");
+        const input = form?.querySelector('input[name="q"]');
+        const clear = form?.querySelector(".home-search-clear");
+        if (!input || !clear) return;
+        const sync = () => { clear.hidden = input.value.length === 0; };
+        clear.addEventListener("click", () => { input.value = ""; sync(); input.focus(); });
+        input.addEventListener("input", sync);
+        sync();
+      })();
+    </script>
   </body>
 </html>

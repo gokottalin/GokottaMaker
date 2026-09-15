@@ -580,8 +580,39 @@
   function publicFormulaHtml(item) {
     const source = safe(item.latex).trim();
     const result = source && window.LarkixMath?.render?.(source, { displayMode: true });
-    const output = result?.valid && !result.blocking ? result.html : `<span class="public-formula-fallback">${html(source || item.name || "公式")}</span>`;
-    return `<div class="public-formula-fit"><div class="formula-card-latex">${output}</div></div>`;
+    const output = result?.valid && !result.blocking
+      ? result.html
+      : `<span class="public-formula-fallback"><strong>公式暂不可显示</strong><code>${html(source || item.name || "公式")}</code></span>`;
+    return `<div class="public-formula-fit"><div class="formula-card-latex" data-formula-source="${html(source)}">${output}</div></div>`;
+  }
+
+  let homeFormulaRendererPromise = null;
+
+  function loadHomeAsset(tagName, attributes) {
+    return new Promise((resolve, reject) => {
+      const selector = attributes.src ? `script[src="${attributes.src}"]` : `link[href="${attributes.href}"]`;
+      const existing = document.querySelector(selector);
+      if (existing) {
+        if (attributes.src && !window.LarkixMath) existing.addEventListener("load", resolve, { once: true });
+        else resolve();
+        return;
+      }
+      const asset = document.createElement(tagName);
+      Object.entries(attributes).forEach(([key, value]) => asset.setAttribute(key, value));
+      asset.addEventListener("load", resolve, { once: true });
+      asset.addEventListener("error", reject, { once: true });
+      document.head.appendChild(asset);
+    });
+  }
+
+  function ensureHomeFormulaRenderer() {
+    if (window.LarkixMath?.render) return Promise.resolve();
+    if (homeFormulaRendererPromise) return homeFormulaRendererPromise;
+    loadHomeAsset("link", { rel: "stylesheet", href: "./assets/vendor/katex/katex.min.css?v=0.16.22" }).catch(() => {});
+    loadHomeAsset("link", { rel: "stylesheet", href: "./styles/40-formula.css?v=20260915-s68" }).catch(() => {});
+    homeFormulaRendererPromise = loadHomeAsset("script", { src: "./assets/vendor/katex/katex.min.js?v=0.16.22" })
+      .then(() => loadHomeAsset("script", { src: "./data/math-renderer.js?v=20260730-s30" }));
+    return homeFormulaRendererPromise;
   }
 
   function fitHomeFormulas(root) {
@@ -600,7 +631,7 @@
 
   function formulaDiscoveryCard(item) {
     const route = safePublicRoute(item.route, `/formula/${encodeURIComponent(item.slug || "")}`);
-    return `<article class="public-media-card public-media-card--formula">
+    return `<article class="public-media-card public-media-card--formula" data-formula-id="${html(item.formulaId || item.id || "")}">
       <a class="public-card-cover" href="${html(route)}" aria-label="打开${html(item.name)}">
         ${publicFormulaHtml(item)}
         <span class="public-card-overlays"><span></span>${cardViewMeta(item.viewCount)}</span>
@@ -651,6 +682,7 @@
       initialFocusLayout.innerHTML = "";
     }
     try {
+      const rendererReady = ensureHomeFormulaRenderer();
       const [homeResponse, derivationResponse] = await Promise.all([
         fetch("./api/public/home-discovery", { cache: "no-store" }),
         fetch("./api/knowledge-nodes", { cache: "no-store" })
@@ -658,6 +690,7 @@
       if (!homeResponse.ok || !derivationResponse.ok) throw new Error("home discovery unavailable");
       const home = await homeResponse.json();
       const derivationPayload = await derivationResponse.json();
+      await rendererReady.catch(() => {});
       if (request !== homeDiscoveryRequest) return;
       const nodes = Array.isArray(derivationPayload.nodes) ? derivationPayload.nodes.slice(0, 4) : [];
       derivations.querySelector(".public-media-grid").innerHTML = nodes.length ? nodes.map(focusNodeCard).join("") : '<div class="empty-state">公开推导节点发布后会显示在这里。</div>';
@@ -689,13 +722,27 @@
     const form = document.createElement("form");
     form.className = "home-search-route";
     form.setAttribute("role", "search");
+    form.action = "./search.html";
+    form.method = "get";
     box.replaceWith(form);
     form.appendChild(box);
-    const button = document.createElement("button");
-    button.type = "submit";
-    button.textContent = "搜索";
-    button.setAttribute("aria-label", "提交公开搜索");
-    form.appendChild(button);
+    box.querySelector(".search-icon")?.remove();
+    search.name = "q";
+    const clear = document.createElement("button");
+    clear.className = "home-search-clear";
+    clear.type = "button";
+    clear.hidden = search.value.length === 0;
+    clear.setAttribute("aria-label", "清空搜索关键词");
+    clear.innerHTML = '<span aria-hidden="true">×</span>';
+    const submit = document.createElement("button");
+    submit.className = "home-search-submit";
+    submit.type = "submit";
+    submit.setAttribute("aria-label", "提交公开搜索");
+    submit.innerHTML = '<span aria-hidden="true">⌕</span>';
+    box.append(clear, submit);
+    const syncClear = () => { clear.hidden = search.value.length === 0; };
+    clear.addEventListener("click", () => { search.value = ""; syncClear(); search.focus(); });
+    search.addEventListener("input", syncClear);
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       const query = search.value.trim();
