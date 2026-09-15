@@ -247,3 +247,6 @@
     width: 100%;
   }
 }
+.larkix-home-header .home-search-route .search-box {
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+}

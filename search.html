@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>公开搜索 | LarkixMaker</title>
+    <meta name="description" content="搜索 LarkixMaker 已公开的文章、开源项目、推导节点、公式与小程序。" />
+    <meta name="theme-color" content="#7C3AED" />
+    <link rel="canonical" href="https://www.larkix.com/search.html" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="./assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524" />
+    <link rel="stylesheet" href="./assets/vendor/katex/katex.min.css?v=0.16.22" />
+    <link rel="stylesheet" href="./styles.css?v=20260911-0001" />
+    <link rel="stylesheet" href="./styles/40-formula.css?v=20260915-s65" />
+  </head>
+  <body class="public-search-page">
+    <a class="skip-link" href="#searchContent">跳到搜索结果</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="./index.html" aria-label="返回 Larkix 主页">
+          <img class="brand-symbol" src="./assets/logo/larkix/rocket-bird-final/larkix-rocket-bird-final-icon.svg?v=transparent-20260524" alt="" aria-hidden="true" /><span class="brand-wordmark">Larki<span>x</span></span>
+          <span class="brand-product">Maker</span>
+        </a>
+        <nav class="main-nav" aria-label="主导航">
+          <a href="./maker.html">首页</a>
+          <a href="./category.html?category=electronics-basics">电子基础</a>
+          <a href="./derive.html">公式推导</a>
+          <a href="./projects.html">开源项目</a>
+          <a href="./miniapps.html">MD2File</a>
+        </nav>
+        <div class="header-actions">
+          <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换夜间模式" title="切换夜间模式"><span class="theme-toggle-icon" aria-hidden="true"></span></button>
+          <a class="return-link" href="./maker.html">返回首页</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="site-shell public-search-shell" id="searchContent">
+      <header class="public-search-heading">
+        <p class="eyebrow">Public Discovery</p>
+        <h1>搜索公开内容</h1>
+        <p>选择一种内容类型，输入任意一个字符即可搜索；清空关键词可浏览该类型的全部公开内容。</p>
+      </header>
+
+      <form class="public-search-form" id="publicSearchForm" role="search">
+        <label class="public-search-query" for="publicSearchInput">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input id="publicSearchInput" name="q" type="search" autocomplete="off" placeholder="搜索名称、关键词、分类、模块或 ID" />
+        </label>
+        <button class="button primary" type="submit">搜索</button>
+      </form>
+
+      <div class="public-search-tabs" id="publicSearchTabs" role="tablist" aria-label="内容类型">
+        <button type="button" role="tab" data-search-type="article">文章</button>
+        <button type="button" role="tab" data-search-type="project">开源项目</button>
+        <button type="button" role="tab" data-search-type="derivation">推导节点</button>
+        <button type="button" role="tab" data-search-type="formula">公式</button>
+        <button type="button" role="tab" data-search-type="miniapp">小程序</button>
+      </div>
+
+      <section class="public-search-controls" aria-label="排序与筛选">
+        <div class="public-search-sort-row">
+          <label>排序
+            <select id="publicSearchSort">
+              <option value="comprehensive">综合排序</option>
+              <option value="views">最多浏览</option>
+              <option value="newest">最新发布</option>
+              <option value="common-level">常用等级</option>
+            </select>
+          </label>
+          <button class="public-search-direction" id="publicSearchDirection" type="button" value="desc" aria-label="当前降序，点击切换为升序">降序 ↓</button>
+          <button class="public-search-more" id="publicSearchMore" type="button" aria-expanded="false" aria-controls="publicSearchFilters">更多筛选</button>
+        </div>
+        <div class="public-search-filters" id="publicSearchFilters" hidden>
+          <label>分类
+            <select id="publicSearchCategory"><option value="">全部分类</option></select>
+          </label>
+          <label>日期
+            <select id="publicSearchDate">
+              <option value="all">全部</option>
+              <option value="day">最近一天</option>
+              <option value="week">最近一周</option>
+              <option value="half-year">最近半年</option>
+            </select>
+          </label>
+          <label id="publicSearchDurationField">阅读时长
+            <select id="publicSearchDuration">
+              <option value="">全部时长</option>
+              <option value="0-10">10 分钟以内</option>
+              <option value="11-30">11–30 分钟</option>
+              <option value="31-60">31–60 分钟</option>
+              <option value="61-9999">60 分钟以上</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <div class="public-search-summary" id="publicSearchSummary" role="status" aria-live="polite">正在读取当前类型的公开内容…</div>
+      <section class="public-media-grid public-search-results" id="publicSearchResults" aria-busy="true" aria-label="搜索结果"></section>
+    </main>
+
+    <script src="./assets/vendor/katex/katex.min.js?v=0.16.22"></script>
+    <script src="./data/math-renderer.js?v=20260730-s30"></script>
+    <script src="./search.js?v=20260915-s65"></script>
+    <script src="./data/site-meta.js?v=20260911-0001"></script>
+    <script src="./data/footer.js?v=20260911-0001"></script>
+  </body>
+</html>

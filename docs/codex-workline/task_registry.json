@@ -4,7 +4,7 @@
   "operatingModel": "project_director_plus_short_task_agents",
   "legacyAgentDocsMode": "historical_reference_only",
   "currentGate": {
-    "batch1": "s64_cms_draft_operations_controls_active",
+    "batch1": "s65_public_search_home_composition_active",
     "businessImplementationAllowed": true,
     "databaseMutationAllowed": false,
     "migrationFileImplementationAllowed": false,
@@ -2497,13 +2497,23 @@
     },
     {
       "id": "A74_CmsDraftOperationsControls",
-      "status": "next",
+      "status": "completed",
       "scope": "Implement CMS local draft protection, six-content common-level controls, derivation cover management, and three-slot homepage focus configuration using the accepted S63 authority.",
       "reads": ["AGENTS.md", "PROJECT_WINDOW.md", "docs/PROJECT_CHARTER.md", "docs/codex-workline/task_registry.json", "docs/codex-workline/requirements/active/REQ-20260913-005.json", "docs/codex-workline/requirements/active/REQ-20260913-007.json", "docs/codex-workline/requirements/active/REQ-20260913-009.json", "docs/codex-workline/requirements/active/REQ-20260913-010.json", "docs/codex-workline/slices/S62_formula_cms_consolidated_handoff.md", "docs/codex-workline/slices/S63_cross_content_discovery_authority_handoff.md"],
       "mayEdit": ["admin/index.html", "admin/admin.js", "admin/admin.css", "admin/admin-dark.css", "scripts/test-cms-draft-operations-controls.js", "scripts/run-cms-draft-operations-browser-fixture.js", "docs/codex-workline/slices/S64_cms_draft_operations_controls_handoff.md"],
       "doneWhen": ["article and formula local drafts are identity-isolated and preserve dirty, restore, conflict, failure, and successful-save semantics", "six CMS content types use the S63 common-level authority", "derivation covers and three distinct published focus slots have complete safe CMS lifecycle behavior", "isolated checks and S50, S60, S62, S63, and governance regressions pass"],
       "brief": "agents/A74_CmsDraftOperationsControls/brief.md",
       "handoff": "docs/codex-workline/slices/S64_cms_draft_operations_controls_handoff.md"
+    },
+    {
+      "id": "A75_PublicSearchHomeComposition",
+      "status": "next",
+      "scope": "Implement the independent five-type public search page and homepage latest-formula/focus composition using accepted S63/S64 authority.",
+      "reads": ["AGENTS.md", "PROJECT_WINDOW.md", "docs/PROJECT_CHARTER.md", "docs/codex-workline/task_registry.json", "docs/codex-workline/requirements/active/REQ-20260913-006.json", "docs/codex-workline/requirements/active/REQ-20260913-008.json", "docs/codex-workline/requirements/active/REQ-20260913-009.json", "docs/codex-workline/requirements/active/REQ-20260913-010.json", "docs/codex-workline/slices/S63_cross_content_discovery_authority_handoff.md", "docs/codex-workline/slices/S64_cms_draft_operations_controls_handoff.md"],
+      "mayEdit": ["index.html", "main.js", "search.html", "search.js", "server.js", "styles/larkix-home.css", "styles/20-content.css", "styles/40-formula.css", "styles/40-responsive.css", "scripts/test-public-search-home-composition.js", "scripts/run-public-search-home-browser-fixture.js", "docs/codex-workline/slices/S65_public_search_home_composition_handoff.md"],
+      "doneWhen": ["homepage search routes to a five-type independent live search page with authoritative sorting and applicable filters", "public result cards expose correct view, duration, metadata, and complete formula presentation without leaking internal authority", "homepage relative order, latest eight formulas, and exact three focus slots match the accepted contract", "isolated browser/API and S50, S60, S62, S63, S64, and governance regressions pass"],
+      "brief": "agents/A75_PublicSearchHomeComposition/brief.md",
+      "handoff": "docs/codex-workline/slices/S65_public_search_home_composition_handoff.md"
     }
   ],
   "onDemandWorkbenches": [

@@ -41,10 +41,10 @@ only long-lived role.
 
 ## Current Decision
 
-S63 is accepted and published at commit
-`0adb4326b6d36c780a6ad1beb419d00653185181`. S64 is the only open execution
-task and routes to `A74_CmsDraftOperationsControls`; S65 through S67 remain
-closed until S64 completes and A00 accepts it. The execution Agent has no Git
+S64 is accepted and published at commit
+`50859b51d492c082466b9287987daa7ce35b7eda`. S65 is the only open execution
+task and routes to `A75_PublicSearchHomeComposition`; S66 and S67 remain
+closed until S65 completes and A00 accepts it. The execution Agent has no Git
 authority. Production, cloud, current data, migrations, services, secrets,
 release/version changes, restore, rollback, and destructive operations remain
 closed.

@@ -35,3 +35,13 @@
 [data-theme="dark"] .formula-graph-node.is-current { border-color: #fbbf24; color: #fff7d6; background: color-mix(in srgb, #854d0e 52%, var(--theme-dark-surface-raised)); }
 [data-theme="dark"] .formula-graph-node.is-article { border-color: #c4b5fd; color: #f5f3ff; background: #2e1751; }
 @media (max-width: 560px) { .formula-card-public-meta > div, .formula-derivation-public-grid { grid-template-columns: 1fr; } .formula-graph-heading { align-items: start; flex-direction: column; } .formula-graph-canvas { height: 380px; } }
+/* S65 formula-card covers keep the complete conclusion visible. */
+.public-formula-fit {
+  display: grid; width: 100%; min-width: 0; min-height: 100%; place-items: center; padding: 18px;
+}
+.public-formula-fit .formula-card-latex {
+  width: max-content; max-width: none; color: var(--ink); font-size: clamp(.9rem, 2vw, 1.3rem);
+  line-height: 1.4; white-space: nowrap; transform: scale(var(--formula-fit-scale, 1)); transform-origin: center;
+}
+.public-formula-fit .katex-display { width: max-content; margin: 0; }
+.public-formula-fallback { display: block; max-width: 38ch; overflow-wrap: anywhere; white-space: normal; }

@@ -1,0 +1,10 @@
+name = "A75_PublicSearchHomeComposition"
+description = "Implement the independent public search page and homepage formula/focus composition over accepted S63/S64 authority."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A75_PublicSearchHomeComposition", "公开搜索与首页编排"]
+developer_instructions = """
+Modify only the files declared by the A75 brief. Do not change backend APIs,
+CMS, migrations, all-site theme/footer/version scope, current or production
+data, Git state, deployment, cloud, services, or secrets. Use isolated DATA_DIR
+verification, preserve user changes, and return the S65 handoff directly to A00.
+"""

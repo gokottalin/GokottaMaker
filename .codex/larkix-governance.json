@@ -263,7 +263,12 @@
       "docs/codex-workline/requirements/active/REQ-20260913-010.json",
       "docs/codex-workline/slices/S63_cross_content_discovery_authority_handoff.md",
       "agents/A74_CmsDraftOperationsControls/brief.md",
-      ".codex/agents/a74-cms-draft-operations-controls.toml"
+      ".codex/agents/a74-cms-draft-operations-controls.toml",
+      "docs/codex-workline/requirements/active/REQ-20260913-006.json",
+      "docs/codex-workline/requirements/active/REQ-20260913-008.json",
+      "docs/codex-workline/slices/S64_cms_draft_operations_controls_handoff.md",
+      "agents/A75_PublicSearchHomeComposition/brief.md",
+      ".codex/agents/a75-public-search-home-composition.toml"
     ],
     "pausedBooleanFields": {
       "batch1ReadyForOpenDecision": true,
@@ -286,13 +291,13 @@
     },
     "projectWindowRequiredText": [
       "# Project Window",
-      "Current phase: `S64_CMS_Draft_Operations_Controls_In_Progress`",
+      "Current phase: `S65_Public_Search_Home_Composition_In_Progress`",
       "Current controller: `agents/A00_ProjectDirector/brief.md`",
-      "Next agent: `agents/A74_CmsDraftOperationsControls/brief.md`",
+      "Next agent: `agents/A75_PublicSearchHomeComposition/brief.md`",
       "Confirmed requirement dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json`",
-      "Current work target: S63 accepted and pushed at `0adb4326b6d36c780a6ad1beb419d00653185181`; S64 CMS draft protection and operations controls is the only open execution task",
+      "Current work target: S64 accepted and pushed at `50859b51d492c082466b9287987daa7ce35b7eda`; S65 public search and homepage composition is the only open execution task",
       "Current gate: Git writes, production deployment, current/production data, services, secrets, cloud, migrations, restore and rollback are closed",
-      "Confirmed queue: S64 active; S65 through S67 remain closed pending S64 completion and A00 acceptance"
+      "Confirmed queue: S65 active; S66 and S67 remain closed pending S65 completion and A00 acceptance"
     ],
     "agentsGuideRequiredText": [
       "Recommended handoff and coordination language: Chinese",
@@ -686,7 +691,7 @@
       "stopOnClosedGateOrNewAuthority": true
     },
     "expectedNextTaskCount": 1,
-    "onlyNextTask": "A74_CmsDraftOperationsControls",
+    "onlyNextTask": "A75_PublicSearchHomeComposition",
     "agentRoleNotes": {
       "A00_ProjectDirector": "项目导演：负责顺序、门禁和下一步裁决",
       "A01_ProjectStateRetriever": "项目状态检索器：只读取资料并建立来源索引",
@@ -759,7 +764,8 @@
       "A69_FormulaWorklineRegression": "公式工作线回归：统一验收证据",
       "A70_FormulaRelationshipProjectionRepair": "关系投影修复：消除公开公式 API 500",
       "A71_SessionBootstrapGovernance": "新会话启动治理：紧凑路由并自动发出启动语",
-      "A74_CmsDraftOperationsControls": "CMS 草稿保护与内容运营控件"
+      "A74_CmsDraftOperationsControls": "CMS 草稿保护与内容运营控件",
+      "A75_PublicSearchHomeComposition": "公开搜索与首页编排"
     },
     "expectedTaskStatuses": {
       "A01_ProjectStateRetriever": "completed",
@@ -831,7 +837,8 @@
       "A69_FormulaWorklineRegression": "completed",
       "A70_FormulaRelationshipProjectionRepair": "completed",
       "A71_SessionBootstrapGovernance": "completed",
-      "A74_CmsDraftOperationsControls": "next"
+      "A74_CmsDraftOperationsControls": "completed",
+      "A75_PublicSearchHomeComposition": "next"
     }
   },
   "temporaryExperts": [
@@ -1178,6 +1185,11 @@
     {
       "id": "A74_CmsDraftOperationsControls",
       "file": ".codex/agents/a74-cms-draft-operations-controls.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A75_PublicSearchHomeComposition",
+      "file": ".codex/agents/a75-public-search-home-composition.toml",
       "mode": "workspace-write"
     }
   ]

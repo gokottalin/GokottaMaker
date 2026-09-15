@@ -33,6 +33,36 @@
     return value ? `<span>${safe(value)}</span>` : "";
   }
 
+  function compactViewCount(value) {
+    const count = Math.max(0, Math.trunc(Number(value) || 0));
+    if (count < 10000) return String(count);
+    const scaled = Math.round((count / 10000) * 10) / 10;
+    return `${Number.isInteger(scaled) ? scaled.toFixed(0) : scaled.toFixed(1)}万`;
+  }
+
+  function compactDuration(value) {
+    const minutes = Number(value);
+    if (!Number.isInteger(minutes) || minutes < 1) return "";
+    if (minutes < 60) return `${minutes}分`;
+    return `${String(Math.floor(minutes / 60)).padStart(2, "0")}时${String(minutes % 60).padStart(2, "0")}分`;
+  }
+
+  function cardViewMeta(value) {
+    const count = Math.max(0, Math.trunc(Number(value) || 0));
+    return `<span class="public-card-view" title="精确浏览量：${count}" aria-label="浏览量 ${count} 次"><span aria-hidden="true">◉</span> ${compactViewCount(count)}</span>`;
+  }
+
+  function safePublicRoute(value, fallback = "./maker.html") {
+    const route = String(value || "");
+    if (!route || /^(?:javascript|data):/i.test(route)) return fallback;
+    try {
+      const target = new URL(route, location.href);
+      return target.origin === location.origin ? `${target.pathname}${target.search}${target.hash}` : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
   function html(value) {
     if (window.LarkixMedia?.escapeHtml) return window.LarkixMedia.escapeHtml(value);
     return safe(value)
@@ -530,7 +560,6 @@
           <a class="card-link" href="./projects.html">查看项目</a>
         </article>
       </div>
-      <div class="derive-node-list focus-derive-list" id="focusDerivationList" aria-label="公开推导节点"></div>
     `;
     const anchor = document.querySelector("#homeRecommended") || document.querySelector("#homeProjects");
     main.insertBefore(section, anchor || null);
@@ -539,14 +568,139 @@
 
   function applyFocusedHome() {
     if (!focusModeEnabled()) return;
-    const focusSection = ensureFocusSection();
-    if (focusSection) renderFocusDerivations(focusSection);
+    ensureFocusSection();
     if (projectList?.closest("[data-layout-section]")) projectList.closest("[data-layout-section]").hidden = true;
     if (miniappUpdateList?.closest("[data-layout-section]")) miniappUpdateList.closest("[data-layout-section]").hidden = false;
     const recommendedTitle = document.querySelector("#homeRecommended h2");
     const recommendedTitleEn = document.querySelector("#homeRecommended .section-title-block span");
     if (recommendedTitle) recommendedTitle.textContent = "聚焦内容";
     if (recommendedTitleEn) recommendedTitleEn.textContent = "Focused Picks";
+  }
+
+  function publicFormulaHtml(item) {
+    const source = safe(item.latex).trim();
+    const result = source && window.LarkixMath?.render?.(source, { displayMode: true });
+    const output = result?.valid && !result.blocking ? result.html : `<span class="public-formula-fallback">${html(source || item.name || "公式")}</span>`;
+    return `<div class="public-formula-fit"><div class="formula-card-latex">${output}</div></div>`;
+  }
+
+  function fitHomeFormulas(root) {
+    root?.querySelectorAll(".public-formula-fit").forEach((frame) => {
+      const math = frame.firstElementChild;
+      if (!math) return;
+      math.style.setProperty("--formula-fit-scale", "1");
+      const width = Math.max(math.scrollWidth, math.getBoundingClientRect().width);
+      const height = Math.max(math.scrollHeight, math.getBoundingClientRect().height);
+      const availableWidth = Math.max(1, frame.clientWidth - 24);
+      const availableHeight = Math.max(1, frame.clientHeight - 24);
+      math.style.setProperty("--formula-fit-scale", String(Math.min(1, availableWidth / width, availableHeight / height)));
+    });
+    window.LarkixMath?.adaptiveLayout?.refresh?.(root);
+  }
+
+  function formulaDiscoveryCard(item) {
+    const route = safePublicRoute(item.route, `/formula/${encodeURIComponent(item.slug || "")}`);
+    return `<article class="public-media-card public-media-card--formula">
+      <a class="public-card-cover" href="${html(route)}" aria-label="打开${html(item.name)}">
+        ${publicFormulaHtml(item)}
+        <span class="public-card-overlays"><span></span>${cardViewMeta(item.viewCount)}</span>
+      </a>
+      <div class="public-card-copy"><h3><a href="${html(route)}">${html(item.name)}</a></h3><p>${html(item.module || item.category || "公式")}</p></div>
+    </article>`;
+  }
+
+  function focusedArticleCard(slot, article) {
+    const duration = compactDuration(article.readingMinutes);
+    const route = safePublicRoute(slot.route, `./post.html?id=${encodeURIComponent(article.id)}`);
+    return `<article class="home-focus-card home-focus-card--${html(slot.slot)}">
+      <a class="public-card-cover" href="${html(route)}" aria-label="打开${html(slot.title)}">
+        ${window.LarkixMedia.image(slot.cover, `${safe(slot.title)}封面`, { loading: "lazy", sizes: slot.slot === "large" ? "(max-width: 760px) 100vw, 50vw" : "(max-width: 760px) 100vw, 26vw", crop: article.coverCrop })}
+        <span class="public-card-overlays">${duration ? `<span class="public-card-duration"><span aria-hidden="true">◷</span> ${duration}</span>` : "<span></span>"}${cardViewMeta(article.viewCount)}</span>
+      </a>
+      <div class="public-card-copy"><h3><a href="${html(route)}">${html(slot.title)}</a></h3><p>${html(slot.category || article.category || "文章")}</p></div>
+    </article>`;
+  }
+
+  function ensureDiscoverySection(id, title, english, href) {
+    let section = document.querySelector(`#${id}`);
+    if (section) return section;
+    section = document.createElement("section");
+    section.className = "site-shell section-row";
+    section.id = id;
+    section.innerHTML = `<div class="section-heading"><div class="section-title-block split-title"><h2>${title}</h2><span>${english}</span></div><a href="${href}">查看全部</a></div><div class="public-media-grid"></div>`;
+    return section;
+  }
+
+  let homeDiscoveryRequest = 0;
+
+  async function loadS65HomeDiscovery() {
+    if (!focusModeEnabled()) return;
+    const request = ++homeDiscoveryRequest;
+    const main = document.querySelector("#mainContent");
+    const recommended = document.querySelector("#homeRecommended");
+    const electronics = ensureFocusSection();
+    const miniappsSection = document.querySelector("#homeMiniapps");
+    if (!main || !recommended || !electronics) return;
+    const derivations = ensureDiscoverySection("homeDerivations", "公开推导节点", "Public Derivations", "./derive.html");
+    const formulas = ensureDiscoverySection("homeLatestFormulas", "最新公式", "Latest Formulas", "./search.html?type=formula");
+    const anchor = miniappsSection || null;
+    [derivations, formulas, recommended, electronics].forEach((section) => main.insertBefore(section, anchor));
+    const initialFocusLayout = recommended.querySelector(".home-lesson-layout");
+    if (initialFocusLayout) {
+      initialFocusLayout.className = "home-focus-layout";
+      initialFocusLayout.innerHTML = "";
+    }
+    try {
+      const [homeResponse, derivationResponse] = await Promise.all([
+        fetch("./api/public/home-discovery", { cache: "no-store" }),
+        fetch("./api/knowledge-nodes", { cache: "no-store" })
+      ]);
+      if (!homeResponse.ok || !derivationResponse.ok) throw new Error("home discovery unavailable");
+      const home = await homeResponse.json();
+      const derivationPayload = await derivationResponse.json();
+      if (request !== homeDiscoveryRequest) return;
+      const nodes = Array.isArray(derivationPayload.nodes) ? derivationPayload.nodes.slice(0, 4) : [];
+      derivations.querySelector(".public-media-grid").innerHTML = nodes.length ? nodes.map(focusNodeCard).join("") : '<div class="empty-state">公开推导节点发布后会显示在这里。</div>';
+      const latest = Array.isArray(home.latestFormulas) ? home.latestFormulas.slice(0, 8) : [];
+      formulas.querySelector(".public-media-grid").innerHTML = latest.length ? latest.map(formulaDiscoveryCard).join("") : '<div class="empty-state">公开公式发布后会显示在这里。</div>';
+      const focusSlots = Array.isArray(home.focusedArticles) ? home.focusedArticles : [];
+      const articleMap = new Map(posts.map((item) => [item.id, item]));
+      const focusLayout = recommended.querySelector(".home-focus-layout");
+      focusLayout.innerHTML = focusSlots.map((slot) => {
+        const article = articleMap.get(slot.postId);
+        return article ? focusedArticleCard(slot, article) : "";
+      }).join("");
+      focusLayout.className = "home-focus-layout";
+      window.LarkixMedia.hydrateFocusedMedia?.(focusLayout);
+      fitHomeFormulas(formulas);
+    } catch {
+      if (request !== homeDiscoveryRequest) return;
+      derivations.querySelector(".public-media-grid").innerHTML = '<div class="empty-state">暂时无法读取公开推导节点。</div>';
+      formulas.querySelector(".public-media-grid").innerHTML = '<div class="empty-state">暂时无法读取最新公式。</div>';
+      const focusLayout = recommended.querySelector(".home-focus-layout");
+      if (focusLayout) focusLayout.innerHTML = "";
+    }
+  }
+
+  function bindHomepageSearchRoute() {
+    if (!search || search.dataset.searchRouteBound === "true") return;
+    search.dataset.searchRouteBound = "true";
+    const box = search.closest(".search-box");
+    const form = document.createElement("form");
+    form.className = "home-search-route";
+    form.setAttribute("role", "search");
+    box.replaceWith(form);
+    form.appendChild(box);
+    const button = document.createElement("button");
+    button.type = "submit";
+    button.textContent = "搜索";
+    button.setAttribute("aria-label", "提交公开搜索");
+    form.appendChild(button);
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const query = search.value.trim();
+      location.href = `./search.html${query ? `?q=${encodeURIComponent(query)}` : ""}`;
+    });
   }
 
   function resolveRecommended(ids) {
@@ -648,6 +802,8 @@
   applyFocusedNavigation();
   applySiteLayout();
   applyFocusedHome();
+  bindHomepageSearchRoute();
+  loadS65HomeDiscovery();
 
   window.addEventListener("larkix:public-content-updated", () => {
     posts = window.LarkixContent.getPosts();
@@ -669,19 +825,6 @@
     applyFocusedNavigation();
     applySiteLayout();
     applyFocusedHome();
-    if (search?.value.trim()) search.dispatchEvent(new Event("input"));
+    loadS65HomeDiscovery();
   });
-
-  if (search) {
-    search.addEventListener("input", () => {
-      const keyword = search.value.trim().toLowerCase();
-      const sourcePosts = focusModeEnabled() ? focusPosts : posts;
-      const sourceProjects = focusModeEnabled() ? focusProjects : projects;
-      const filteredPosts = searchItems(sourcePosts, keyword);
-      const filteredProjects = searchItems(sourceProjects, keyword);
-      renderArticles(keyword ? filteredPosts : sortByRecommendation(filteredPosts));
-      renderProjects(focusModeEnabled() ? [] : filteredProjects);
-      applyFocusedHome();
-    });
-  }
 })();
