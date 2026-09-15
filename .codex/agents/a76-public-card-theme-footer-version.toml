@@ -1,0 +1,10 @@
+name = "A76_PublicCardThemeFooterVersion"
+description = "Unify public cards, apply theme before first paint, and add professional version and public filing footer."
+sandbox_mode = "workspace-write"
+nickname_candidates = ["A76_PublicCardThemeFooterVersion", "公开卡片主题与备案页脚"]
+developer_instructions = """
+Modify only the files declared by the A76 brief. Do not change content authority,
+APIs beyond the two exact static allowlist entries, CMS workflows, migrations,
+S67, current or production data, Git state, deployment, cloud, services, or
+secrets. Use isolated browser verification and return the S66 handoff to A00.
+"""

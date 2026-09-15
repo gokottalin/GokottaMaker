@@ -41,13 +41,12 @@ only long-lived role.
 
 ## Current Decision
 
-S64 is accepted and published at commit
-`50859b51d492c082466b9287987daa7ce35b7eda`. S65 is the only open execution
-task and routes to `A75_PublicSearchHomeComposition`; S66 and S67 remain
-closed until S65 completes and A00 accepts it. The execution Agent has no Git
-authority. Production, cloud, current data, migrations, services, secrets,
-release/version changes, restore, rollback, and destructive operations remain
-closed.
+S65 is accepted and published at commit
+`6d81f07b726046e8ab937316cdc9a63b5d8dee23`. S66 is the only open execution
+task and routes to `A76_PublicCardThemeFooterVersion`; S67 remains closed until
+S66 completes and A00 accepts it. The execution Agent has no Git authority.
+Production, cloud, current data, migrations, services, secrets, release-version
+changes, restore, rollback, and destructive operations remain closed.
 
 ## Teaching Rule
 

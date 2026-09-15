@@ -1930,6 +1930,39 @@
   gap: 16px;
 }
 
+.site-version {
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.site-filing,
+.site-filing a {
+  display: flex;
+  align-items: center;
+}
+
+.site-filing {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px 18px;
+}
+
+.site-filing a {
+  gap: 6px;
+  min-height: 32px;
+  overflow-wrap: anywhere;
+}
+
+.site-filing a:hover {
+  color: var(--blue);
+}
+
+.site-filing img {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+}
+
 
 /* S65 public search and shared discovery cards */
 .home-search-route { display: flex; align-items: stretch; gap: 8px; margin: 0; }
@@ -1969,11 +2002,26 @@
 .public-search-more { margin-left: auto; }
 .public-search-filters { margin-top: 14px; padding: 14px; border-radius: 10px; background: color-mix(in srgb, var(--accent) 5%, var(--surface)); }
 .public-search-summary { min-height: 1.5em; margin: 18px 0 12px; }
-.public-media-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px 16px; }
-.public-media-card { min-width: 0; }
+.public-media-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--public-card-gap); align-items: stretch; }
+.public-media-card,
+.home-focus-card,
+.focus-entry-card {
+  min-width: 0;
+  width: 100%;
+  padding: var(--public-card-padding);
+  border: 1px solid var(--public-card-border);
+  border-radius: var(--public-card-radius);
+  background: var(--public-card-bg);
+  box-shadow: var(--public-card-shadow);
+}
+.focus-entry-card.focus-entry-primary {
+  background:
+    linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(242, 163, 22, 0.06)),
+    var(--public-card-bg);
+}
 .public-card-cover {
   position: relative; isolation: isolate; display: grid; aspect-ratio: 16 / 10; place-items: center;
-  overflow: hidden; border: 1px solid var(--line); border-radius: 10px; color: inherit;
+  overflow: hidden; border: 1px solid var(--public-card-border); border-radius: calc(var(--public-card-radius) - 3px); color: inherit;
   background: radial-gradient(circle at 78% 18%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 38%), color-mix(in srgb, var(--surface) 92%, var(--accent));
   text-decoration: none;
 }

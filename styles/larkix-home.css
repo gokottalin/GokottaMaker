@@ -107,7 +107,8 @@
 .larkix-product-grid {
   display: grid;
   grid-template-columns: 1.15fr 1fr 1fr;
-  gap: 18px;
+  gap: var(--public-card-gap);
+  align-items: stretch;
 }
 
 .larkix-product-card {
@@ -115,11 +116,12 @@
   isolation: isolate;
   overflow: hidden;
   min-height: 220px;
-  padding: 28px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: var(--shadow);
+  width: 100%;
+  padding: var(--public-card-padding);
+  border: 1px solid var(--public-card-border);
+  border-radius: var(--public-card-radius);
+  background: var(--public-card-bg);
+  box-shadow: var(--public-card-shadow);
 }
 
 .larkix-product-card > * {

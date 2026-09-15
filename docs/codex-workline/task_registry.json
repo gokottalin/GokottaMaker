@@ -4,7 +4,7 @@
   "operatingModel": "project_director_plus_short_task_agents",
   "legacyAgentDocsMode": "historical_reference_only",
   "currentGate": {
-    "batch1": "s65_public_search_home_composition_active",
+    "batch1": "s66_public_card_theme_footer_version_active",
     "businessImplementationAllowed": true,
     "databaseMutationAllowed": false,
     "migrationFileImplementationAllowed": false,
@@ -2507,13 +2507,23 @@
     },
     {
       "id": "A75_PublicSearchHomeComposition",
-      "status": "next",
+      "status": "completed",
       "scope": "Implement the independent five-type public search page and homepage latest-formula/focus composition using accepted S63/S64 authority.",
       "reads": ["AGENTS.md", "PROJECT_WINDOW.md", "docs/PROJECT_CHARTER.md", "docs/codex-workline/task_registry.json", "docs/codex-workline/requirements/active/REQ-20260913-006.json", "docs/codex-workline/requirements/active/REQ-20260913-008.json", "docs/codex-workline/requirements/active/REQ-20260913-009.json", "docs/codex-workline/requirements/active/REQ-20260913-010.json", "docs/codex-workline/slices/S63_cross_content_discovery_authority_handoff.md", "docs/codex-workline/slices/S64_cms_draft_operations_controls_handoff.md"],
       "mayEdit": ["index.html", "main.js", "search.html", "search.js", "server.js", "styles/larkix-home.css", "styles/20-content.css", "styles/40-formula.css", "styles/40-responsive.css", "scripts/test-public-search-home-composition.js", "scripts/run-public-search-home-browser-fixture.js", "docs/codex-workline/slices/S65_public_search_home_composition_handoff.md"],
       "doneWhen": ["homepage search routes to a five-type independent live search page with authoritative sorting and applicable filters", "public result cards expose correct view, duration, metadata, and complete formula presentation without leaking internal authority", "homepage relative order, latest eight formulas, and exact three focus slots match the accepted contract", "isolated browser/API and S50, S60, S62, S63, S64, and governance regressions pass"],
       "brief": "agents/A75_PublicSearchHomeComposition/brief.md",
       "handoff": "docs/codex-workline/slices/S65_public_search_home_composition_handoff.md"
+    },
+    {
+      "id": "A76_PublicCardThemeFooterVersion",
+      "status": "next",
+      "scope": "Unify the primary public card system, apply saved/default theme before first paint, and publish the professional version and filing footer on public surfaces.",
+      "reads": ["AGENTS.md", "PROJECT_WINDOW.md", "docs/PROJECT_CHARTER.md", "docs/codex-workline/task_registry.json", "docs/codex-workline/requirements/active/REQ-20260913-011.json", "docs/codex-workline/requirements/active/REQ-20260913-012.json", "docs/codex-workline/slices/S65_public_search_home_composition_handoff.md", "data/footer.js", "data/site-meta.js", "styles/00-base.css", "styles/20-content.css"],
+      "mayEdit": ["404.html", "category.html", "derive.html", "formula.html", "index.html", "maker.html", "miniapps.html", "post.html", "project.html", "projects.html", "search.html", "tools/gokotta-elec.html", "tools/larkix-elec.html", "tools/md2doc.html", "admin/index.html", "admin/course-paths.html", "data/theme-init.js", "data/footer.js", "data/site-meta.js", "server.js", "styles/00-base.css", "styles/20-content.css", "styles/40-responsive.css", "styles/larkix-home.css", "styles/larkix-elec.css", "styles/gokotta-elec.css", "admin/admin.css", "admin/admin-dark.css", "assets/icons/beian.png", "scripts/test-public-card-theme-footer-version.js", "scripts/run-public-card-theme-footer-browser-fixture.js", "docs/codex-workline/slices/S66_public_card_theme_footer_version_handoff.md"],
+      "doneWhen": ["Maker, electronic-basics, focus and search-result cards share visual tokens and mobile full-width behavior without erasing necessary variants", "saved light, saved dark and unset-default-light themes are applied before first paint on every public and CMS surface", "public footers show exact ICP and public-security filing text, link, icon order and responsive behavior while CMS shows version only", "the professional version comes from the authoritative site metadata and focused plus prior-workline regressions pass"],
+      "brief": "agents/A76_PublicCardThemeFooterVersion/brief.md",
+      "handoff": "docs/codex-workline/slices/S66_public_card_theme_footer_version_handoff.md"
     }
   ],
   "onDemandWorkbenches": [

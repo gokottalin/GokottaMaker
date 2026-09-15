@@ -4,7 +4,8 @@
 
   const getStoredTheme = () => {
     try {
-      return localStorage.getItem(themeKey);
+      const theme = localStorage.getItem(themeKey);
+      return theme === "light" || theme === "dark" ? theme : null;
     } catch (error) {
       return null;
     }
@@ -82,8 +83,7 @@
     transition.finished.finally(() => root.classList.remove("theme-switching"));
   };
 
-  const systemTheme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  applyTheme(getStoredTheme() || systemTheme);
+  applyTheme(getStoredTheme() || (root.dataset.theme === "dark" ? "dark" : "light"));
   setupNavControls();
 
   document.addEventListener("click", (event) => {
@@ -115,13 +115,19 @@
   });
 
   const meta = window.LARKIX_SITE_META || {};
-  const siteBrand = document.body.dataset.siteBrand || "LarkixMaker";
+  const version = String(meta.version || "V1.0.0").replace(/^v/i, "");
+  const build = String(meta.build || "20260504-0149").replace(/-/g, ".");
+  const versionDisplay = `${meta.productName || "LarkixMaker"} v${version} · Build ${build}`;
+  const isCms = /(?:^|\/)admin(?:\/|$)/.test(window.location.pathname);
   const footer = document.createElement("footer");
   footer.className = "site-footer";
   footer.innerHTML = `
     <div class="site-shell site-footer-inner">
-      <span>${siteBrand}</span>
-      <span>Version ${meta.versionLabel || "V1.0.0+20260504-0149"}</span>
+      <span class="site-version">${versionDisplay}</span>
+      ${isCms ? "" : `<nav class="site-filing" aria-label="网站备案信息">
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer">粤ICP备2026065094号-1</a>
+        <a href="https://beian.mps.gov.cn/#/query/webSearch?code=44522402000188" target="_blank" rel="noreferrer"><img src="/assets/icons/beian.png" alt="" aria-hidden="true" width="20" height="20" />粤公网安备44522402000188号</a>
+      </nav>`}
     </div>
   `;
   document.body.appendChild(footer);

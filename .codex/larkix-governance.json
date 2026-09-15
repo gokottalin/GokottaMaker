@@ -291,13 +291,13 @@
     },
     "projectWindowRequiredText": [
       "# Project Window",
-      "Current phase: `S65_Public_Search_Home_Composition_In_Progress`",
+      "Current phase: `S66_Public_Card_Theme_Footer_Version_In_Progress`",
       "Current controller: `agents/A00_ProjectDirector/brief.md`",
-      "Next agent: `agents/A75_PublicSearchHomeComposition/brief.md`",
+      "Next agent: `agents/A76_PublicCardThemeFooterVersion/brief.md`",
       "Confirmed requirement dispatch: `docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json`",
-      "Current work target: S64 accepted and pushed at `50859b51d492c082466b9287987daa7ce35b7eda`; S65 public search and homepage composition is the only open execution task",
+      "Current work target: S65 accepted and pushed at `6d81f07b726046e8ab937316cdc9a63b5d8dee23`; S66 public card, first-paint theme, version and filing footer is the only open execution task",
       "Current gate: Git writes, production deployment, current/production data, services, secrets, cloud, migrations, restore and rollback are closed",
-      "Confirmed queue: S65 active; S66 and S67 remain closed pending S65 completion and A00 acceptance"
+      "Confirmed queue: S66 active; S67 remains closed pending S66 completion and A00 acceptance"
     ],
     "agentsGuideRequiredText": [
       "Recommended handoff and coordination language: Chinese",
@@ -691,7 +691,7 @@
       "stopOnClosedGateOrNewAuthority": true
     },
     "expectedNextTaskCount": 1,
-    "onlyNextTask": "A75_PublicSearchHomeComposition",
+    "onlyNextTask": "A76_PublicCardThemeFooterVersion",
     "agentRoleNotes": {
       "A00_ProjectDirector": "项目导演：负责顺序、门禁和下一步裁决",
       "A01_ProjectStateRetriever": "项目状态检索器：只读取资料并建立来源索引",
@@ -765,7 +765,8 @@
       "A70_FormulaRelationshipProjectionRepair": "关系投影修复：消除公开公式 API 500",
       "A71_SessionBootstrapGovernance": "新会话启动治理：紧凑路由并自动发出启动语",
       "A74_CmsDraftOperationsControls": "CMS 草稿保护与内容运营控件",
-      "A75_PublicSearchHomeComposition": "公开搜索与首页编排"
+      "A75_PublicSearchHomeComposition": "公开搜索与首页编排",
+      "A76_PublicCardThemeFooterVersion": "公开卡片、主题首帧、版本与备案页脚"
     },
     "expectedTaskStatuses": {
       "A01_ProjectStateRetriever": "completed",
@@ -838,7 +839,8 @@
       "A70_FormulaRelationshipProjectionRepair": "completed",
       "A71_SessionBootstrapGovernance": "completed",
       "A74_CmsDraftOperationsControls": "completed",
-      "A75_PublicSearchHomeComposition": "next"
+      "A75_PublicSearchHomeComposition": "completed",
+      "A76_PublicCardThemeFooterVersion": "next"
     }
   },
   "temporaryExperts": [
@@ -1190,6 +1192,11 @@
     {
       "id": "A75_PublicSearchHomeComposition",
       "file": ".codex/agents/a75-public-search-home-composition.toml",
+      "mode": "workspace-write"
+    },
+    {
+      "id": "A76_PublicCardThemeFooterVersion",
+      "file": ".codex/agents/a76-public-card-theme-footer-version.toml",
       "mode": "workspace-write"
     }
   ]

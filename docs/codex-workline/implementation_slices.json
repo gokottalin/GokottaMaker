@@ -10,7 +10,7 @@
   "lastReplannedBy": "A00_ProjectDirector",
   "requirementDispatch": "docs/codex-workline/requirements/dispatch/DISPATCH-20260911-001.json",
   "currentGate": {
-    "batch1": "s65_public_search_home_composition_active",
+    "batch1": "s66_public_card_theme_footer_version_active",
     "businessImplementationAllowed": true,
     "databaseMutationAllowed": false,
     "migrationFileImplementationAllowed": false,
@@ -3017,7 +3017,7 @@
       "id": "S65_public_search_home_composition",
       "agent": "A75_PublicSearchHomeComposition",
       "roleNote": "公开搜索与首页编排",
-      "status": "in_progress",
+      "status": "completed",
       "purpose": "Deliver the independent public search experience and homepage formula/focus composition over accepted S63/S64 authority.",
       "reads": ["AGENTS.md", "PROJECT_WINDOW.md", "docs/codex-workline/task_registry.json", "docs/codex-workline/requirements/active/REQ-20260913-006.json", "docs/codex-workline/requirements/active/REQ-20260913-008.json", "docs/codex-workline/requirements/active/REQ-20260913-009.json", "docs/codex-workline/requirements/active/REQ-20260913-010.json", "docs/codex-workline/slices/S63_cross_content_discovery_authority_handoff.md", "docs/codex-workline/slices/S64_cms_draft_operations_controls_handoff.md"],
       "mayEdit": ["index.html", "main.js", "search.html", "search.js", "server.js", "styles/larkix-home.css", "styles/20-content.css", "styles/40-formula.css", "styles/40-responsive.css", "scripts/test-public-search-home-composition.js", "scripts/run-public-search-home-browser-fixture.js", "docs/codex-workline/slices/S65_public_search_home_composition_handoff.md"],
@@ -3026,13 +3026,27 @@
       "dependencies": ["A00 acceptance and origin/main publication of S64 at 50859b51d492c082466b9287987daa7ce35b7eda"],
       "forbidden": ["backend or API changes except the exact public static allowlist entries for search.html, search.js and styles/40-formula.css; CMS, migration, S66 theme/footer/version or other all-site card implementation", "current or production data, Git, deployment, cloud, service, secret, or destructive writes"],
       "requirements": ["REQ-20260913-006", "REQ-20260913-008", "REQ-20260913-009", "REQ-20260913-010"]
+    },
+    {
+      "id": "S66_public_card_theme_footer_version",
+      "agent": "A76_PublicCardThemeFooterVersion",
+      "roleNote": "公开卡片、主题首帧、版本与备案页脚",
+      "status": "in_progress",
+      "purpose": "Deliver REQ-20260913-011 and REQ-20260913-012 as one shared public-shell slice after S65 acceptance, without changing content authority or starting final regression.",
+      "reads": ["AGENTS.md", "PROJECT_WINDOW.md", "docs/codex-workline/task_registry.json", "docs/codex-workline/requirements/active/REQ-20260913-011.json", "docs/codex-workline/requirements/active/REQ-20260913-012.json", "docs/codex-workline/slices/S65_public_search_home_composition_handoff.md", "data/footer.js", "data/site-meta.js", "styles/00-base.css", "styles/20-content.css"],
+      "mayEdit": ["404.html", "category.html", "derive.html", "formula.html", "index.html", "maker.html", "miniapps.html", "post.html", "project.html", "projects.html", "search.html", "tools/gokotta-elec.html", "tools/larkix-elec.html", "tools/md2doc.html", "admin/index.html", "admin/course-paths.html", "data/theme-init.js", "data/footer.js", "data/site-meta.js", "server.js", "styles/00-base.css", "styles/20-content.css", "styles/40-responsive.css", "styles/larkix-home.css", "styles/larkix-elec.css", "styles/gokotta-elec.css", "admin/admin.css", "admin/admin-dark.css", "assets/icons/beian.png", "scripts/test-public-card-theme-footer-version.js", "scripts/run-public-card-theme-footer-browser-fixture.js", "docs/codex-workline/slices/S66_public_card_theme_footer_version_handoff.md"],
+      "outputs": ["shared public card tokens and preserved variants", "pre-paint theme initialization across public and CMS pages", "authoritative professional version projection", "public-only ICP and public-security filing footer with controlled icon", "isolated static and real-browser evidence", "A00 handoff"],
+      "verification": ["computed card dimensions and mobile no-overflow across Maker, homepage and search", "cold-load first-frame evidence for unset, saved-light and saved-dark themes across public and CMS pages", "exact version, filing text, href, target, rel, icon order and CMS exclusion", "S50, S60, S62, S63, S64, S65 and governance regression"],
+      "dependencies": ["A00 acceptance and origin/main publication of S65 at 6d81f07b726046e8ab937316cdc9a63b5d8dee23"],
+      "forbidden": ["content/API/CMS workflow/migration changes or S67 regression implementation", "theme preference values other than light/dark or system-preference defaulting", "filing text on private CMS surfaces", "release version bump, current/production data, Git, deployment, cloud, service, secret, or destructive writes"],
+      "requirements": ["REQ-20260913-011", "REQ-20260913-012"]
     }
   ],
   "nextDecision": {
-    "agents": ["A75_PublicSearchHomeComposition"],
-    "decision": "S64 is accepted. S65 is the only open execution task; S66 and S67 remain closed pending A00 acceptance.",
+    "agents": ["A76_PublicCardThemeFooterVersion"],
+    "decision": "S65 is accepted and published. S66 is the only open execution task; S67 remains closed pending A00 acceptance.",
     "shortPrompts": [
-      "Agent 00 Project Director（项目导演：本批次已验收，等待下一份确认需求）：运行 codex:handoff 核验队列为空；Git 和生产门禁保持关闭。"
+      "Agent 76 Public Card Theme Footer Version（公开卡片、主题首帧、版本与备案页脚）：进入 E:\\Project\\2607-LarkixWeb，运行 npm.cmd run --silent codex:bootstrap 核验 S66 唯一路由，然后严格执行 agents\\A76_PublicCardThemeFooterVersion\\brief.md；完成后直接回传 A00。"
     ]
   }
 }

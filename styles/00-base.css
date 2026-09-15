@@ -22,6 +22,12 @@
   --header-line: rgba(233, 213, 255, 0.9);
   --shadow: 0 18px 45px rgba(76, 29, 149, 0.1);
   --radius: 8px;
+  --public-card-radius: 12px;
+  --public-card-padding: 18px;
+  --public-card-gap: 16px;
+  --public-card-border: var(--line);
+  --public-card-bg: var(--surface);
+  --public-card-shadow: 0 14px 32px rgba(76, 29, 149, 0.08);
   --page: 1880px;
   --transition: 260ms cubic-bezier(0.22, 1, 0.36, 1);
   --theme-duration: 420ms;
@@ -45,6 +51,7 @@
   --header-bg: rgba(18, 10, 31, 0.88);
   --header-line: rgba(182, 168, 201, 0.18);
   --shadow: 0 20px 52px rgba(0, 0, 0, 0.34);
+  --public-card-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
   color-scheme: dark;
 }
 

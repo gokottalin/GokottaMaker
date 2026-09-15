@@ -2924,7 +2924,8 @@ const focusModePublicDataFiles = new Set([
   "/data/math-renderer.js",
   "/data/media.js",
   "/data/miniapps.js",
-  "/data/site-meta.js"
+  "/data/site-meta.js",
+  "/data/theme-init.js"
 ]);
 const focusModePublicAssetPrefixes = [
   "/assets/covers/",
@@ -2933,6 +2934,9 @@ const focusModePublicAssetPrefixes = [
   "/assets/logo/md2file/",
   "/assets/vendor/katex/"
 ];
+const focusModePublicAssetFiles = new Set([
+  "/assets/icons/beian.png"
+]);
 const focusModePublicStyleFiles = new Set([
   "/styles/00-base.css",
   "/styles/10-hero.css",
@@ -2960,7 +2964,7 @@ const publicApiExactPaths = new Set([
 
 function isFocusModePublicStaticPath(pathname) {
   if (pathname.startsWith("/uploads/")) return publicUploadPaths().has(pathname);
-  if (focusModePublicDataFiles.has(pathname) || focusModePublicStyleFiles.has(pathname)) return true;
+  if (focusModePublicDataFiles.has(pathname) || focusModePublicAssetFiles.has(pathname) || focusModePublicStyleFiles.has(pathname)) return true;
   if (focusModePublicAssetPrefixes.some((prefix) => pathname.startsWith(prefix))) return true;
   return !pathname.startsWith("/data/") && !pathname.startsWith("/assets/") && !pathname.startsWith("/styles/");
 }

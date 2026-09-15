@@ -477,13 +477,15 @@
 .miniapp-registry {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+  gap: var(--public-card-gap);
+  align-items: stretch;
 }
 
 .home-miniapp-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 20px;
+  gap: var(--public-card-gap);
+  align-items: stretch;
 }
 
 .home-miniapp-card h3 {
@@ -495,13 +497,14 @@
 .miniapp-card {
   display: grid;
   grid-template-columns: 84px minmax(0, 1fr);
-  gap: 18px;
+  gap: var(--public-card-gap);
   min-width: 0;
-  padding: 20px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 14px 32px rgba(76, 29, 149, 0.08);
+  width: 100%;
+  padding: var(--public-card-padding);
+  border: 1px solid var(--public-card-border);
+  border-radius: var(--public-card-radius);
+  background: var(--public-card-bg);
+  box-shadow: var(--public-card-shadow);
   transition:
     background var(--theme-duration) var(--theme-ease),
     border-color var(--theme-duration) var(--theme-ease),
