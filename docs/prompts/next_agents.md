@@ -11,14 +11,14 @@ Agent 00 Project Director remains the only long-lived controller. Historical
 accepted baseline: `DISPATCH-20260813-002`.
 
 ```text
-Agent 76 Public Card Theme Footer Version（公开卡片、主题首帧、版本与备案页脚）：请进入 E:\Project\2607-LarkixWeb，运行 npm.cmd run --silent codex:bootstrap 核验 S66 路由，然后执行 agents\A76_PublicCardThemeFooterVersion\brief.md；严格遵守 may_edit，完成后直接回传 A00。
+Agent 00 Project Director（项目导演：S62-S67 已验收、队列为空）：请进入 E:\Project\2607-LarkixWeb，运行 npm.cmd run --silent codex:bootstrap 核验队列为空；只读取 compact 输出与 A00 brief，Git 和生产门禁保持关闭。
 ```
 
 当需求已经由 Owner 确认，并且当前会话判定必须转入新会话时，当前会话必须运行
 `npm.cmd run --silent codex:launch`，在同一回复的 `新会话启动语` 下原样发出输出。
 需要诊断完整路由时运行 `npm.cmd run --silent codex:handoff`。
 
-Current controller: `A00_ProjectDirector`. Current execution task: `A76_PublicCardThemeFooterVersion` / S66.
+Current controller: `A00_ProjectDirector`. S62-S67 are accepted and the execution queue is empty.
 
 Release commit `68bc822` is published on `origin/main`. Version
 `V2.5.5+20260911-0001`, contract `1238/0/0`, and formula regression `15/15` passed.

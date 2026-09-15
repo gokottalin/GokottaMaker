@@ -41,10 +41,10 @@ only long-lived role.
 
 ## Current Decision
 
-S65 is accepted and published at commit
-`6d81f07b726046e8ab937316cdc9a63b5d8dee23`. S66 is the only open execution
-task and routes to `A76_PublicCardThemeFooterVersion`; S67 remains closed until
-S66 completes and A00 accepts it. The execution Agent has no Git authority.
+S66 is accepted and published at commit
+`fc359526c220ad5c1f28c6471696f84e78292d27`. S67 is independently accepted at
+12/12 with protected-boundary PASS. The batch queue is empty and control has
+returned to A00; no implementation Agent is open.
 Production, cloud, current data, migrations, services, secrets, release-version
 changes, restore, rollback, and destructive operations remain closed.
 
